@@ -131,6 +131,12 @@ An additional working assumption for the first implementation is that a larva is
 - Render one row per hatchery and separate by player.
 - If native Base Control augmentation is possible, plug rectangles there.
 - Otherwise render them in the fallback or module-owned chart surface.
+- the line of a hatchery starts from the time the building is completed and has a larva, not from time 0:00 of the match. same for the end of of the line - when the building is destroyed.
+- when one hatchery accumulates 11 seconds over time with 3+ larva, one thick black line is shown on the line chart. that happens every 11 accumulated seconds. 
+- below the line of the hatchery there is a text with message "[x] potential larva missed".
+- on top of the charts there is overview message saying "[y] total potential larva missed in this match".
+- do not show charts for hatcheries that we not completed during building, that created zero larva. 
+- in a hover over a missed larva, show current minerals and gas with blue and green numbers.
 
 **Exit criteria:**
 
