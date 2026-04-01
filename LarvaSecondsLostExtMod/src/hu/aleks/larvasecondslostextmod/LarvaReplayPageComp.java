@@ -236,6 +236,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
             + "Epic 6 now derives per-hatchery larva counts with a calibrated hatchery-to-larva assignment heuristic.\n"
             + "Epic 7 Story 01 now converts those counts into real replay-derived 3+ larva windows on the supported Larva timeline.\n"
             + "Epic 7 Story 02 now adds thick black markers every 11 seconds of accumulated 3+ larva saturation.\n"
+            + "Epic 7 Story 03 now shows per-hatchery missed-larva totals and per-Zerg-player totals below each player's name.\n"
             + "Story 01.07 can also write a dev diagnostic dump file for zero-click verification when enabled by JVM property.\n"
                 + "\n"
                 + "This page is the replay-scoped entry point currently available to the external module.\n"
@@ -332,11 +333,16 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
             builder.append( "Timeline rows: " )
                 .append( summary.getTimelineModel().getRowList().size() )
                 .append( " (module-owned normalized larva-window model)" )
-                .append( '\n' )
                 .append( '\n' );
+        if ( summary.getTimelineModel() != null && !summary.getTimelineModel().getGroupOverviewLabelMap().isEmpty() ) {
+            builder.append( "Player totals:" ).append( '\n' );
+            for ( final java.util.Map.Entry< String, String > entry : summary.getTimelineModel().getGroupOverviewLabelMap().entrySet() )
+                builder.append( "- " ).append( entry.getKey() ).append( ": " ).append( entry.getValue() ).append( '\n' );
+            builder.append( '\n' );
+        }
         if ( summary.getLarvaAnalysisReport() != null )
             builder.append( summary.getLarvaAnalysisReport().toDisplayText() ).append( '\n' ).append( '\n' );
-        builder.append( "Next goal: add per-hatchery and match totals on top of these replay-derived windows and threshold markers." );
+        builder.append( "Next goal: prepare hover-time resource context for missed-larva markers without leaking replay parser objects into the UI model." );
 
         return builder.toString();
     }

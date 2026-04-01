@@ -1,7 +1,9 @@
 package hu.aleks.larvasecondslostextmod;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Builds the normalized module-owned timeline model used by the supported Larva chart.
@@ -19,6 +21,9 @@ public class LarvaTimelineModelBuilder {
 
     /** Empty message used when no rows are available yet. */
     private static final String EMPTY_MESSAGE = "Load a replay to populate the supported larva timeline.";
+
+    /** Suffix used for per-hatchery totals. */
+    private static final String POTENTIAL_LARVA_MISSED_SUFFIX = " potential larva missed";
 
     /** Stable 3+ larva window calculator. */
     private final LarvaSaturationWindowCalculator saturationWindowCalculator = new LarvaSaturationWindowCalculator();
@@ -48,7 +53,8 @@ public class LarvaTimelineModelBuilder {
         if ( rowList.isEmpty() && replaySummary != null && replayLengthMs > 0L )
             rowList.add( createFallbackRow( replayLengthMs, fallbackPreviewStartMs, fallbackPreviewEndMs ) );
 
-        return new LarvaTimelineModel( TITLE, SUBTITLE, integrationMode, replayLengthMs, replayLengthLabel, EMPTY_MESSAGE, rowList );
+        return new LarvaTimelineModel( TITLE, SUBTITLE, integrationMode, buildGroupOverviewLabelMap( rowList ), replayLengthMs, replayLengthLabel,
+            EMPTY_MESSAGE, rowList );
     }
 
     /**
@@ -97,19 +103,8 @@ public class LarvaTimelineModelBuilder {
                     "3+ larva " + window.getStartTimeLabel() + "-" + window.getEndTimeLabel(), LarvaTimelineSegment.Kind.SATURATION_WINDOW ) );
 
         final String rowLabel = timeline.getHatcheryType() + " (tag " + timeline.getHatcheryTagText() + ")";
-        final String detailLabel = "active="
-                + saturationWindowCalculator.formatMs( startMs )
-                + "-"
-                + saturationWindowCalculator.formatMs( endMs )
-                + ", windows="
-                + saturationWindowList.size()
-                + ", max="
-                + timeline.getMaxLarvaCount()
-                + ", larva="
-                + timeline.getCreatedLarvaCount()
-                + ", missed="
-                + markerList.size();
-            return new LarvaTimelineRow( timeline.getPlayerName(), rowLabel, detailLabel, startMs, endMs, markerList.size(), segmentList, markerList );
+        final String detailLabel = markerList.size() + POTENTIAL_LARVA_MISSED_SUFFIX;
+        return new LarvaTimelineRow( timeline.getPlayerName(), rowLabel, detailLabel, startMs, endMs, markerList.size(), segmentList, markerList );
     }
 
     /**
@@ -128,6 +123,35 @@ public class LarvaTimelineModelBuilder {
                 LarvaTimelineSegment.Kind.PREVIEW_INTERVAL ) );
         return new LarvaTimelineRow( "Replay context", "Larva fallback preview rail", "placeholder timing before replay-derived hatchery rows exist",
             0L, replayLengthMs, 0, segmentList, new ArrayList< LarvaTimelineMarker >() );
+    }
+
+    /**
+     * Builds the per-player overview messages from visible hatchery rows.
+     *
+     * @param rowList visible timeline rows
+     * @return per-player overview messages keyed by player name
+     */
+    private Map< String, String > buildGroupOverviewLabelMap( final List< LarvaTimelineRow > rowList ) {
+        final Map< String, Integer > playerTotals = new LinkedHashMap<>();
+
+        for ( final LarvaTimelineRow row : rowList ) {
+            if ( row.getMissedLarvaCount() < 0 )
+                continue;
+
+            final String playerName = row.getGroupLabel();
+            if ( playerName == null || playerName.length() == 0 || "Replay context".equals( playerName ) )
+                continue;
+
+            final Integer currentTotal = playerTotals.get( playerName );
+            playerTotals.put( playerName, Integer.valueOf( ( currentTotal == null ? 0 : currentTotal.intValue() ) + row.getMissedLarvaCount() ) );
+        }
+
+        final Map< String, String > groupOverviewLabelMap = new LinkedHashMap<>();
+        for ( final Map.Entry< String, Integer > entry : playerTotals.entrySet() ) {
+            groupOverviewLabelMap.put( entry.getKey(), entry.getValue().intValue() + POTENTIAL_LARVA_MISSED_SUFFIX );
+        }
+
+        return groupOverviewLabelMap;
     }
 
     /**

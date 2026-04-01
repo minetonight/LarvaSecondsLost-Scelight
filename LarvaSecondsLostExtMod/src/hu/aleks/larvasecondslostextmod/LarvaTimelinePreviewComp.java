@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -38,6 +39,9 @@ public class LarvaTimelinePreviewComp extends JPanel {
 
     /** Player group text color. */
     private static final Color GROUP_TEXT_COLOR = new Color( 54, 72, 92 );
+
+    /** Overview text color. */
+    private static final Color OVERVIEW_TEXT_COLOR = new Color( 36, 48, 64 );
 
     /** Marker color. */
     private static final Color MARKER_COLOR = new Color( 246, 156, 63 );
@@ -120,18 +124,21 @@ public class LarvaTimelinePreviewComp extends JPanel {
             return;
         }
 
-        g.drawString( timelineModel.getModeLabel(), LEFT_PAD, TOP_PAD + 40 );
+        final int headerBottomY = TOP_PAD + 40;
+        g.setColor( SUBTLE_TEXT_COLOR );
+        g.drawString( timelineModel.getModeLabel(), LEFT_PAD, headerBottomY );
 
         final List< LarvaTimelineRow > rowList = timelineModel.getRowList();
         if ( rowList.isEmpty() ) {
-            g.drawString( timelineModel.getEmptyMessage(), LEFT_PAD, TOP_PAD + 64 );
+            g.drawString( timelineModel.getEmptyMessage(), LEFT_PAD, headerBottomY + 24 );
             return;
         }
 
         final int railLeft = LEFT_PAD + LABEL_WIDTH;
         final int railWidth = Math.max( 80, width - railLeft - RIGHT_PAD );
-        int y = TOP_PAD + 62;
+        int y = headerBottomY + 22;
         String previousGroup = null;
+        final Map< String, String > groupOverviewLabelMap = timelineModel.getGroupOverviewLabelMap();
 
         for ( final LarvaTimelineRow row : rowList ) {
             final String groupLabel = row.getGroupLabel();
@@ -141,6 +148,12 @@ public class LarvaTimelinePreviewComp extends JPanel {
                 g.setColor( GROUP_TEXT_COLOR );
                 g.drawString( groupLabel, LEFT_PAD, y );
                 y += 14;
+                final String groupOverviewLabel = groupOverviewLabelMap.get( groupLabel );
+                if ( groupOverviewLabel != null && groupOverviewLabel.length() > 0 ) {
+                    g.setColor( OVERVIEW_TEXT_COLOR );
+                    g.drawString( groupOverviewLabel, LEFT_PAD, y );
+                    y += 14;
+                }
                 previousGroup = groupLabel;
             }
 
@@ -277,7 +290,14 @@ public class LarvaTimelinePreviewComp extends JPanel {
             }
         }
 
-        final int preferredHeight = 118 + timelineModel.getRowList().size() * ROW_STEP + Math.max( 0, groupCount - 1 ) * GROUP_GAP + groupCount * 14;
+        int groupOverviewCount = 0;
+        for ( final String label : timelineModel.getGroupOverviewLabelMap().values() ) {
+            if ( label != null && label.length() > 0 )
+                groupOverviewCount++;
+        }
+
+        final int preferredHeight = 118 + timelineModel.getRowList().size() * ROW_STEP + Math.max( 0, groupCount - 1 ) * GROUP_GAP + groupCount * 14
+            + groupOverviewCount * 14;
         setPreferredSize( new Dimension( 220, preferredHeight ) );
     }
 

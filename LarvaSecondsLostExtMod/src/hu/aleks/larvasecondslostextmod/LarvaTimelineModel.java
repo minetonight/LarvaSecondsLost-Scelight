@@ -3,6 +3,8 @@ package hu.aleks.larvasecondslostextmod;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Normalized presentation model for the module-owned Larva timeline.
@@ -17,6 +19,9 @@ public class LarvaTimelineModel {
 
     /** Fallback-mode note shown above the preview. */
     private final String modeLabel;
+
+    /** Per-player overview messages shown with player group headers. */
+    private final Map< String, String > groupOverviewLabelMap;
 
     /** Replay length in milliseconds. */
     private final long replayLengthMs;
@@ -36,16 +41,18 @@ public class LarvaTimelineModel {
      * @param title chart title
      * @param subtitle short chart subtitle
      * @param modeLabel fallback mode note
+     * @param groupOverviewLabelMap overview messages shown with player group headers
      * @param replayLengthMs replay length in milliseconds
      * @param replayLengthLabel formatted replay length
      * @param emptyMessage empty-state message
      * @param rowList timeline rows
      */
-    public LarvaTimelineModel( final String title, final String subtitle, final String modeLabel, final long replayLengthMs,
-            final String replayLengthLabel, final String emptyMessage, final List< LarvaTimelineRow > rowList ) {
+    public LarvaTimelineModel( final String title, final String subtitle, final String modeLabel, final Map< String, String > groupOverviewLabelMap,
+            final long replayLengthMs, final String replayLengthLabel, final String emptyMessage, final List< LarvaTimelineRow > rowList ) {
         this.title = title;
         this.subtitle = subtitle;
         this.modeLabel = modeLabel;
+        this.groupOverviewLabelMap = Collections.unmodifiableMap( new LinkedHashMap<>( groupOverviewLabelMap ) );
         this.replayLengthMs = replayLengthMs;
         this.replayLengthLabel = replayLengthLabel;
         this.emptyMessage = emptyMessage;
@@ -62,6 +69,10 @@ public class LarvaTimelineModel {
 
     public String getModeLabel() {
         return modeLabel;
+    }
+
+    public Map< String, String > getGroupOverviewLabelMap() {
+        return groupOverviewLabelMap;
     }
 
     public long getReplayLengthMs() {

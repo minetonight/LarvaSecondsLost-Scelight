@@ -39,7 +39,7 @@ From the infrastructure plan:
 - Epic 07 is the first real conversion from replay-derived larva counts to `LarvaWindow`-style segments
 - rendering must stay decoupled from replay parser objects by using normalized presentation models
 - the supported output path is the module-owned chart-like Larva timeline, not unsupported native chart registration or Base Control patching
-- later stories should layer on missed-larva markers, per-hatchery totals, match totals, and hover-time resource details
+- later stories should layer on missed-larva markers, per-hatchery totals, per-player totals, and hover-time resource details
 
 ## Non-goals
 
@@ -82,16 +82,17 @@ This is the minimum user-visible Epic 07 slice. It should establish the real lar
 - Markers continue across multiple windows when accumulated saturation time is intermittent.
 - Marker generation is derived from the same normalized timeline model, not recomputed in paint code.
 
-## Story 07.03 — Show per-hatchery and match totals
+## Story 07.03 — Show per-hatchery and per-player totals
 
 **As a** user  
-**I want** missed-larva totals shown per hatchery and for the whole replay  
-**So that** the chart communicates both local and overall impact.
+**I want** missed-larva totals shown per hatchery and per Zerg player  
+**So that** the chart communicates both local and player-level impact.
 
 ### Acceptance criteria
 
 - Each visible hatchery row shows text in the format `[x] potential larva missed`.
-- The top of the chart shows `[y] total potential larva missed in this match`.
+- Below each player's name, the chart shows that player's total on its own separate line.
+- Each per-player total is derived only from that player's visible hatchery rows.
 - Totals match the number of 11-second threshold markers.
 - Hatcheries with zero missed larva still render correctly if they otherwise qualify for display.
 
@@ -149,6 +150,6 @@ Epic 07 is done when:
 
 1. Story 07.01 — Convert count timelines into stable `3+ larva` windows
 2. Story 07.02 — Show per-hatchery missed-larva thresholds
-3. Story 07.03 — Show per-hatchery and match totals
+3. Story 07.03 — Show per-hatchery and per-player totals
 4. Story 07.04 — Prepare hover-time resource context for later detail
 5. Story 07.05 — Prepare Epic 08 handoff conditions
