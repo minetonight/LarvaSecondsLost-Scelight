@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Larva Seconds Lost External Module Builder" basedir="." default="BUILD_RELEASE">
+    <description>
+        SDK-compatible Ant builder for the Larva Seconds Lost Scelight external module.
+    </description>
+
+    <property name="projectName" value="LarvaSecondsLostExtMod" />
+    <property name="srcFolder" value="src" />
+    <property name="binFolder" value="bin" />
+    <property name="customLibsFolder" value="lib" />
+    <property name="releaseFolder" value="release" />
+    <property name="releaseResourcesFolder" value="${releaseFolder}/resources" />
+    <property name="releaseBuildFolder" value="${releaseFolder}/Scelight" />
+    <property name="releasePropertiesFile" value="${releaseFolder}/release.properties" />
+    <property name="deploymentFolder" value="${releaseFolder}/deployment" />
+
+    <target name="INIT_PROPERTIES">
+        <property file="${releasePropertiesFile}" />
+
+        <condition property="version" value="${version.major}.${version.minor}" else="${version.major}.${version.minor}.${version.revision}">
+            <equals arg1="${version.revision}" arg2="0" />
+        </condition>
+
+        <property name="extModApiJar" value="../ScelightExtModSDK/Scelight-ext-mod-api/${api.version}/lib/scelight-ext-mod-api-${api.version}.jar" />
+        <property name="versionFolder" value="${releaseBuildFolder}/mod-x/${folder}/${version}" />
+        <property name="deploymentFileName" value="${deploymentName}-${version}.zip" />
+        <property name="deploymentFile" value="${deploymentFolder}/${deploymentFileName}" />
+    </target>
+
+    <target name="CLEAN" depends="INIT_PROPERTIES" description="Removes generated build outputs.">
+        <delete dir="${binFolder}" />
+        <delete dir="${releaseBuildFolder}" />
+    </target>
+
+    <target name="COMPILE" depends="INIT_PROPERTIES" description="Compiles the module with Java 7 source and target compatibility.">
+        <available file="${extModApiJar}" property="extModApiJarPresent" />
+        <fail message="Scelight External Module API jar not found: ${extModApiJar}" unless="extModApiJarPresent" />
+
+        <delete dir="${binFolder}" />
+        <mkdir dir="${binFolder}" />
+
+        <copy todir="${binFolder}" preservelastmodified="true">
+            <fileset dir="${srcFolder}" excludes="**/*.java" />
+        </copy>
+
+        <javac srcdir="${srcFolder}" destdir="${binFolder}" source="1.7" target="1.7" encoding="UTF-8" debug="true" includeantruntime="false">
+            <classpath>
+                <pathelement location="${extModApiJar}" />
+                <fileset dir="${customLibsFolder}" includes="**/*.jar" />
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="BUILD_RELEASE" depends="COMPILE" description="Creates a release and deployment of the external module.">
+        <tstamp>
+            <format property="date" pattern="yyyy-MM-dd'T'HH:mm:ss.SSSXXX"/>
+        </tstamp>
+
+        <propertyfile file="${releasePropertiesFile}">
+            <entry key="buildNumber" type="int" default="0" operation="+" />
+        </propertyfile>
+
+        <delete dir="${releaseBuildFolder}" />
+        <mkdir dir="${versionFolder}" />
+        <mkdir dir="${deploymentFolder}" />
+
+        <copy todir="${versionFolder}" preservelastmodified="true">
+            <fileset dir="${customLibsFolder}" includes="**/*.jar" />
+        </copy>
+
+        <property name="manifestFile" value="${versionFolder}/Scelight-mod-x-manifest.xml" />
+        <copy tofile="${manifestFile}" preservelastmodified="true" file="${releaseResourcesFolder}/Scelight-mod-x-manifest-template.xml" />
+        <replace file="${manifestFile}" propertyfile="${releasePropertiesFile}" encoding="UTF-8">
+            <replacefilter token="@name@" property="name" />
+            <replacefilter token="@version.major@" property="version.major" />
+            <replacefilter token="@version.minor@" property="version.minor" />
+            <replacefilter token="@version.revision@" property="version.revision" />
+            <replacefilter token="@buildNumber@" property="buildNumber" />
+            <replacefilter token="@folder@" property="folder" />
+            <replacefilter token="@api.version.major@" property="api.version.major" />
+            <replacefilter token="@api.version.minor@" property="api.version.minor" />
+            <replacefilter token="@api.version.revision@" property="api.version.revision" />
+        </replace>
+        <replace file="${manifestFile}" token="@date@" value="${date}" encoding="UTF-8"/>
+
+        <jar destfile="${versionFolder}/${folder}.jar">
+            <fileset dir="${binFolder}" excludes="**/package.html" />
+        </jar>
+
+        <echo>External Module release build successful, placed in folder: ${releaseBuildFolder}</echo>
+
+        <delete>
+            <fileset dir="${deploymentFolder}" includes="${deploymentName}-*.zip" />
+            <fileset file="${deploymentFolder}/module.xml" />
+        </delete>
+
+        <zip destfile="${deploymentFile}" basedir="${releaseBuildFolder}/.." includes="Scelight/**" />
+
+        <property name="moduleXmlFile" value="${deploymentFolder}/module.xml" />
+        <copy tofile="${moduleXmlFile}" preservelastmodified="true" file="${releaseResourcesFolder}/module-template.xml" />
+        <replace file="${moduleXmlFile}" propertyfile="${releasePropertiesFile}" encoding="UTF-8">
+            <replacefilter token="@name@" property="name" />
+            <replacefilter token="@version.major@" property="version.major" />
+            <replacefilter token="@version.minor@" property="version.minor" />
+            <replacefilter token="@version.revision@" property="version.revision" />
+            <replacefilter token="@folder@" property="folder" />
+            <replacefilter token="@archiveBaseUrl@" property="archiveBaseUrl" />
+        </replace>
+        <replace file="${moduleXmlFile}" token="@archiveFile@" value="${deploymentFileName}" encoding="UTF-8"/>
+        <checksum file="${deploymentFile}" algorithm="SHA-256" property="archiveSha256"/>
+        <replace file="${moduleXmlFile}" token="@archiveSha256@" value="${archiveSha256}" encoding="UTF-8"/>
+        <length file="${deploymentFile}" property="archiveSize"/>
+        <replace file="${moduleXmlFile}" token="@archiveSize@" value="${archiveSize}" encoding="UTF-8"/>
+        <java classpath="../ScelightExtModSDK/lib-sdk/sdk-tools.jar" classname="hu.sltool.extmodsdk.InjectModuleFileList">
+            <arg file="${moduleXmlFile}" />
+            <arg file="${deploymentFile}" />
+        </java>
+    </target>
+
+    <target name="INSTALL_DEPLOYMENT" depends="BUILD_RELEASE" description="Installs the deployment into a Scelight folder after replacing older versions.">
+        <echo>Checking Scelight folder: ${scelightFolder}</echo>
+
+        <basename file="${scelightFolder}" property="scelightFolderName" />
+        <fail message="The Scelight folder is not named Scelight: ${scelightFolderName}">
+            <condition>
+                <not>
+                    <equals arg1="${scelightFolderName}" arg2="Scelight" />
+                </not>
+            </condition>
+        </fail>
+
+        <available file="${scelightFolder}" type="dir" property="scelightFolderPresent"/>
+        <fail message="Scelight folder does not exist: ${scelightFolder}" unless="scelightFolderPresent" />
+
+        <condition property="isRealScelightFolder">
+            <or>
+                <available file="${scelightFolder}/Scelight.exe" />
+                <available file="${scelightFolder}/Scelight-linux.sh" />
+                <available file="${scelightFolder}/Scelight-os-x.command" />
+            </or>
+        </condition>
+        <fail message="Scelight folder does not appear to be a real Scelight folder (no known launcher file was found): ${scelightFolder}" unless="isRealScelightFolder" />
+
+        <delete dir="${scelightFolder}/mod-x/${folder}" />
+        <unzip src="${deploymentFile}" dest="${scelightFolder}/.." />
+    </target>
+
+    <target name="BACKUP_PROJECT" depends="INIT_PROPERTIES" description="Creates a project backup zip excluding the bin folder.">
+        <condition property="datePattern" value="-yyyyMMdd-HHmmss" else="">
+            <equals arg1="${includeTstampInBackup}" arg2="true" />
+        </condition>
+        <tstamp>
+            <format property="date" pattern="${datePattern}"/>
+        </tstamp>
+
+        <mkdir dir="${backupFolder}" />
+        <property name="destBackupFile" value="${backupFolder}/${projectName}-${version}-project${date}.zip" />
+
+        <delete file="${destBackupFile}" />
+        <zip destfile="${destBackupFile}" basedir=".." includes="${projectName}/" excludes="${projectName}/bin/" />
+
+        <echo>Project backup ready in file: ${destBackupFile}</echo>
+    </target>
+
+    <target name="1_BUILD_RELEASE" depends="BUILD_RELEASE" />
+    <target name="2_INSTALL_DEPLOYMENT" depends="INSTALL_DEPLOYMENT" />
+    <target name="Z_BACKUP_PROJECT" depends="BACKUP_PROJECT" />
+</project>

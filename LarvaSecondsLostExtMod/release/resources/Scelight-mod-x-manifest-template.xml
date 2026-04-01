@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<extModManifestBean v="1">
+    <name>@name@</name>
+    <version major="@version.major@" minor="@version.minor@" revision="@version.revision@" v="1"/>
+    <buildInfo v="1">
+        <buildNumber>@buildNumber@</buildNumber>
+        <date>@date@</date>
+    </buildInfo>
+    <apiVersion major="@api.version.major@" minor="@api.version.minor@" revision="@api.version.revision@" v="1"/>
+    <folder>@folder@</folder>
+    <iconImgData>iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAwElEQVQ4y+3SsUqCYRTG8Z86SQ5O6lLQBXQBDS4heA3RKhRt0RU4BDZ1E92AeAG5OkSTBNGQrtKSNBV9Lmd4eeFzavzO9D/wPOc8h/elqlrCRdKn/IgGzhNtC6+YQR/rMN2GsUjEW3SDF/gJ/Sme63jARQiO8JelXOA4+BdLDPCGTQ3fOMRnyQkjnOAmNm9xiTN8wRTXWeyUD/COIZ5whzHmaCsxFdkZE3zgKuKvcJ+/yL4BvRjQRRMv6FSf+J9qB/jwK3EOh2yhAAAA</iconImgData>
+    <authorList v="1">
+        <personName v="1">
+            <first>Aleks</first>
+        </personName>
+    </authorList>
+    <homePage>https://example.invalid/larva-seconds-lost</homePage>
+    <shortDesc>Baseline Scelight module for larva analysis and visualization.</shortDesc>
+    <description><![CDATA[
+        <html><body>
+            <p>This baseline release proves that the Larva Seconds Lost external module can be built, packaged, installed, and enabled inside Scelight.</p>
+            <p>Later epics will replace the placeholder page with replay analysis and the larva timeline chart integration.</p>
+        </body></html>
+    ]]></description>
+    <mainClass>hu.aleks.larvasecondslostextmod.LarvaSecondsLostModule</mainClass>
+</extModManifestBean>

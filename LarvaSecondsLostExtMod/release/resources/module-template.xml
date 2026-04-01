@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<moduleBean v="1">
+    <name>@name@</name>
+    <version major="@version.major@" minor="@version.minor@" revision="@version.revision@" v="1"/>
+    <folder>@folder@</folder>
+    <archiveFile path="@archiveFile@" sha256="@archiveSha256@" v="1"/>
+    <urlList>@archiveBaseUrl@@archiveFile@</urlList>
+    <archiveSize>@archiveSize@</archiveSize>
+    @fileList@
+</moduleBean>
