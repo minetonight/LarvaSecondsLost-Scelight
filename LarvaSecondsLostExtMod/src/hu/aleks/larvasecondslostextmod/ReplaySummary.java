@@ -1,6 +1,10 @@
 package hu.aleks.larvasecondslostextmod;
 
+import java.awt.Color;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Immutable core replay metadata summary.
@@ -41,6 +45,9 @@ public class ReplaySummary {
     /** Base build string. */
     private final String baseBuild;
 
+    /** Player colors keyed by player name. */
+    private final Map< String, Color > playerColorMap;
+
     /**
      * Creates a new replay summary.
      *
@@ -54,9 +61,11 @@ public class ReplaySummary {
      * @param replayEndTime replay end time
      * @param replayVersion replay version string
      * @param baseBuild replay base build string
+         * @param playerColorMap player colors keyed by player name
      */
     public ReplaySummary( final Path replayFile, final String sourceDescription, final String mapTitle, final String players, final String winners,
-             final String length, final long lengthMs, final String replayEndTime, final String replayVersion, final String baseBuild ) {
+             final String length, final long lengthMs, final String replayEndTime, final String replayVersion, final String baseBuild,
+             final Map< String, Color > playerColorMap ) {
         this.replayFile = replayFile;
         this.sourceDescription = sourceDescription;
         this.mapTitle = mapTitle;
@@ -67,6 +76,8 @@ public class ReplaySummary {
         this.replayEndTime = replayEndTime;
         this.replayVersion = replayVersion;
         this.baseBuild = baseBuild;
+        this.playerColorMap = playerColorMap == null ? Collections.< String, Color >emptyMap()
+            : Collections.unmodifiableMap( new LinkedHashMap<>( playerColorMap ) );
     }
 
     public Path getReplayFile() {
@@ -107,6 +118,14 @@ public class ReplaySummary {
 
     public String getBaseBuild() {
         return baseBuild;
+    }
+
+    public Map< String, Color > getPlayerColorMap() {
+        return playerColorMap;
+    }
+
+    public Color getPlayerColor( final String playerName ) {
+        return playerName == null ? null : playerColorMap.get( playerName );
     }
 
 }

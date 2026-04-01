@@ -79,6 +79,9 @@ public class LarvaTimelinePreviewComp extends JPanel {
     /** Extra gap inserted when a new player group begins. */
     private static final int GROUP_GAP = 16;
 
+    /** Space reserved below the axis for labels and legend. */
+    private static final int AXIS_BOTTOM_PAD = 38;
+
     /** Current normalized timeline model to render. */
     private LarvaTimelineModel timelineModel;
 
@@ -125,11 +128,11 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.setColor( OUTLINE_COLOR );
         g.drawString( timelineModel == null ? "Larva timeline" : timelineModel.getTitle(), LEFT_PAD, TOP_PAD + 4 );
         g.setColor( SUBTLE_TEXT_COLOR );
-        g.drawString( timelineModel == null ? "Module-owned supported visualization; load a replay to populate it."
+        g.drawString( timelineModel == null ? "Load a replay to see 3+ larva windows and missed inject pressure."
                 : timelineModel.getSubtitle(), LEFT_PAD, TOP_PAD + 22 );
 
         if ( timelineModel == null || timelineModel.getReplayLengthMs() <= 0L ) {
-            g.drawString( "Load a replay to render replay-derived hatchery rows.", LEFT_PAD, TOP_PAD + 48 );
+            g.drawString( "Choose a replay to fill the timeline.", LEFT_PAD, TOP_PAD + 48 );
             return;
         }
 
@@ -148,13 +151,14 @@ public class LarvaTimelinePreviewComp extends JPanel {
         int y = headerBottomY + 22;
         String previousGroup = null;
         final Map< String, String > groupOverviewLabelMap = timelineModel.getGroupOverviewLabelMap();
+        final Map< String, Color > groupColorMap = timelineModel.getGroupColorMap();
 
         for ( final LarvaTimelineRow row : rowList ) {
             final String groupLabel = row.getGroupLabel();
             if ( groupLabel != null && groupLabel.length() > 0 && !groupLabel.equals( previousGroup ) ) {
                 if ( previousGroup != null )
                     y += GROUP_GAP;
-                g.setColor( GROUP_TEXT_COLOR );
+                g.setColor( resolveGroupColor( groupLabel, groupColorMap ) );
                 g.drawString( groupLabel, LEFT_PAD, y );
                 y += 14;
                 final String groupOverviewLabel = groupOverviewLabelMap.get( groupLabel );
@@ -170,7 +174,7 @@ public class LarvaTimelinePreviewComp extends JPanel {
             y += ROW_STEP;
         }
 
-        final int axisY = Math.min( height - 24, y + 4 );
+        final int axisY = Math.min( height - AXIS_BOTTOM_PAD, y + 4 );
         drawAxis( g, fm, railLeft, railWidth, axisY );
     }
 
@@ -298,7 +302,22 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.drawString( startLabel, railLeft, axisY + 16 );
         g.drawString( endLabel, railLeft + railWidth - fm.stringWidth( endLabel ), axisY + 16 );
         g.setColor( SUBTLE_TEXT_COLOR );
-        g.drawString( "Supported module-owned larva timeline", LEFT_PAD, axisY + 16 );
+        g.drawString( "Legend: red bars = 3+ larva, black ticks = missed larva", LEFT_PAD, axisY + 32 );
+    }
+
+    /**
+     * Resolves the color used for a player header.
+     *
+     * @param groupLabel player name
+     * @param groupColorMap available player colors
+     * @return header color
+     */
+    private Color resolveGroupColor( final String groupLabel, final Map< String, Color > groupColorMap ) {
+        if ( groupColorMap == null || groupLabel == null )
+            return GROUP_TEXT_COLOR;
+
+        final Color groupColor = groupColorMap.get( groupLabel );
+        return groupColor == null ? GROUP_TEXT_COLOR : groupColor;
     }
 
     /**
@@ -326,7 +345,7 @@ public class LarvaTimelinePreviewComp extends JPanel {
         }
 
         final int preferredHeight = 118 + timelineModel.getRowList().size() * ROW_STEP + Math.max( 0, groupCount - 1 ) * GROUP_GAP + groupCount * 14
-            + groupOverviewCount * 14;
+            + groupOverviewCount * 14 + 18;
         setPreferredSize( new Dimension( 220, preferredHeight ) );
     }
 

@@ -3,9 +3,9 @@
     <name>Larva Seconds Lost</name>
     <version major="0" minor="1" revision="0" v="1"/>
     <folder>larva-seconds-lost</folder>
-    <archiveFile path="LarvaSecondsLost-0.1.zip" sha256="5580fa4bfbd8206d8a783ac1656f82502932653685479055e8ad406d252eb98d" v="1"/>
+    <archiveFile path="LarvaSecondsLost-0.1.zip" sha256="5dbc93c083b5e7ade5ec950ee07e2aa14b7848ea85a6d4fbb0106530ba39bf56" v="1"/>
     <urlList>https://example.invalid/scelight-mods/LarvaSecondsLost-0.1.zip</urlList>
-    <archiveSize>106285</archiveSize>
-    <fileList path="Scelight/mod-x/larva-seconds-lost/0.1/Scelight-mod-x-manifest.xml" sha256="1b67c11a78fc6931bef9dd8a4ac6d0e6a114402a72d9293f54a43d051186d4df" v="1"/>
-    <fileList path="Scelight/mod-x/larva-seconds-lost/0.1/larva-seconds-lost.jar" sha256="f9e5acfd63d97ab0829140e2ab27acdf4c5d342b3dbebb73059231af2d5533e7" v="1"/>
+    <archiveSize>113035</archiveSize>
+    <fileList path="Scelight/mod-x/larva-seconds-lost/0.1/Scelight-mod-x-manifest.xml" sha256="2c1bf7169a812276ccba156c157cca10ced9d5cb130cc0bd7a782658d0f53b76" v="1"/>
+    <fileList path="Scelight/mod-x/larva-seconds-lost/0.1/larva-seconds-lost.jar" sha256="c6da3def2fbc7c729d7e67d447e612e3276e90c25a7655d7fd2e806d80b92f63" v="1"/>
 </moduleBean>

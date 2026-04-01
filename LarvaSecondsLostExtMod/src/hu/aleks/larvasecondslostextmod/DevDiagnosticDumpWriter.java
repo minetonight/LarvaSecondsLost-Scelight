@@ -22,6 +22,9 @@ public class DevDiagnosticDumpWriter {
     /** Deterministic formatter used for fixture/golden validation snapshots. */
     private final LarvaTimelineGoldenFormatter timelineGoldenFormatter = new LarvaTimelineGoldenFormatter();
 
+    /** Structured verification formatter used to separate analysis, model, integration, and runtime concerns. */
+    private final LarvaVerificationReportFormatter verificationReportFormatter = new LarvaVerificationReportFormatter();
+
     /** System property that enables the dump file. */
     public static final String PROP_ENABLED = "larva.dev.dump.enabled";
 
@@ -60,6 +63,21 @@ public class DevDiagnosticDumpWriter {
 
     /** Current capability details. */
     private String capabilityDetails = "Capability review has not been recorded yet.";
+
+    /** Current structured verification details. */
+    private String verificationDetails = "Verification report has not been recorded yet.";
+
+    /** Last known module name. */
+    private String moduleName = "Larva Seconds Lost";
+
+    /** Last known module version. */
+    private String moduleVersion = "unknown";
+
+    /** Last known chart capability. */
+    private ChartIntegrationCapability chartCapability;
+
+    /** Last known Base Control capability. */
+    private BaseControlAugmentationCapability baseControlCapability;
 
     /** Last write timestamp. */
     private String lastUpdated = formatNow();
@@ -102,8 +120,12 @@ public class DevDiagnosticDumpWriter {
         if ( !enabled )
             return;
 
+        moduleName = manifest.getName();
+        moduleVersion = String.valueOf( manifest.getVersion() );
         lifecycleState = "started";
         lifecycleDetails = "Module initialized successfully: name=" + manifest.getName() + ", version=" + manifest.getVersion();
+        verificationDetails = verificationReportFormatter.formatRuntimeOnly( lifecycleState, dumpFile, moduleName, moduleVersion, enabled,
+                chartCapability, baseControlCapability );
         lastUpdated = formatNow();
         writeDump();
     }
@@ -120,6 +142,8 @@ public class DevDiagnosticDumpWriter {
 
         this.lifecycleState = lifecycleState;
         this.lifecycleDetails = lifecycleDetails;
+        verificationDetails = verificationReportFormatter.formatRuntimeOnly( lifecycleState, dumpFile, moduleName, moduleVersion, enabled,
+                chartCapability, baseControlCapability );
         lastUpdated = formatNow();
         writeDump();
     }
@@ -135,6 +159,8 @@ public class DevDiagnosticDumpWriter {
 
         lifecycleState = "init-failed";
         this.lifecycleDetails = lifecycleDetails;
+        verificationDetails = verificationReportFormatter.formatRuntimeOnly( lifecycleState, dumpFile, moduleName, moduleVersion, enabled,
+                chartCapability, baseControlCapability );
         lastUpdated = formatNow();
         writeDump();
     }
@@ -151,6 +177,8 @@ public class DevDiagnosticDumpWriter {
 
         analysisState = "running";
         analysisDetails = "Replay analysis started from " + sourceDescription + ":\n" + replayFile;
+        verificationDetails = verificationReportFormatter.formatInProgress( replayFile, sourceDescription, lifecycleState, dumpFile, moduleName,
+                moduleVersion, enabled, chartCapability, baseControlCapability );
         lastUpdated = formatNow();
         writeDump();
     }
@@ -166,6 +194,8 @@ public class DevDiagnosticDumpWriter {
 
         analysisState = "succeeded";
         analysisDetails = buildSuccessDetails( summary );
+        verificationDetails = verificationReportFormatter.formatSuccess( summary, lifecycleState, dumpFile, moduleName, moduleVersion, enabled,
+                chartCapability, baseControlCapability );
         lastUpdated = formatNow();
         writeDump();
     }
@@ -186,6 +216,8 @@ public class DevDiagnosticDumpWriter {
                 + replayFile
                 + "\n\nReason:\n"
                 + ( hasText( message ) ? message : "Unknown error" );
+            verificationDetails = verificationReportFormatter.formatFailure( replayFile, sourceDescription, message, lifecycleState, dumpFile,
+                moduleName, moduleVersion, enabled, chartCapability, baseControlCapability );
         lastUpdated = formatNow();
         writeDump();
     }
@@ -200,6 +232,9 @@ public class DevDiagnosticDumpWriter {
             final BaseControlAugmentationCapability baseControlCapability ) {
         if ( !enabled )
             return;
+
+        this.chartCapability = chartCapability;
+        this.baseControlCapability = baseControlCapability;
 
         final StringBuilder builder = new StringBuilder();
         if ( chartCapability != null ) {
@@ -225,6 +260,8 @@ public class DevDiagnosticDumpWriter {
         }
 
         capabilityDetails = builder.length() == 0 ? "Capability review has not been recorded yet." : builder.toString();
+    verificationDetails = verificationReportFormatter.formatRuntimeOnly( lifecycleState, dumpFile, moduleName, moduleVersion, enabled,
+        chartCapability, baseControlCapability );
         lastUpdated = formatNow();
         writeDump();
     }
@@ -238,8 +275,12 @@ public class DevDiagnosticDumpWriter {
         if ( !enabled )
             return;
 
+        moduleName = manifest.getName();
+        moduleVersion = String.valueOf( manifest.getVersion() );
         lifecycleState = "stopped";
         lifecycleDetails = "Module stopped cleanly: name=" + manifest.getName() + ", version=" + manifest.getVersion();
+        verificationDetails = verificationReportFormatter.formatRuntimeOnly( lifecycleState, dumpFile, moduleName, moduleVersion, enabled,
+                chartCapability, baseControlCapability );
         lastUpdated = formatNow();
         writeDump();
     }
@@ -311,6 +352,9 @@ public class DevDiagnosticDumpWriter {
             lineList.add( "" );
             lineList.add( "[Capabilities]" );
             addMultiline( lineList, capabilityDetails );
+            lineList.add( "" );
+            lineList.add( "[Verification]" );
+            addMultiline( lineList, verificationDetails );
 
             Files.write( dumpFile, lineList, UTF8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE );
         } catch ( final IOException e ) {

@@ -1,5 +1,6 @@
 package hu.aleks.larvasecondslostextmod;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,17 +11,23 @@ import java.util.Map;
  */
 public class LarvaTimelineModelBuilder {
 
+    /** Maximum allowed distance between a hovered point and a resource snapshot. */
+    private static final int SNAPSHOT_MATCH_WINDOW_LOOPS = 10 * 16;
+
     /** Minimum width of a placeholder interval so it remains visible on short replays. */
     private static final long MIN_PLACEHOLDER_WINDOW_MS = 10000L;
 
     /** Timeline title. */
-    private static final String TITLE = "Larva timeline";
+    private static final String TITLE = "Larva pressure timeline";
 
     /** Timeline subtitle. */
-    private static final String SUBTITLE = "Replay-derived 3+ larva windows rendered on the supported module-owned Larva page.";
+    private static final String SUBTITLE = "Red bars show 3+ larva windows for completed Zerg hatcheries.";
+
+    /** Timeline legend. */
+    private static final String MODE_LABEL = "Black ticks mark each 11-second missed-inject threshold.";
 
     /** Empty message used when no rows are available yet. */
-    private static final String EMPTY_MESSAGE = "Load a replay to populate the supported larva timeline.";
+    private static final String EMPTY_MESSAGE = "No qualifying Zerg hatcheries were found in this replay.";
 
     /** Suffix used for per-hatchery totals. */
     private static final String POTENTIAL_LARVA_MISSED_SUFFIX = " potential larva missed";
@@ -53,8 +60,8 @@ public class LarvaTimelineModelBuilder {
         if ( rowList.isEmpty() && replaySummary != null && replayLengthMs > 0L )
             rowList.add( createFallbackRow( replayLengthMs, fallbackPreviewStartMs, fallbackPreviewEndMs ) );
 
-        return new LarvaTimelineModel( TITLE, SUBTITLE, integrationMode, buildGroupOverviewLabelMap( rowList ), replayLengthMs, replayLengthLabel,
-            EMPTY_MESSAGE, rowList );
+        return new LarvaTimelineModel( TITLE, SUBTITLE, resolveModeLabel( integrationMode ), buildGroupOverviewLabelMap( rowList ),
+            buildGroupColorMap( replaySummary, rowList ), replayLengthMs, replayLengthLabel, EMPTY_MESSAGE, rowList );
     }
 
     /**
@@ -130,10 +137,11 @@ public class LarvaTimelineModelBuilder {
 
         final List< LarvaTimelineMarker > enrichedMarkerList = new ArrayList<>( markerList.size() );
         for ( final LarvaTimelineMarker marker : markerList ) {
-            final LarvaPlayerResourceSnapshot snapshot = larvaAnalysisReport.findLatestResourceSnapshot( playerName, marker.getLoop() );
+            final SnapshotSelection snapshotSelection = selectSnapshot( larvaAnalysisReport, playerName, marker.getLoop() );
+            final LarvaPlayerResourceSnapshot snapshot = snapshotSelection.snapshot;
             final LarvaMarkerHoverData hoverData = snapshot == null ? null
-                    : new LarvaMarkerHoverData( playerName, snapshot.getLoop(), snapshot.getTimeLabel(), snapshot.getMineralsCurrent(), snapshot.getGasCurrent(),
-                            snapshot.getFoodUsed(), snapshot.getFoodMade() );
+                : new LarvaMarkerHoverData( playerName, snapshot.getLoop(), snapshot.getTimeLabel(), snapshot.getMineralsCurrent(), snapshot.getGasCurrent(),
+                    snapshot.getFoodUsed(), snapshot.getFoodMade(), snapshotSelection.futureSnapshot );
             enrichedMarkerList.add( new LarvaTimelineMarker( marker.getLoop(), marker.getTimeMs(), marker.getLabel(), marker.getKind(), hoverData,
                     buildMarkerTooltipText( marker, hoverData ) ) );
         }
@@ -153,12 +161,12 @@ public class LarvaTimelineModelBuilder {
         if ( window == null )
             return null;
 
-        final LarvaPlayerResourceSnapshot snapshot = larvaAnalysisReport == null ? null
-                : larvaAnalysisReport.findLatestResourceSnapshot( playerName, window.getStartLoop() );
+        final SnapshotSelection snapshotSelection = larvaAnalysisReport == null ? SnapshotSelection.NONE : selectSnapshot( larvaAnalysisReport, playerName,
+                window.getStartLoop() );
 
         final StringBuilder builder = new StringBuilder( "<html><b>3+ larva window</b><br/>" );
         builder.append( "Window: " ).append( window.getStartTimeLabel() ).append( " - " ).append( window.getEndTimeLabel() ).append( "<br/>" );
-        builder.append( buildSnapshotTooltipLines( "Window start", window.getStartTimeLabel(), snapshot ) );
+        builder.append( buildSnapshotTooltipLines( "Window start", window.getStartTimeLabel(), snapshotSelection ) );
         builder.append( "</html>" );
         return builder.toString();
     }
@@ -189,18 +197,25 @@ public class LarvaTimelineModelBuilder {
      * @param snapshot snapshot to render; may be <code>null</code>
      * @return HTML snippet without surrounding html/body tags
      */
-    private String buildSnapshotTooltipLines( final String pointLabel, final String pointTimeLabel, final LarvaPlayerResourceSnapshot snapshot ) {
+    private String buildSnapshotTooltipLines( final String pointLabel, final String pointTimeLabel, final SnapshotSelection snapshotSelection ) {
         final StringBuilder builder = new StringBuilder();
         builder.append( pointLabel ).append( ": " ).append( safeText( pointTimeLabel, "n/a" ) ).append( "<br/>" );
+
+        final LarvaPlayerResourceSnapshot snapshot = snapshotSelection == null ? null : snapshotSelection.snapshot;
         if ( snapshot == null ) {
-            builder.append( "Resources: unknown<br/>Supply: unknown" );
+            builder.append( "Unknown at this timestamp" );
             return builder.toString();
         }
 
-        builder.append( "Resource snapshot: " ).append( safeText( snapshot.getTimeLabel(), "n/a" ) ).append( "<br/>" );
-        builder.append( "Minerals: " ).append( formatInt( snapshot.getMineralsCurrent() ) )
+        if ( snapshotSelection.futureSnapshot )
+            builder.append( "<font color='#c62828'>" );
+        builder.append( snapshotSelection.futureSnapshot ? "Near-future snapshot: " : "Resource snapshot: " )
+                .append( safeText( snapshot.getTimeLabel(), "n/a" ) ).append( "<br/>" );
+        builder.append( snapshotSelection.futureSnapshot ? "Minerals: " : "Minerals: " ).append( formatInt( snapshot.getMineralsCurrent() ) )
                 .append( ", Gas: " ).append( formatInt( snapshot.getGasCurrent() ) ).append( "<br/>" );
         builder.append( "Supply: " ).append( formatSupply( snapshot.getFoodUsed(), snapshot.getFoodMade() ) );
+        if ( snapshotSelection.futureSnapshot )
+            builder.append( "</font>" );
         return builder.toString();
     }
 
@@ -216,15 +231,80 @@ public class LarvaTimelineModelBuilder {
         final StringBuilder builder = new StringBuilder();
         builder.append( pointLabel ).append( ": " ).append( safeText( pointTimeLabel, "n/a" ) ).append( "<br/>" );
         if ( hoverData == null ) {
-            builder.append( "Resources: unknown<br/>Supply: unknown" );
+            builder.append( "Unknown at this timestamp" );
             return builder.toString();
         }
 
-        builder.append( "Resource snapshot: " ).append( safeText( hoverData.getSnapshotTimeLabel(), "n/a" ) ).append( "<br/>" );
+        if ( hoverData.isFutureSnapshot() )
+            builder.append( "<font color='#c62828'>" );
+        builder.append( hoverData.isFutureSnapshot() ? "Near-future snapshot: " : "Resource snapshot: " )
+                .append( safeText( hoverData.getSnapshotTimeLabel(), "n/a" ) ).append( "<br/>" );
         builder.append( "Minerals: " ).append( formatInt( hoverData.getMineralsCurrent() ) )
                 .append( ", Gas: " ).append( formatInt( hoverData.getGasCurrent() ) ).append( "<br/>" );
         builder.append( "Supply: " ).append( formatSupply( hoverData.getFoodUsed(), hoverData.getFoodMade() ) );
+        if ( hoverData.isFutureSnapshot() )
+            builder.append( "</font>" );
         return builder.toString();
+    }
+
+    /**
+     * Formats how old the resource snapshot is compared to the event point.
+     *
+     * @param pointTimeLabel formatted event time
+     * @param snapshotTimeLabel formatted snapshot time
+     * @param snapshotLoop snapshot loop if available; negative if unknown
+     * @return readable age text
+     */
+    /**
+     * Selects the best snapshot for a hovered point.
+     *
+     * <p>If a future snapshot is within 10 seconds, it is preferred over an older past snapshot.
+     * Otherwise the latest past snapshot is used only if it is within 10 seconds. Anything older
+     * is treated as unknown at this timestamp.</p>
+     *
+     * @param larvaAnalysisReport analysis report holding resource snapshots
+     * @param playerName player name
+     * @param pointLoop hovered point loop
+     * @return selected snapshot description
+     */
+    private SnapshotSelection selectSnapshot( final LarvaAnalysisReport larvaAnalysisReport, final String playerName, final int pointLoop ) {
+        if ( larvaAnalysisReport == null || playerName == null || playerName.length() == 0 )
+            return SnapshotSelection.NONE;
+
+        final LarvaPlayerResourceSnapshot futureSnapshot = larvaAnalysisReport.findEarliestFutureResourceSnapshot( playerName, pointLoop );
+        if ( futureSnapshot != null && futureSnapshot.getLoop() - pointLoop <= SNAPSHOT_MATCH_WINDOW_LOOPS )
+            return new SnapshotSelection( futureSnapshot, true );
+
+        final LarvaPlayerResourceSnapshot latestSnapshot = larvaAnalysisReport.findLatestResourceSnapshot( playerName, pointLoop );
+        if ( latestSnapshot != null && pointLoop - latestSnapshot.getLoop() <= SNAPSHOT_MATCH_WINDOW_LOOPS )
+            return new SnapshotSelection( latestSnapshot, false );
+
+        return SnapshotSelection.NONE;
+    }
+
+    /** Selected snapshot plus its relative position to the hovered point. */
+    private static class SnapshotSelection {
+
+        /** Empty selection instance. */
+        private static final SnapshotSelection NONE = new SnapshotSelection( null, false );
+
+        /** Selected snapshot. */
+        private final LarvaPlayerResourceSnapshot snapshot;
+
+        /** Tells if the snapshot is from shortly after the hovered point. */
+        private final boolean futureSnapshot;
+
+        /**
+         * Creates a new snapshot selection.
+         *
+         * @param snapshot selected snapshot
+         * @param futureSnapshot tells if the snapshot is from shortly after the hovered point
+         */
+        private SnapshotSelection( final LarvaPlayerResourceSnapshot snapshot, final boolean futureSnapshot ) {
+            this.snapshot = snapshot;
+            this.futureSnapshot = futureSnapshot;
+        }
+
     }
 
     /**
@@ -306,7 +386,7 @@ public class LarvaTimelineModelBuilder {
         final List< LarvaTimelineSegment > segmentList = new ArrayList<>();
         segmentList.add( new LarvaTimelineSegment( startMs, endMs, "Replay-length-derived placeholder interval",
                 LarvaTimelineSegment.Kind.PREVIEW_INTERVAL ) );
-        return new LarvaTimelineRow( "Replay context", "Larva fallback preview rail", "placeholder timing before replay-derived hatchery rows exist",
+        return new LarvaTimelineRow( "Replay context", "Replay overview", "No 3+ larva windows reached the warning threshold",
             0L, replayLengthMs, 0, segmentList, new ArrayList< LarvaTimelineMarker >() );
     }
 
@@ -337,6 +417,59 @@ public class LarvaTimelineModelBuilder {
         }
 
         return groupOverviewLabelMap;
+    }
+
+    /**
+     * Builds player display colors for the visible group labels.
+     *
+     * @param replaySummary replay summary holding player colors
+     * @param rowList visible timeline rows
+     * @return group color map keyed by player name
+     */
+    private Map< String, Color > buildGroupColorMap( final ReplaySummary replaySummary, final List< LarvaTimelineRow > rowList ) {
+        final Map< String, Color > groupColorMap = new LinkedHashMap<>();
+        if ( replaySummary == null || rowList == null || rowList.isEmpty() )
+            return groupColorMap;
+
+        for ( final LarvaTimelineRow row : rowList ) {
+            final String playerName = row.getGroupLabel();
+            if ( playerName == null || playerName.length() == 0 || groupColorMap.containsKey( playerName ) )
+                continue;
+
+            final Color playerColor = replaySummary.getPlayerColor( playerName );
+            if ( playerColor != null )
+                groupColorMap.put( playerName, adjustForReadability( playerColor ) );
+        }
+
+        return groupColorMap;
+    }
+
+    /**
+     * Keeps very bright player colors readable on a white background.
+     *
+     * @param color player color
+     * @return adjusted color
+     */
+    private Color adjustForReadability( final Color color ) {
+        if ( color == null )
+            return null;
+
+        final int brightness = color.getRed() + color.getGreen() + color.getBlue();
+        if ( brightness > 540 )
+            return color.darker().darker();
+        if ( brightness > 440 )
+            return color.darker();
+        return color;
+    }
+
+    /**
+     * Returns the label shown below the chart title.
+     *
+     * @param integrationMode integration-mode label passed by the page summary
+     * @return user-facing legend label
+     */
+    private String resolveModeLabel( final String integrationMode ) {
+        return integrationMode == null || integrationMode.length() == 0 ? MODE_LABEL : MODE_LABEL;
     }
 
     /**

@@ -1,5 +1,6 @@
 package hu.aleks.larvasecondslostextmod;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +24,9 @@ public class LarvaTimelineModel {
     /** Per-player overview messages shown with player group headers. */
     private final Map< String, String > groupOverviewLabelMap;
 
+    /** Per-player display colors keyed by player name. */
+    private final Map< String, Color > groupColorMap;
+
     /** Replay length in milliseconds. */
     private final long replayLengthMs;
 
@@ -42,17 +46,20 @@ public class LarvaTimelineModel {
      * @param subtitle short chart subtitle
      * @param modeLabel fallback mode note
      * @param groupOverviewLabelMap overview messages shown with player group headers
+     * @param groupColorMap per-player display colors keyed by player name
      * @param replayLengthMs replay length in milliseconds
      * @param replayLengthLabel formatted replay length
      * @param emptyMessage empty-state message
      * @param rowList timeline rows
      */
     public LarvaTimelineModel( final String title, final String subtitle, final String modeLabel, final Map< String, String > groupOverviewLabelMap,
-            final long replayLengthMs, final String replayLengthLabel, final String emptyMessage, final List< LarvaTimelineRow > rowList ) {
+            final Map< String, Color > groupColorMap, final long replayLengthMs, final String replayLengthLabel, final String emptyMessage,
+            final List< LarvaTimelineRow > rowList ) {
         this.title = title;
         this.subtitle = subtitle;
         this.modeLabel = modeLabel;
         this.groupOverviewLabelMap = Collections.unmodifiableMap( new LinkedHashMap<>( groupOverviewLabelMap ) );
+        this.groupColorMap = Collections.unmodifiableMap( new LinkedHashMap<>( groupColorMap ) );
         this.replayLengthMs = replayLengthMs;
         this.replayLengthLabel = replayLengthLabel;
         this.emptyMessage = emptyMessage;
@@ -73,6 +80,10 @@ public class LarvaTimelineModel {
 
     public Map< String, String > getGroupOverviewLabelMap() {
         return groupOverviewLabelMap;
+    }
+
+    public Map< String, Color > getGroupColorMap() {
+        return groupColorMap;
     }
 
     public long getReplayLengthMs() {

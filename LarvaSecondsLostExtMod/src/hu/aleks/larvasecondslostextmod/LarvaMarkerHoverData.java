@@ -26,6 +26,9 @@ public class LarvaMarkerHoverData {
     /** Food made at the snapshot, in fixed-point tracker units. */
     private final Integer foodMade;
 
+    /** Tells if the snapshot comes from shortly after the hovered time. */
+    private final boolean futureSnapshot;
+
     /**
      * Creates new marker hover metadata.
      *
@@ -37,6 +40,23 @@ public class LarvaMarkerHoverData {
      */
     public LarvaMarkerHoverData( final String playerName, final int snapshotLoop, final String snapshotTimeLabel, final Integer mineralsCurrent,
             final Integer gasCurrent, final Integer foodUsed, final Integer foodMade ) {
+        this( playerName, snapshotLoop, snapshotTimeLabel, mineralsCurrent, gasCurrent, foodUsed, foodMade, false );
+    }
+
+    /**
+     * Creates new marker hover metadata.
+     *
+     * @param playerName player name owning the marker
+     * @param snapshotLoop replay loop of the snapshot
+     * @param snapshotTimeLabel formatted replay time of the snapshot
+     * @param mineralsCurrent minerals available at the snapshot
+     * @param gasCurrent gas available at the snapshot
+     * @param foodUsed supply used at the snapshot
+     * @param foodMade supply cap at the snapshot
+     * @param futureSnapshot tells if the snapshot comes from shortly after the hovered time
+     */
+    public LarvaMarkerHoverData( final String playerName, final int snapshotLoop, final String snapshotTimeLabel, final Integer mineralsCurrent,
+            final Integer gasCurrent, final Integer foodUsed, final Integer foodMade, final boolean futureSnapshot ) {
         this.playerName = playerName;
         this.snapshotLoop = snapshotLoop;
         this.snapshotTimeLabel = snapshotTimeLabel;
@@ -44,6 +64,7 @@ public class LarvaMarkerHoverData {
         this.gasCurrent = gasCurrent;
         this.foodUsed = foodUsed;
         this.foodMade = foodMade;
+        this.futureSnapshot = futureSnapshot;
     }
 
     public String getPlayerName() {
@@ -72,6 +93,10 @@ public class LarvaMarkerHoverData {
 
     public Integer getFoodMade() {
         return foodMade;
+    }
+
+    public boolean isFutureSnapshot() {
+        return futureSnapshot;
     }
 
 }

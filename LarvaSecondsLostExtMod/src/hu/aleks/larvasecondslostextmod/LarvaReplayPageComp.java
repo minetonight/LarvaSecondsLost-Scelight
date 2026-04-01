@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -38,9 +39,6 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
     /** Timeline preview component. */
     private final LarvaTimelinePreviewComp timelinePreviewComp;
 
-    /** Capability label shown above the replay tools. */
-    private final JLabel capabilityLabel;
-
     /** Last replay file displayed on this page. */
     private Path currentReplayFile;
 
@@ -54,10 +52,9 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
 
         this.module = module;
 
-        statusLabel = new JLabel( "Replay diagnostics page ready.", module.getLarvaIcon().get(), SwingConstants.LEADING );
+        statusLabel = new JLabel( "Larva timeline ready.", module.getLarvaIcon().get(), SwingConstants.LEADING );
         detailsArea = new JTextArea();
         timelinePreviewComp = new LarvaTimelinePreviewComp();
-        capabilityLabel = new JLabel();
 
         buildGui();
         addHierarchyListener( this );
@@ -114,24 +111,25 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         buttonPanel.add( createAnalyzeLatestReplayButton() );
         buttonPanel.add( createRefreshButton() );
 
-        final JPanel capabilityPanel = new JPanel( new BorderLayout() );
-        capabilityPanel.add( capabilityLabel, BorderLayout.CENTER );
-        capabilityPanel.setBorder( BorderFactory.createEmptyBorder( 0, 0, 4, 0 ) );
-
         final JPanel northPanel = new JPanel( new BorderLayout( 0, 8 ) );
         northPanel.add( headerPanel, BorderLayout.NORTH );
-        northPanel.add( capabilityPanel, BorderLayout.CENTER );
         northPanel.add( buttonPanel, BorderLayout.SOUTH );
 
         detailsArea.setEditable( false );
         detailsArea.setLineWrap( true );
         detailsArea.setWrapStyleWord( true );
-        detailsArea.setRows( 18 );
+        detailsArea.setRows( 8 );
         detailsArea.setBorder( BorderFactory.createEmptyBorder( 8, 8, 8, 8 ) );
 
         final JSplitPane splitPane = new JSplitPane( JSplitPane.VERTICAL_SPLIT, timelinePreviewComp, new JScrollPane( detailsArea ) );
         splitPane.setBorder( BorderFactory.createEmptyBorder() );
-        splitPane.setResizeWeight( 0.35 );
+        splitPane.setResizeWeight( 0.95 );
+        SwingUtilities.invokeLater( new Runnable() {
+            @Override
+            public void run() {
+                splitPane.setDividerLocation( 0.95d );
+            }
+        } );
 
         add( northPanel, BorderLayout.NORTH );
         add( splitPane, BorderLayout.CENTER );
@@ -227,36 +225,14 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
      * Shows the idle message before any replay has been loaded.
      */
     void showIdleMessage() {
-        updateCapabilityLabel();
         timelinePreviewComp.setTimelineModel( null );
-        detailsArea.setText( "Epic 2 fallback replay-view surface\n"
-            + "Epic 3 now adds a module-owned chart-like timeline above the diagnostics text.\n"
-            + "Epic 4 now confirms native chart dropdown integration is unsupported for pure external modules.\n"
-            + "Epic 5 now confirms native Base Control chart augmentation is unsupported for pure external modules.\n"
-            + "Epic 6 now derives per-hatchery larva counts with a calibrated hatchery-to-larva assignment heuristic.\n"
-            + "Epic 7 Story 01 now converts those counts into real replay-derived 3+ larva windows on the supported Larva timeline.\n"
-            + "Epic 7 Story 02 now adds thick black markers every 11 seconds of accumulated 3+ larva saturation.\n"
-            + "Epic 7 Story 03 now shows per-hatchery missed-larva totals and per-Zerg-player totals below each player's name.\n"
-            + "Epic 7 Story 04 now shows hover tooltips with minerals, gas, and supply on red windows and missed-larva markers.\n"
-            + "Epic 7 Story 05 now records the Epic 08 handoff for hardening, replay fixtures, and validation.\n"
-            + "Story 01.07 can also write a dev diagnostic dump file for zero-click verification when enabled by JVM property.\n"
-                + "\n"
-                + "This page is the replay-scoped entry point currently available to the external module.\n"
-                + "When the page is selected from the main navigation, it automatically tries to load the latest replay.\n"
-                + "\n"
-                + "Use one of the actions above to load replay diagnostics:\n"
-                + "- Open Replay... loads any replay file manually.\n"
-                + "- Analyze Latest Replay first reuses the Replay Folder Monitor event stream, then falls back to scanning Scelight's monitored replay folders.\n"
-                + "- Refresh Current Replay reruns the latest successful analysis.\n"
-                + "- Dev dump file can be enabled with -D"
-                + DevDiagnosticDumpWriter.PROP_ENABLED
-                + "=true and optionally -D"
-                + DevDiagnosticDumpWriter.PROP_FILE
-                + "=/path/to/file.txt.\n"
-                + "\n"
-                + "The timeline renders normalized replay-derived hatchery rows so later missed-larva markers and totals can build on the same supported model.\n"
-            + "\n"
-            + "Native injection into Scelight's internal replay analyzer page is not exposed by the public external module API, so this module uses a dedicated fallback page next to the replay workflow." );
+        detailsArea.setText( "Choose a replay to see where Zerg hatcheries floated at 3+ larva.\n\n"
+            + "What you are looking at:\n"
+            + "- Red bars show how long a hatchery stayed at 3 or more larva.\n"
+            + "- Black ticks mark every 11 seconds of missed inject time.\n"
+            + "- Player totals add up all missed larva across visible hatcheries.\n\n"
+            + "Use the buttons above to open a replay, analyze the latest replay, or refresh the current one." );
+        detailsArea.setCaretPosition( 0 );
     }
 
     /**
@@ -267,10 +243,9 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
      */
     void showBusy( final Path replayFile, final String sourceDescription ) {
         currentReplayFile = replayFile;
-        statusLabel.setText( "Loading replay diagnostics..." );
-        updateCapabilityLabel();
+        statusLabel.setText( "Analyzing replay..." );
         timelinePreviewComp.setTimelineModel( null );
-        detailsArea.setText( "Analyzing replay from " + sourceDescription + ":\n" + replayFile );
+        detailsArea.setText( "Analyzing " + ( replayFile == null ? "replay" : replayFile.getFileName() ) + "..." );
     }
 
     /**
@@ -280,8 +255,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
      */
     void showSummary( final LarvaReplayPageSummary summary ) {
         currentReplayFile = summary.getReplaySummary().getReplayFile();
-        statusLabel.setText( "Replay diagnostics ready: " + summary.getReplaySummary().getReplayFile().getFileName() );
-        updateCapabilityLabel();
+        statusLabel.setText( "Replay ready: " + summary.getReplaySummary().getReplayFile().getFileName() );
         timelinePreviewComp.setTimelineModel( summary.getTimelineModel() );
         detailsArea.setText( buildSummaryText( summary ) );
         detailsArea.setCaretPosition( 0 );
@@ -296,12 +270,10 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
      */
     void showError( final Path replayFile, final String sourceDescription, final String errorMessage ) {
         currentReplayFile = replayFile;
-        statusLabel.setText( "Replay diagnostics failed." );
-        updateCapabilityLabel();
+        statusLabel.setText( "Replay could not be analyzed." );
         timelinePreviewComp.setTimelineModel( null );
-        detailsArea.setText( "Failed to analyze replay from " + sourceDescription + ":\n"
-                + replayFile
-                + "\n\nReason:\n"
+        detailsArea.setText( "Could not analyze " + ( replayFile == null ? "the selected replay" : replayFile.getFileName() ) + ".\n\n"
+            + "Reason:\n"
                 + ( errorMessage == null ? "Unknown error" : errorMessage ) );
         detailsArea.setCaretPosition( 0 );
     }
@@ -316,58 +288,14 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         final ReplaySummary replaySummary = summary.getReplaySummary();
         final StringBuilder builder = new StringBuilder();
 
-        builder.append( "Epic 2 replay-view presence confirmed" ).append( '\n' );
-        builder.append( "Epic 3 placeholder chart confirmed" ).append( '\n' );
-        builder.append( "Epic 4 native chart dropdown feasibility resolved" ).append( '\n' );
-        builder.append( "Epic 5 Base Control augmentation feasibility resolved" ).append( '\n' );
-        builder.append( "Epic 6 larva assignment foundation resolved" ).append( '\n' ).append( '\n' );
-        builder.append( "Epic 7 replay-derived windows, markers, totals, hover context, and handoff prepared" ).append( '\n' ).append( '\n' );
         builder.append( buildReplayMetadataSection( replaySummary ) ).append( '\n' );
-        builder.append( buildPageDiagnosticsSection( summary ) ).append( '\n' );
-        builder.append( buildCapabilitySection() ).append( '\n' );
-        builder.append( buildEpic07HandoffSection() ).append( '\n' );
-        builder.append( "Fallback placeholder window: " )
-                .append( formatMs( summary.getPreviewWindowStartMs() ) )
-                .append( " - " )
-                .append( formatMs( summary.getPreviewWindowEndMs() ) )
-                .append( " (used only if no replay-derived hatchery rows are available)" )
-            .append( '\n' );
-        if ( summary.getTimelineModel() != null )
-            builder.append( "Timeline rows: " )
-                .append( summary.getTimelineModel().getRowList().size() )
-                .append( " (module-owned normalized larva-window model)" )
-                .append( '\n' );
-        if ( summary.getTimelineModel() != null && !summary.getTimelineModel().getGroupOverviewLabelMap().isEmpty() ) {
-            builder.append( "Player totals:" ).append( '\n' );
-            for ( final java.util.Map.Entry< String, String > entry : summary.getTimelineModel().getGroupOverviewLabelMap().entrySet() )
-                builder.append( "- " ).append( entry.getKey() ).append( ": " ).append( entry.getValue() ).append( '\n' );
-            builder.append( '\n' );
-        }
-        if ( summary.getLarvaAnalysisReport() != null )
-            builder.append( summary.getLarvaAnalysisReport().toDisplayText() ).append( '\n' ).append( '\n' );
-        builder.append( "Next goal: start Epic 08 hardening with replay fixtures, edge-case validation, and documentation cleanup on top of the now-stable larva timeline model." );
+        builder.append( buildPlayerTotalsSection( summary ) ).append( '\n' );
+        builder.append( buildHatcheryBreakdownSection( summary ) ).append( '\n' );
+        builder.append( "Legend:\n" );
+        builder.append( "- Red bars: time spent at 3+ larva.\n" );
+        builder.append( "- Black ticks: every 11 seconds of missed inject time.\n" );
+        builder.append( "- Hover a bar or tick for resource and supply context." );
 
-        return builder.toString();
-    }
-
-    /**
-     * Builds the Epic 07 handoff section for the replay diagnostics text.
-     *
-     * @return rendered Epic 07 handoff section
-     */
-    private String buildEpic07HandoffSection() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append( "Epic 07 handoff:" ).append( '\n' );
-        builder.append( "Proven now:" ).append( '\n' );
-        builder.append( "- Replay-derived per-hatchery larva counts now produce stable red 3+ larva windows." ).append( '\n' );
-        builder.append( "- The supported module-owned Larva timeline now renders one qualifying hatchery row per player grouping with lifetime bounds." ).append( '\n' );
-        builder.append( "- Missed-larva markers, per-hatchery totals, and per-player totals now come from the same normalized model." ).append( '\n' );
-        builder.append( "- Hover tooltips now show minerals, gas, and supply context on window starts and missed-larva moments." ).append( '\n' );
-        builder.append( "Still unresolved:" ).append( '\n' );
-        builder.append( "- Replay edge-case hardening for morph timing, replay truncation, sparse player-stats sampling, and hatchery death corner cases." ).append( '\n' );
-        builder.append( "- Replay-fixture validation and golden-output coverage." ).append( '\n' );
-        builder.append( "- Final documentation cleanup." ).append( '\n' );
-        builder.append( "Next technical question: how should Epic 07's larva-window and missed-larva visualization be hardened and validated across replay fixtures and edge cases?" );
         return builder.toString();
     }
 
@@ -379,88 +307,62 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
      */
     private String buildReplayMetadataSection( final ReplaySummary replaySummary ) {
         final StringBuilder builder = new StringBuilder();
-        builder.append( "Replay metadata:" ).append( '\n' );
-        builder.append( "Replay source: " ).append( replaySummary.getSourceDescription() ).append( '\n' );
-        builder.append( "Replay file: " ).append( replaySummary.getReplayFile() ).append( '\n' );
+        builder.append( "Replay overview:" ).append( '\n' );
+        builder.append( "Replay: " ).append( replaySummary.getReplayFile().getFileName() ).append( '\n' );
         builder.append( "Map: " ).append( replaySummary.getMapTitle() ).append( '\n' );
         builder.append( "Players: " ).append( replaySummary.getPlayers() ).append( '\n' );
         builder.append( "Winners: " ).append( replaySummary.getWinners() ).append( '\n' );
         builder.append( "Length: " ).append( replaySummary.getLength() ).append( '\n' );
-        builder.append( "Replay end time: " ).append( replaySummary.getReplayEndTime() ).append( '\n' );
-        builder.append( "Replay version: " ).append( replaySummary.getReplayVersion() ).append( '\n' );
-        builder.append( "Base build: " ).append( replaySummary.getBaseBuild() ).append( '\n' );
+        builder.append( "Played: " ).append( replaySummary.getReplayEndTime() ).append( '\n' );
         return builder.toString();
     }
 
     /**
-     * Builds the page-specific diagnostics section.
+     * Builds the per-player totals section.
      *
-     * @param summary page-level replay diagnostics summary
-     * @return rendered page diagnostics section
+     * @param summary page-level replay summary
+     * @return rendered totals section
      */
-    private String buildPageDiagnosticsSection( final LarvaReplayPageSummary summary ) {
+    private String buildPlayerTotalsSection( final LarvaReplayPageSummary summary ) {
         final StringBuilder builder = new StringBuilder();
-        builder.append( "Larva page diagnostics:" ).append( '\n' );
-        builder.append( "Integration mode: " ).append( summary.getIntegrationMode() ).append( '\n' );
-        builder.append( "Native larva chart registration: " ).append( module.getChartIntegrationCapability().getRegistrationStatus() ).append( '\n' );
-        builder.append( "Native Base Control augmentation: " ).append( module.getBaseControlAugmentationCapability().getAugmentationStatus() ).append( '\n' );
-        if ( summary.getTimelineModel() != null ) {
-            builder.append( "Timeline title: " ).append( summary.getTimelineModel().getTitle() ).append( '\n' );
-            builder.append( "Timeline subtitle: " ).append( summary.getTimelineModel().getSubtitle() ).append( '\n' );
+        builder.append( "Player totals:" ).append( '\n' );
+        if ( summary.getTimelineModel() == null || summary.getTimelineModel().getGroupOverviewLabelMap().isEmpty() ) {
+            builder.append( "- No missed larva warnings were found." ).append( '\n' );
+            return builder.toString();
+        }
+
+        for ( final java.util.Map.Entry< String, String > entry : summary.getTimelineModel().getGroupOverviewLabelMap().entrySet() )
+            builder.append( "- " ).append( entry.getKey() ).append( ": " ).append( entry.getValue() ).append( '\n' );
+        return builder.toString();
+    }
+
+    /**
+     * Builds the per-hatchery breakdown section.
+     *
+     * @param summary page-level replay summary
+     * @return rendered hatchery breakdown section
+     */
+    private String buildHatcheryBreakdownSection( final LarvaReplayPageSummary summary ) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append( "Hatchery breakdown:" ).append( '\n' );
+        if ( summary.getTimelineModel() == null || summary.getTimelineModel().getRowList().isEmpty() ) {
+            builder.append( "- No qualifying hatchery rows are available." ).append( '\n' );
+            return builder.toString();
+        }
+
+        for ( final LarvaTimelineRow row : summary.getTimelineModel().getRowList() ) {
+            if ( "Replay context".equals( row.getGroupLabel() ) )
+                continue;
+
+            builder.append( "- " )
+                .append( row.getGroupLabel() )
+                .append( " / " )
+                .append( row.getRowLabel() )
+                .append( ": " )
+                .append( row.getDetailLabel() )
+                .append( '\n' );
         }
         return builder.toString();
-    }
-
-    /**
-     * Updates the short capability banner shown above the action buttons.
-     */
-    private void updateCapabilityLabel() {
-        final ChartIntegrationCapability capability = module.getChartIntegrationCapability();
-        final BaseControlAugmentationCapability baseControlCapability = module.getBaseControlAugmentationCapability();
-        capabilityLabel.setText( "<html><b>Epic 4:</b> " + capability.getIntegrationModeTitle() + "<br><b>Epic 5:</b> "
-                + baseControlCapability.getIntegrationModeTitle() + "</html>" );
-    }
-
-    /**
-     * Builds the capability report section for the details area.
-     *
-     * @return rendered capability section
-     */
-    private String buildCapabilitySection() {
-        final ChartIntegrationCapability capability = module.getChartIntegrationCapability();
-        final BaseControlAugmentationCapability baseControlCapability = module.getBaseControlAugmentationCapability();
-        final StringBuilder builder = new StringBuilder();
-        builder.append( "Epic 4 native chart dropdown integration: " )
-                .append( capability.isNativeDropdownSupported() ? "supported" : "unsupported" )
-                .append( '\n' );
-        builder.append( capability.getExplanation() ).append( '\n' );
-        builder.append( "Public API review: " ).append( capability.getPublicApiEvidence() ).append( '\n' );
-        builder.append( "Internal chart wiring review: " ).append( capability.getTechnicalEvidence() ).append( '\n' );
-        builder.append( "Registration status: " ).append( capability.getRegistrationStatus() ).append( '\n' );
-        builder.append( "Recommended path: " ).append( capability.getRecommendedPath() ).append( '\n' );
-        builder.append( '\n' );
-        builder.append( "Epic 5 native Base Control augmentation: " )
-            .append( baseControlCapability.isAugmentationSupported() ? "supported" : "unsupported" )
-            .append( '\n' );
-        builder.append( baseControlCapability.getExplanation() ).append( '\n' );
-        builder.append( "Public API review: " ).append( baseControlCapability.getPublicApiEvidence() ).append( '\n' );
-        builder.append( "Internal Base Control wiring review: " ).append( baseControlCapability.getTechnicalEvidence() ).append( '\n' );
-        builder.append( "Augmentation status: " ).append( baseControlCapability.getAugmentationStatus() ).append( '\n' );
-        builder.append( "Recommended path: " ).append( baseControlCapability.getRecommendedPath() ).append( '\n' );
-        return builder.toString();
-    }
-
-    /**
-     * Formats milliseconds as a short $m:ss$ string.
-     *
-     * @param ms time in milliseconds
-     * @return formatted time string
-     */
-    private String formatMs( final long ms ) {
-        final long totalSeconds = ms / 1000L;
-        final long minutes = totalSeconds / 60L;
-        final long seconds = totalSeconds % 60L;
-        return minutes + ":" + ( seconds < 10L ? "0" : "" ) + seconds;
     }
 
 }

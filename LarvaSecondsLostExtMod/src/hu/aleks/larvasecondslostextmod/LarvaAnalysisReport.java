@@ -190,6 +190,28 @@ public class LarvaAnalysisReport {
     }
 
     /**
+     * Resolves the earliest player resource snapshot after a specified marker loop.
+     *
+     * @param playerName player name
+     * @param loop marker loop
+     * @return earliest future snapshot; may be <code>null</code>
+     */
+    public LarvaPlayerResourceSnapshot findEarliestFutureResourceSnapshot( final String playerName, final int loop ) {
+        if ( playerName == null || playerName.length() == 0 )
+            return null;
+
+        final List< LarvaPlayerResourceSnapshot > snapshotList = resourceSnapshotsByPlayerName.get( playerName );
+        if ( snapshotList == null || snapshotList.isEmpty() )
+            return null;
+
+        for ( final LarvaPlayerResourceSnapshot snapshot : snapshotList )
+            if ( snapshot.getLoop() > loop )
+                return snapshot;
+
+        return null;
+    }
+
+    /**
      * Renders a readable diagnostics section for the Larva page.
      *
      * @return formatted diagnostics text

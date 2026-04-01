@@ -46,7 +46,9 @@ For development runs, the module can write a structured text dump file that reco
 - module startup state,
 - replay analysis start/success/failure,
 - the latest replay summary,
-- and the Epic 6 larva analysis diagnostics.
+- the Epic 6 larva analysis diagnostics,
+- a deterministic validation snapshot for fixture/golden comparison,
+- and a structured verification section that separates replay-analysis, timeline-model, integration-mode, and packaging/runtime concerns.
 
 Enable it by starting Scelight with:
 
@@ -61,6 +63,8 @@ If the file path is not overridden, the module writes to:
 - `${user.home}/LarvaSecondsLost-dev-dump.txt`
 
 This mode is development-only and can be disabled cleanly by omitting those JVM properties.
+
+See [docs/validation-checklist.md](docs/validation-checklist.md) for the verification-section format and the reproducibility checklist.
 
 ## Observable runtime proof
 

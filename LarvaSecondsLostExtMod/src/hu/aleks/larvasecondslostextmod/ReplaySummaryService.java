@@ -2,12 +2,16 @@ package hu.aleks.larvasecondslostextmod;
 
 import hu.scelightapi.sc2.rep.model.IReplay;
 import hu.scelightapi.sc2.rep.model.details.IDetails;
+import hu.scelightapi.sc2.rep.model.details.IPlayer;
 import hu.scelightapi.sc2.rep.repproc.IRepProcessor;
 
+import java.awt.Color;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Service that loads a replay processor and extracts lightweight replay diagnostics.
@@ -87,7 +91,7 @@ public class ReplaySummaryService {
             safe( details == null ? null : details.getTitle(), "Unknown map" ),
                 safe( repProc.getPlayersGrouped(), "Unknown players" ), safe( repProc.getWinnersString(), "Unknown / undecided" ),
             formatDuration( lengthMs ), lengthMs, formatDate( replayEndTime ), replay.getHeader().versionString( true ),
-            String.valueOf( replay.getHeader().getBaseBuild() ) );
+            String.valueOf( replay.getHeader().getBaseBuild() ), buildPlayerColorMap( details ) );
         final LarvaTimelineModel timelineModel = timelineModelBuilder.build( replaySummary, FALLBACK_INTEGRATION_MODE, larvaAnalysisReport,
                 previewWindowStartMs, previewWindowEndMs );
         return new LarvaReplayPageSummary( replaySummary, FALLBACK_INTEGRATION_MODE, timelineModel, previewWindowStartMs, previewWindowEndMs,
@@ -146,6 +150,63 @@ public class ReplaySummaryService {
      */
     private String safe( final String value, final String fallback ) {
         return value == null || value.length() == 0 ? fallback : value;
+    }
+
+    /**
+     * Builds a player-name to player-color map from replay details.
+     *
+     * @param details replay details
+     * @return immutable-ready player color map
+     */
+    private Map< String, Color > buildPlayerColorMap( final IDetails details ) {
+        final Map< String, Color > playerColorMap = new LinkedHashMap<>();
+        if ( details == null || details.getPlayerList() == null )
+            return playerColorMap;
+
+        for ( final IPlayer player : details.getPlayerList() ) {
+            if ( player == null || player.getName() == null || player.getName().length() == 0 )
+                continue;
+
+            final Color color = toPlayerColor( player.getArgb() );
+            if ( color != null )
+                playerColorMap.put( player.getName(), color );
+        }
+
+        return playerColorMap;
+    }
+
+    /**
+     * Converts replay ARGB values to an AWT color.
+     *
+     * @param argb replay ARGB components
+     * @return converted color; may be <code>null</code>
+     */
+    private Color toPlayerColor( final int[] argb ) {
+        if ( argb == null || argb.length < 4 )
+            return null;
+
+        final int alpha = clampColorComponent( argb[ 0 ] );
+        final int red = clampColorComponent( argb[ 1 ] );
+        final int green = clampColorComponent( argb[ 2 ] );
+        final int blue = clampColorComponent( argb[ 3 ] );
+        if ( alpha == 0 )
+            return null;
+
+        return new Color( red, green, blue );
+    }
+
+    /**
+     * Clamps a replay color component into the AWT range.
+     *
+     * @param value raw component value
+     * @return clamped component
+     */
+    private int clampColorComponent( final int value ) {
+        if ( value < 0 )
+            return 0;
+        if ( value > 255 )
+            return 255;
+        return value;
     }
 
 }
