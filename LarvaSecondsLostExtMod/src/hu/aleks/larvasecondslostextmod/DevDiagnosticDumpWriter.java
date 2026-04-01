@@ -219,6 +219,11 @@ public class DevDiagnosticDumpWriter {
         builder.append( "Replay version: " ).append( replaySummary.getReplayVersion() ).append( '\n' );
         builder.append( "Base build: " ).append( replaySummary.getBaseBuild() ).append( '\n' );
         builder.append( "Integration mode: " ).append( summary.getIntegrationMode() ).append( '\n' );
+        if ( summary.getTimelineModel() != null ) {
+            builder.append( "Timeline title: " ).append( summary.getTimelineModel().getTitle() ).append( '\n' );
+            builder.append( "Timeline rows: " ).append( summary.getTimelineModel().getRowList().size() ).append( '\n' );
+            builder.append( "Timeline subtitle: " ).append( summary.getTimelineModel().getSubtitle() ).append( '\n' );
+        }
         if ( summary.getLarvaAnalysisReport() != null )
             builder.append( '\n' ).append( summary.getLarvaAnalysisReport().toDisplayText() );
         return builder.toString();

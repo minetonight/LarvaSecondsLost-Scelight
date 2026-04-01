@@ -26,6 +26,9 @@ public class ReplaySummaryService {
     /** Epic 6 replay analyzer. */
     private final LarvaReplayAnalyzer larvaReplayAnalyzer;
 
+    /** Builds the normalized Epic 03 timeline presentation model. */
+    private final LarvaTimelineModelBuilder timelineModelBuilder;
+
     /**
      * Creates a new replay summary service.
      *
@@ -34,6 +37,7 @@ public class ReplaySummaryService {
     public ReplaySummaryService( final LarvaSecondsLostModule module ) {
         this.module = module;
         larvaReplayAnalyzer = new LarvaReplayAnalyzer();
+        timelineModelBuilder = new LarvaTimelineModelBuilder();
     }
 
     /**
@@ -83,7 +87,10 @@ public class ReplaySummaryService {
                 safe( repProc.getPlayersGrouped(), "Unknown players" ), safe( repProc.getWinnersString(), "Unknown / undecided" ),
             formatDuration( lengthMs ), lengthMs, formatDate( replayEndTime ), replay.getHeader().versionString( true ),
             String.valueOf( replay.getHeader().getBaseBuild() ) );
-        return new LarvaReplayPageSummary( replaySummary, FALLBACK_INTEGRATION_MODE, previewWindowStartMs, previewWindowEndMs, larvaAnalysisReport );
+        final LarvaTimelineModel timelineModel = timelineModelBuilder.build( replaySummary, FALLBACK_INTEGRATION_MODE, larvaAnalysisReport,
+                previewWindowStartMs, previewWindowEndMs );
+        return new LarvaReplayPageSummary( replaySummary, FALLBACK_INTEGRATION_MODE, timelineModel, previewWindowStartMs, previewWindowEndMs,
+                larvaAnalysisReport );
     }
 
     /**

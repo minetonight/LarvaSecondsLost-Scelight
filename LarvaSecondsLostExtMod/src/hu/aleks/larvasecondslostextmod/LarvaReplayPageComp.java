@@ -228,9 +228,9 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
      */
     void showIdleMessage() {
         updateCapabilityLabel();
-        timelinePreviewComp.setSummary( null );
+        timelinePreviewComp.setTimelineModel( null );
         detailsArea.setText( "Epic 2 fallback replay-view surface\n"
-            + "Epic 3 now adds a first chart-like preview above the diagnostics text.\n"
+            + "Epic 3 now adds a module-owned chart-like timeline above the diagnostics text.\n"
             + "Epic 4 now confirms native chart dropdown integration is unsupported for pure external modules.\n"
             + "Epic 5 now confirms native Base Control chart augmentation is unsupported for pure external modules.\n"
             + "Epic 6 now derives per-hatchery larva counts with a calibrated hatchery-to-larva assignment heuristic.\n"
@@ -249,7 +249,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
                 + DevDiagnosticDumpWriter.PROP_FILE
                 + "=/path/to/file.txt.\n"
                 + "\n"
-            + "The preview timeline intentionally shows a replay-derived placeholder interval so real larva windows can replace it in later epics.\n"
+                + "The preview timeline intentionally renders normalized replay-derived placeholder rows so real larva windows can replace them in later epics without changing the page layout.\n"
             + "\n"
             + "Native injection into Scelight's internal replay analyzer page is not exposed by the public external module API, so this module uses a dedicated fallback page next to the replay workflow." );
     }
@@ -264,7 +264,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         currentReplayFile = replayFile;
         statusLabel.setText( "Loading replay diagnostics..." );
         updateCapabilityLabel();
-        timelinePreviewComp.setSummary( null );
+        timelinePreviewComp.setTimelineModel( null );
         detailsArea.setText( "Analyzing replay from " + sourceDescription + ":\n" + replayFile );
     }
 
@@ -277,7 +277,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         currentReplayFile = summary.getReplaySummary().getReplayFile();
         statusLabel.setText( "Replay diagnostics ready: " + summary.getReplaySummary().getReplayFile().getFileName() );
         updateCapabilityLabel();
-        timelinePreviewComp.setSummary( summary );
+        timelinePreviewComp.setTimelineModel( summary.getTimelineModel() );
         detailsArea.setText( buildSummaryText( summary ) );
         detailsArea.setCaretPosition( 0 );
     }
@@ -293,7 +293,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         currentReplayFile = replayFile;
         statusLabel.setText( "Replay diagnostics failed." );
         updateCapabilityLabel();
-        timelinePreviewComp.setSummary( null );
+        timelinePreviewComp.setTimelineModel( null );
         detailsArea.setText( "Failed to analyze replay from " + sourceDescription + ":\n"
                 + replayFile
                 + "\n\nReason:\n"
@@ -323,6 +323,11 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
                 .append( " - " )
                 .append( formatMs( summary.getPreviewWindowEndMs() ) )
                 .append( " (replay-derived placeholder interval)" )
+            .append( '\n' );
+        if ( summary.getTimelineModel() != null )
+            builder.append( "Timeline rows: " )
+                .append( summary.getTimelineModel().getRowList().size() )
+                .append( " (module-owned normalized preview model)" )
                 .append( '\n' )
                 .append( '\n' );
         if ( summary.getLarvaAnalysisReport() != null )
@@ -363,6 +368,10 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         final StringBuilder builder = new StringBuilder();
         builder.append( "Larva page diagnostics:" ).append( '\n' );
         builder.append( "Integration mode: " ).append( summary.getIntegrationMode() ).append( '\n' );
+        if ( summary.getTimelineModel() != null ) {
+            builder.append( "Timeline title: " ).append( summary.getTimelineModel().getTitle() ).append( '\n' );
+            builder.append( "Timeline subtitle: " ).append( summary.getTimelineModel().getSubtitle() ).append( '\n' );
+        }
         return builder.toString();
     }
 

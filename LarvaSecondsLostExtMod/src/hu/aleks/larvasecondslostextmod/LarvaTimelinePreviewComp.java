@@ -7,6 +7,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -14,8 +15,9 @@ import javax.swing.JPanel;
 /**
  * Simple chart-like preview used for Epic 03.
  *
- * <p>This is intentionally a module-owned fallback visualization. It renders one replay-derived
- * placeholder interval so the later larva windows can replace it without changing the page layout.</p>
+ * <p>This is intentionally a module-owned fallback visualization. It renders a normalized replay
+ * timeline model so later larva windows can replace placeholder intervals without changing the
+ * page layout.</p>
  */
 @SuppressWarnings("serial")
 public class LarvaTimelinePreviewComp extends JPanel {
@@ -29,8 +31,38 @@ public class LarvaTimelinePreviewComp extends JPanel {
     /** Outline color. */
     private static final Color OUTLINE_COLOR = new Color( 90, 90, 90 );
 
-    /** Current summary to render. */
-    private LarvaReplayPageSummary summary;
+    /** Secondary text color. */
+    private static final Color SUBTLE_TEXT_COLOR = new Color( 92, 104, 117 );
+
+    /** Player group text color. */
+    private static final Color GROUP_TEXT_COLOR = new Color( 54, 72, 92 );
+
+    /** Marker color. */
+    private static final Color MARKER_COLOR = new Color( 246, 156, 63 );
+
+    /** Left padding. */
+    private static final int LEFT_PAD = 12;
+
+    /** Right padding. */
+    private static final int RIGHT_PAD = 12;
+
+    /** Top padding. */
+    private static final int TOP_PAD = 12;
+
+    /** Space reserved for row labels. */
+    private static final int LABEL_WIDTH = 168;
+
+    /** Height of a timeline rail. */
+    private static final int RAIL_HEIGHT = 16;
+
+    /** Vertical step between rows. */
+    private static final int ROW_STEP = 34;
+
+    /** Extra gap inserted when a new player group begins. */
+    private static final int GROUP_GAP = 16;
+
+    /** Current normalized timeline model to render. */
+    private LarvaTimelineModel timelineModel;
 
     /**
      * Creates a new timeline preview component.
@@ -40,16 +72,18 @@ public class LarvaTimelinePreviewComp extends JPanel {
         setBackground( Color.WHITE );
         setBorder( BorderFactory.createCompoundBorder( BorderFactory.createLineBorder( new Color( 212, 212, 212 ) ),
                 BorderFactory.createEmptyBorder( 8, 8, 8, 8 ) ) );
-        setPreferredSize( new Dimension( 220, 110 ) );
+        setPreferredSize( new Dimension( 220, 150 ) );
     }
 
     /**
-     * Updates the summary shown in the preview.
+     * Updates the normalized timeline model shown in the preview.
      *
-     * @param summary replay summary to render; may be <code>null</code>
+     * @param timelineModel timeline model to render; may be <code>null</code>
      */
-    public void setSummary( final LarvaReplayPageSummary summary ) {
-        this.summary = summary;
+    public void setTimelineModel( final LarvaTimelineModel timelineModel ) {
+        this.timelineModel = timelineModel;
+        updatePreferredHeight();
+        revalidate();
         repaint();
     }
 
@@ -65,46 +99,145 @@ public class LarvaTimelinePreviewComp extends JPanel {
         final FontMetrics fm = g.getFontMetrics();
 
         g.setColor( OUTLINE_COLOR );
-        g.drawString( "Epic 03 preview timeline", 10, 16 );
+        g.drawString( timelineModel == null ? "Epic 03 module-owned larva timeline" : timelineModel.getTitle(), LEFT_PAD, TOP_PAD + 4 );
+        g.setColor( SUBTLE_TEXT_COLOR );
+        g.drawString( timelineModel == null ? "Module-owned fallback visualization; load a replay to populate it."
+                : timelineModel.getSubtitle(), LEFT_PAD, TOP_PAD + 22 );
 
-        if ( summary == null || summary.getReplaySummary() == null || summary.getReplaySummary().getLengthMs() <= 0L ) {
-            g.drawString( "Load a replay to render a placeholder time window.", 10, 40 );
+        if ( timelineModel == null || timelineModel.getReplayLengthMs() <= 0L ) {
+            g.drawString( "Load a replay to render normalized placeholder timeline rows.", LEFT_PAD, TOP_PAD + 48 );
             return;
         }
 
-        final ReplaySummary replaySummary = summary.getReplaySummary();
+        g.drawString( timelineModel.getModeLabel(), LEFT_PAD, TOP_PAD + 40 );
 
-        final int railLeft = 12;
-        final int railTop = 46;
-        final int railWidth = Math.max( 60, width - 24 );
-        final int railHeight = 20;
+        final List< LarvaTimelineRow > rowList = timelineModel.getRowList();
+        if ( rowList.isEmpty() ) {
+            g.drawString( timelineModel.getEmptyMessage(), LEFT_PAD, TOP_PAD + 64 );
+            return;
+        }
 
+        final int railLeft = LEFT_PAD + LABEL_WIDTH;
+        final int railWidth = Math.max( 80, width - railLeft - RIGHT_PAD );
+        int y = TOP_PAD + 62;
+        String previousGroup = null;
+
+        for ( final LarvaTimelineRow row : rowList ) {
+            final String groupLabel = row.getGroupLabel();
+            if ( groupLabel != null && groupLabel.length() > 0 && !groupLabel.equals( previousGroup ) ) {
+                if ( previousGroup != null )
+                    y += GROUP_GAP;
+                g.setColor( GROUP_TEXT_COLOR );
+                g.drawString( groupLabel, LEFT_PAD, y );
+                y += 14;
+                previousGroup = groupLabel;
+            }
+
+            drawRow( g, fm, row, railLeft, y, railWidth );
+            y += ROW_STEP;
+        }
+
+        final int axisY = Math.min( height - 24, y + 4 );
+        drawAxis( g, fm, railLeft, railWidth, axisY );
+    }
+
+    /**
+     * Draws one normalized timeline row.
+     *
+     * @param g graphics context
+     * @param fm font metrics
+     * @param row row to draw
+     * @param railLeft rail left position
+     * @param y top y position of the row
+     * @param railWidth rail width
+     */
+    private void drawRow( final Graphics2D g, final FontMetrics fm, final LarvaTimelineRow row, final int railLeft, final int y, final int railWidth ) {
+        g.setColor( OUTLINE_COLOR );
+        g.drawString( row.getRowLabel(), LEFT_PAD, y + 2 );
+        g.setColor( SUBTLE_TEXT_COLOR );
+        g.drawString( row.getDetailLabel(), LEFT_PAD, y + 16 );
+
+        final int railY = y + 2;
         g.setColor( RAIL_COLOR );
-        g.fillRoundRect( railLeft, railTop, railWidth, railHeight, 12, 12 );
+        g.fillRoundRect( railLeft, railY, railWidth, RAIL_HEIGHT, 10, 10 );
         g.setColor( OUTLINE_COLOR );
-        g.drawRoundRect( railLeft, railTop, railWidth, railHeight, 12, 12 );
+        g.drawRoundRect( railLeft, railY, railWidth, RAIL_HEIGHT, 10, 10 );
 
-        final int startX = railLeft + scaleToWidth( summary.getPreviewWindowStartMs(), replaySummary.getLengthMs(), railWidth );
-        final int endX = railLeft + scaleToWidth( summary.getPreviewWindowEndMs(), replaySummary.getLengthMs(), railWidth );
-        final int windowWidth = Math.max( 8, endX - startX );
+        for ( final LarvaTimelineSegment segment : row.getSegmentList() )
+            drawSegment( g, fm, segment, railLeft, railY, railWidth );
+    }
 
-        g.setColor( WINDOW_COLOR );
-        g.fillRoundRect( startX, railTop + 2, windowWidth, railHeight - 4, 10, 10 );
+    /**
+     * Draws one semantic segment onto a timeline rail.
+     *
+     * @param g graphics context
+     * @param fm font metrics
+     * @param segment segment to draw
+     * @param railLeft rail left position
+     * @param railY rail top position
+     * @param railWidth rail width
+     */
+    private void drawSegment( final Graphics2D g, final FontMetrics fm, final LarvaTimelineSegment segment, final int railLeft, final int railY,
+            final int railWidth ) {
+        final int startX = railLeft + scaleToWidth( segment.getStartMs(), timelineModel.getReplayLengthMs(), railWidth );
+        final int endX = railLeft + scaleToWidth( segment.getEndMs(), timelineModel.getReplayLengthMs(), railWidth );
+        final int segmentWidth = Math.max( segment.getKind() == LarvaTimelineSegment.Kind.PREVIEW_MARKER ? 4 : 8, endX - startX );
+        final Color segmentColor = segment.getKind() == LarvaTimelineSegment.Kind.PREVIEW_MARKER ? MARKER_COLOR : WINDOW_COLOR;
+
+        g.setColor( segmentColor );
+        g.fillRoundRect( startX, railY + 2, segmentWidth, RAIL_HEIGHT - 4, 8, 8 );
         g.setColor( OUTLINE_COLOR );
-        g.drawRoundRect( startX, railTop + 2, windowWidth, railHeight - 4, 10, 10 );
+        g.drawRoundRect( startX, railY + 2, segmentWidth, RAIL_HEIGHT - 4, 8, 8 );
 
+        final int labelX = Math.max( railLeft, Math.min( startX, railLeft + railWidth - fm.stringWidth( segment.getLabel() ) ) );
+        g.setColor( SUBTLE_TEXT_COLOR );
+        g.drawString( segment.getLabel(), labelX, railY - 4 );
+    }
+
+    /**
+     * Draws the shared time axis.
+     *
+     * @param g graphics context
+     * @param fm font metrics
+     * @param railLeft rail left position
+     * @param railWidth rail width
+     * @param axisY y coordinate of the axis baseline
+     */
+    private void drawAxis( final Graphics2D g, final FontMetrics fm, final int railLeft, final int railWidth, final int axisY ) {
+        g.setColor( OUTLINE_COLOR );
         g.setStroke( new BasicStroke( 1f ) );
-        g.drawLine( railLeft, railTop + railHeight + 10, railLeft + railWidth, railTop + railHeight + 10 );
-        g.drawLine( railLeft, railTop + railHeight + 6, railLeft, railTop + railHeight + 14 );
-        g.drawLine( railLeft + railWidth, railTop + railHeight + 6, railLeft + railWidth, railTop + railHeight + 14 );
+        g.drawLine( railLeft, axisY, railLeft + railWidth, axisY );
+        g.drawLine( railLeft, axisY - 4, railLeft, axisY + 4 );
+        g.drawLine( railLeft + railWidth, axisY - 4, railLeft + railWidth, axisY + 4 );
 
         final String startLabel = "0:00";
-        final String endLabel = replaySummary.getLength();
-        g.drawString( startLabel, railLeft, height - 12 );
-        g.drawString( endLabel, railLeft + railWidth - fm.stringWidth( endLabel ), height - 12 );
+        final String endLabel = timelineModel.getReplayLengthLabel();
+        g.drawString( startLabel, railLeft, axisY + 16 );
+        g.drawString( endLabel, railLeft + railWidth - fm.stringWidth( endLabel ), axisY + 16 );
+        g.setColor( SUBTLE_TEXT_COLOR );
+        g.drawString( "Module-owned fallback timeline preview", LEFT_PAD, axisY + 16 );
+    }
 
-        final String windowLabel = "Preview window: " + formatMs( summary.getPreviewWindowStartMs() ) + " - " + formatMs( summary.getPreviewWindowEndMs() );
-        g.drawString( windowLabel, 10, 88 );
+    /**
+     * Updates preferred height based on the number of visible rows.
+     */
+    private void updatePreferredHeight() {
+        if ( timelineModel == null || timelineModel.getRowList().isEmpty() ) {
+            setPreferredSize( new Dimension( 220, 150 ) );
+            return;
+        }
+
+        int groupCount = 0;
+        String previousGroup = null;
+        for ( final LarvaTimelineRow row : timelineModel.getRowList() ) {
+            if ( row.getGroupLabel() != null && row.getGroupLabel().length() > 0 && !row.getGroupLabel().equals( previousGroup ) ) {
+                groupCount++;
+                previousGroup = row.getGroupLabel();
+            }
+        }
+
+        final int preferredHeight = 118 + timelineModel.getRowList().size() * ROW_STEP + Math.max( 0, groupCount - 1 ) * GROUP_GAP + groupCount * 14;
+        setPreferredSize( new Dimension( 220, preferredHeight ) );
     }
 
     /**
@@ -119,19 +252,6 @@ public class LarvaTimelinePreviewComp extends JPanel {
         if ( maxValue <= 0L )
             return 0;
         return (int) ( ( value * width ) / maxValue );
-    }
-
-    /**
-     * Formats milliseconds as a short $m:ss$ string.
-     *
-     * @param ms time in milliseconds
-     * @return formatted time string
-     */
-    private String formatMs( final long ms ) {
-        final long totalSeconds = ms / 1000L;
-        final long minutes = totalSeconds / 60L;
-        final long seconds = totalSeconds % 60L;
-        return minutes + ":" + ( seconds < 10L ? "0" : "" ) + seconds;
     }
 
 }

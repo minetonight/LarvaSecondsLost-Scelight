@@ -2,7 +2,7 @@
 
 This project is the Epic 01 and Epic 02 baseline for the Scelight larva feature. It proves that an external module can be built, packaged, installed, enabled, observed, and given a replay-scoped fallback surface before chart integration is attempted.
 
-It now also includes the Epic 03 placeholder chart: a first timeline-style visualization rendered on the `Larva` page from replay-derived timing data.
+It now also includes the Epic 03 placeholder chart: a first normalized timeline-style visualization rendered on the `Larva` page from replay-derived timing data and per-hatchery placeholder rows when available.
 
 Epic 04 is now resolved as well: native registration into Scelight's built-in chart dropdown is treated as unsupported for a pure external module, so the module-owned fallback page remains the supported path.
 
@@ -71,6 +71,7 @@ When the module is enabled:
 - The page can analyze a replay selected manually or resolve the latest replay from the Replay Folder Monitor plus Scelight's monitored replay folders.
 - The page shows replay diagnostics on a module-owned fallback surface that stays adjacent to the replay workflow.
 - The page renders a first chart-like preview timeline above the diagnostics text.
+- That preview is module-owned, grouped for later per-player/per-hatchery evolution, and fed by a normalized presentation model instead of painting directly from replay parser objects.
 - When enabled by JVM property, the module also writes a predictable dev diagnostic dump file outside the UI.
 
 ## Epic 01S02 replay-view presence
@@ -84,7 +85,9 @@ When the module is enabled:
 ## Epic 01S03 first chart
 
 - The `Larva` page now contains a module-owned timeline preview component.
-- The preview renders a replay-derived placeholder interval so chart painting, resizing, redraw, and replay switching are exercised before real larva windows are computed.
+- The preview consumes a normalized presentation model so chart painting stays separate from replay parsing and later larva-window logic.
+- When per-hatchery count timelines are available, the preview renders replay-derived placeholder rows from those timelines; otherwise it falls back to a replay-length-derived placeholder interval.
+- Resize, redraw, and replay switching are exercised on the supported fallback page before real larva windows are computed.
 - This remains separate from Scelight internals and can later be replaced by real larva windows without changing the replay page structure.
 
 ## Epic 01S04 native chart dropdown integration
