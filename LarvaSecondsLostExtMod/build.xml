@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="Larva Seconds Lost External Module Builder" basedir="." default="BUILD_RELEASE">
+<project name="Larva Seconds Lost External Module Builder" basedir="." default="INSTALL_DEPLOYMENT">
     <description>
         SDK-compatible Ant builder for the Larva Seconds Lost Scelight external module.
     </description>

@@ -1,9 +1,12 @@
 package hu.aleks.larvasecondslostextmod;
 
+import hu.scelightapibase.gui.comp.multipage.IPageSelectedListener;
 import hu.scelightapibase.gui.comp.IFileChooser;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.nio.file.Path;
 
 import javax.swing.BorderFactory;
@@ -21,7 +24,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * Module-owned replay diagnostics page used as the Epic 2 fallback replay-view surface.
  */
 @SuppressWarnings("serial")
-public class LarvaReplayPageComp extends JPanel {
+public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener, HierarchyListener {
 
     /** Owning external module. */
     private final LarvaSecondsLostModule module;
@@ -57,7 +60,42 @@ public class LarvaReplayPageComp extends JPanel {
         capabilityLabel = new JLabel();
 
         buildGui();
+        addHierarchyListener( this );
         showIdleMessage();
+    }
+
+    @Override
+    public void pageSelected() {
+        requestAutomaticLatestReplayLoad( "Larva page navigation" );
+    }
+
+    @Override
+    public void hierarchyChanged( final HierarchyEvent event ) {
+        if ( ( event.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED ) == 0L || !isShowing() )
+            return;
+
+        requestAutomaticLatestReplayLoad( "Larva page shown" );
+    }
+
+    /**
+     * Attempts to load the latest replay automatically.
+     *
+     * @param sourceDescription source label describing the automatic trigger
+     */
+    private void requestAutomaticLatestReplayLoad( final String sourceDescription ) {
+        final Path replayFile = module.resolveLatestReplayPath();
+        if ( replayFile == null ) {
+            if ( module.getLatestReplaySummary() == null )
+                showIdleMessage();
+            return;
+        }
+
+        final LarvaReplayPageSummary latestSummary = module.getLatestReplaySummary();
+        final Path latestLoadedReplay = latestSummary == null || latestSummary.getReplaySummary() == null ? null : latestSummary.getReplaySummary().getReplayFile();
+        if ( replayFile.equals( latestLoadedReplay ) )
+            return;
+
+        module.requestReplayAnalysis( replayFile, sourceDescription );
     }
 
     /**
@@ -199,6 +237,7 @@ public class LarvaReplayPageComp extends JPanel {
             + "Story 01.07 can also write a dev diagnostic dump file for zero-click verification when enabled by JVM property.\n"
                 + "\n"
                 + "This page is the replay-scoped entry point currently available to the external module.\n"
+                + "When the page is selected from the main navigation, it automatically tries to load the latest replay.\n"
                 + "\n"
                 + "Use one of the actions above to load replay diagnostics:\n"
                 + "- Open Replay... loads any replay file manually.\n"
