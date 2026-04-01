@@ -47,6 +47,9 @@ public class LarvaSecondsLostModule extends BaseExtModule {
     /** Cached Base Control augmentation capability report. */
     private BaseControlAugmentationCapability baseControlAugmentationCapability;
 
+    /** Development-only diagnostic dump writer. */
+    private DevDiagnosticDumpWriter devDiagnosticDumpWriter;
+
     /** Listener registered at the replay folder monitor. */
     private INewRepListener newRepListener;
 
@@ -65,6 +68,7 @@ public class LarvaSecondsLostModule extends BaseExtModule {
 
         try {
             loadResources();
+            devDiagnosticDumpWriter = new DevDiagnosticDumpWriter( logger );
             replaySummaryService = new ReplaySummaryService( this );
             latestReplayResolver = new LatestReplayResolver( this );
             chartIntegrationCapabilityDetector = new ChartIntegrationCapabilityDetector();
@@ -73,7 +77,11 @@ public class LarvaSecondsLostModule extends BaseExtModule {
             baseControlAugmentationCapability = baseControlAugmentationCapabilityDetector.detect();
             installReplayMonitorListener();
             installReplayPage();
+            if ( devDiagnosticDumpWriter.isEnabled() )
+                devDiagnosticDumpWriter.recordStartup( manifest );
             logger.debug( manifest.getName() + " module started successfully." );
+            if ( devDiagnosticDumpWriter.isEnabled() )
+                logger.debug( manifest.getName() + " dev diagnostic dump file enabled at: " + devDiagnosticDumpWriter.getDumpFile() );
         } catch ( final RuntimeException e ) {
             logger.error( "Failed to initialize " + manifest.getName() + " module.", e );
             throw e;
@@ -142,6 +150,8 @@ public class LarvaSecondsLostModule extends BaseExtModule {
         final LarvaReplayPageComp pageComp = replayPageComp;
         if ( pageComp != null )
             pageComp.showBusy( replayFile, sourceDescription );
+        if ( devDiagnosticDumpWriter != null && devDiagnosticDumpWriter.isEnabled() )
+            devDiagnosticDumpWriter.recordAnalysisStart( replayFile, sourceDescription );
 
         final Thread worker = new Thread( new Runnable() {
             @Override
@@ -150,9 +160,13 @@ public class LarvaSecondsLostModule extends BaseExtModule {
                     final ReplaySummary summary = replaySummaryService.analyze( replayFile, sourceDescription );
                     latestReplaySummary = summary;
                     refreshReplayPage( summary );
+                    if ( devDiagnosticDumpWriter != null && devDiagnosticDumpWriter.isEnabled() )
+                        devDiagnosticDumpWriter.recordAnalysisSuccess( summary );
                     logger.debug( manifest.getName() + " replay diagnostics ready for: " + replayFile );
                 } catch ( final RuntimeException e ) {
                     logger.error( "Failed to analyze replay for the Larva page: " + replayFile, e );
+                    if ( devDiagnosticDumpWriter != null && devDiagnosticDumpWriter.isEnabled() )
+                        devDiagnosticDumpWriter.recordAnalysisFailure( replayFile, sourceDescription, e.getMessage() );
                     showReplayError( replayFile, sourceDescription, e.getMessage() );
                 }
             }
@@ -261,10 +275,22 @@ public class LarvaSecondsLostModule extends BaseExtModule {
         return baseControlAugmentationCapability;
     }
 
+    /**
+     * Returns the development diagnostic dump writer.
+     *
+     * @return development diagnostic dump writer; may be <code>null</code>
+     */
+    DevDiagnosticDumpWriter getDevDiagnosticDumpWriter() {
+        return devDiagnosticDumpWriter;
+    }
+
     @Override
     public void destroy() {
         if ( newRepListener != null )
             services.getRepFolderMonitor().removeNewRepListener( newRepListener );
+
+        if ( devDiagnosticDumpWriter != null && devDiagnosticDumpWriter.isEnabled() )
+            devDiagnosticDumpWriter.recordShutdown( manifest );
 
         logger.debug( manifest.getName() + " module stopped." );
     }

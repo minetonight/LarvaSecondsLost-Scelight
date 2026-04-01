@@ -196,6 +196,7 @@ public class LarvaReplayPageComp extends JPanel {
             + "Epic 4 now confirms native chart dropdown integration is unsupported for pure external modules.\n"
             + "Epic 5 now confirms native Base Control chart augmentation is unsupported for pure external modules.\n"
             + "Epic 6 now derives per-hatchery larva counts with a calibrated hatchery-to-larva assignment heuristic.\n"
+            + "Story 01.07 can also write a dev diagnostic dump file for zero-click verification when enabled by JVM property.\n"
                 + "\n"
                 + "This page is the replay-scoped entry point currently available to the external module.\n"
                 + "\n"
@@ -203,6 +204,11 @@ public class LarvaReplayPageComp extends JPanel {
                 + "- Open Replay... loads any replay file manually.\n"
                 + "- Analyze Latest Replay first reuses the Replay Folder Monitor event stream, then falls back to scanning Scelight's monitored replay folders.\n"
                 + "- Refresh Current Replay reruns the latest successful analysis.\n"
+                + "- Dev dump file can be enabled with -D"
+                + DevDiagnosticDumpWriter.PROP_ENABLED
+                + "=true and optionally -D"
+                + DevDiagnosticDumpWriter.PROP_FILE
+                + "=/path/to/file.txt.\n"
                 + "\n"
             + "The preview timeline intentionally shows a replay-derived placeholder interval so real larva windows can replace it in later epics.\n"
             + "\n"

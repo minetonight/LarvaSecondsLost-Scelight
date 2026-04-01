@@ -10,6 +10,8 @@ Epic 05 is now resolved too: augmenting Scelight's built-in Base Control chart w
 
 Epic 06 now adds the replay-analysis foundation: the module reconstructs per-hatchery larva count timelines from tracker events, Spawn Larva targets, and a calibrated hatchery-to-larva offset derived from the replay opening when possible.
 
+Story 01.07 is now implemented too: during development, the module can write a predictable diagnostic dump file so external-app verification no longer depends entirely on manual UI clicks.
+
 ## SDK-style layout
 
 - `src/` - Java 7 source code and packaged resources.
@@ -35,6 +37,29 @@ The build uses the shared Scelight external module API jar from `../ScelightExtM
 3. The install target removes older copies of `mod-x/larva-seconds-lost` and unpacks the fresh deployment.
 4. In Scelight, enable the module from the Installed Modules page.
 
+## Story 01.07 zero-click diagnostic dump
+
+For development runs, the module can write a structured text dump file that records:
+
+- module startup state,
+- replay analysis start/success/failure,
+- the latest replay summary,
+- and the Epic 6 larva analysis diagnostics.
+
+Enable it by starting Scelight with:
+
+- `-Dlarva.dev.dump.enabled=true`
+
+Optionally override the dump location with:
+
+- `-Dlarva.dev.dump.file=/absolute/path/to/LarvaSecondsLost-dev-dump.txt`
+
+If the file path is not overridden, the module writes to:
+
+- `${user.home}/LarvaSecondsLost-dev-dump.txt`
+
+This mode is development-only and can be disabled cleanly by omitting those JVM properties.
+
 ## Observable runtime proof
 
 When the module is enabled:
@@ -44,6 +69,7 @@ When the module is enabled:
 - The page can analyze a replay selected manually or resolve the latest replay from the Replay Folder Monitor plus Scelight's monitored replay folders.
 - The page shows replay diagnostics on a module-owned fallback surface that stays adjacent to the replay workflow.
 - The page renders a first chart-like preview timeline above the diagnostics text.
+- When enabled by JVM property, the module also writes a predictable dev diagnostic dump file outside the UI.
 
 ## Epic 2 replay-view presence
 
@@ -85,6 +111,7 @@ When the module is enabled:
 - If compilation fails, verify the API jar exists at `../ScelightExtModSDK/Scelight-ext-mod-api/1.5.2/lib/scelight-ext-mod-api-1.5.2.jar`.
 - If install fails, confirm `scelightFolder` points to a directory literally named `Scelight` and that it contains one of `Scelight.exe`, `Scelight-linux.sh`, or `Scelight-os-x.command`.
 - If the module is installed but not visible, check that it is enabled in Scelight's module management UI and review the application log for the module lifecycle messages.
+- If Story 01.07 dump mode is enabled but no dump file appears, confirm the JVM properties were passed to Scelight and that the dump path is writable.
 
 ## Epic 02 handoff
 
