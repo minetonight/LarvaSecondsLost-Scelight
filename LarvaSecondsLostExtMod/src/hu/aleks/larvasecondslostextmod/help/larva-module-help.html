@@ -1,14 +1,17 @@
 <html>
 <body>
     <h2>Larva Seconds Lost</h2>
-    <p>This external module is currently the Epic 01 hello-world baseline.</p>
+    <p>This external module now includes the Epic 2 fallback replay-view surface.</p>
     <p>What is proven in this build:</p>
     <ul>
         <li>The module compiles against the Scelight external module API.</li>
         <li>The module can package a manifest, jar, and deployment zip.</li>
         <li>The module can contribute visible UI inside Scelight once enabled.</li>
         <li>Lifecycle logging is available for startup and shutdown verification.</li>
+        <li>The module can analyze a replay on its own page, either by manual file selection or from the Replay Folder Monitor event stream.</li>
+        <li>The module now renders a first chart-like timeline preview using a replay-derived placeholder interval.</li>
     </ul>
-    <p>Replay analysis and chart integration are intentionally deferred to later epics.</p>
+    <p>Direct injection into Scelight's internal replay analyzer page is not exposed by the public external module API, so replay diagnostics currently live on the module-owned Larva page.</p>
+    <p>Real larva windows are still deferred to later epics, but the page layout is now ready to host them.</p>
 </body>
 </html>

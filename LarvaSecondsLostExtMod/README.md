@@ -1,6 +1,8 @@
 # Larva Seconds Lost external module
 
-This project is the Epic 01 baseline for the Scelight larva feature. It proves that an external module can be built, packaged, installed, enabled, and observed before any replay-analysis logic is added.
+This project is the Epic 01 and Epic 02 baseline for the Scelight larva feature. It proves that an external module can be built, packaged, installed, enabled, observed, and given a replay-scoped fallback surface before chart integration is attempted.
+
+It now also includes the Epic 03 placeholder chart: a first timeline-style visualization rendered on the `Larva` page from replay-derived timing data.
 
 ## SDK-style layout
 
@@ -33,7 +35,22 @@ When the module is enabled:
 
 - Scelight logs module startup and shutdown.
 - A new page named **Larva** appears in the main page tree.
-- The page shows a short baseline message and the next replay-integration question.
+- The page can analyze a replay selected manually or resolve the latest replay from the Replay Folder Monitor plus Scelight's monitored replay folders.
+- The page shows replay diagnostics on a module-owned fallback surface that stays adjacent to the replay workflow.
+- The page renders a first chart-like preview timeline above the diagnostics text.
+
+## Epic 2 replay-view presence
+
+- The external module API does not expose a public hook into Scelight's internal replay analyzer tab lifecycle.
+- The supported fallback is a module-owned replay page that loads replay diagnostics through `IRepParserEngine`.
+- The page can be reached from the main side menu while working with replays.
+- The page also reacts to monitored replay-folder events, and it now has a best-effort fallback that scans the same monitored replay folders Scelight uses for native "Quick Open Last Replay" behavior.
+
+## Epic 3 first chart
+
+- The `Larva` page now contains a module-owned timeline preview component.
+- The preview renders a replay-derived placeholder interval so chart painting, resizing, redraw, and replay switching are exercised before real larva windows are computed.
+- This remains separate from Scelight internals and can later be replaced by real larva windows without changing the replay page structure.
 
 ## Troubleshooting
 
@@ -49,11 +66,14 @@ When the module is enabled:
 - Packaging metadata and manifest generation are in place.
 - Deployment packaging is repeatable.
 - Module initialization exposes a visible page and debug lifecycle messages.
+- Replay diagnostics can be loaded on a module-owned fallback page.
+- A first chart-like replay timeline can be rendered on that fallback page.
 
 ### Still unknown
 
 - Which replay-analysis extension point is the correct place to collect larva state for a chart.
 - How to register a new chart option in the replay UI without depending on Scelight internals.
+- Whether a future native chart dropdown integration is exposed anywhere in the public external module API.
 
 ### Next technical question
 
