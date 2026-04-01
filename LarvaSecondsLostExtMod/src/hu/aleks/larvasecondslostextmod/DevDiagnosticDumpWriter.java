@@ -103,6 +103,37 @@ public class DevDiagnosticDumpWriter {
     }
 
     /**
+     * Records an intermediate lifecycle update.
+     *
+     * @param lifecycleState lifecycle state label
+     * @param lifecycleDetails lifecycle details text
+     */
+    public synchronized void recordLifecycleUpdate( final String lifecycleState, final String lifecycleDetails ) {
+        if ( !enabled )
+            return;
+
+        this.lifecycleState = lifecycleState;
+        this.lifecycleDetails = lifecycleDetails;
+        lastUpdated = formatNow();
+        writeDump();
+    }
+
+    /**
+     * Records module initialization failure.
+     *
+     * @param lifecycleDetails failure details
+     */
+    public synchronized void recordInitFailure( final String lifecycleDetails ) {
+        if ( !enabled )
+            return;
+
+        lifecycleState = "init-failed";
+        this.lifecycleDetails = lifecycleDetails;
+        lastUpdated = formatNow();
+        writeDump();
+    }
+
+    /**
      * Records replay analysis start.
      *
      * @param replayFile replay file being analyzed

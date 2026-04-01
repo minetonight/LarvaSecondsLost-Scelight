@@ -12,6 +12,8 @@ Epic 06 now adds the replay-analysis foundation: the module reconstructs per-hat
 
 Story 01.07 is now implemented too: during development, the module can write a predictable diagnostic dump file so external-app verification no longer depends entirely on manual UI clicks.
 
+Story 01.08 is now implemented too: lifecycle diagnostics log startup phases, shutdown, and a more useful initialization failure summary so packaging failures can be distinguished from runtime integration failures.
+
 ## SDK-style layout
 
 - `src/` - Java 7 source code and packaged resources.
@@ -112,6 +114,8 @@ When the module is enabled:
 - If install fails, confirm `scelightFolder` points to a directory literally named `Scelight` and that it contains one of `Scelight.exe`, `Scelight-linux.sh`, or `Scelight-os-x.command`.
 - If the module is installed but not visible, check that it is enabled in Scelight's module management UI and review the application log for the module lifecycle messages.
 - If Story 01.07 dump mode is enabled but no dump file appears, confirm the JVM properties were passed to Scelight and that the dump path is writable.
+- If module startup fails, check the latest logged initialization phase first. Common failure points are missing packaged resources, incompatible API/runtime versions, and early replay-page startup errors.
+- If the Larva page exists but replay diagnostics do not update, compare the application log with the Story 01.07 dump file to distinguish page wiring issues from replay-analysis issues.
 
 ## Epic 02 handoff
 

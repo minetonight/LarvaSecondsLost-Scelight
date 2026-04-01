@@ -23,6 +23,9 @@ import javax.swing.JComponent;
  */
 public class LarvaSecondsLostModule extends BaseExtModule {
 
+    /** Startup step label used for lifecycle diagnostics. */
+    private String initPhase = "not-started";
+
     /** Icon used by the placeholder page. */
     private IRIcon larvaIcon;
 
@@ -67,26 +70,41 @@ public class LarvaSecondsLostModule extends BaseExtModule {
         super.init( manifest, services, modEnv );
 
         try {
+            updateInitPhase( "starting module initialization" );
             loadResources();
             devDiagnosticDumpWriter = new DevDiagnosticDumpWriter( logger );
+            recordLifecycleUpdate( "initializing", "Resources loaded successfully." );
             replaySummaryService = new ReplaySummaryService( this );
+            updateInitPhase( "creating replay services" );
             latestReplayResolver = new LatestReplayResolver( this );
             chartIntegrationCapabilityDetector = new ChartIntegrationCapabilityDetector();
             chartIntegrationCapability = chartIntegrationCapabilityDetector.detect();
             baseControlAugmentationCapabilityDetector = new BaseControlAugmentationCapabilityDetector();
             baseControlAugmentationCapability = baseControlAugmentationCapabilityDetector.detect();
+            recordLifecycleUpdate( "initializing", "Replay services and capability detectors created successfully." );
+            updateInitPhase( "installing replay monitor listener" );
             installReplayMonitorListener();
+            recordLifecycleUpdate( "initializing", "Replay monitor listener installed." );
+            updateInitPhase( "installing Larva page" );
             installReplayPage();
+            recordLifecycleUpdate( "initializing", "Larva page installation requested on the EDT." );
             if ( devDiagnosticDumpWriter.isEnabled() )
                 devDiagnosticDumpWriter.recordStartup( manifest );
+            updateInitPhase( "startup complete" );
             logger.debug( manifest.getName() + " module started successfully." );
             if ( devDiagnosticDumpWriter.isEnabled() )
                 logger.debug( manifest.getName() + " dev diagnostic dump file enabled at: " + devDiagnosticDumpWriter.getDumpFile() );
         } catch ( final RuntimeException e ) {
-            logger.error( "Failed to initialize " + manifest.getName() + " module.", e );
+            final String failureMessage = buildInitFailureMessage( e );
+            logger.error( failureMessage, e );
+            if ( devDiagnosticDumpWriter != null && devDiagnosticDumpWriter.isEnabled() )
+                devDiagnosticDumpWriter.recordInitFailure( failureMessage );
             throw e;
         } catch ( final Error e ) {
-            logger.error( "Fatal error while initializing " + manifest.getName() + " module.", e );
+            final String failureMessage = buildInitFailureMessage( e );
+            logger.error( failureMessage, e );
+            if ( devDiagnosticDumpWriter != null && devDiagnosticDumpWriter.isEnabled() )
+                devDiagnosticDumpWriter.recordInitFailure( failureMessage );
             throw e;
         }
     }
@@ -95,6 +113,7 @@ public class LarvaSecondsLostModule extends BaseExtModule {
      * Loads static resources that are packaged inside the module jar.
      */
     private void loadResources() {
+        updateInitPhase( "loading packaged resources" );
         larvaIcon = guiFactory.newRIcon( getClass().getResource( "icon/larva-module-icon.png" ) );
         helpContent = guiFactory.newRHtml( "Larva Module Help", getClass().getResource( "help/larva-module-help.html" ) );
     }
@@ -284,6 +303,48 @@ public class LarvaSecondsLostModule extends BaseExtModule {
         return devDiagnosticDumpWriter;
     }
 
+    /**
+     * Updates the current initialization phase for diagnostics.
+     *
+     * @param initPhase initialization phase label
+     */
+    private void updateInitPhase( final String initPhase ) {
+        this.initPhase = initPhase;
+        logger.debug( manifest == null ? "Larva Seconds Lost init phase: " + initPhase : manifest.getName() + " init phase: " + initPhase );
+    }
+
+    /**
+     * Records a lifecycle update in the optional development dump.
+     *
+     * @param lifecycleState lifecycle state label
+     * @param lifecycleDetails lifecycle details text
+     */
+    private void recordLifecycleUpdate( final String lifecycleState, final String lifecycleDetails ) {
+        if ( devDiagnosticDumpWriter != null && devDiagnosticDumpWriter.isEnabled() )
+            devDiagnosticDumpWriter.recordLifecycleUpdate( lifecycleState, lifecycleDetails );
+    }
+
+    /**
+     * Builds a readable initialization failure message.
+     *
+     * @param throwable startup failure
+     * @return readable failure message
+     */
+    private String buildInitFailureMessage( final Throwable throwable ) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append( "Failed to initialize " )
+                .append( manifest.getName() )
+                .append( " during phase: " )
+                .append( initPhase )
+                .append( ". " );
+        builder.append( "Common causes: missing packaged resources, incompatible external module API/runtime version, or a replay-page startup error. " );
+        if ( throwable != null && throwable.getMessage() != null && throwable.getMessage().length() > 0 )
+            builder.append( "Cause: " ).append( throwable.getMessage() );
+        else
+            builder.append( "Cause: see stack trace for details." );
+        return builder.toString();
+    }
+
     @Override
     public void destroy() {
         if ( newRepListener != null )
@@ -292,6 +353,7 @@ public class LarvaSecondsLostModule extends BaseExtModule {
         if ( devDiagnosticDumpWriter != null && devDiagnosticDumpWriter.isEnabled() )
             devDiagnosticDumpWriter.recordShutdown( manifest );
 
+        logger.debug( manifest.getName() + " destroy sequence completed." );
         logger.debug( manifest.getName() + " module stopped." );
     }
 
