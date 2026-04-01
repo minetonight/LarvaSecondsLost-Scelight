@@ -35,6 +35,9 @@ public class LarvaReplayPageComp extends JPanel {
     /** Timeline preview component. */
     private final LarvaTimelinePreviewComp timelinePreviewComp;
 
+    /** Capability label shown above the replay tools. */
+    private final JLabel capabilityLabel;
+
     /** Last replay file displayed on this page. */
     private Path currentReplayFile;
 
@@ -51,6 +54,7 @@ public class LarvaReplayPageComp extends JPanel {
         statusLabel = new JLabel( "Replay diagnostics page ready.", module.getLarvaIcon().get(), SwingConstants.LEADING );
         detailsArea = new JTextArea();
         timelinePreviewComp = new LarvaTimelinePreviewComp();
+        capabilityLabel = new JLabel();
 
         buildGui();
         showIdleMessage();
@@ -72,8 +76,13 @@ public class LarvaReplayPageComp extends JPanel {
         buttonPanel.add( createAnalyzeLatestReplayButton() );
         buttonPanel.add( createRefreshButton() );
 
+        final JPanel capabilityPanel = new JPanel( new BorderLayout() );
+        capabilityPanel.add( capabilityLabel, BorderLayout.CENTER );
+        capabilityPanel.setBorder( BorderFactory.createEmptyBorder( 0, 0, 4, 0 ) );
+
         final JPanel northPanel = new JPanel( new BorderLayout( 0, 8 ) );
         northPanel.add( headerPanel, BorderLayout.NORTH );
+        northPanel.add( capabilityPanel, BorderLayout.CENTER );
         northPanel.add( buttonPanel, BorderLayout.SOUTH );
 
         detailsArea.setEditable( false );
@@ -180,9 +189,11 @@ public class LarvaReplayPageComp extends JPanel {
      * Shows the idle message before any replay has been loaded.
      */
     void showIdleMessage() {
+        updateCapabilityLabel();
         timelinePreviewComp.setSummary( null );
         detailsArea.setText( "Epic 2 fallback replay-view surface\n"
             + "Epic 3 now adds a first chart-like preview above the diagnostics text.\n"
+            + "Epic 4 now confirms native chart dropdown integration is unsupported for pure external modules.\n"
                 + "\n"
                 + "This page is the replay-scoped entry point currently available to the external module.\n"
                 + "\n"
@@ -205,6 +216,7 @@ public class LarvaReplayPageComp extends JPanel {
     void showBusy( final Path replayFile, final String sourceDescription ) {
         currentReplayFile = replayFile;
         statusLabel.setText( "Loading replay diagnostics..." );
+        updateCapabilityLabel();
         timelinePreviewComp.setSummary( null );
         detailsArea.setText( "Analyzing replay from " + sourceDescription + ":\n" + replayFile );
     }
@@ -217,6 +229,7 @@ public class LarvaReplayPageComp extends JPanel {
     void showSummary( final ReplaySummary summary ) {
         currentReplayFile = summary.getReplayFile();
         statusLabel.setText( "Replay diagnostics ready: " + summary.getReplayFile().getFileName() );
+        updateCapabilityLabel();
         timelinePreviewComp.setSummary( summary );
         detailsArea.setText( buildSummaryText( summary ) );
         detailsArea.setCaretPosition( 0 );
@@ -232,6 +245,7 @@ public class LarvaReplayPageComp extends JPanel {
     void showError( final Path replayFile, final String sourceDescription, final String errorMessage ) {
         currentReplayFile = replayFile;
         statusLabel.setText( "Replay diagnostics failed." );
+        updateCapabilityLabel();
         timelinePreviewComp.setSummary( null );
         detailsArea.setText( "Failed to analyze replay from " + sourceDescription + ":\n"
                 + replayFile
@@ -251,6 +265,7 @@ public class LarvaReplayPageComp extends JPanel {
 
         builder.append( "Epic 2 replay-view presence confirmed" ).append( '\n' );
         builder.append( "Epic 3 placeholder chart confirmed" ).append( '\n' ).append( '\n' );
+        builder.append( buildCapabilitySection() ).append( '\n' );
         builder.append( "Integration mode: " ).append( summary.getIntegrationMode() ).append( '\n' );
         builder.append( "Replay source: " ).append( summary.getSourceDescription() ).append( '\n' );
         builder.append( "Replay file: " ).append( summary.getReplayFile() ).append( '\n' );
@@ -270,6 +285,31 @@ public class LarvaReplayPageComp extends JPanel {
                 .append( '\n' );
         builder.append( "Next goal: replace this placeholder interval with larva-specific replay output, and later attempt native chart registration if the public API allows it." );
 
+        return builder.toString();
+    }
+
+    /**
+     * Updates the short capability banner shown above the action buttons.
+     */
+    private void updateCapabilityLabel() {
+        final ChartIntegrationCapability capability = module.getChartIntegrationCapability();
+        capabilityLabel.setText( "<html><b>Epic 4:</b> " + capability.getIntegrationModeTitle() + "</html>" );
+    }
+
+    /**
+     * Builds the capability report section for the details area.
+     *
+     * @return rendered capability section
+     */
+    private String buildCapabilitySection() {
+        final ChartIntegrationCapability capability = module.getChartIntegrationCapability();
+        final StringBuilder builder = new StringBuilder();
+        builder.append( "Epic 4 native chart dropdown integration: " )
+                .append( capability.isNativeDropdownSupported() ? "supported" : "unsupported" )
+                .append( '\n' );
+        builder.append( capability.getExplanation() ).append( '\n' );
+        builder.append( "Technical evidence: " ).append( capability.getTechnicalEvidence() ).append( '\n' );
+        builder.append( "Recommended path: " ).append( capability.getRecommendedPath() ).append( '\n' );
         return builder.toString();
     }
 

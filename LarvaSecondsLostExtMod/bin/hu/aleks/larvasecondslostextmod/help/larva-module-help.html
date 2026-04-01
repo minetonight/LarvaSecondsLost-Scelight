@@ -10,8 +10,10 @@
         <li>Lifecycle logging is available for startup and shutdown verification.</li>
         <li>The module can analyze a replay on its own page, either by manual file selection or from the Replay Folder Monitor event stream.</li>
         <li>The module now renders a first chart-like timeline preview using a replay-derived placeholder interval.</li>
+        <li>The module now reports that native chart dropdown registration is not exposed by the public external module API.</li>
     </ul>
     <p>Direct injection into Scelight's internal replay analyzer page is not exposed by the public external module API, so replay diagnostics currently live on the module-owned Larva page.</p>
     <p>Real larva windows are still deferred to later epics, but the page layout is now ready to host them.</p>
+    <p>The native chart dropdown is currently treated as unsupported for a pure external module because Scelight builds it from internal chart enums and factories that are not part of the external API.</p>
 </body>
 </html>

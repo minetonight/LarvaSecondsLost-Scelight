@@ -35,6 +35,12 @@ public class LarvaSecondsLostModule extends BaseExtModule {
     /** Resolves the latest replay even if the replay-folder event was missed. */
     private LatestReplayResolver latestReplayResolver;
 
+    /** Detects native chart integration capability. */
+    private ChartIntegrationCapabilityDetector chartIntegrationCapabilityDetector;
+
+    /** Cached chart integration capability report. */
+    private ChartIntegrationCapability chartIntegrationCapability;
+
     /** Listener registered at the replay folder monitor. */
     private INewRepListener newRepListener;
 
@@ -55,6 +61,8 @@ public class LarvaSecondsLostModule extends BaseExtModule {
             loadResources();
             replaySummaryService = new ReplaySummaryService( this );
             latestReplayResolver = new LatestReplayResolver( this );
+            chartIntegrationCapabilityDetector = new ChartIntegrationCapabilityDetector();
+            chartIntegrationCapability = chartIntegrationCapabilityDetector.detect();
             installReplayMonitorListener();
             installReplayPage();
             logger.debug( manifest.getName() + " module started successfully." );
@@ -225,6 +233,15 @@ public class LarvaSecondsLostModule extends BaseExtModule {
      */
     ReplaySummary getLatestReplaySummary() {
         return latestReplaySummary;
+    }
+
+    /**
+     * Returns the cached chart integration capability report.
+     *
+     * @return chart integration capability report
+     */
+    ChartIntegrationCapability getChartIntegrationCapability() {
+        return chartIntegrationCapability;
     }
 
     @Override
