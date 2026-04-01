@@ -19,3 +19,6 @@ do not show charts for hatcheries that we not completed during building, that cr
 
 # extra feature - minerals
 in a hover over a missed larva, show current minerals and gas with blue and green numbers.
+
+# extra feature - lifetime
+the line of a hatchery starts from the time the building is completed and has a larva, not from time 0:00 of the match. same for the end of of the line - when the building is destroyed.
