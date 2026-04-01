@@ -2,6 +2,8 @@
 
 This project is the Epic 01 and Epic 02 baseline for the Scelight larva feature. It proves that an external module can be built, packaged, installed, enabled, observed, and given a replay-scoped fallback surface before chart integration is attempted.
 
+Epic 08 is now documented as the hardening and validation pass for that supported fallback path: replay-fixture scenarios and golden outputs exist, deterministic diagnostics can be compared against them, packaging remains reproducible through the SDK-style Ant flow, and the module still avoids unsupported native chart or Base Control integration.
+
 It now also includes the Epic 03 placeholder chart: a first normalized timeline-style visualization rendered on the `Larva` page from replay-derived timing data and per-hatchery placeholder rows when available.
 
 Epic 04 is now resolved as well: native registration into Scelight's built-in chart dropdown is treated as unsupported for a pure external module, so the module-owned fallback page remains the supported path.
@@ -38,6 +40,47 @@ The build uses the shared Scelight external module API jar from `../ScelightExtM
 2. Run `ant INSTALL_DEPLOYMENT`.
 3. The install target removes older copies of `mod-x/larva-seconds-lost` and unpacks the fresh deployment.
 4. In Scelight, enable the module from the Installed Modules page.
+
+## Publish or export the module to other users and computers
+
+Use the SDK-style deployment artifacts produced by `ant BUILD_RELEASE`:
+
+- `release/deployment/LarvaSecondsLost-<version>.zip` — the distributable archive
+- `release/deployment/module.xml` — the hosted update descriptor for Scelight-style published modules
+- `release/Scelight/mod-x/larva-seconds-lost/<version>/` — the unpacked module tree
+
+### Manual export to another computer
+
+This is the simplest distribution path for non-official module sharing.
+
+1. Run `ant BUILD_RELEASE`.
+2. Copy either:
+   - `release/deployment/LarvaSecondsLost-<version>.zip`, or
+   - the folder `release/Scelight/mod-x/larva-seconds-lost/<version>/`.
+3. On the target computer, install it in one of these ways:
+   - unzip `LarvaSecondsLost-<version>.zip` into the folder **that contains** the target `Scelight` folder, or
+   - manually copy `larva-seconds-lost/<version>/` under the target `Scelight/mod-x/` folder.
+4. Start Scelight and enable the module on the Installed Modules page.
+
+### Hosted publish for repeatable installs or updates
+
+This is the path to use when other users should download the module from a stable URL.
+
+1. Update [release/release.properties](release/release.properties):
+   - increment `version.major`, `version.minor`, or `version.revision`
+   - set `archiveBaseUrl` to the public HTTP or HTTPS directory where the deployment zip will be hosted
+2. Update [release/resources/Scelight-mod-x-manifest-template.xml](release/resources/Scelight-mod-x-manifest-template.xml) with real release metadata such as home page, short description, and longer HTML description.
+3. Run `ant BUILD_RELEASE`.
+4. Publish both generated files from [release/deployment](release/deployment):
+   - `LarvaSecondsLost-<version>.zip`
+   - `module.xml`
+5. Keep the `module.xml` URL stable. For a new release, upload the new zip and replace `module.xml` at the same URL.
+
+### Official-module style publishing note
+
+If the module is ever distributed through Scelight's official external-module listing flow, the Scelight operator needs the public URL of your hosted `module.xml`. The generated `module.xml` already contains the version, archive URL, SHA-256, archive size, and file list expected by that flow.
+
+See [docs/publishing-and-release.md](docs/publishing-and-release.md) for a step-by-step release guide.
 
 ## Story 01.07 zero-click diagnostic dump
 
@@ -270,4 +313,32 @@ How should the derived per-hatchery larva counts be converted into stable `3+ la
 ### Next technical question
 
 How should Epic 07's larva-window and missed-larva visualization be hardened and validated across replay fixtures and edge cases?
+
+## Epic 08 handoff
+
+### Proven now
+
+- Epic 08 now documents a replay-fixture catalog and diff-friendly golden outputs for simple openings, intermittent saturation, destroyed hatcheries, morph continuity, ambiguous assignment pressure, and normalized transition edge cases.
+- Epic 08 now uses a deterministic validation snapshot in the development dump so replay-analysis output, timeline-model output, and missed-larva marker output can be compared against fixture goldens without relying only on manual UI inspection.
+- Epic 08 now documents a concise reproducibility checklist covering build, release artifact inspection, installation, `Larva` page verification, and diagnostic verification.
+- Epic 08 now confirms that packaging and installation remain aligned with the SDK-style Ant flow through `ant BUILD_RELEASE` and `ant INSTALL_DEPLOYMENT`.
+- Epic 08 now keeps the supported rendering path explicit: the module-owned `Larva` page remains the supported surface, while native chart dropdown registration and Base Control augmentation remain unsupported through the public external module API.
+
+### Remaining limitations
+
+- Sparse replay resource snapshots may still yield partial hover context such as `unknown` minerals, gas, or supply for some timestamps even when the timeline output itself remains stable.
+- Ambiguous larva births are intentionally left ambiguous or unassigned instead of being forced into fabricated stable-looking hatchery windows.
+- The latest-replay folder-scan fallback still depends on a narrow reflective bridge to Scelight internals; the supported integration path remains the module-owned page, not that reflective fallback.
+- Native chart dropdown integration and native Base Control augmentation remain unsupported for a pure external module.
+
+### Developer validation references
+
+- Fixture overview: [docs/epic08-fixtures/README.md](docs/epic08-fixtures/README.md)
+- Fixture scenarios: [docs/epic08-fixtures/fixture-catalog.md](docs/epic08-fixtures/fixture-catalog.md)
+- Reproducibility and diagnostic checklist: [docs/validation-checklist.md](docs/validation-checklist.md)
+- Release and export instructions: [docs/publishing-and-release.md](docs/publishing-and-release.md)
+
+### Next technical question
+
+If any later work is pursued, the next question is optional polish rather than a blocked prerequisite: which UX improvements would most improve the supported module-owned `Larva` page without leaving the supported external-module integration path?
 
