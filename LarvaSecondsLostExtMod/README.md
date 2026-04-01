@@ -80,27 +80,27 @@ When the module is enabled:
 - The page can be reached from the main side menu while working with replays.
 - The page also reacts to monitored replay-folder events, and it now has a best-effort fallback that scans the same monitored replay folders Scelight uses for native "Quick Open Last Replay" behavior.
 
-## Epic 3 first chart
+## Epic 01S03 first chart
 
 - The `Larva` page now contains a module-owned timeline preview component.
 - The preview renders a replay-derived placeholder interval so chart painting, resizing, redraw, and replay switching are exercised before real larva windows are computed.
 - This remains separate from Scelight internals and can later be replaced by real larva windows without changing the replay page structure.
 
-## Epic 4 native chart dropdown integration
+## Epic 01S04 native chart dropdown integration
 
 - The public external module API does not expose a replay-chart registration hook.
 - Scelight's native chart selector is built from internal app classes such as `ChartType` and `ChartsComp`, not from an external registry.
 - Because that selector is backed by an internal enum and internal chart factory wiring, a pure external module cannot add a new `larva` entry there in a supported way.
 - The module now reports this capability result directly on the `Larva` page so later epics can continue on the supported fallback path.
 
-## Epic 5 Base Control chart augmentation
+## Epic 01S05 Base Control chart augmentation
 
 - The public external module API does not expose the internal Base Control chart or any supported callback to append extra rectangles to it.
 - Scelight constructs Base Control through internal app classes: `ChartType.BASE_CONTROL` selects `BaseControlChartFactory` inside `ChartsComp`, and that factory creates `BaseControlChart` instances backed by internal `BaseControlChartDataSet` objects.
 - Because those classes are internal and no external augmentation registry exists, a pure external module cannot extend Base Control in a supported way.
 - The module now reports this capability result directly on the `Larva` page so the separate Larva timeline remains the supported rendering path for later epics.
 
-## Epic 6 larva-to-hatchery assignment foundation
+## Epic 01S06 larva-to-hatchery assignment foundation
 
 - The module now parses hatchery-like tracker events for `Hatchery`, `Lair`, and `Hive`, preserving morph continuity on the same unit tag.
 - It tracks larva births from tracker events, and removes assigned larva again on generic tracker death or type-change events.
@@ -146,3 +146,14 @@ How should the derived per-hatchery larva counts be converted into stable 3+ lar
 ### Next technical question
 
 Where can a mod surface something during replay analysis?
+
+
+### Epic 02S01 replay integration review
+
+- Reviewed public extension points available to a pure external module: module lifecycle, page-level UI contribution, replay parser access, replay processor access, replay-folder monitor events, and general logging / diagnostics.
+- Reviewed non-public replay-analyzer internals conceptually and treated them as unsupported integration targets for the production path.
+- Conclusion: the public external module API exposes enough surface to add a replay-adjacent module page, but it does not expose a supported hook to inject UI directly into Scelight's internal replay analyzer tab lifecycle.
+- Supported Epic 02 path: keep replay interaction on the module-owned `Larva` page and load replay data there through the public replay parser API.
+- Rejected path for the supported implementation: reflection-based or internal-class coupling to replay-analyzer pages, chart factories, or chart enums.
+- Evidence used for the decision: the module can safely add pages, observe replay-folder events, and parse selected replays, while native replay-analyzer composition remains internal to Scelight.
+- Operational result: the `Larva` page is the stable replay-scoped fallback surface for Epic 02 and the base integration point for later timeline rendering.
