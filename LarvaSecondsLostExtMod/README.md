@@ -6,6 +6,8 @@ It now also includes the Epic 03 placeholder chart: a first timeline-style visua
 
 Epic 04 is now resolved as well: native registration into Scelight's built-in chart dropdown is treated as unsupported for a pure external module, so the module-owned fallback page remains the supported path.
 
+Epic 05 is now resolved too: augmenting Scelight's built-in Base Control chart with extra larva rectangles is also treated as unsupported for a pure external module, so the separate Larva timeline remains the supported path.
+
 ## SDK-style layout
 
 - `src/` - Java 7 source code and packaged resources.
@@ -61,6 +63,13 @@ When the module is enabled:
 - Because that selector is backed by an internal enum and internal chart factory wiring, a pure external module cannot add a new `larva` entry there in a supported way.
 - The module now reports this capability result directly on the `Larva` page so later epics can continue on the supported fallback path.
 
+## Epic 5 Base Control chart augmentation
+
+- The public external module API does not expose the internal Base Control chart or any supported callback to append extra rectangles to it.
+- Scelight constructs Base Control through internal app classes: `ChartType.BASE_CONTROL` selects `BaseControlChartFactory` inside `ChartsComp`, and that factory creates `BaseControlChart` instances backed by internal `BaseControlChartDataSet` objects.
+- Because those classes are internal and no external augmentation registry exists, a pure external module cannot extend Base Control in a supported way.
+- The module now reports this capability result directly on the `Larva` page so the separate Larva timeline remains the supported rendering path for later epics.
+
 ## Troubleshooting
 
 - If compilation fails, verify the API jar exists at `../ScelightExtModSDK/Scelight-ext-mod-api/1.5.2/lib/scelight-ext-mod-api-1.5.2.jar`.
@@ -78,12 +87,14 @@ When the module is enabled:
 - Replay diagnostics can be loaded on a module-owned fallback page.
 - A first chart-like replay timeline can be rendered on that fallback page.
 - Native chart dropdown integration is documented as unsupported through the public external module API.
+- Native Base Control chart augmentation is documented as unsupported through the public external module API.
 
 ### Still unknown
 
 - Which replay-analysis extension point is the correct place to collect larva state for a chart.
 - How to register a new chart option in the replay UI without depending on Scelight internals.
 - Whether a future native chart dropdown integration is exposed anywhere in the public external module API.
+- Whether a future native Base Control augmentation hook is exposed anywhere in the public external module API.
 - Whether unsupported reflection-based hacking of internal chart classes is worth considering. The current answer is no for the supported implementation path.
 
 ### Next technical question

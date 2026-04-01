@@ -41,6 +41,12 @@ public class LarvaSecondsLostModule extends BaseExtModule {
     /** Cached chart integration capability report. */
     private ChartIntegrationCapability chartIntegrationCapability;
 
+    /** Detects Base Control augmentation capability. */
+    private BaseControlAugmentationCapabilityDetector baseControlAugmentationCapabilityDetector;
+
+    /** Cached Base Control augmentation capability report. */
+    private BaseControlAugmentationCapability baseControlAugmentationCapability;
+
     /** Listener registered at the replay folder monitor. */
     private INewRepListener newRepListener;
 
@@ -63,6 +69,8 @@ public class LarvaSecondsLostModule extends BaseExtModule {
             latestReplayResolver = new LatestReplayResolver( this );
             chartIntegrationCapabilityDetector = new ChartIntegrationCapabilityDetector();
             chartIntegrationCapability = chartIntegrationCapabilityDetector.detect();
+            baseControlAugmentationCapabilityDetector = new BaseControlAugmentationCapabilityDetector();
+            baseControlAugmentationCapability = baseControlAugmentationCapabilityDetector.detect();
             installReplayMonitorListener();
             installReplayPage();
             logger.debug( manifest.getName() + " module started successfully." );
@@ -242,6 +250,15 @@ public class LarvaSecondsLostModule extends BaseExtModule {
      */
     ChartIntegrationCapability getChartIntegrationCapability() {
         return chartIntegrationCapability;
+    }
+
+    /**
+     * Returns the cached Base Control augmentation capability report.
+     *
+     * @return Base Control augmentation capability report
+     */
+    BaseControlAugmentationCapability getBaseControlAugmentationCapability() {
+        return baseControlAugmentationCapability;
     }
 
     @Override

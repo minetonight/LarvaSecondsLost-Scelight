@@ -194,6 +194,7 @@ public class LarvaReplayPageComp extends JPanel {
         detailsArea.setText( "Epic 2 fallback replay-view surface\n"
             + "Epic 3 now adds a first chart-like preview above the diagnostics text.\n"
             + "Epic 4 now confirms native chart dropdown integration is unsupported for pure external modules.\n"
+            + "Epic 5 now confirms native Base Control chart augmentation is unsupported for pure external modules.\n"
                 + "\n"
                 + "This page is the replay-scoped entry point currently available to the external module.\n"
                 + "\n"
@@ -264,7 +265,8 @@ public class LarvaReplayPageComp extends JPanel {
         final StringBuilder builder = new StringBuilder();
 
         builder.append( "Epic 2 replay-view presence confirmed" ).append( '\n' );
-        builder.append( "Epic 3 placeholder chart confirmed" ).append( '\n' ).append( '\n' );
+        builder.append( "Epic 3 placeholder chart confirmed" ).append( '\n' );
+        builder.append( "Epic 5 Base Control augmentation feasibility resolved" ).append( '\n' ).append( '\n' );
         builder.append( buildCapabilitySection() ).append( '\n' );
         builder.append( "Integration mode: " ).append( summary.getIntegrationMode() ).append( '\n' );
         builder.append( "Replay source: " ).append( summary.getSourceDescription() ).append( '\n' );
@@ -283,7 +285,7 @@ public class LarvaReplayPageComp extends JPanel {
                 .append( " (replay-derived placeholder interval)" )
                 .append( '\n' )
                 .append( '\n' );
-        builder.append( "Next goal: replace this placeholder interval with larva-specific replay output, and later attempt native chart registration if the public API allows it." );
+            builder.append( "Next goal: replace this placeholder interval with larva-specific replay output on the supported module-owned Larva timeline." );
 
         return builder.toString();
     }
@@ -293,7 +295,9 @@ public class LarvaReplayPageComp extends JPanel {
      */
     private void updateCapabilityLabel() {
         final ChartIntegrationCapability capability = module.getChartIntegrationCapability();
-        capabilityLabel.setText( "<html><b>Epic 4:</b> " + capability.getIntegrationModeTitle() + "</html>" );
+        final BaseControlAugmentationCapability baseControlCapability = module.getBaseControlAugmentationCapability();
+        capabilityLabel.setText( "<html><b>Epic 4:</b> " + capability.getIntegrationModeTitle() + "<br><b>Epic 5:</b> "
+                + baseControlCapability.getIntegrationModeTitle() + "</html>" );
     }
 
     /**
@@ -303,6 +307,7 @@ public class LarvaReplayPageComp extends JPanel {
      */
     private String buildCapabilitySection() {
         final ChartIntegrationCapability capability = module.getChartIntegrationCapability();
+        final BaseControlAugmentationCapability baseControlCapability = module.getBaseControlAugmentationCapability();
         final StringBuilder builder = new StringBuilder();
         builder.append( "Epic 4 native chart dropdown integration: " )
                 .append( capability.isNativeDropdownSupported() ? "supported" : "unsupported" )
@@ -310,6 +315,13 @@ public class LarvaReplayPageComp extends JPanel {
         builder.append( capability.getExplanation() ).append( '\n' );
         builder.append( "Technical evidence: " ).append( capability.getTechnicalEvidence() ).append( '\n' );
         builder.append( "Recommended path: " ).append( capability.getRecommendedPath() ).append( '\n' );
+        builder.append( '\n' );
+        builder.append( "Epic 5 native Base Control augmentation: " )
+            .append( baseControlCapability.isAugmentationSupported() ? "supported" : "unsupported" )
+            .append( '\n' );
+        builder.append( baseControlCapability.getExplanation() ).append( '\n' );
+        builder.append( "Technical evidence: " ).append( baseControlCapability.getTechnicalEvidence() ).append( '\n' );
+        builder.append( "Recommended path: " ).append( baseControlCapability.getRecommendedPath() ).append( '\n' );
         return builder.toString();
     }
 
