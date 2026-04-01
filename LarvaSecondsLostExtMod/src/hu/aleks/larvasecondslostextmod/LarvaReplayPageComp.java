@@ -150,9 +150,9 @@ public class LarvaReplayPageComp extends JPanel {
             @Override
             public void actionPerformed( final java.awt.event.ActionEvent event ) {
                 if ( currentReplayFile == null ) {
-                    final ReplaySummary latestSummary = module.getLatestReplaySummary();
+                    final LarvaReplayPageSummary latestSummary = module.getLatestReplaySummary();
                     if ( latestSummary != null )
-                        currentReplayFile = latestSummary.getReplayFile();
+                        currentReplayFile = latestSummary.getReplaySummary().getReplayFile();
                 }
 
                 if ( currentReplayFile == null ) {
@@ -234,9 +234,9 @@ public class LarvaReplayPageComp extends JPanel {
      *
      * @param summary replay summary to display
      */
-    void showSummary( final ReplaySummary summary ) {
-        currentReplayFile = summary.getReplayFile();
-        statusLabel.setText( "Replay diagnostics ready: " + summary.getReplayFile().getFileName() );
+    void showSummary( final LarvaReplayPageSummary summary ) {
+        currentReplayFile = summary.getReplaySummary().getReplayFile();
+        statusLabel.setText( "Replay diagnostics ready: " + summary.getReplaySummary().getReplayFile().getFileName() );
         updateCapabilityLabel();
         timelinePreviewComp.setSummary( summary );
         detailsArea.setText( buildSummaryText( summary ) );
@@ -268,24 +268,17 @@ public class LarvaReplayPageComp extends JPanel {
      * @param summary replay summary to render
      * @return rendered summary text
      */
-    private String buildSummaryText( final ReplaySummary summary ) {
+    private String buildSummaryText( final LarvaReplayPageSummary summary ) {
+        final ReplaySummary replaySummary = summary.getReplaySummary();
         final StringBuilder builder = new StringBuilder();
 
         builder.append( "Epic 2 replay-view presence confirmed" ).append( '\n' );
         builder.append( "Epic 3 placeholder chart confirmed" ).append( '\n' );
         builder.append( "Epic 5 Base Control augmentation feasibility resolved" ).append( '\n' );
         builder.append( "Epic 6 larva assignment foundation resolved" ).append( '\n' ).append( '\n' );
+        builder.append( buildReplayMetadataSection( replaySummary ) ).append( '\n' );
+        builder.append( buildPageDiagnosticsSection( summary ) ).append( '\n' );
         builder.append( buildCapabilitySection() ).append( '\n' );
-        builder.append( "Integration mode: " ).append( summary.getIntegrationMode() ).append( '\n' );
-        builder.append( "Replay source: " ).append( summary.getSourceDescription() ).append( '\n' );
-        builder.append( "Replay file: " ).append( summary.getReplayFile() ).append( '\n' );
-        builder.append( "Map: " ).append( summary.getMapTitle() ).append( '\n' );
-        builder.append( "Players: " ).append( summary.getPlayers() ).append( '\n' );
-        builder.append( "Winners: " ).append( summary.getWinners() ).append( '\n' );
-        builder.append( "Length: " ).append( summary.getLength() ).append( '\n' );
-        builder.append( "Replay end time: " ).append( summary.getReplayEndTime() ).append( '\n' );
-        builder.append( "Replay version: " ).append( summary.getReplayVersion() ).append( '\n' );
-        builder.append( "Base build: " ).append( summary.getBaseBuild() ).append( '\n' ).append( '\n' );
         builder.append( "Preview chart window: " )
                 .append( formatMs( summary.getPreviewWindowStartMs() ) )
                 .append( " - " )
@@ -297,6 +290,40 @@ public class LarvaReplayPageComp extends JPanel {
             builder.append( summary.getLarvaAnalysisReport().toDisplayText() ).append( '\n' ).append( '\n' );
         builder.append( "Next goal: convert these per-hatchery larva counts into real 3+ larva windows on the supported module-owned Larva timeline." );
 
+        return builder.toString();
+    }
+
+    /**
+     * Builds the replay metadata section.
+     *
+     * @param replaySummary core replay metadata summary
+     * @return rendered replay metadata section
+     */
+    private String buildReplayMetadataSection( final ReplaySummary replaySummary ) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append( "Replay metadata:" ).append( '\n' );
+        builder.append( "Replay source: " ).append( replaySummary.getSourceDescription() ).append( '\n' );
+        builder.append( "Replay file: " ).append( replaySummary.getReplayFile() ).append( '\n' );
+        builder.append( "Map: " ).append( replaySummary.getMapTitle() ).append( '\n' );
+        builder.append( "Players: " ).append( replaySummary.getPlayers() ).append( '\n' );
+        builder.append( "Winners: " ).append( replaySummary.getWinners() ).append( '\n' );
+        builder.append( "Length: " ).append( replaySummary.getLength() ).append( '\n' );
+        builder.append( "Replay end time: " ).append( replaySummary.getReplayEndTime() ).append( '\n' );
+        builder.append( "Replay version: " ).append( replaySummary.getReplayVersion() ).append( '\n' );
+        builder.append( "Base build: " ).append( replaySummary.getBaseBuild() ).append( '\n' );
+        return builder.toString();
+    }
+
+    /**
+     * Builds the page-specific diagnostics section.
+     *
+     * @param summary page-level replay diagnostics summary
+     * @return rendered page diagnostics section
+     */
+    private String buildPageDiagnosticsSection( final LarvaReplayPageSummary summary ) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append( "Larva page diagnostics:" ).append( '\n' );
+        builder.append( "Integration mode: " ).append( summary.getIntegrationMode() ).append( '\n' );
         return builder.toString();
     }
 

@@ -41,9 +41,9 @@ public class ReplaySummaryService {
      *
      * @param replayFile replay file to analyze
      * @param sourceDescription short description of how the replay was selected
-     * @return replay summary to display on the module page
+    * @return replay summary to display on the module page
      */
-    public ReplaySummary analyze( final Path replayFile, final String sourceDescription ) {
+    public LarvaReplayPageSummary analyze( final Path replayFile, final String sourceDescription ) {
         if ( replayFile == null )
             throw new IllegalArgumentException( "Replay file is required." );
 
@@ -78,11 +78,12 @@ public class ReplaySummaryService {
             + larvaAnalysisReport.getLarvaBirthCount() + ", assigned=" + larvaAnalysisReport.getAssignedLarvaCount() + ", unassigned="
             + larvaAnalysisReport.getUnassignedLarvaCount() + ", fullReplayParseUsed=" + larvaAnalysisReport.isFullReplayParseUsed() );
 
-        return new ReplaySummary( replayFile, safe( sourceDescription, "Unknown" ), safe( details == null ? null : details.getTitle(), "Unknown map" ),
+        final ReplaySummary replaySummary = new ReplaySummary( replayFile, safe( sourceDescription, "Unknown" ),
+            safe( details == null ? null : details.getTitle(), "Unknown map" ),
                 safe( repProc.getPlayersGrouped(), "Unknown players" ), safe( repProc.getWinnersString(), "Unknown / undecided" ),
             formatDuration( lengthMs ), lengthMs, formatDate( replayEndTime ), replay.getHeader().versionString( true ),
-            String.valueOf( replay.getHeader().getBaseBuild() ), FALLBACK_INTEGRATION_MODE, previewWindowStartMs, previewWindowEndMs,
-            larvaAnalysisReport );
+            String.valueOf( replay.getHeader().getBaseBuild() ) );
+        return new LarvaReplayPageSummary( replaySummary, FALLBACK_INTEGRATION_MODE, previewWindowStartMs, previewWindowEndMs, larvaAnalysisReport );
     }
 
     /**

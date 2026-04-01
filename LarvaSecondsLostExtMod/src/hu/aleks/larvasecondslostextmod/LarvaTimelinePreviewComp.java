@@ -30,7 +30,7 @@ public class LarvaTimelinePreviewComp extends JPanel {
     private static final Color OUTLINE_COLOR = new Color( 90, 90, 90 );
 
     /** Current summary to render. */
-    private ReplaySummary summary;
+    private LarvaReplayPageSummary summary;
 
     /**
      * Creates a new timeline preview component.
@@ -48,7 +48,7 @@ public class LarvaTimelinePreviewComp extends JPanel {
      *
      * @param summary replay summary to render; may be <code>null</code>
      */
-    public void setSummary( final ReplaySummary summary ) {
+    public void setSummary( final LarvaReplayPageSummary summary ) {
         this.summary = summary;
         repaint();
     }
@@ -67,10 +67,12 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.setColor( OUTLINE_COLOR );
         g.drawString( "Epic 03 preview timeline", 10, 16 );
 
-        if ( summary == null || summary.getLengthMs() <= 0L ) {
+        if ( summary == null || summary.getReplaySummary() == null || summary.getReplaySummary().getLengthMs() <= 0L ) {
             g.drawString( "Load a replay to render a placeholder time window.", 10, 40 );
             return;
         }
+
+        final ReplaySummary replaySummary = summary.getReplaySummary();
 
         final int railLeft = 12;
         final int railTop = 46;
@@ -82,8 +84,8 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.setColor( OUTLINE_COLOR );
         g.drawRoundRect( railLeft, railTop, railWidth, railHeight, 12, 12 );
 
-        final int startX = railLeft + scaleToWidth( summary.getPreviewWindowStartMs(), summary.getLengthMs(), railWidth );
-        final int endX = railLeft + scaleToWidth( summary.getPreviewWindowEndMs(), summary.getLengthMs(), railWidth );
+        final int startX = railLeft + scaleToWidth( summary.getPreviewWindowStartMs(), replaySummary.getLengthMs(), railWidth );
+        final int endX = railLeft + scaleToWidth( summary.getPreviewWindowEndMs(), replaySummary.getLengthMs(), railWidth );
         final int windowWidth = Math.max( 8, endX - startX );
 
         g.setColor( WINDOW_COLOR );
@@ -97,7 +99,7 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.drawLine( railLeft + railWidth, railTop + railHeight + 6, railLeft + railWidth, railTop + railHeight + 14 );
 
         final String startLabel = "0:00";
-        final String endLabel = summary.getLength();
+        final String endLabel = replaySummary.getLength();
         g.drawString( startLabel, railLeft, height - 12 );
         g.drawString( endLabel, railLeft + railWidth - fm.stringWidth( endLabel ), height - 12 );
 

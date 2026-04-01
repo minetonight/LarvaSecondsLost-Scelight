@@ -3,7 +3,11 @@ package hu.aleks.larvasecondslostextmod;
 import java.nio.file.Path;
 
 /**
- * Immutable replay diagnostics summary shown on the module-owned replay page.
+ * Immutable core replay metadata summary.
+ *
+ * <p>This model intentionally contains only replay-level metadata that is independent from
+ * module-owned visualization and larva-analysis diagnostics. Page-specific diagnostics are
+ * carried separately by {@link LarvaReplayPageSummary}.</p>
  */
 public class ReplaySummary {
 
@@ -37,18 +41,6 @@ public class ReplaySummary {
     /** Base build string. */
     private final String baseBuild;
 
-    /** Diagnostic note describing the fallback integration. */
-    private final String integrationMode;
-
-    /** Preview window start in milliseconds. */
-    private final long previewWindowStartMs;
-
-    /** Preview window end in milliseconds. */
-    private final long previewWindowEndMs;
-
-    /** Epic 6 larva analysis foundation report. */
-    private final LarvaAnalysisReport larvaAnalysisReport;
-
     /**
      * Creates a new replay summary.
      *
@@ -58,14 +50,13 @@ public class ReplaySummary {
      * @param players grouped player string
      * @param winners winners string
      * @param length replay length
+         * @param lengthMs replay length in milliseconds
      * @param replayEndTime replay end time
      * @param replayVersion replay version string
      * @param baseBuild replay base build string
-     * @param integrationMode fallback integration mode description
      */
     public ReplaySummary( final Path replayFile, final String sourceDescription, final String mapTitle, final String players, final String winners,
-            final String length, final long lengthMs, final String replayEndTime, final String replayVersion, final String baseBuild,
-            final String integrationMode, final long previewWindowStartMs, final long previewWindowEndMs, final LarvaAnalysisReport larvaAnalysisReport ) {
+             final String length, final long lengthMs, final String replayEndTime, final String replayVersion, final String baseBuild ) {
         this.replayFile = replayFile;
         this.sourceDescription = sourceDescription;
         this.mapTitle = mapTitle;
@@ -76,10 +67,6 @@ public class ReplaySummary {
         this.replayEndTime = replayEndTime;
         this.replayVersion = replayVersion;
         this.baseBuild = baseBuild;
-        this.integrationMode = integrationMode;
-        this.previewWindowStartMs = previewWindowStartMs;
-        this.previewWindowEndMs = previewWindowEndMs;
-        this.larvaAnalysisReport = larvaAnalysisReport;
     }
 
     public Path getReplayFile() {
@@ -120,22 +107,6 @@ public class ReplaySummary {
 
     public String getBaseBuild() {
         return baseBuild;
-    }
-
-    public String getIntegrationMode() {
-        return integrationMode;
-    }
-
-    public long getPreviewWindowStartMs() {
-        return previewWindowStartMs;
-    }
-
-    public long getPreviewWindowEndMs() {
-        return previewWindowEndMs;
-    }
-
-    public LarvaAnalysisReport getLarvaAnalysisReport() {
-        return larvaAnalysisReport;
     }
 
 }

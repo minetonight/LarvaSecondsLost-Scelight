@@ -154,7 +154,7 @@ public class DevDiagnosticDumpWriter {
      *
      * @param summary replay summary to dump
      */
-    public synchronized void recordAnalysisSuccess( final ReplaySummary summary ) {
+    public synchronized void recordAnalysisSuccess( final LarvaReplayPageSummary summary ) {
         if ( !enabled )
             return;
 
@@ -205,18 +205,19 @@ public class DevDiagnosticDumpWriter {
      * @param summary replay summary
      * @return formatted success details
      */
-    private String buildSuccessDetails( final ReplaySummary summary ) {
+    private String buildSuccessDetails( final LarvaReplayPageSummary summary ) {
+        final ReplaySummary replaySummary = summary.getReplaySummary();
         final StringBuilder builder = new StringBuilder();
         builder.append( "Replay analysis completed successfully." ).append( '\n' );
-        builder.append( "Replay source: " ).append( summary.getSourceDescription() ).append( '\n' );
-        builder.append( "Replay file: " ).append( summary.getReplayFile() ).append( '\n' );
-        builder.append( "Map: " ).append( summary.getMapTitle() ).append( '\n' );
-        builder.append( "Players: " ).append( summary.getPlayers() ).append( '\n' );
-        builder.append( "Winners: " ).append( summary.getWinners() ).append( '\n' );
-        builder.append( "Length: " ).append( summary.getLength() ).append( '\n' );
-        builder.append( "Replay end time: " ).append( summary.getReplayEndTime() ).append( '\n' );
-        builder.append( "Replay version: " ).append( summary.getReplayVersion() ).append( '\n' );
-        builder.append( "Base build: " ).append( summary.getBaseBuild() ).append( '\n' );
+        builder.append( "Replay source: " ).append( replaySummary.getSourceDescription() ).append( '\n' );
+        builder.append( "Replay file: " ).append( replaySummary.getReplayFile() ).append( '\n' );
+        builder.append( "Map: " ).append( replaySummary.getMapTitle() ).append( '\n' );
+        builder.append( "Players: " ).append( replaySummary.getPlayers() ).append( '\n' );
+        builder.append( "Winners: " ).append( replaySummary.getWinners() ).append( '\n' );
+        builder.append( "Length: " ).append( replaySummary.getLength() ).append( '\n' );
+        builder.append( "Replay end time: " ).append( replaySummary.getReplayEndTime() ).append( '\n' );
+        builder.append( "Replay version: " ).append( replaySummary.getReplayVersion() ).append( '\n' );
+        builder.append( "Base build: " ).append( replaySummary.getBaseBuild() ).append( '\n' );
         builder.append( "Integration mode: " ).append( summary.getIntegrationMode() ).append( '\n' );
         if ( summary.getLarvaAnalysisReport() != null )
             builder.append( '\n' ).append( summary.getLarvaAnalysisReport().toDisplayText() );

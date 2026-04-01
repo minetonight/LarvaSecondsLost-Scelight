@@ -111,6 +111,7 @@ This story intentionally starts with lightweight replay diagnostics. It is a bri
 - The module listens for newly detected replay files through the replay-folder monitor if the API exposes it.
 - The module remembers the latest replay candidate for later analysis.
 - If the monitor event is unavailable or missed, the module can still resolve a best-effort latest replay candidate from the monitored replay folders.
+- On click of the module in the main navigation the latest replay is loaded automatically.
 - The replay source is identified in the diagnostics output.
 
 ### Notes

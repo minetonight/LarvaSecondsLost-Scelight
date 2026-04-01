@@ -60,7 +60,7 @@ public class LarvaSecondsLostModule extends BaseExtModule {
     private volatile Path lastDetectedReplayPath;
 
     /** Latest successful replay summary produced by this module. */
-    private volatile ReplaySummary latestReplaySummary;
+    private volatile LarvaReplayPageSummary latestReplaySummary;
 
     /** Replay page component if the page was instantiated. */
     private volatile LarvaReplayPageComp replayPageComp;
@@ -176,7 +176,7 @@ public class LarvaSecondsLostModule extends BaseExtModule {
             @Override
             public void run() {
                 try {
-                    final ReplaySummary summary = replaySummaryService.analyze( replayFile, sourceDescription );
+                    final LarvaReplayPageSummary summary = replaySummaryService.analyze( replayFile, sourceDescription );
                     latestReplaySummary = summary;
                     refreshReplayPage( summary );
                     if ( devDiagnosticDumpWriter != null && devDiagnosticDumpWriter.isEnabled() )
@@ -200,7 +200,7 @@ public class LarvaSecondsLostModule extends BaseExtModule {
      *
      * @param summary replay summary to display
      */
-    private void refreshReplayPage( final ReplaySummary summary ) {
+    private void refreshReplayPage( final LarvaReplayPageSummary summary ) {
         guiUtils.runInEDT( new Runnable() {
             @Override
             public void run() {
@@ -272,7 +272,7 @@ public class LarvaSecondsLostModule extends BaseExtModule {
      *
      * @return the latest replay summary; may be <code>null</code>
      */
-    ReplaySummary getLatestReplaySummary() {
+    LarvaReplayPageSummary getLatestReplaySummary() {
         return latestReplaySummary;
     }
 
