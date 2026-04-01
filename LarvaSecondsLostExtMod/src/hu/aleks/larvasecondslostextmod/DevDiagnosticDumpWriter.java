@@ -19,6 +19,9 @@ import java.util.List;
  */
 public class DevDiagnosticDumpWriter {
 
+    /** Deterministic formatter used for fixture/golden validation snapshots. */
+    private final LarvaTimelineGoldenFormatter timelineGoldenFormatter = new LarvaTimelineGoldenFormatter();
+
     /** System property that enables the dump file. */
     public static final String PROP_ENABLED = "larva.dev.dump.enabled";
 
@@ -277,6 +280,8 @@ public class DevDiagnosticDumpWriter {
         builder.append( "- Replay-fixture validation and golden-output coverage." ).append( '\n' );
         builder.append( "- Final documentation cleanup." ).append( '\n' );
         builder.append( "Next technical question: how should Epic 07's larva-window and missed-larva visualization be hardened and validated across replay fixtures and edge cases?" ).append( '\n' );
+        builder.append( '\n' ).append( "Deterministic validation snapshot" ).append( '\n' );
+        builder.append( timelineGoldenFormatter.format( summary ) ).append( '\n' );
         if ( summary.getLarvaAnalysisReport() != null )
             builder.append( '\n' ).append( summary.getLarvaAnalysisReport().toDisplayText() );
         return builder.toString();

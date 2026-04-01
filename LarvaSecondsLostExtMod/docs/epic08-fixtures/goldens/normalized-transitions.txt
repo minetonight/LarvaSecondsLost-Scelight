@@ -1,0 +1,11 @@
+formatVersion=1
+replay.map=Fixture 06 — out-of-order or duplicate transitions
+replay.players=validation fixture
+replay.winners=n/a
+replay.length=n/a
+timeline.mode=Supported module-owned Larva page fallback
+row[0].segmentCount=chronological-only
+row[0].markerCount=monotonic-only
+analysis.ambiguousLarva=n/a
+analysis.noEligibleLarva=n/a
+note=duplicate loop updates collapse to one effective state, zero-length windows are absent, and markers never move backward

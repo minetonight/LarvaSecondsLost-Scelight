@@ -1,0 +1,14 @@
+formatVersion=1
+replay.map=Fixture 03 — hatchery destroyed before replay end
+replay.players=Zerg A vs Terran B
+replay.winners=Terran B
+replay.length=8:00
+timeline.mode=Supported module-owned Larva page fallback
+row[0].group=Zerg A
+row[0].label=Lair (tag 17)
+row[0].rangeMs=90000-255000
+row[0].segmentCount=2
+row[0].markerCount=1
+analysis.ambiguousLarva=0
+analysis.noEligibleLarva=0
+note=row must stop at hatchery death and never extend to replay end

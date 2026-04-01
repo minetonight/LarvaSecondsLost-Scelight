@@ -97,18 +97,22 @@ public class LarvaTimelineModelBuilder {
             return null;
 
         final List< LarvaSaturationWindow > saturationWindowList = saturationWindowCalculator.buildWindows( timeline, replayLengthMs );
+        final String playerName = safeText( timeline.getPlayerName(), "Unknown player" );
+        final String hatcheryType = safeText( timeline.getHatcheryType(), "Hatchery" );
+        final String hatcheryTagText = safeText( timeline.getHatcheryTagText(), String.valueOf( timeline.getHatcheryTag() ) );
+
         final List< LarvaTimelineMarker > markerList = attachMarkerHoverData( missedLarvaMarkerCalculator.buildMarkers( saturationWindowList ),
-            timeline.getPlayerName(), larvaAnalysisReport );
+            playerName, larvaAnalysisReport );
 
         final List< LarvaTimelineSegment > segmentList = new ArrayList<>();
         for ( final LarvaSaturationWindow window : saturationWindowList )
             segmentList.add( new LarvaTimelineSegment( window.getStartMs(), window.getEndMs(),
                 "3+ larva " + window.getStartTimeLabel() + "-" + window.getEndTimeLabel(), LarvaTimelineSegment.Kind.SATURATION_WINDOW,
-                buildWindowTooltipText( window, timeline.getPlayerName(), larvaAnalysisReport ) ) );
+                buildWindowTooltipText( window, playerName, larvaAnalysisReport ) ) );
 
-        final String rowLabel = timeline.getHatcheryType() + " (tag " + timeline.getHatcheryTagText() + ")";
+        final String rowLabel = hatcheryType + " (tag " + hatcheryTagText + ")";
         final String detailLabel = markerList.size() + POTENTIAL_LARVA_MISSED_SUFFIX;
-        return new LarvaTimelineRow( timeline.getPlayerName(), rowLabel, detailLabel, startMs, endMs, markerList.size(), segmentList, markerList );
+        return new LarvaTimelineRow( playerName, rowLabel, detailLabel, startMs, endMs, markerList.size(), segmentList, markerList );
     }
 
     /**

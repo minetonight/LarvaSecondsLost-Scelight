@@ -318,10 +318,12 @@ public class LarvaReplayAnalyzer {
         Collections.sort( timelineList, new Comparator< HatcheryLarvaTimeline >() {
             @Override
             public int compare( final HatcheryLarvaTimeline left, final HatcheryLarvaTimeline right ) {
-                final int playerCompare = left.getPlayerName().compareToIgnoreCase( right.getPlayerName() );
-                return playerCompare != 0 ? playerCompare : left.getHatcheryTagText().compareToIgnoreCase( right.getHatcheryTagText() );
+                final int playerCompare = compareIgnoreCaseSafe( left.getPlayerName(), right.getPlayerName() );
+                return playerCompare != 0 ? playerCompare : compareIgnoreCaseSafe( left.getHatcheryTagText(), right.getHatcheryTagText() );
             }
         } );
+
+        sortResourceSnapshotsByLoop( resourceSnapshotsByPlayerName );
 
         return new LarvaAnalysisReport( calibration, timelineList, hatcheryByTag.size(), larvaBirthCount, assignedLarvaCount, unassignedLarvaCount,
             ambiguousLarvaCount, noEligibleHatcheryLarvaCount,
@@ -369,7 +371,7 @@ public class LarvaReplayAnalyzer {
                 final IBaseUnitEvent baseUnitEvent = (IBaseUnitEvent) event;
                 final String unitType = toStringValue( baseUnitEvent.getUnitTypeName() );
                 final Integer playerId = firstNonNull( baseUnitEvent.getControlPlayerId(), baseUnitEvent.getUpkeepPlayerId() );
-                if ( playerId == null )
+                if ( playerId == null || baseUnitEvent.getXCoord() == null || baseUnitEvent.getYCoord() == null )
                     continue;
 
                 if ( isHatcheryLike( unitType ) )
@@ -478,10 +480,42 @@ public class LarvaReplayAnalyzer {
             return "Unknown player";
 
         final IUser[] usersByPlayerId = repProc.getUsersByPlayerId();
+        if ( usersByPlayerId == null )
+            return "Player " + playerId;
         if ( playerId.intValue() < 0 || playerId.intValue() >= usersByPlayerId.length || usersByPlayerId[ playerId.intValue() ] == null )
             return "Player " + playerId;
 
         return usersByPlayerId[ playerId.intValue() ].getName();
+    }
+
+    /**
+     * Sorts resource snapshots per player so sparse or slightly out-of-order tracker samples remain
+     * deterministic for later hover lookup and validation output.
+     *
+     * @param resourceSnapshotsByPlayerName snapshots to sort in place
+     */
+    private void sortResourceSnapshotsByLoop( final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName ) {
+        for ( final List< LarvaPlayerResourceSnapshot > snapshotList : resourceSnapshotsByPlayerName.values() ) {
+            Collections.sort( snapshotList, new Comparator< LarvaPlayerResourceSnapshot >() {
+                @Override
+                public int compare( final LarvaPlayerResourceSnapshot left, final LarvaPlayerResourceSnapshot right ) {
+                    return left.getLoop() < right.getLoop() ? -1 : left.getLoop() == right.getLoop() ? 0 : 1;
+                }
+            } );
+        }
+    }
+
+    /**
+     * Null-safe text comparison for deterministic sorting.
+     *
+     * @param left left text
+     * @param right right text
+     * @return comparator result
+     */
+    private int compareIgnoreCaseSafe( final String left, final String right ) {
+        final String safeLeft = left == null ? "" : left;
+        final String safeRight = right == null ? "" : right;
+        return safeLeft.compareToIgnoreCase( safeRight );
     }
 
     /**
@@ -745,7 +779,36 @@ public class LarvaReplayAnalyzer {
         private HatcheryLarvaTimeline toTimeline( final IRepProcessor repProc ) {
             return new HatcheryLarvaTimeline( hatcheryTag, hatcheryTagText, playerName == null ? resolveFallbackPlayerName( repProc, playerId ) : playerName,
                     hatcheryType, completed, completionLoop, completionTimeLabel, firstLarvaLoop, firstLarvaTimeLabel, destroyedLoop, destroyedTimeLabel,
-                    countPointList, maxLarvaCount, directAssignmentCount, injectCorrelatedAssignmentCount, heuristicAssignmentCount );
+                    normalizePointList(), maxLarvaCount, directAssignmentCount, injectCorrelatedAssignmentCount, heuristicAssignmentCount );
+        }
+
+        /**
+         * Produces a normalized count-point list so downstream window calculations do not depend on
+         * tracker event ordering quirks.
+         *
+         * @return normalized point list
+         */
+        private List< HatcheryLarvaTimeline.CountPoint > normalizePointList() {
+            if ( countPointList.isEmpty() )
+                return countPointList;
+
+            final List< HatcheryLarvaTimeline.CountPoint > normalizedPointList = new ArrayList<>( countPointList );
+            Collections.sort( normalizedPointList, new Comparator< HatcheryLarvaTimeline.CountPoint >() {
+                @Override
+                public int compare( final HatcheryLarvaTimeline.CountPoint left, final HatcheryLarvaTimeline.CountPoint right ) {
+                    return left.getLoop() < right.getLoop() ? -1 : left.getLoop() == right.getLoop() ? 0 : 1;
+                }
+            } );
+
+            final List< HatcheryLarvaTimeline.CountPoint > deduplicatedPointList = new ArrayList<>( normalizedPointList.size() );
+            for ( final HatcheryLarvaTimeline.CountPoint point : normalizedPointList ) {
+                if ( !deduplicatedPointList.isEmpty() && deduplicatedPointList.get( deduplicatedPointList.size() - 1 ).getLoop() == point.getLoop() )
+                    deduplicatedPointList.set( deduplicatedPointList.size() - 1, point );
+                else
+                    deduplicatedPointList.add( point );
+            }
+
+            return deduplicatedPointList;
         }
 
         /**
@@ -759,6 +822,8 @@ public class LarvaReplayAnalyzer {
             if ( playerId == null )
                 return "Unknown player";
             final IUser[] usersByPlayerId = repProc.getUsersByPlayerId();
+            if ( usersByPlayerId == null )
+                return "Player " + playerId;
             return playerId.intValue() >= 0 && playerId.intValue() < usersByPlayerId.length && usersByPlayerId[ playerId.intValue() ] != null
                     ? usersByPlayerId[ playerId.intValue() ].getName()
                     : "Player " + playerId;

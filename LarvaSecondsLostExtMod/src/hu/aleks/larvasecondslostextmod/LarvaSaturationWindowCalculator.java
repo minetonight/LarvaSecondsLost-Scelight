@@ -1,6 +1,7 @@
 package hu.aleks.larvasecondslostextmod;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,10 +66,14 @@ public class LarvaSaturationWindowCalculator {
         if ( visibleStartLoop < 0 || visibleEndLoop <= visibleStartLoop )
             return Collections.emptyList();
 
+        final List< HatcheryLarvaTimeline.CountPoint > pointList = normalizeCountPoints( timeline.getCountPointList(), visibleEndLoop );
+        if ( pointList.isEmpty() )
+            return Collections.emptyList();
+
         final List< LarvaSaturationWindow > windowList = new ArrayList<>();
         Integer openWindowStartLoop = null;
 
-        for ( final HatcheryLarvaTimeline.CountPoint point : timeline.getCountPointList() ) {
+        for ( final HatcheryLarvaTimeline.CountPoint point : pointList ) {
             if ( point.getLoop() > visibleEndLoop )
                 break;
 
@@ -86,6 +91,47 @@ public class LarvaSaturationWindowCalculator {
             addWindow( windowList, openWindowStartLoop.intValue(), visibleEndLoop );
 
         return windowList;
+    }
+
+    /**
+     * Normalizes count points so downstream calculations stay deterministic even if replay data
+     * contains duplicate loops, sparse tails, or slightly out-of-order transitions.
+     *
+     * @param originalPointList raw count points
+     * @param visibleEndLoop visible row end loop
+     * @return normalized count points sorted by loop and deduplicated by last value per loop
+     */
+    private List< HatcheryLarvaTimeline.CountPoint > normalizeCountPoints( final List< HatcheryLarvaTimeline.CountPoint > originalPointList,
+            final int visibleEndLoop ) {
+        if ( originalPointList == null || originalPointList.isEmpty() )
+            return Collections.emptyList();
+
+        final List< HatcheryLarvaTimeline.CountPoint > sortedPointList = new ArrayList<>();
+        for ( final HatcheryLarvaTimeline.CountPoint point : originalPointList ) {
+            if ( point == null || point.getLoop() < 0 || point.getLoop() > visibleEndLoop )
+                continue;
+            sortedPointList.add( point );
+        }
+
+        if ( sortedPointList.isEmpty() )
+            return Collections.emptyList();
+
+        Collections.sort( sortedPointList, new Comparator< HatcheryLarvaTimeline.CountPoint >() {
+            @Override
+            public int compare( final HatcheryLarvaTimeline.CountPoint left, final HatcheryLarvaTimeline.CountPoint right ) {
+                return left.getLoop() < right.getLoop() ? -1 : left.getLoop() == right.getLoop() ? 0 : 1;
+            }
+        } );
+
+        final List< HatcheryLarvaTimeline.CountPoint > normalizedPointList = new ArrayList<>( sortedPointList.size() );
+        for ( final HatcheryLarvaTimeline.CountPoint point : sortedPointList ) {
+            if ( !normalizedPointList.isEmpty() && normalizedPointList.get( normalizedPointList.size() - 1 ).getLoop() == point.getLoop() )
+                normalizedPointList.set( normalizedPointList.size() - 1, point );
+            else
+                normalizedPointList.add( point );
+        }
+
+        return normalizedPointList;
     }
 
     /**

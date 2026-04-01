@@ -1,0 +1,16 @@
+formatVersion=1
+replay.map=Fixture 02 — intermittent saturation across multiple windows
+replay.players=Zerg A vs Protoss B
+replay.winners=Zerg A
+replay.length=6:00
+timeline.mode=Supported module-owned Larva page fallback
+row[0].group=Zerg A
+row[0].label=Hatchery (tag 1)
+row[0].missedLarvaCount=3
+row[0].segmentCount=3
+row[0].segment[0].kind=SATURATION_WINDOW
+row[0].segment[1].kind=SATURATION_WINDOW
+row[0].segment[2].kind=SATURATION_WINDOW
+row[0].markerCount=3
+analysis.ambiguousLarva=0
+analysis.noEligibleLarva=0

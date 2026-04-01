@@ -1,0 +1,12 @@
+formatVersion=1
+replay.map=Fixture 05 — ambiguous multi-hatchery assignment pressure
+replay.players=Zerg A vs Terran B
+replay.winners=Zerg A
+replay.length=7:10
+timeline.mode=Supported module-owned Larva page fallback
+row[0].group=Zerg A
+row[0].segmentCount=1
+row[0].markerCount=1
+analysis.ambiguousLarva=1+
+analysis.noEligibleLarva=0+
+note=ambiguous larva must remain unassigned instead of creating fabricated extra windows

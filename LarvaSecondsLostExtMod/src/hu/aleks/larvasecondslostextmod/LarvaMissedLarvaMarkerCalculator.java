@@ -1,6 +1,7 @@
 package hu.aleks.larvasecondslostextmod;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,11 +26,15 @@ public class LarvaMissedLarvaMarkerCalculator {
         if ( saturationWindowList == null || saturationWindowList.isEmpty() )
             return Collections.emptyList();
 
+        final List< LarvaSaturationWindow > normalizedWindowList = normalizeWindows( saturationWindowList );
+        if ( normalizedWindowList.isEmpty() )
+            return Collections.emptyList();
+
         final List< LarvaTimelineMarker > markerList = new ArrayList<>();
         int accumulatedLoops = 0;
         int missedLarvaCount = 0;
 
-        for ( final LarvaSaturationWindow window : saturationWindowList ) {
+        for ( final LarvaSaturationWindow window : normalizedWindowList ) {
             final int windowDurationLoops = window.getEndLoop() - window.getStartLoop();
             if ( windowDurationLoops <= 0 )
                 continue;
@@ -52,6 +57,63 @@ public class LarvaMissedLarvaMarkerCalculator {
         }
 
         return markerList;
+    }
+
+    /**
+     * Normalizes and merges windows before threshold calculation so replay truncation or duplicate
+     * transitions cannot double-count missed-larva markers.
+     *
+     * @param originalWindowList original saturation windows
+     * @return normalized, merged windows in chronological order
+     */
+    private List< LarvaSaturationWindow > normalizeWindows( final List< LarvaSaturationWindow > originalWindowList ) {
+        final List< LarvaSaturationWindow > sortedWindowList = new ArrayList<>();
+        for ( final LarvaSaturationWindow window : originalWindowList ) {
+            if ( window == null || window.getEndLoop() <= window.getStartLoop() || window.getStartLoop() < 0 )
+                continue;
+            sortedWindowList.add( window );
+        }
+
+        if ( sortedWindowList.isEmpty() )
+            return Collections.emptyList();
+
+        Collections.sort( sortedWindowList, new Comparator< LarvaSaturationWindow >() {
+            @Override
+            public int compare( final LarvaSaturationWindow left, final LarvaSaturationWindow right ) {
+                if ( left.getStartLoop() != right.getStartLoop() )
+                    return left.getStartLoop() < right.getStartLoop() ? -1 : 1;
+                return left.getEndLoop() < right.getEndLoop() ? -1 : left.getEndLoop() == right.getEndLoop() ? 0 : 1;
+            }
+        } );
+
+        final List< LarvaSaturationWindow > normalizedWindowList = new ArrayList<>();
+        LarvaSaturationWindow current = sortedWindowList.get( 0 );
+        for ( int i = 1; i < sortedWindowList.size(); i++ ) {
+            final LarvaSaturationWindow next = sortedWindowList.get( i );
+            if ( next.getStartLoop() <= current.getEndLoop() )
+                current = mergeWindows( current, next );
+            else {
+                normalizedWindowList.add( current );
+                current = next;
+            }
+        }
+        normalizedWindowList.add( current );
+
+        return normalizedWindowList;
+    }
+
+    /**
+     * Merges two overlapping or abutting saturation windows.
+     *
+     * @param current current merged window
+     * @param next next window to merge
+     * @return merged window
+     */
+    private LarvaSaturationWindow mergeWindows( final LarvaSaturationWindow current, final LarvaSaturationWindow next ) {
+        final int startLoop = Math.min( current.getStartLoop(), next.getStartLoop() );
+        final int endLoop = Math.max( current.getEndLoop(), next.getEndLoop() );
+        return new LarvaSaturationWindow( startLoop, endLoop, loopsToMs( startLoop ), loopsToMs( endLoop ),
+                formatLoopTime( startLoop ), formatLoopTime( endLoop ) );
     }
 
     /**

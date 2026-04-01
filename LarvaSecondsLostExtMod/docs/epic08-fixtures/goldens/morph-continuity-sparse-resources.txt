@@ -1,0 +1,13 @@
+formatVersion=1
+replay.map=Fixture 04 — morph continuity and sparse resource snapshots
+replay.players=Zerg A vs Zerg B
+replay.winners=Zerg A
+replay.length=9:15
+timeline.mode=Supported module-owned Larva page fallback
+row[0].group=Zerg A
+row[0].label=Hive (tag 23)
+row[0].segmentCount=2
+row[0].markerCount=2
+analysis.ambiguousLarva=0
+analysis.noEligibleLarva=0
+note=resource hover data may be partial but row continuity must survive morphs on the same tag
