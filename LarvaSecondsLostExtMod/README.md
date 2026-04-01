@@ -73,12 +73,13 @@ When the module is enabled:
 - The page renders a first chart-like preview timeline above the diagnostics text.
 - When enabled by JVM property, the module also writes a predictable dev diagnostic dump file outside the UI.
 
-## Epic 2 replay-view presence
+## Epic 01S02 replay-view presence
 
 - The external module API does not expose a public hook into Scelight's internal replay analyzer tab lifecycle.
 - The supported fallback is a module-owned replay page that loads replay diagnostics through `IRepParserEngine`.
 - The page can be reached from the main side menu while working with replays.
 - The page also reacts to monitored replay-folder events, and it now has a best-effort fallback that scans the same monitored replay folders Scelight uses for native "Quick Open Last Replay" behavior.
+- Caveat: that latest-replay folder-scan fallback uses reflection against Scelight internal settings classes so the module can stay compiled only against the public external module API. It is intentionally best-effort and may need adjustment if those internal class names or methods change in a future Scelight version.
 
 ## Epic 01S03 first chart
 
@@ -157,3 +158,4 @@ Where can a mod surface something during replay analysis?
 - Rejected path for the supported implementation: reflection-based or internal-class coupling to replay-analyzer pages, chart factories, or chart enums.
 - Evidence used for the decision: the module can safely add pages, observe replay-folder events, and parse selected replays, while native replay-analyzer composition remains internal to Scelight.
 - Operational result: the `Larva` page is the stable replay-scoped fallback surface for Epic 02 and the base integration point for later timeline rendering.
+- Additional caveat: the fallback that scans Scelight's monitored replay folders is a narrow reflective compatibility bridge, not a supported public API extension point. The supported UI integration remains the module-owned `Larva` page itself.
