@@ -6,7 +6,10 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -79,6 +82,9 @@ public class LarvaTimelinePreviewComp extends JPanel {
     /** Current normalized timeline model to render. */
     private LarvaTimelineModel timelineModel;
 
+    /** Tooltip hotspots rebuilt on every paint pass. */
+    private final List< TooltipHotspot > tooltipHotspotList = new ArrayList<>();
+
     /**
      * Creates a new timeline preview component.
      */
@@ -88,6 +94,7 @@ public class LarvaTimelinePreviewComp extends JPanel {
         setBorder( BorderFactory.createCompoundBorder( BorderFactory.createLineBorder( new Color( 212, 212, 212 ) ),
                 BorderFactory.createEmptyBorder( 8, 8, 8, 8 ) ) );
         setPreferredSize( new Dimension( 220, 150 ) );
+        setToolTipText( "" );
     }
 
     /**
@@ -105,6 +112,8 @@ public class LarvaTimelinePreviewComp extends JPanel {
     @Override
     protected void paintComponent( final Graphics g_ ) {
         super.paintComponent( g_ );
+
+        tooltipHotspotList.clear();
 
         final Graphics2D g = (Graphics2D) g_;
         g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
@@ -224,6 +233,9 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.setColor( OUTLINE_COLOR );
         g.drawRoundRect( startX, railY + 2, segmentWidth, RAIL_HEIGHT - 4, 8, 8 );
 
+        if ( segment.getTooltipText() != null && segment.getTooltipText().length() > 0 )
+            tooltipHotspotList.add( new TooltipHotspot( new Rectangle( startX, railY + 2, segmentWidth, RAIL_HEIGHT - 4 ), segment.getTooltipText() ) );
+
         if ( !marker && segmentWidth >= 36 ) {
             final int labelX = Math.max( railLeft, Math.min( startX, railLeft + railWidth - fm.stringWidth( segment.getLabel() ) ) );
             g.setColor( SUBTLE_TEXT_COLOR );
@@ -246,6 +258,23 @@ public class LarvaTimelinePreviewComp extends JPanel {
 
         g.setColor( MISSED_LARVA_MARKER_COLOR );
         g.fillRoundRect( markerX, railY - 1, MARKER_WIDTH, RAIL_HEIGHT + 2, 3, 3 );
+
+        if ( marker.getTooltipText() != null && marker.getTooltipText().length() > 0 )
+            tooltipHotspotList.add( new TooltipHotspot( new Rectangle( markerX - 2, railY - 2, MARKER_WIDTH + 4, RAIL_HEIGHT + 4 ), marker.getTooltipText() ) );
+    }
+
+    @Override
+    public String getToolTipText( final MouseEvent event ) {
+        if ( event == null )
+            return null;
+
+        for ( int i = tooltipHotspotList.size() - 1; i >= 0; i-- ) {
+            final TooltipHotspot hotspot = tooltipHotspotList.get( i );
+            if ( hotspot.bounds.contains( event.getPoint() ) )
+                return hotspot.tooltipText;
+        }
+
+        return null;
     }
 
     /**
@@ -313,6 +342,28 @@ public class LarvaTimelinePreviewComp extends JPanel {
         if ( maxValue <= 0L )
             return 0;
         return (int) ( ( value * width ) / maxValue );
+    }
+
+    /** Tooltip hotspot used for hit-testing. */
+    private static class TooltipHotspot {
+
+        /** Hoverable bounds. */
+        private final Rectangle bounds;
+
+        /** Tooltip text associated with the bounds. */
+        private final String tooltipText;
+
+        /**
+         * Creates a new tooltip hotspot.
+         *
+         * @param bounds hoverable bounds
+         * @param tooltipText tooltip text
+         */
+        private TooltipHotspot( final Rectangle bounds, final String tooltipText ) {
+            this.bounds = bounds;
+            this.tooltipText = tooltipText;
+        }
+
     }
 
 }

@@ -2,7 +2,9 @@ package hu.aleks.larvasecondslostextmod;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Result of the Epic 6 larva-to-hatchery assignment foundation analysis.
@@ -54,6 +56,9 @@ public class LarvaAnalysisReport {
     /** Tells if full replay reparsing was required to get complete event streams. */
     private final boolean fullReplayParseUsed;
 
+    /** Player resource snapshots collected from tracker events. */
+    private final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName;
+
     /**
      * Creates a new larva analysis report.
      *
@@ -68,13 +73,15 @@ public class LarvaAnalysisReport {
      * @param directAssignmentCount direct creator-based assignments
      * @param injectCorrelatedAssignmentCount inject-correlated assignments
      * @param heuristicAssignmentCount pure heuristic assignments
-     * @param hatcheryMorphCount number of hatchery morph continuations detected
+         * @param hatcheryMorphCount number of hatchery morph continuations detected
+         * @param resourceSnapshotsByPlayerName player resource snapshots collected from tracker events
      */
     public LarvaAnalysisReport( final LarvaHeuristicCalibration calibration, final List< HatcheryLarvaTimeline > timelineList,
             final int trackedHatcheryCount, final int larvaBirthCount, final int assignedLarvaCount, final int unassignedLarvaCount,
             final int ambiguousLarvaCount, final int noEligibleHatcheryLarvaCount,
             final int directAssignmentCount, final int injectCorrelatedAssignmentCount, final int heuristicAssignmentCount,
-            final int hatcheryMorphCount, final int trackerEventCount, final int gameEventCount, final boolean fullReplayParseUsed ) {
+             final int hatcheryMorphCount, final int trackerEventCount, final int gameEventCount, final boolean fullReplayParseUsed,
+             final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName ) {
         this.calibration = calibration;
         this.timelineList = Collections.unmodifiableList( new ArrayList<>( timelineList ) );
         this.trackedHatcheryCount = trackedHatcheryCount;
@@ -90,6 +97,7 @@ public class LarvaAnalysisReport {
         this.trackerEventCount = trackerEventCount;
         this.gameEventCount = gameEventCount;
         this.fullReplayParseUsed = fullReplayParseUsed;
+        this.resourceSnapshotsByPlayerName = copySnapshotMap( resourceSnapshotsByPlayerName );
     }
 
     public LarvaHeuristicCalibration getCalibration() {
@@ -152,6 +160,35 @@ public class LarvaAnalysisReport {
         return fullReplayParseUsed;
     }
 
+    public Map< String, List< LarvaPlayerResourceSnapshot > > getResourceSnapshotsByPlayerName() {
+        return resourceSnapshotsByPlayerName;
+    }
+
+    /**
+     * Resolves the latest player resource snapshot at or before a specified marker loop.
+     *
+     * @param playerName player name
+     * @param loop marker loop
+     * @return latest matching snapshot; may be <code>null</code>
+     */
+    public LarvaPlayerResourceSnapshot findLatestResourceSnapshot( final String playerName, final int loop ) {
+        if ( playerName == null || playerName.length() == 0 )
+            return null;
+
+        final List< LarvaPlayerResourceSnapshot > snapshotList = resourceSnapshotsByPlayerName.get( playerName );
+        if ( snapshotList == null || snapshotList.isEmpty() )
+            return null;
+
+        LarvaPlayerResourceSnapshot latestSnapshot = null;
+        for ( final LarvaPlayerResourceSnapshot snapshot : snapshotList ) {
+            if ( snapshot.getLoop() > loop )
+                break;
+            latestSnapshot = snapshot;
+        }
+
+        return latestSnapshot;
+    }
+
     /**
      * Renders a readable diagnostics section for the Larva page.
      *
@@ -184,6 +221,7 @@ public class LarvaAnalysisReport {
             .append( ", no eligible hatchery=" ).append( noEligibleHatcheryLarvaCount )
             .append( '\n' );
         builder.append( "- Assigned larva total: " ).append( assignedLarvaCount ).append( '\n' );
+        builder.append( "- Resource snapshot support: " ).append( formatResourceSnapshotCounts() ).append( '\n' );
 
         if ( timelineList.isEmpty() ) {
             builder.append( "- No per-hatchery timelines were derived from this replay yet." );
@@ -268,6 +306,44 @@ public class LarvaAnalysisReport {
      */
     private String formatOptionalTimeLabel( final String timeLabel ) {
         return timeLabel == null || timeLabel.length() == 0 ? "n/a" : timeLabel;
+    }
+
+    /**
+     * Copies the player resource snapshot map into immutable containers.
+     *
+     * @param source source snapshot map
+     * @return immutable copy
+     */
+    private Map< String, List< LarvaPlayerResourceSnapshot > > copySnapshotMap( final Map< String, List< LarvaPlayerResourceSnapshot > > source ) {
+        final Map< String, List< LarvaPlayerResourceSnapshot > > copy = new LinkedHashMap<>();
+        if ( source == null || source.isEmpty() )
+            return Collections.unmodifiableMap( copy );
+
+        for ( final Map.Entry< String, List< LarvaPlayerResourceSnapshot > > entry : source.entrySet() )
+            copy.put( entry.getKey(), Collections.unmodifiableList( new ArrayList<>( entry.getValue() ) ) );
+
+        return Collections.unmodifiableMap( copy );
+    }
+
+    /**
+     * Formats how many resource snapshots were captured per player.
+     *
+     * @return summary text
+     */
+    private String formatResourceSnapshotCounts() {
+        if ( resourceSnapshotsByPlayerName.isEmpty() )
+            return "no tracker-based player resource snapshots captured";
+
+        final StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for ( final Map.Entry< String, List< LarvaPlayerResourceSnapshot > > entry : resourceSnapshotsByPlayerName.entrySet() ) {
+            if ( !first )
+                builder.append( ", " );
+            builder.append( entry.getKey() ).append( '=' ).append( entry.getValue().size() );
+            first = false;
+        }
+
+        return builder.toString();
     }
 
 }

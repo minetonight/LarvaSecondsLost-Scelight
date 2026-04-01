@@ -237,6 +237,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
             + "Epic 7 Story 01 now converts those counts into real replay-derived 3+ larva windows on the supported Larva timeline.\n"
             + "Epic 7 Story 02 now adds thick black markers every 11 seconds of accumulated 3+ larva saturation.\n"
             + "Epic 7 Story 03 now shows per-hatchery missed-larva totals and per-Zerg-player totals below each player's name.\n"
+            + "Epic 7 Story 04 now shows hover tooltips with minerals, gas, and supply on red windows and missed-larva markers.\n"
             + "Story 01.07 can also write a dev diagnostic dump file for zero-click verification when enabled by JVM property.\n"
                 + "\n"
                 + "This page is the replay-scoped entry point currently available to the external module.\n"
@@ -319,7 +320,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         builder.append( "Epic 4 native chart dropdown feasibility resolved" ).append( '\n' );
         builder.append( "Epic 5 Base Control augmentation feasibility resolved" ).append( '\n' );
         builder.append( "Epic 6 larva assignment foundation resolved" ).append( '\n' ).append( '\n' );
-        builder.append( "Epic 7 real 3+ larva windows started" ).append( '\n' ).append( '\n' );
+        builder.append( "Epic 7 replay-derived windows, markers, totals, and hover context prepared" ).append( '\n' ).append( '\n' );
         builder.append( buildReplayMetadataSection( replaySummary ) ).append( '\n' );
         builder.append( buildPageDiagnosticsSection( summary ) ).append( '\n' );
         builder.append( buildCapabilitySection() ).append( '\n' );
@@ -342,7 +343,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         }
         if ( summary.getLarvaAnalysisReport() != null )
             builder.append( summary.getLarvaAnalysisReport().toDisplayText() ).append( '\n' ).append( '\n' );
-        builder.append( "Next goal: prepare hover-time resource context for missed-larva markers without leaking replay parser objects into the UI model." );
+        builder.append( "Next goal: prepare the Epic 08 handoff so hardening and replay-fixture validation can build on the now-stable larva timeline model." );
 
         return builder.toString();
     }

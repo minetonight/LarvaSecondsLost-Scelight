@@ -67,7 +67,7 @@ public class LarvaTimelineModelBuilder {
     private void populateReplayDerivedRows( final long replayLengthMs, final LarvaAnalysisReport larvaAnalysisReport,
             final List< LarvaTimelineRow > rowList ) {
         for ( final HatcheryLarvaTimeline timeline : larvaAnalysisReport.getTimelineList() ) {
-            final LarvaTimelineRow row = createReplayDerivedRow( replayLengthMs, timeline );
+            final LarvaTimelineRow row = createReplayDerivedRow( replayLengthMs, timeline, larvaAnalysisReport );
             if ( row != null )
                 rowList.add( row );
         }
@@ -77,10 +77,12 @@ public class LarvaTimelineModelBuilder {
      * Creates one replay-derived placeholder row from a hatchery timeline.
      *
      * @param replayLengthMs replay length in milliseconds
-     * @param timeline hatchery larva timeline
+         * @param timeline hatchery larva timeline
+         * @param larvaAnalysisReport larva analysis report
      * @return timeline row; may be <code>null</code>
      */
-    private LarvaTimelineRow createReplayDerivedRow( final long replayLengthMs, final HatcheryLarvaTimeline timeline ) {
+        private LarvaTimelineRow createReplayDerivedRow( final long replayLengthMs, final HatcheryLarvaTimeline timeline,
+            final LarvaAnalysisReport larvaAnalysisReport ) {
         if ( timeline.getCountPointList().isEmpty() || !timeline.isCompleted() || timeline.getCreatedLarvaCount() <= 0 )
             return null;
 
@@ -95,16 +97,195 @@ public class LarvaTimelineModelBuilder {
             return null;
 
         final List< LarvaSaturationWindow > saturationWindowList = saturationWindowCalculator.buildWindows( timeline, replayLengthMs );
-        final List< LarvaTimelineMarker > markerList = missedLarvaMarkerCalculator.buildMarkers( saturationWindowList );
+        final List< LarvaTimelineMarker > markerList = attachMarkerHoverData( missedLarvaMarkerCalculator.buildMarkers( saturationWindowList ),
+            timeline.getPlayerName(), larvaAnalysisReport );
 
         final List< LarvaTimelineSegment > segmentList = new ArrayList<>();
         for ( final LarvaSaturationWindow window : saturationWindowList )
             segmentList.add( new LarvaTimelineSegment( window.getStartMs(), window.getEndMs(),
-                    "3+ larva " + window.getStartTimeLabel() + "-" + window.getEndTimeLabel(), LarvaTimelineSegment.Kind.SATURATION_WINDOW ) );
+                "3+ larva " + window.getStartTimeLabel() + "-" + window.getEndTimeLabel(), LarvaTimelineSegment.Kind.SATURATION_WINDOW,
+                buildWindowTooltipText( window, timeline.getPlayerName(), larvaAnalysisReport ) ) );
 
         final String rowLabel = timeline.getHatcheryType() + " (tag " + timeline.getHatcheryTagText() + ")";
         final String detailLabel = markerList.size() + POTENTIAL_LARVA_MISSED_SUFFIX;
         return new LarvaTimelineRow( timeline.getPlayerName(), rowLabel, detailLabel, startMs, endMs, markerList.size(), segmentList, markerList );
+    }
+
+    /**
+     * Attaches immutable hover metadata to marker models without leaking replay parser objects into Swing.
+     *
+     * @param markerList base marker list
+     * @param playerName player owning the markers
+     * @param larvaAnalysisReport replay analysis report containing tracker-based resource snapshots
+     * @return marker list enriched with hover metadata
+     */
+    private List< LarvaTimelineMarker > attachMarkerHoverData( final List< LarvaTimelineMarker > markerList, final String playerName,
+            final LarvaAnalysisReport larvaAnalysisReport ) {
+        if ( markerList == null || markerList.isEmpty() || larvaAnalysisReport == null )
+            return markerList;
+
+        final List< LarvaTimelineMarker > enrichedMarkerList = new ArrayList<>( markerList.size() );
+        for ( final LarvaTimelineMarker marker : markerList ) {
+            final LarvaPlayerResourceSnapshot snapshot = larvaAnalysisReport.findLatestResourceSnapshot( playerName, marker.getLoop() );
+            final LarvaMarkerHoverData hoverData = snapshot == null ? null
+                    : new LarvaMarkerHoverData( playerName, snapshot.getLoop(), snapshot.getTimeLabel(), snapshot.getMineralsCurrent(), snapshot.getGasCurrent(),
+                            snapshot.getFoodUsed(), snapshot.getFoodMade() );
+            enrichedMarkerList.add( new LarvaTimelineMarker( marker.getLoop(), marker.getTimeMs(), marker.getLabel(), marker.getKind(), hoverData,
+                    buildMarkerTooltipText( marker, hoverData ) ) );
+        }
+
+        return enrichedMarkerList;
+    }
+
+    /**
+     * Builds the tooltip text for a replay-derived 3+ larva window.
+     *
+     * @param window saturation window
+     * @param playerName player owning the window
+     * @param larvaAnalysisReport analysis report containing resource snapshots
+     * @return tooltip text
+     */
+    private String buildWindowTooltipText( final LarvaSaturationWindow window, final String playerName, final LarvaAnalysisReport larvaAnalysisReport ) {
+        if ( window == null )
+            return null;
+
+        final LarvaPlayerResourceSnapshot snapshot = larvaAnalysisReport == null ? null
+                : larvaAnalysisReport.findLatestResourceSnapshot( playerName, window.getStartLoop() );
+
+        final StringBuilder builder = new StringBuilder( "<html><b>3+ larva window</b><br/>" );
+        builder.append( "Window: " ).append( window.getStartTimeLabel() ).append( " - " ).append( window.getEndTimeLabel() ).append( "<br/>" );
+        builder.append( buildSnapshotTooltipLines( "Window start", window.getStartTimeLabel(), snapshot ) );
+        builder.append( "</html>" );
+        return builder.toString();
+    }
+
+    /**
+     * Builds the tooltip text for a missed-larva marker.
+     *
+     * @param marker missed-larva marker
+     * @param hoverData attached hover metadata; may be <code>null</code>
+     * @return tooltip text
+     */
+    private String buildMarkerTooltipText( final LarvaTimelineMarker marker, final LarvaMarkerHoverData hoverData ) {
+        if ( marker == null )
+            return null;
+
+        final StringBuilder builder = new StringBuilder( "<html><b>Potential larva missed</b><br/>" );
+        builder.append( marker.getLabel() ).append( "<br/>" );
+        builder.append( buildSnapshotTooltipLines( "Missed moment", extractTimeFromMarkerLabel( marker.getLabel() ), hoverData ) );
+        builder.append( "</html>" );
+        return builder.toString();
+    }
+
+    /**
+     * Builds the snapshot lines for HTML tooltips.
+     *
+     * @param pointLabel label describing the relevant replay point
+     * @param pointTimeLabel formatted replay time of the relevant point
+     * @param snapshot snapshot to render; may be <code>null</code>
+     * @return HTML snippet without surrounding html/body tags
+     */
+    private String buildSnapshotTooltipLines( final String pointLabel, final String pointTimeLabel, final LarvaPlayerResourceSnapshot snapshot ) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append( pointLabel ).append( ": " ).append( safeText( pointTimeLabel, "n/a" ) ).append( "<br/>" );
+        if ( snapshot == null ) {
+            builder.append( "Resources: unknown<br/>Supply: unknown" );
+            return builder.toString();
+        }
+
+        builder.append( "Resource snapshot: " ).append( safeText( snapshot.getTimeLabel(), "n/a" ) ).append( "<br/>" );
+        builder.append( "Minerals: " ).append( formatInt( snapshot.getMineralsCurrent() ) )
+                .append( ", Gas: " ).append( formatInt( snapshot.getGasCurrent() ) ).append( "<br/>" );
+        builder.append( "Supply: " ).append( formatSupply( snapshot.getFoodUsed(), snapshot.getFoodMade() ) );
+        return builder.toString();
+    }
+
+    /**
+     * Builds the snapshot lines for HTML tooltips.
+     *
+     * @param pointLabel label describing the relevant replay point
+     * @param pointTimeLabel formatted replay time of the relevant point
+     * @param hoverData hover metadata to render; may be <code>null</code>
+     * @return HTML snippet without surrounding html/body tags
+     */
+    private String buildSnapshotTooltipLines( final String pointLabel, final String pointTimeLabel, final LarvaMarkerHoverData hoverData ) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append( pointLabel ).append( ": " ).append( safeText( pointTimeLabel, "n/a" ) ).append( "<br/>" );
+        if ( hoverData == null ) {
+            builder.append( "Resources: unknown<br/>Supply: unknown" );
+            return builder.toString();
+        }
+
+        builder.append( "Resource snapshot: " ).append( safeText( hoverData.getSnapshotTimeLabel(), "n/a" ) ).append( "<br/>" );
+        builder.append( "Minerals: " ).append( formatInt( hoverData.getMineralsCurrent() ) )
+                .append( ", Gas: " ).append( formatInt( hoverData.getGasCurrent() ) ).append( "<br/>" );
+        builder.append( "Supply: " ).append( formatSupply( hoverData.getFoodUsed(), hoverData.getFoodMade() ) );
+        return builder.toString();
+    }
+
+    /**
+     * Extracts the trailing time portion from a marker label.
+     *
+     * @param label marker label
+     * @return extracted time text
+     */
+    private String extractTimeFromMarkerLabel( final String label ) {
+        if ( label == null )
+            return "n/a";
+
+        final int atIndex = label.lastIndexOf( " at " );
+        return atIndex < 0 ? label : label.substring( atIndex + 4 );
+    }
+
+    /**
+     * Formats an integer value or a fallback when unknown.
+     *
+     * @param value value to format
+     * @return formatted text
+     */
+    private String formatInt( final Integer value ) {
+        return value == null ? "unknown" : String.valueOf( value.intValue() );
+    }
+
+    /**
+     * Formats fixed-point supply values as used/made.
+     *
+     * @param foodUsed fixed-point food used
+     * @param foodMade fixed-point food made
+     * @return formatted supply text
+     */
+    private String formatSupply( final Integer foodUsed, final Integer foodMade ) {
+        if ( foodUsed == null || foodMade == null )
+            return "unknown";
+
+        return formatFixedPointSupply( foodUsed.intValue() ) + "/" + formatFixedPointSupply( foodMade.intValue() );
+    }
+
+    /**
+     * Formats a fixed-point supply value.
+     *
+     * @param fixedPointValue raw tracker value
+     * @return formatted supply component
+     */
+    private String formatFixedPointSupply( final int fixedPointValue ) {
+        final int whole = fixedPointValue / 4096;
+        final int remainder = Math.abs( fixedPointValue % 4096 );
+        if ( remainder == 0 )
+            return String.valueOf( whole );
+        if ( remainder == 2048 )
+            return whole + ".5";
+        return String.valueOf( Math.round( fixedPointValue / 4096.0d * 10.0d ) / 10.0d );
+    }
+
+    /**
+     * Returns a non-empty string.
+     *
+     * @param value value to sanitize
+     * @param fallback fallback text
+     * @return sanitized text
+     */
+    private String safeText( final String value, final String fallback ) {
+        return value == null || value.length() == 0 ? fallback : value;
     }
 
     /**

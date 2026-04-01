@@ -6,6 +6,7 @@ import hu.scelightapi.sc2.rep.model.IReplay;
 import hu.scelightapi.sc2.rep.repproc.IRepProcessor;
 import hu.scelightapi.sc2.rep.repproc.IUser;
 import hu.scelightapi.sc2.rep.model.trackerevents.IBaseUnitEvent;
+import hu.scelightapi.sc2.rep.model.trackerevents.IPlayerStatsEvent;
 import hu.scelightapi.sc2.rep.model.trackerevents.ITrackerEvents;
 import hu.scelightapi.sc2.rep.model.trackerevents.IUnitBornEvent;
 import hu.scelightapi.sc2.rep.model.trackerevents.IUnitInitEvent;
@@ -149,6 +150,7 @@ public class LarvaReplayAnalyzer {
 
         final Map< Integer, HatcheryState > hatcheryByTag = new LinkedHashMap<>();
         final Map< Integer, LarvaState > larvaByTag = new HashMap<>();
+        final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName = new LinkedHashMap<>();
 
         int larvaBirthCount = 0;
         int assignedLarvaCount = 0;
@@ -166,6 +168,15 @@ public class LarvaReplayAnalyzer {
                     continue;
 
                 switch ( event.getId() ) {
+                    case ITrackerEvents.ID_PLAYER_STATS : {
+                        final IPlayerStatsEvent playerStatsEvent = (IPlayerStatsEvent) event;
+                        final Integer playerId = playerStatsEvent.getPlayerId();
+                        final String playerName = resolvePlayerName( repProc, playerId );
+                        addResourceSnapshot( resourceSnapshotsByPlayerName, new LarvaPlayerResourceSnapshot( playerName, event.getLoop(),
+                            repProc.formatLoopTime( event.getLoop() ), playerStatsEvent.getMineralsCurrent(), playerStatsEvent.getGasCurrent(),
+                            playerStatsEvent.getFoodUsed(), playerStatsEvent.getFoodMade() ) );
+                        break;
+                    }
                     case ITrackerEvents.ID_UNIT_INIT :
                     case ITrackerEvents.ID_UNIT_BORN : {
                         final IBaseUnitEvent baseUnitEvent = (IBaseUnitEvent) event;
@@ -315,7 +326,27 @@ public class LarvaReplayAnalyzer {
         return new LarvaAnalysisReport( calibration, timelineList, hatcheryByTag.size(), larvaBirthCount, assignedLarvaCount, unassignedLarvaCount,
             ambiguousLarvaCount, noEligibleHatcheryLarvaCount,
             directAssignmentCount, injectCorrelatedAssignmentCount, heuristicAssignmentCount, hatcheryMorphCount,
-            trackerEventArray == null ? 0 : trackerEventArray.length, gameEventArray == null ? 0 : gameEventArray.length, fullReplayParseUsed );
+            trackerEventArray == null ? 0 : trackerEventArray.length, gameEventArray == null ? 0 : gameEventArray.length, fullReplayParseUsed,
+            resourceSnapshotsByPlayerName );
+    }
+
+    /**
+     * Adds one player resource snapshot to the target map.
+     *
+     * @param snapshotMap target snapshot map
+     * @param snapshot snapshot to add
+     */
+    private void addResourceSnapshot( final Map< String, List< LarvaPlayerResourceSnapshot > > snapshotMap, final LarvaPlayerResourceSnapshot snapshot ) {
+        if ( snapshot == null || snapshot.getPlayerName() == null || snapshot.getPlayerName().length() == 0 )
+            return;
+
+        List< LarvaPlayerResourceSnapshot > snapshotList = snapshotMap.get( snapshot.getPlayerName() );
+        if ( snapshotList == null ) {
+            snapshotList = new ArrayList<>();
+            snapshotMap.put( snapshot.getPlayerName(), snapshotList );
+        }
+
+        snapshotList.add( snapshot );
     }
 
     /**

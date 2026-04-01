@@ -99,14 +99,16 @@ This is the minimum user-visible Epic 07 slice. It should establish the real lar
 ## Story 07.04 — Prepare hover-time resource context for later detail
 
 **As a** user  
-**I want** missed-larva markers to be ready for minerals / gas hover details  
-**So that** later work can attach economy context without restructuring the chart model.
+**I want** missed-larva markers and `3+ larva` windows to show minerals, gas, and supply context on hover  
+**So that** I can tell whether the player could realistically spend the larva at those moments.
 
 ### Acceptance criteria
 
 - The normalized model can attach per-marker hover metadata without leaking replay parser objects into Swing code.
 - Marker-level context can carry minerals and gas values separately.
-- The initial implementation may leave the hover text unrendered if the data pipeline hook is all that is required at this stage.
+- The resource-context pipeline is populated from replay tracker snapshots and attached to missed-larva markers before rendering.
+- Hovering a missed-larva marker shows minerals, gas, and supply at the missed-larva moment.
+- Hovering a red `3+ larva` window shows minerals, gas, and supply at the start of that window.
 
 ## Story 07.05 — Prepare Epic 08 handoff conditions
 

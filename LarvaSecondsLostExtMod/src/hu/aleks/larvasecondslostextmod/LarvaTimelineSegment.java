@@ -27,6 +27,9 @@ public class LarvaTimelineSegment {
     /** Semantic segment kind. */
     private final Kind kind;
 
+    /** Optional tooltip text shown when the segment is hovered. */
+    private final String tooltipText;
+
     /**
      * Creates a new timeline segment.
      *
@@ -36,10 +39,24 @@ public class LarvaTimelineSegment {
      * @param kind semantic segment kind
      */
     public LarvaTimelineSegment( final long startMs, final long endMs, final String label, final Kind kind ) {
+        this( startMs, endMs, label, kind, null );
+    }
+
+    /**
+     * Creates a new timeline segment.
+     *
+     * @param startMs segment start in milliseconds
+     * @param endMs segment end in milliseconds
+     * @param label segment label
+     * @param kind semantic segment kind
+     * @param tooltipText optional tooltip text shown when the segment is hovered
+     */
+    public LarvaTimelineSegment( final long startMs, final long endMs, final String label, final Kind kind, final String tooltipText ) {
         this.startMs = startMs;
         this.endMs = endMs;
         this.label = label;
         this.kind = kind;
+        this.tooltipText = tooltipText;
     }
 
     public long getStartMs() {
@@ -56,6 +73,10 @@ public class LarvaTimelineSegment {
 
     public Kind getKind() {
         return kind;
+    }
+
+    public String getTooltipText() {
+        return tooltipText;
     }
 
 }
