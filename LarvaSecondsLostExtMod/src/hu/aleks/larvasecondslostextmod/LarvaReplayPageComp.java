@@ -238,6 +238,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
             + "Epic 7 Story 02 now adds thick black markers every 11 seconds of accumulated 3+ larva saturation.\n"
             + "Epic 7 Story 03 now shows per-hatchery missed-larva totals and per-Zerg-player totals below each player's name.\n"
             + "Epic 7 Story 04 now shows hover tooltips with minerals, gas, and supply on red windows and missed-larva markers.\n"
+            + "Epic 7 Story 05 now records the Epic 08 handoff for hardening, replay fixtures, and validation.\n"
             + "Story 01.07 can also write a dev diagnostic dump file for zero-click verification when enabled by JVM property.\n"
                 + "\n"
                 + "This page is the replay-scoped entry point currently available to the external module.\n"
@@ -320,10 +321,11 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         builder.append( "Epic 4 native chart dropdown feasibility resolved" ).append( '\n' );
         builder.append( "Epic 5 Base Control augmentation feasibility resolved" ).append( '\n' );
         builder.append( "Epic 6 larva assignment foundation resolved" ).append( '\n' ).append( '\n' );
-        builder.append( "Epic 7 replay-derived windows, markers, totals, and hover context prepared" ).append( '\n' ).append( '\n' );
+        builder.append( "Epic 7 replay-derived windows, markers, totals, hover context, and handoff prepared" ).append( '\n' ).append( '\n' );
         builder.append( buildReplayMetadataSection( replaySummary ) ).append( '\n' );
         builder.append( buildPageDiagnosticsSection( summary ) ).append( '\n' );
         builder.append( buildCapabilitySection() ).append( '\n' );
+        builder.append( buildEpic07HandoffSection() ).append( '\n' );
         builder.append( "Fallback placeholder window: " )
                 .append( formatMs( summary.getPreviewWindowStartMs() ) )
                 .append( " - " )
@@ -343,8 +345,29 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         }
         if ( summary.getLarvaAnalysisReport() != null )
             builder.append( summary.getLarvaAnalysisReport().toDisplayText() ).append( '\n' ).append( '\n' );
-        builder.append( "Next goal: prepare the Epic 08 handoff so hardening and replay-fixture validation can build on the now-stable larva timeline model." );
+        builder.append( "Next goal: start Epic 08 hardening with replay fixtures, edge-case validation, and documentation cleanup on top of the now-stable larva timeline model." );
 
+        return builder.toString();
+    }
+
+    /**
+     * Builds the Epic 07 handoff section for the replay diagnostics text.
+     *
+     * @return rendered Epic 07 handoff section
+     */
+    private String buildEpic07HandoffSection() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append( "Epic 07 handoff:" ).append( '\n' );
+        builder.append( "Proven now:" ).append( '\n' );
+        builder.append( "- Replay-derived per-hatchery larva counts now produce stable red 3+ larva windows." ).append( '\n' );
+        builder.append( "- The supported module-owned Larva timeline now renders one qualifying hatchery row per player grouping with lifetime bounds." ).append( '\n' );
+        builder.append( "- Missed-larva markers, per-hatchery totals, and per-player totals now come from the same normalized model." ).append( '\n' );
+        builder.append( "- Hover tooltips now show minerals, gas, and supply context on window starts and missed-larva moments." ).append( '\n' );
+        builder.append( "Still unresolved:" ).append( '\n' );
+        builder.append( "- Replay edge-case hardening for morph timing, replay truncation, sparse player-stats sampling, and hatchery death corner cases." ).append( '\n' );
+        builder.append( "- Replay-fixture validation and golden-output coverage." ).append( '\n' );
+        builder.append( "- Final documentation cleanup." ).append( '\n' );
+        builder.append( "Next technical question: how should Epic 07's larva-window and missed-larva visualization be hardened and validated across replay fixtures and edge cases?" );
         return builder.toString();
     }
 

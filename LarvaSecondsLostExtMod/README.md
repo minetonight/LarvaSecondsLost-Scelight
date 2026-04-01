@@ -247,3 +247,23 @@ That Epic 05 question has since been answered in practice: the public external m
 
 How should the derived per-hatchery larva counts be converted into stable `3+ larva` windows and visualized on the Larva timeline?
 
+## Epic 07 handoff
+
+### Proven now
+
+- Epic 07 now converts replay-derived per-hatchery larva count timelines into stable red `3+ larva` windows on the supported module-owned `Larva` timeline.
+- Epic 07 now renders one row per qualifying hatchery, grouped by player, with row visibility bounded by hatchery lifetime instead of replay start.
+- Epic 07 now accumulates one missed-larva marker every 11 seconds of `3+ larva` saturation and surfaces per-hatchery plus per-player totals from the same normalized model.
+- Epic 07 now attaches replay-derived minerals, gas, and supply context to red windows and missed-larva markers and renders that context in hover tooltips.
+- Epic 07 now proves that the project can stay on the supported fallback rendering path without unsupported native chart registration or Base Control augmentation.
+
+### Still unresolved
+
+- Hardening against replay edge cases such as unusual morph timing, replay truncation, sparse player-stats sampling, and hatchery death corner cases.
+- Replay-fixture validation and golden-output coverage for the larva-window, threshold, totals, and tooltip pipeline.
+- Final documentation cleanup across prompts, README handoffs, and developer diagnostics.
+
+### Next technical question
+
+How should Epic 07's larva-window and missed-larva visualization be hardened and validated across replay fixtures and edge cases?
+
