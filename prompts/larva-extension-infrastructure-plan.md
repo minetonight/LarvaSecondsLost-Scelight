@@ -29,12 +29,14 @@ An additional working assumption for the first implementation is that a larva is
 - Configure `release.properties`, manifest generation, icon, folder id, deployment naming, and local install path.
 - Implement a minimal `LarvaChartModule.java` entrypoint.
 - Add very small visible behavior such as startup logging, a simple menu/action/hook if the external API allows it, or a diagnostic confirmation panel.
+- Add an optional development-only diagnostic dump file so basic runtime verification can be performed with fewer manual UI steps.
 
 **Exit criteria:**
 
 - The deployment zip builds cleanly.
 - The module installs into a local Scelight instance.
 - Enabling the module produces a visible or logged "hello world" confirmation.
+- A predictable diagnostic dump path can be enabled for development-time verification.
 - The project is confirmed to compile with Java 7 only.
 
 ### Epic 2: Reachable replay-view presence
@@ -321,6 +323,7 @@ Required assets:
   - larva assignment decisions
   - generated `>=3` windows
   - whether native chart integration or fallback integration was activated
+- An optional structured diagnostic dump file for dev-mode runs so validation can be inspected without depending entirely on manual UI navigation.
 - Packaging verification steps to confirm the deployment zip and installed module match expected manifest contents.
 - A compatibility check against the target Scelight version matching the external module API jar version.
 
@@ -337,6 +340,7 @@ Required assets:
 ## Recommended implementation order
 
 1. Complete Epic 1 with a pure hello-world external module.
+  - Include the optional zero-click diagnostic dump path during development so external-app verification is easier to automate.
 2. Complete Epic 2 by exposing some module-owned replay-view entry point.
 3. Complete Epic 3 by rendering a trivial chart or timeline somewhere reachable.
 4. Attempt Epic 4 to determine whether native `larva` chart dropdown integration is possible.

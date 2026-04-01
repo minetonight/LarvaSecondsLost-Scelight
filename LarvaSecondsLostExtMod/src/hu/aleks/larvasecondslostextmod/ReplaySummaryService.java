@@ -23,6 +23,9 @@ public class ReplaySummaryService {
     /** Owning external module. */
     private final LarvaSecondsLostModule module;
 
+    /** Epic 6 replay analyzer. */
+    private final LarvaReplayAnalyzer larvaReplayAnalyzer;
+
     /**
      * Creates a new replay summary service.
      *
@@ -30,6 +33,7 @@ public class ReplaySummaryService {
      */
     public ReplaySummaryService( final LarvaSecondsLostModule module ) {
         this.module = module;
+        larvaReplayAnalyzer = new LarvaReplayAnalyzer();
     }
 
     /**
@@ -46,9 +50,19 @@ public class ReplaySummaryService {
         if ( !Files.exists( replayFile ) )
             throw new IllegalArgumentException( "Replay file does not exist: " + replayFile );
 
-        final IRepProcessor repProc = module.repParserEngine.getRepProc( replayFile );
+        IRepProcessor repProc = module.repParserEngine.getRepProc( replayFile );
         if ( repProc == null )
             throw new IllegalStateException( "Scelight could not parse the replay file." );
+
+        boolean fullReplayParseUsed = false;
+        if ( repProc.getReplay().getTrackerEvents() == null || repProc.getReplay().getGameEvents() == null ) {
+            module.logger.debug( "Larva analysis requires full replay events; reparsing replay instead of using cache-only processor: " + replayFile );
+            final IRepProcessor reparsedRepProc = module.repParserEngine.parseAndWrapReplay( replayFile );
+            if ( reparsedRepProc != null ) {
+                repProc = reparsedRepProc;
+                fullReplayParseUsed = true;
+            }
+        }
 
         final IReplay replay = repProc.getReplay();
         final IDetails details = replay.getDetails();
@@ -58,11 +72,17 @@ public class ReplaySummaryService {
         final long previewWindowStartMs = lengthMs <= 0L ? 0L : lengthMs / 4L;
         final long previewWindowDurationMs = lengthMs <= 0L ? 0L : Math.max( 10000L, lengthMs / 5L );
         final long previewWindowEndMs = lengthMs <= 0L ? 0L : Math.min( lengthMs, previewWindowStartMs + previewWindowDurationMs );
+        final LarvaAnalysisReport larvaAnalysisReport = larvaReplayAnalyzer.analyze( repProc, fullReplayParseUsed );
+        module.logger.debug( "Larva analysis summary for " + replayFile.getFileName() + ": trackerEvents=" + larvaAnalysisReport.getTrackerEventCount()
+            + ", gameEvents=" + larvaAnalysisReport.getGameEventCount() + ", hatcheries=" + larvaAnalysisReport.getTrackedHatcheryCount() + ", larvaBirths="
+            + larvaAnalysisReport.getLarvaBirthCount() + ", assigned=" + larvaAnalysisReport.getAssignedLarvaCount() + ", unassigned="
+            + larvaAnalysisReport.getUnassignedLarvaCount() + ", fullReplayParseUsed=" + larvaAnalysisReport.isFullReplayParseUsed() );
 
         return new ReplaySummary( replayFile, safe( sourceDescription, "Unknown" ), safe( details == null ? null : details.getTitle(), "Unknown map" ),
                 safe( repProc.getPlayersGrouped(), "Unknown players" ), safe( repProc.getWinnersString(), "Unknown / undecided" ),
             formatDuration( lengthMs ), lengthMs, formatDate( replayEndTime ), replay.getHeader().versionString( true ),
-            String.valueOf( replay.getHeader().getBaseBuild() ), FALLBACK_INTEGRATION_MODE, previewWindowStartMs, previewWindowEndMs );
+            String.valueOf( replay.getHeader().getBaseBuild() ), FALLBACK_INTEGRATION_MODE, previewWindowStartMs, previewWindowEndMs,
+            larvaAnalysisReport );
     }
 
     /**

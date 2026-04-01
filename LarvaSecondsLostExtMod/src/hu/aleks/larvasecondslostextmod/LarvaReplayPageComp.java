@@ -195,6 +195,7 @@ public class LarvaReplayPageComp extends JPanel {
             + "Epic 3 now adds a first chart-like preview above the diagnostics text.\n"
             + "Epic 4 now confirms native chart dropdown integration is unsupported for pure external modules.\n"
             + "Epic 5 now confirms native Base Control chart augmentation is unsupported for pure external modules.\n"
+            + "Epic 6 now derives per-hatchery larva counts with a calibrated hatchery-to-larva assignment heuristic.\n"
                 + "\n"
                 + "This page is the replay-scoped entry point currently available to the external module.\n"
                 + "\n"
@@ -266,7 +267,8 @@ public class LarvaReplayPageComp extends JPanel {
 
         builder.append( "Epic 2 replay-view presence confirmed" ).append( '\n' );
         builder.append( "Epic 3 placeholder chart confirmed" ).append( '\n' );
-        builder.append( "Epic 5 Base Control augmentation feasibility resolved" ).append( '\n' ).append( '\n' );
+        builder.append( "Epic 5 Base Control augmentation feasibility resolved" ).append( '\n' );
+        builder.append( "Epic 6 larva assignment foundation resolved" ).append( '\n' ).append( '\n' );
         builder.append( buildCapabilitySection() ).append( '\n' );
         builder.append( "Integration mode: " ).append( summary.getIntegrationMode() ).append( '\n' );
         builder.append( "Replay source: " ).append( summary.getSourceDescription() ).append( '\n' );
@@ -285,7 +287,9 @@ public class LarvaReplayPageComp extends JPanel {
                 .append( " (replay-derived placeholder interval)" )
                 .append( '\n' )
                 .append( '\n' );
-            builder.append( "Next goal: replace this placeholder interval with larva-specific replay output on the supported module-owned Larva timeline." );
+        if ( summary.getLarvaAnalysisReport() != null )
+            builder.append( summary.getLarvaAnalysisReport().toDisplayText() ).append( '\n' ).append( '\n' );
+        builder.append( "Next goal: convert these per-hatchery larva counts into real 3+ larva windows on the supported module-owned Larva timeline." );
 
         return builder.toString();
     }

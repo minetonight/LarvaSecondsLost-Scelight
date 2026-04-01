@@ -8,6 +8,8 @@ Epic 04 is now resolved as well: native registration into Scelight's built-in ch
 
 Epic 05 is now resolved too: augmenting Scelight's built-in Base Control chart with extra larva rectangles is also treated as unsupported for a pure external module, so the separate Larva timeline remains the supported path.
 
+Epic 06 now adds the replay-analysis foundation: the module reconstructs per-hatchery larva count timelines from tracker events, Spawn Larva targets, and a calibrated hatchery-to-larva offset derived from the replay opening when possible.
+
 ## SDK-style layout
 
 - `src/` - Java 7 source code and packaged resources.
@@ -70,6 +72,14 @@ When the module is enabled:
 - Because those classes are internal and no external augmentation registry exists, a pure external module cannot extend Base Control in a supported way.
 - The module now reports this capability result directly on the `Larva` page so the separate Larva timeline remains the supported rendering path for later epics.
 
+## Epic 6 larva-to-hatchery assignment foundation
+
+- The module now parses hatchery-like tracker events for `Hatchery`, `Lair`, and `Hive`, preserving morph continuity on the same unit tag.
+- It tracks larva births from tracker events, and removes assigned larva again on generic tracker death or type-change events.
+- It correlates `SpawnLarva` command targets by hatchery tag and uses them as a stronger signal when a larva birth must be assigned heuristically.
+- When the replay opening exposes a simple Zerg start with one hatchery and at least three larva, the module derives a replay-specific hatchery-to-larva offset and assignment radius from those opening samples.
+- The Larva page now shows per-hatchery larva count diagnostics and assignment confidence counts. Epic 7 can build the real 3+ larva windows on top of this foundation.
+
 ## Troubleshooting
 
 - If compilation fails, verify the API jar exists at `../ScelightExtModSDK/Scelight-ext-mod-api/1.5.2/lib/scelight-ext-mod-api-1.5.2.jar`.
@@ -88,6 +98,7 @@ When the module is enabled:
 - A first chart-like replay timeline can be rendered on that fallback page.
 - Native chart dropdown integration is documented as unsupported through the public external module API.
 - Native Base Control chart augmentation is documented as unsupported through the public external module API.
+- Per-hatchery larva count timelines can now be derived on the module-owned Larva page.
 
 ### Still unknown
 
@@ -96,6 +107,10 @@ When the module is enabled:
 - Whether a future native chart dropdown integration is exposed anywhere in the public external module API.
 - Whether a future native Base Control augmentation hook is exposed anywhere in the public external module API.
 - Whether unsupported reflection-based hacking of internal chart classes is worth considering. The current answer is no for the supported implementation path.
+
+### Next technical question
+
+How should the derived per-hatchery larva counts be converted into stable 3+ larva windows and visualized as red rectangles on the Larva timeline?
 
 ### Next technical question
 

@@ -131,7 +131,24 @@ If additional compile configuration is needed to enforce Java 7 source/target, d
 
 This story proves deployment correctness, not feature completeness.
 
-## Story 01.07 — Verify runtime lifecycle and diagnostics
+## Story 01.07 — Add a diagnostic dump file for zero-click verification
+
+**As a** developer  
+**I want** the module to write a structured diagnostic dump file during development  
+**So that** I can verify runtime behavior without relying only on manual UI clicks.
+
+### Acceptance criteria
+
+- The module can write a structured text or JSON diagnostic dump file when a dev-mode flag is enabled.
+- The dump contains enough information to confirm that the module started and completed its intended dev check.
+- The dump location is predictable and documented.
+- The dump behavior can be disabled cleanly for normal runtime use.
+
+### Notes
+
+This is intended to automate away part of the human-in-the-loop verification path for the external app.
+
+## Story 01.08 — Verify runtime lifecycle and diagnostics
 
 **As a** developer  
 **I want** basic lifecycle diagnostics  
@@ -148,7 +165,7 @@ This story proves deployment correctness, not feature completeness.
 
 This is especially useful before replay-view work starts.
 
-## Story 01.08 — Establish Epic 02 handoff conditions
+## Story 01.09 — Establish Epic 02 handoff conditions
 
 **As a** developer  
 **I want** a clean handoff from hello-world to replay-view work  
@@ -191,5 +208,6 @@ Epic 01 is done when:
 4. Story 01.05 — Make the module buildable from the workspace
 5. Story 01.06 — Install the module into a local Scelight instance
 6. Story 01.04 — Add visible hello-world proof
-7. Story 01.07 — Verify runtime lifecycle and diagnostics
-8. Story 01.08 — Establish Epic 02 handoff conditions
+7. Story 01.07 — Add a diagnostic dump file for zero-click verification
+8. Story 01.08 — Verify runtime lifecycle and diagnostics
+9. Story 01.09 — Establish Epic 02 handoff conditions

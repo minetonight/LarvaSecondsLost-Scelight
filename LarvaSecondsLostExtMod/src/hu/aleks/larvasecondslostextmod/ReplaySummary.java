@@ -46,6 +46,9 @@ public class ReplaySummary {
     /** Preview window end in milliseconds. */
     private final long previewWindowEndMs;
 
+    /** Epic 6 larva analysis foundation report. */
+    private final LarvaAnalysisReport larvaAnalysisReport;
+
     /**
      * Creates a new replay summary.
      *
@@ -62,7 +65,7 @@ public class ReplaySummary {
      */
     public ReplaySummary( final Path replayFile, final String sourceDescription, final String mapTitle, final String players, final String winners,
             final String length, final long lengthMs, final String replayEndTime, final String replayVersion, final String baseBuild,
-            final String integrationMode, final long previewWindowStartMs, final long previewWindowEndMs ) {
+            final String integrationMode, final long previewWindowStartMs, final long previewWindowEndMs, final LarvaAnalysisReport larvaAnalysisReport ) {
         this.replayFile = replayFile;
         this.sourceDescription = sourceDescription;
         this.mapTitle = mapTitle;
@@ -76,6 +79,7 @@ public class ReplaySummary {
         this.integrationMode = integrationMode;
         this.previewWindowStartMs = previewWindowStartMs;
         this.previewWindowEndMs = previewWindowEndMs;
+        this.larvaAnalysisReport = larvaAnalysisReport;
     }
 
     public Path getReplayFile() {
@@ -128,6 +132,10 @@ public class ReplaySummary {
 
     public long getPreviewWindowEndMs() {
         return previewWindowEndMs;
+    }
+
+    public LarvaAnalysisReport getLarvaAnalysisReport() {
+        return larvaAnalysisReport;
     }
 
 }

@@ -12,10 +12,12 @@
         <li>The module now renders a first chart-like timeline preview using a replay-derived placeholder interval.</li>
         <li>The module now reports that native chart dropdown registration is not exposed by the public external module API.</li>
         <li>The module now reports that native Base Control chart augmentation is also not exposed by the public external module API.</li>
+        <li>The module now derives per-hatchery larva count timelines using tracker events, Spawn Larva targets, and a calibrated hatchery-to-larva assignment heuristic.</li>
     </ul>
     <p>Direct injection into Scelight's internal replay analyzer page is not exposed by the public external module API, so replay diagnostics currently live on the module-owned Larva page.</p>
     <p>Real larva windows are still deferred to later epics, but the page layout is now ready to host them.</p>
     <p>The native chart dropdown is currently treated as unsupported for a pure external module because Scelight builds it from internal chart enums and factories that are not part of the external API.</p>
     <p>The native Base Control chart is also currently treated as unsupported for augmentation because it is created from those same internal chart classes and no public augmentation callback is exposed.</p>
+    <p>Epic 6 focuses on the replay-analysis foundation: hatchery tracking, larva birth/death tracking, opening calibration for the "below the hatchery" offset, and per-hatchery larva count diagnostics on the Larva page.</p>
 </body>
 </html>
