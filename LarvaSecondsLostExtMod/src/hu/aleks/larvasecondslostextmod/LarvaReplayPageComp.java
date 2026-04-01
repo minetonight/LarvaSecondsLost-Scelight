@@ -234,6 +234,8 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
             + "Epic 4 now confirms native chart dropdown integration is unsupported for pure external modules.\n"
             + "Epic 5 now confirms native Base Control chart augmentation is unsupported for pure external modules.\n"
             + "Epic 6 now derives per-hatchery larva counts with a calibrated hatchery-to-larva assignment heuristic.\n"
+            + "Epic 7 Story 01 now converts those counts into real replay-derived 3+ larva windows on the supported Larva timeline.\n"
+            + "Epic 7 Story 02 now adds thick black markers every 11 seconds of accumulated 3+ larva saturation.\n"
             + "Story 01.07 can also write a dev diagnostic dump file for zero-click verification when enabled by JVM property.\n"
                 + "\n"
                 + "This page is the replay-scoped entry point currently available to the external module.\n"
@@ -249,7 +251,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
                 + DevDiagnosticDumpWriter.PROP_FILE
                 + "=/path/to/file.txt.\n"
                 + "\n"
-                + "The preview timeline intentionally renders normalized replay-derived placeholder rows so real larva windows can replace them in later epics without changing the page layout.\n"
+                + "The timeline renders normalized replay-derived hatchery rows so later missed-larva markers and totals can build on the same supported model.\n"
             + "\n"
             + "Native injection into Scelight's internal replay analyzer page is not exposed by the public external module API, so this module uses a dedicated fallback page next to the replay workflow." );
     }
@@ -316,24 +318,25 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         builder.append( "Epic 4 native chart dropdown feasibility resolved" ).append( '\n' );
         builder.append( "Epic 5 Base Control augmentation feasibility resolved" ).append( '\n' );
         builder.append( "Epic 6 larva assignment foundation resolved" ).append( '\n' ).append( '\n' );
+        builder.append( "Epic 7 real 3+ larva windows started" ).append( '\n' ).append( '\n' );
         builder.append( buildReplayMetadataSection( replaySummary ) ).append( '\n' );
         builder.append( buildPageDiagnosticsSection( summary ) ).append( '\n' );
         builder.append( buildCapabilitySection() ).append( '\n' );
-        builder.append( "Preview chart window: " )
+        builder.append( "Fallback placeholder window: " )
                 .append( formatMs( summary.getPreviewWindowStartMs() ) )
                 .append( " - " )
                 .append( formatMs( summary.getPreviewWindowEndMs() ) )
-                .append( " (replay-derived placeholder interval)" )
+                .append( " (used only if no replay-derived hatchery rows are available)" )
             .append( '\n' );
         if ( summary.getTimelineModel() != null )
             builder.append( "Timeline rows: " )
                 .append( summary.getTimelineModel().getRowList().size() )
-                .append( " (module-owned normalized preview model)" )
+                .append( " (module-owned normalized larva-window model)" )
                 .append( '\n' )
                 .append( '\n' );
         if ( summary.getLarvaAnalysisReport() != null )
             builder.append( summary.getLarvaAnalysisReport().toDisplayText() ).append( '\n' ).append( '\n' );
-        builder.append( "Next goal: convert these per-hatchery larva counts into real 3+ larva windows on the supported module-owned Larva timeline." );
+        builder.append( "Next goal: add per-hatchery and match totals on top of these replay-derived windows and threshold markers." );
 
         return builder.toString();
     }

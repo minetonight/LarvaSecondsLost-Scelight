@@ -4,24 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Builds the normalized module-owned timeline model used by the Epic 03 preview chart.
+ * Builds the normalized module-owned timeline model used by the supported Larva chart.
  */
 public class LarvaTimelineModelBuilder {
-
-    /** Replay loops per second in SC2 tracker/game timelines. */
-    private static final long LOOPS_PER_SECOND = 16L;
 
     /** Minimum width of a placeholder interval so it remains visible on short replays. */
     private static final long MIN_PLACEHOLDER_WINDOW_MS = 10000L;
 
     /** Timeline title. */
-    private static final String TITLE = "Epic 03 module-owned larva timeline";
+    private static final String TITLE = "Larva timeline";
 
     /** Timeline subtitle. */
-    private static final String SUBTITLE = "Replay-derived placeholder intervals rendered on the supported Larva page fallback surface.";
+    private static final String SUBTITLE = "Replay-derived 3+ larva windows rendered on the supported module-owned Larva page.";
 
     /** Empty message used when no rows are available yet. */
-    private static final String EMPTY_MESSAGE = "Load a replay to populate the module-owned fallback timeline preview.";
+    private static final String EMPTY_MESSAGE = "Load a replay to populate the supported larva timeline.";
+
+    /** Stable 3+ larva window calculator. */
+    private final LarvaSaturationWindowCalculator saturationWindowCalculator = new LarvaSaturationWindowCalculator();
+
+    /** Missed-larva threshold marker calculator. */
+    private final LarvaMissedLarvaMarkerCalculator missedLarvaMarkerCalculator = new LarvaMissedLarvaMarkerCalculator();
 
     /**
      * Builds a timeline model from replay metadata and current larva diagnostics.
@@ -72,35 +75,41 @@ public class LarvaTimelineModelBuilder {
      * @return timeline row; may be <code>null</code>
      */
     private LarvaTimelineRow createReplayDerivedRow( final long replayLengthMs, final HatcheryLarvaTimeline timeline ) {
-        if ( timeline.getCountPointList().isEmpty() )
+        if ( timeline.getCountPointList().isEmpty() || !timeline.isCompleted() || timeline.getCreatedLarvaCount() <= 0 )
             return null;
 
-        final HatcheryLarvaTimeline.CountPoint firstPoint = timeline.getCountPointList().get( 0 );
-        final HatcheryLarvaTimeline.CountPoint lastPoint = timeline.getCountPointList().get( timeline.getCountPointList().size() - 1 );
-        final long firstPointMs = clampToReplay( loopsToMs( firstPoint.getLoop() ), replayLengthMs );
-        final long lastPointMs = clampToReplay( loopsToMs( lastPoint.getLoop() ), replayLengthMs );
-        final long startMs;
-        final long endMs;
-        final LarvaTimelineSegment.Kind kind;
+        final int visibleStartLoop = saturationWindowCalculator.resolveVisibleStartLoop( timeline );
+        final int visibleEndLoop = saturationWindowCalculator.resolveVisibleEndLoop( timeline, replayLengthMs );
+        if ( visibleStartLoop < 0 || visibleEndLoop <= visibleStartLoop )
+            return null;
 
-        if ( lastPointMs > firstPointMs ) {
-            startMs = firstPointMs;
-            endMs = ensureVisibleWindow( firstPointMs, lastPointMs, replayLengthMs );
-            kind = LarvaTimelineSegment.Kind.PREVIEW_INTERVAL;
-        } else {
-            final long markerStartMs = Math.max( 0L, firstPointMs - MIN_PLACEHOLDER_WINDOW_MS / 2L );
-            startMs = markerStartMs;
-            endMs = ensureVisibleWindow( markerStartMs, firstPointMs + MIN_PLACEHOLDER_WINDOW_MS / 2L, replayLengthMs );
-            kind = LarvaTimelineSegment.Kind.PREVIEW_MARKER;
-        }
+        final long startMs = clampToReplay( saturationWindowCalculator.loopsToMs( visibleStartLoop ), replayLengthMs );
+        final long endMs = clampToReplay( saturationWindowCalculator.loopsToMs( visibleEndLoop ), replayLengthMs );
+        if ( endMs <= startMs )
+            return null;
+
+        final List< LarvaSaturationWindow > saturationWindowList = saturationWindowCalculator.buildWindows( timeline, replayLengthMs );
+        final List< LarvaTimelineMarker > markerList = missedLarvaMarkerCalculator.buildMarkers( saturationWindowList );
 
         final List< LarvaTimelineSegment > segmentList = new ArrayList<>();
-        segmentList.add( new LarvaTimelineSegment( startMs, endMs,
-                "Replay-derived placeholder span, max larva=" + timeline.getMaxLarvaCount(), kind ) );
+        for ( final LarvaSaturationWindow window : saturationWindowList )
+            segmentList.add( new LarvaTimelineSegment( window.getStartMs(), window.getEndMs(),
+                    "3+ larva " + window.getStartTimeLabel() + "-" + window.getEndTimeLabel(), LarvaTimelineSegment.Kind.SATURATION_WINDOW ) );
 
         final String rowLabel = timeline.getHatcheryType() + " (tag " + timeline.getHatcheryTagText() + ")";
-        final String detailLabel = "points=" + timeline.getCountPointList().size() + ", max=" + timeline.getMaxLarvaCount();
-        return new LarvaTimelineRow( timeline.getPlayerName(), rowLabel, detailLabel, segmentList );
+        final String detailLabel = "active="
+                + saturationWindowCalculator.formatMs( startMs )
+                + "-"
+                + saturationWindowCalculator.formatMs( endMs )
+                + ", windows="
+                + saturationWindowList.size()
+                + ", max="
+                + timeline.getMaxLarvaCount()
+                + ", larva="
+                + timeline.getCreatedLarvaCount()
+                + ", missed="
+                + markerList.size();
+            return new LarvaTimelineRow( timeline.getPlayerName(), rowLabel, detailLabel, startMs, endMs, markerList.size(), segmentList, markerList );
     }
 
     /**
@@ -117,17 +126,8 @@ public class LarvaTimelineModelBuilder {
         final List< LarvaTimelineSegment > segmentList = new ArrayList<>();
         segmentList.add( new LarvaTimelineSegment( startMs, endMs, "Replay-length-derived placeholder interval",
                 LarvaTimelineSegment.Kind.PREVIEW_INTERVAL ) );
-        return new LarvaTimelineRow( "Replay context", "Larva fallback preview rail", "placeholder timing before real larva windows", segmentList );
-    }
-
-    /**
-     * Converts tracker loops to milliseconds.
-     *
-     * @param loops replay loops
-     * @return milliseconds
-     */
-    private long loopsToMs( final int loops ) {
-        return ( loops * 1000L ) / LOOPS_PER_SECOND;
+        return new LarvaTimelineRow( "Replay context", "Larva fallback preview rail", "placeholder timing before replay-derived hatchery rows exist",
+            0L, replayLengthMs, 0, segmentList, new ArrayList< LarvaTimelineMarker >() );
     }
 
     /**

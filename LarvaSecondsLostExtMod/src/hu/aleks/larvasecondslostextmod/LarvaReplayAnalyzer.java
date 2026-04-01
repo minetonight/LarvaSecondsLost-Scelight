@@ -180,6 +180,8 @@ public class LarvaReplayAnalyzer {
                             hatcheryState.y = baseUnitEvent.getYCoord();
                             hatcheryState.alive = true;
                             hatcheryState.completed = event.getId() == ITrackerEvents.ID_UNIT_BORN;
+                            if ( hatcheryState.completed )
+                                hatcheryState.recordCompletion( event.getLoop(), repProc );
                             hatcheryState.ensurePoint( event.getLoop(), repProc );
                         } else if ( IBdUtil.UNIT_LARVA.equals( unitType ) ) {
                             larvaBirthCount++;
@@ -229,6 +231,7 @@ public class LarvaReplayAnalyzer {
                             final HatcheryState hatcheryState = hatcheryByTag.get( hatcheryTag );
                             if ( hatcheryState != null ) {
                                 hatcheryState.completed = true;
+                                hatcheryState.recordCompletion( event.getLoop(), repProc );
                                 hatcheryState.ensurePoint( event.getLoop(), repProc );
                             }
                         }
@@ -247,8 +250,10 @@ public class LarvaReplayAnalyzer {
                         }
 
                         final HatcheryState hatcheryState = hatcheryByTag.get( tag );
-                        if ( hatcheryState != null )
+                        if ( hatcheryState != null ) {
                             hatcheryState.alive = false;
+                            hatcheryState.recordDestroyed( event.getLoop(), repProc );
+                        }
                         break;
                     }
                     case ITrackerEvents.ID_UNIT_TYPE_CHANGE : {
@@ -264,6 +269,7 @@ public class LarvaReplayAnalyzer {
                             hatcheryState.hatcheryType = unitType;
                             hatcheryState.alive = true;
                             hatcheryState.completed = true;
+                            hatcheryState.recordCompletion( event.getLoop(), repProc );
                             hatcheryState.ensurePoint( event.getLoop(), repProc );
                         }
 
@@ -555,6 +561,24 @@ public class LarvaReplayAnalyzer {
         /** Tells if the hatchery is completed. */
         private boolean completed;
 
+        /** Completion loop, or <code>-1</code> if unknown. */
+        private int completionLoop = -1;
+
+        /** Completion time label. */
+        private String completionTimeLabel;
+
+        /** First loop where at least one larva was assigned. */
+        private int firstLarvaLoop = -1;
+
+        /** First larva time label. */
+        private String firstLarvaTimeLabel;
+
+        /** Destroyed loop, or <code>-1</code> if the hatchery survived. */
+        private int destroyedLoop = -1;
+
+        /** Destroyed time label. */
+        private String destroyedTimeLabel;
+
         /** Current larva count. */
         private int larvaCount;
 
@@ -603,6 +627,10 @@ public class LarvaReplayAnalyzer {
          */
         private void addLarva( final int loop, final IRepProcessor repProc, final LarvaAssignmentHeuristic.Confidence confidence ) {
             larvaCount++;
+            if ( firstLarvaLoop < 0 ) {
+                firstLarvaLoop = loop;
+                firstLarvaTimeLabel = repProc.formatLoopTime( loop );
+            }
             if ( larvaCount > maxLarvaCount )
                 maxLarvaCount = larvaCount;
             switch ( confidence ) {
@@ -620,6 +648,34 @@ public class LarvaReplayAnalyzer {
                     break;
             }
             addOrReplacePoint( loop, repProc, larvaCount );
+        }
+
+        /**
+         * Records the first known completion moment if it has not been captured yet.
+         *
+         * @param loop completion loop
+         * @param repProc replay processor
+         */
+        private void recordCompletion( final int loop, final IRepProcessor repProc ) {
+            if ( completionLoop >= 0 )
+                return;
+
+            completionLoop = loop;
+            completionTimeLabel = repProc.formatLoopTime( loop );
+        }
+
+        /**
+         * Records the first known destroy moment if it has not been captured yet.
+         *
+         * @param loop destroyed loop
+         * @param repProc replay processor
+         */
+        private void recordDestroyed( final int loop, final IRepProcessor repProc ) {
+            if ( destroyedLoop >= 0 )
+                return;
+
+            destroyedLoop = loop;
+            destroyedTimeLabel = repProc.formatLoopTime( loop );
         }
 
         /**
@@ -657,7 +713,8 @@ public class LarvaReplayAnalyzer {
          */
         private HatcheryLarvaTimeline toTimeline( final IRepProcessor repProc ) {
             return new HatcheryLarvaTimeline( hatcheryTag, hatcheryTagText, playerName == null ? resolveFallbackPlayerName( repProc, playerId ) : playerName,
-                    hatcheryType, countPointList, maxLarvaCount, directAssignmentCount, injectCorrelatedAssignmentCount, heuristicAssignmentCount );
+                    hatcheryType, completed, completionLoop, completionTimeLabel, firstLarvaLoop, firstLarvaTimeLabel, destroyedLoop, destroyedTimeLabel,
+                    countPointList, maxLarvaCount, directAssignmentCount, injectCorrelatedAssignmentCount, heuristicAssignmentCount );
         }
 
         /**

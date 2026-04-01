@@ -13,11 +13,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 /**
- * Simple chart-like preview used for Epic 03.
+ * Simple chart-like visualization used on the supported module-owned Larva page.
  *
- * <p>This is intentionally a module-owned fallback visualization. It renders a normalized replay
- * timeline model so later larva windows can replace placeholder intervals without changing the
- * page layout.</p>
+ * <p>This renders a normalized replay timeline model so replay-analysis code can evolve without
+ * pushing chart logic down into Swing painting.</p>
  */
 @SuppressWarnings("serial")
 public class LarvaTimelinePreviewComp extends JPanel {
@@ -27,6 +26,9 @@ public class LarvaTimelinePreviewComp extends JPanel {
 
     /** Preview window color. */
     private static final Color WINDOW_COLOR = new Color( 220, 70, 70 );
+
+    /** Placeholder interval color. */
+    private static final Color PREVIEW_INTERVAL_COLOR = new Color( 239, 170, 170 );
 
     /** Outline color. */
     private static final Color OUTLINE_COLOR = new Color( 90, 90, 90 );
@@ -39,6 +41,12 @@ public class LarvaTimelinePreviewComp extends JPanel {
 
     /** Marker color. */
     private static final Color MARKER_COLOR = new Color( 246, 156, 63 );
+
+    /** Supported hatchery lifetime rail color. */
+    private static final Color LIFETIME_RAIL_COLOR = new Color( 194, 201, 210 );
+
+    /** Missed-larva marker color. */
+    private static final Color MISSED_LARVA_MARKER_COLOR = Color.BLACK;
 
     /** Left padding. */
     private static final int LEFT_PAD = 12;
@@ -54,6 +62,9 @@ public class LarvaTimelinePreviewComp extends JPanel {
 
     /** Height of a timeline rail. */
     private static final int RAIL_HEIGHT = 16;
+
+    /** Width of a missed-larva threshold marker. */
+    private static final int MARKER_WIDTH = 4;
 
     /** Vertical step between rows. */
     private static final int ROW_STEP = 34;
@@ -99,13 +110,13 @@ public class LarvaTimelinePreviewComp extends JPanel {
         final FontMetrics fm = g.getFontMetrics();
 
         g.setColor( OUTLINE_COLOR );
-        g.drawString( timelineModel == null ? "Epic 03 module-owned larva timeline" : timelineModel.getTitle(), LEFT_PAD, TOP_PAD + 4 );
+        g.drawString( timelineModel == null ? "Larva timeline" : timelineModel.getTitle(), LEFT_PAD, TOP_PAD + 4 );
         g.setColor( SUBTLE_TEXT_COLOR );
-        g.drawString( timelineModel == null ? "Module-owned fallback visualization; load a replay to populate it."
+        g.drawString( timelineModel == null ? "Module-owned supported visualization; load a replay to populate it."
                 : timelineModel.getSubtitle(), LEFT_PAD, TOP_PAD + 22 );
 
         if ( timelineModel == null || timelineModel.getReplayLengthMs() <= 0L ) {
-            g.drawString( "Load a replay to render normalized placeholder timeline rows.", LEFT_PAD, TOP_PAD + 48 );
+            g.drawString( "Load a replay to render replay-derived hatchery rows.", LEFT_PAD, TOP_PAD + 48 );
             return;
         }
 
@@ -158,13 +169,22 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.drawString( row.getDetailLabel(), LEFT_PAD, y + 16 );
 
         final int railY = y + 2;
+        final int rowStartX = railLeft + scaleToWidth( row.getStartMs(), timelineModel.getReplayLengthMs(), railWidth );
+        final int rowEndX = railLeft + scaleToWidth( row.getEndMs(), timelineModel.getReplayLengthMs(), railWidth );
+        final int lifetimeWidth = Math.max( 6, rowEndX - rowStartX );
+
         g.setColor( RAIL_COLOR );
-        g.fillRoundRect( railLeft, railY, railWidth, RAIL_HEIGHT, 10, 10 );
+        g.fillRoundRect( rowStartX, railY, lifetimeWidth, RAIL_HEIGHT, 10, 10 );
+        g.setColor( LIFETIME_RAIL_COLOR );
+        g.fillRoundRect( rowStartX + 1, railY + 1, Math.max( 4, lifetimeWidth - 2 ), Math.max( 4, RAIL_HEIGHT - 2 ), 9, 9 );
         g.setColor( OUTLINE_COLOR );
-        g.drawRoundRect( railLeft, railY, railWidth, RAIL_HEIGHT, 10, 10 );
+        g.drawRoundRect( rowStartX, railY, lifetimeWidth, RAIL_HEIGHT, 10, 10 );
 
         for ( final LarvaTimelineSegment segment : row.getSegmentList() )
             drawSegment( g, fm, segment, railLeft, railY, railWidth );
+
+        for ( final LarvaTimelineMarker marker : row.getMarkerList() )
+            drawMarker( g, marker, railLeft, railY, railWidth );
     }
 
     /**
@@ -181,17 +201,38 @@ public class LarvaTimelinePreviewComp extends JPanel {
             final int railWidth ) {
         final int startX = railLeft + scaleToWidth( segment.getStartMs(), timelineModel.getReplayLengthMs(), railWidth );
         final int endX = railLeft + scaleToWidth( segment.getEndMs(), timelineModel.getReplayLengthMs(), railWidth );
-        final int segmentWidth = Math.max( segment.getKind() == LarvaTimelineSegment.Kind.PREVIEW_MARKER ? 4 : 8, endX - startX );
-        final Color segmentColor = segment.getKind() == LarvaTimelineSegment.Kind.PREVIEW_MARKER ? MARKER_COLOR : WINDOW_COLOR;
+        final boolean marker = segment.getKind() == LarvaTimelineSegment.Kind.PREVIEW_MARKER;
+        final int segmentWidth = Math.max( marker ? 4 : 8, endX - startX );
+        final Color segmentColor = marker ? MARKER_COLOR
+            : segment.getKind() == LarvaTimelineSegment.Kind.SATURATION_WINDOW ? WINDOW_COLOR : PREVIEW_INTERVAL_COLOR;
 
         g.setColor( segmentColor );
         g.fillRoundRect( startX, railY + 2, segmentWidth, RAIL_HEIGHT - 4, 8, 8 );
         g.setColor( OUTLINE_COLOR );
         g.drawRoundRect( startX, railY + 2, segmentWidth, RAIL_HEIGHT - 4, 8, 8 );
 
-        final int labelX = Math.max( railLeft, Math.min( startX, railLeft + railWidth - fm.stringWidth( segment.getLabel() ) ) );
-        g.setColor( SUBTLE_TEXT_COLOR );
-        g.drawString( segment.getLabel(), labelX, railY - 4 );
+        if ( !marker && segmentWidth >= 36 ) {
+            final int labelX = Math.max( railLeft, Math.min( startX, railLeft + railWidth - fm.stringWidth( segment.getLabel() ) ) );
+            g.setColor( SUBTLE_TEXT_COLOR );
+            g.drawString( segment.getLabel(), labelX, railY - 4 );
+        }
+    }
+
+    /**
+     * Draws one semantic threshold marker onto a timeline rail.
+     *
+     * @param g graphics context
+     * @param marker marker to draw
+     * @param railLeft rail left position
+     * @param railY rail top position
+     * @param railWidth rail width
+     */
+    private void drawMarker( final Graphics2D g, final LarvaTimelineMarker marker, final int railLeft, final int railY, final int railWidth ) {
+        final int centerX = railLeft + scaleToWidth( marker.getTimeMs(), timelineModel.getReplayLengthMs(), railWidth );
+        final int markerX = centerX - MARKER_WIDTH / 2;
+
+        g.setColor( MISSED_LARVA_MARKER_COLOR );
+        g.fillRoundRect( markerX, railY - 1, MARKER_WIDTH, RAIL_HEIGHT + 2, 3, 3 );
     }
 
     /**
@@ -215,7 +256,7 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.drawString( startLabel, railLeft, axisY + 16 );
         g.drawString( endLabel, railLeft + railWidth - fm.stringWidth( endLabel ), axisY + 16 );
         g.setColor( SUBTLE_TEXT_COLOR );
-        g.drawString( "Module-owned fallback timeline preview", LEFT_PAD, axisY + 16 );
+        g.drawString( "Supported module-owned larva timeline", LEFT_PAD, axisY + 16 );
     }
 
     /**

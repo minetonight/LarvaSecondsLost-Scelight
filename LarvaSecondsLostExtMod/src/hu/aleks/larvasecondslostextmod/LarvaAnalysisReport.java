@@ -200,6 +200,10 @@ public class LarvaAnalysisReport {
                     .append( timeline.getHatcheryTagText() )
                     .append( ") max=" )
                     .append( timeline.getMaxLarvaCount() )
+                .append( ", completed=" )
+                .append( timeline.isCompleted() )
+                .append( ", larva=" )
+                .append( timeline.getCreatedLarvaCount() )
                     .append( ", direct=" )
                     .append( timeline.getDirectAssignmentCount() )
                     .append( ", inject=" )
@@ -207,6 +211,13 @@ public class LarvaAnalysisReport {
                     .append( ", heuristic=" )
                     .append( timeline.getHeuristicAssignmentCount() )
                     .append( '\n' );
+            builder.append( "    lifecycle: completion=" )
+                .append( formatOptionalTimeLabel( timeline.getCompletionTimeLabel() ) )
+                .append( ", first larva=" )
+                .append( formatOptionalTimeLabel( timeline.getFirstLarvaTimeLabel() ) )
+                .append( ", destroyed=" )
+                .append( formatOptionalTimeLabel( timeline.getDestroyedTimeLabel() ) )
+                .append( '\n' );
             builder.append( "    points: " ).append( formatPoints( timeline.getCountPointList() ) ).append( '\n' );
         }
 
@@ -247,6 +258,16 @@ public class LarvaAnalysisReport {
     private String formatDecimal( final double value ) {
         final long scaled = Math.round( value * 100.0 );
         return String.valueOf( scaled / 100.0 );
+    }
+
+    /**
+     * Formats an optional time label.
+     *
+     * @param timeLabel time label
+     * @return display text
+     */
+    private String formatOptionalTimeLabel( final String timeLabel ) {
+        return timeLabel == null || timeLabel.length() == 0 ? "n/a" : timeLabel;
     }
 
 }
