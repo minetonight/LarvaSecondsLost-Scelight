@@ -93,8 +93,11 @@ When the module is enabled:
 ## Epic 01S04 native chart dropdown integration
 
 - The public external module API does not expose a replay-chart registration hook.
+- Review of the public SDK-style external module surface found page registration, replay parser access, replay processor access, replay-folder monitoring, settings, logging, and utility services, but no chart registry or chart-provider extension point.
 - Scelight's native chart selector is built from internal app classes such as `ChartType` and `ChartsComp`, not from an external registry.
+- Source inspection confirms the native chart dropdown is wired internally: `ChartType` is an internal enum and `ChartsComp` builds the selector directly from that enum's values and internal chart factory classes.
 - Because that selector is backed by an internal enum and internal chart factory wiring, a pure external module cannot add a new `larva` entry there in a supported way.
+- The module now evaluates this through a dedicated capability-check layer before page rendering, and the runtime result is logged, shown on the `Larva` page, and written to the optional dev diagnostic dump.
 - The module now reports this capability result directly on the `Larva` page so later epics can continue on the supported fallback path.
 
 ## Epic 01S05 Base Control chart augmentation
@@ -162,10 +165,36 @@ How should the derived per-hatchery larva counts be converted into stable 3+ lar
 - Operational result: the `Larva` page is the stable replay-scoped fallback surface for Epic 02 and the base integration point for later timeline rendering.
 - Additional caveat: the fallback that scans Scelight's monitored replay folders is a narrow reflective compatibility bridge, not a supported public API extension point. The supported UI integration remains the module-owned `Larva` page itself.
 
-### Epic 03 handoff summary
+## Epic 03 handoff summary
 
 - Epic 02 proved that a replay-scoped module-owned surface exists and is reachable from Scelight navigation.
 - Epic 02 proved that replay selection, replay loading, and replay lifecycle feedback are working on the supported fallback path.
 - Epic 02 did not prove native chart dropdown integration or Base Control augmentation; both remain unsupported through the public external module API.
 - Epic 02 did not yet implement the final larva-window rendering. Epic 03 and later work should focus on visualization on the supported module-owned Larva page.
+
+## Epic 04 handoff
+
+### Proven now
+
+- Epic 03 proved that the supported module-owned `Larva` page can host a chart-like timeline without depending on Scelight internal chart classes.
+- Epic 03 proved that replay-derived timing can drive visible placeholder output on that timeline.
+- Epic 03 proved that the fallback visualization can render one row per derived hatchery timeline and group those rows by player when such timelines are available.
+- Epic 03 proved that resize, redraw, replay switching, and page state transitions can update the timeline without reopening the page.
+- Epic 03 proved that the visualization path can stay decoupled from replay parser objects by using a normalized presentation model between replay analysis and painting.
+
+### Still unknown
+
+- Whether a pure external module can register a native `larva` chart entry in Scelight's built-in chart dropdown through the public external module API.
+- Whether a future public chart registration hook exists anywhere else in the external module API surface.
+- Whether a separate native replay-chart registration mechanism exists outside the currently reviewed page-level UI hooks.
+- How the final `3+ larva` windows, missed-larva thresholds, and overview summaries should replace the current placeholder timeline rows.
+- Whether hover-time resource details for missed larva should be implemented directly on the fallback timeline or only after the final larva-window model exists.
+
+### Next technical question
+
+Can a pure external module register a native `larva` chart entry in Scelight's chart dropdown?
+
+### Retrospective note
+
+That Epic 04 question has since been answered in practice: the public external module API does not expose supported native chart dropdown registration, so the module-owned `Larva` page remains the supported rendering path. This handoff section preserves the state at the end of Epic 03 before Epic 04 was concluded.
 

@@ -38,8 +38,8 @@ public class LarvaSecondsLostModule extends BaseExtModule {
     /** Resolves the latest replay even if the replay-folder event was missed. */
     private LatestReplayResolver latestReplayResolver;
 
-    /** Detects native chart integration capability. */
-    private ChartIntegrationCapabilityDetector chartIntegrationCapabilityDetector;
+    /** Owns native chart integration capability evaluation. */
+    private ChartIntegrationManager chartIntegrationManager;
 
     /** Cached chart integration capability report. */
     private ChartIntegrationCapability chartIntegrationCapability;
@@ -77,10 +77,12 @@ public class LarvaSecondsLostModule extends BaseExtModule {
             replaySummaryService = new ReplaySummaryService( this );
             updateInitPhase( "creating replay services" );
             latestReplayResolver = new LatestReplayResolver( this );
-            chartIntegrationCapabilityDetector = new ChartIntegrationCapabilityDetector();
-            chartIntegrationCapability = chartIntegrationCapabilityDetector.detect();
+            chartIntegrationManager = new ChartIntegrationManager( new ChartIntegrationCapabilityDetector() );
+            chartIntegrationCapability = chartIntegrationManager.initialize( logger );
             baseControlAugmentationCapabilityDetector = new BaseControlAugmentationCapabilityDetector();
             baseControlAugmentationCapability = baseControlAugmentationCapabilityDetector.detect();
+            if ( devDiagnosticDumpWriter != null && devDiagnosticDumpWriter.isEnabled() )
+                devDiagnosticDumpWriter.recordCapabilitySummary( chartIntegrationCapability, baseControlAugmentationCapability );
             recordLifecycleUpdate( "initializing", "Replay services and capability detectors created successfully." );
             updateInitPhase( "installing replay monitor listener" );
             installReplayMonitorListener();

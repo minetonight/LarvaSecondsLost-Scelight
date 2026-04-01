@@ -55,6 +55,9 @@ public class DevDiagnosticDumpWriter {
     /** Current replay analysis details. */
     private String analysisDetails = "No replay analysis has been recorded yet.";
 
+    /** Current capability details. */
+    private String capabilityDetails = "Capability review has not been recorded yet.";
+
     /** Last write timestamp. */
     private String lastUpdated = formatNow();
 
@@ -185,6 +188,43 @@ public class DevDiagnosticDumpWriter {
     }
 
     /**
+     * Records the current integration capability summary.
+     *
+     * @param chartCapability Epic 4 chart integration capability
+     * @param baseControlCapability Epic 5 Base Control augmentation capability
+     */
+    public synchronized void recordCapabilitySummary( final ChartIntegrationCapability chartCapability,
+            final BaseControlAugmentationCapability baseControlCapability ) {
+        if ( !enabled )
+            return;
+
+        final StringBuilder builder = new StringBuilder();
+        if ( chartCapability != null ) {
+            builder.append( "Epic 4 native chart dropdown integration: " )
+                    .append( chartCapability.isNativeDropdownSupported() ? "supported" : "unsupported" )
+                    .append( '\n' );
+            builder.append( "Public API review: " ).append( chartCapability.getPublicApiEvidence() ).append( '\n' );
+            builder.append( "Internal chart wiring review: " ).append( chartCapability.getTechnicalEvidence() ).append( '\n' );
+            builder.append( "Registration status: " ).append( chartCapability.getRegistrationStatus() ).append( '\n' );
+            builder.append( "Recommended path: " ).append( chartCapability.getRecommendedPath() ).append( '\n' );
+        }
+
+        if ( baseControlCapability != null ) {
+            if ( builder.length() > 0 )
+                builder.append( '\n' );
+            builder.append( "Epic 5 native Base Control augmentation: " )
+                    .append( baseControlCapability.isAugmentationSupported() ? "supported" : "unsupported" )
+                    .append( '\n' );
+            builder.append( "Technical evidence: " ).append( baseControlCapability.getTechnicalEvidence() ).append( '\n' );
+            builder.append( "Recommended path: " ).append( baseControlCapability.getRecommendedPath() );
+        }
+
+        capabilityDetails = builder.length() == 0 ? "Capability review has not been recorded yet." : builder.toString();
+        lastUpdated = formatNow();
+        writeDump();
+    }
+
+    /**
      * Records module shutdown.
      *
      * @param manifest module manifest
@@ -250,6 +290,9 @@ public class DevDiagnosticDumpWriter {
             lineList.add( "" );
             lineList.add( "[Analysis]" );
             addMultiline( lineList, analysisDetails );
+            lineList.add( "" );
+            lineList.add( "[Capabilities]" );
+            addMultiline( lineList, capabilityDetails );
 
             Files.write( dumpFile, lineList, UTF8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE );
         } catch ( final IOException e ) {
