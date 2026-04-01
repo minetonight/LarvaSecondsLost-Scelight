@@ -11,6 +11,9 @@ import java.util.Map;
  */
 public class LarvaAnalysisReport {
 
+    /** Normal-speed relative value used by Scelight game-speed conversion. */
+    private static final long NORMAL_GAME_SPEED_RELATIVE = 36L;
+
     /** Calibration used by the assignment heuristic. */
     private final LarvaHeuristicCalibration calibration;
 
@@ -56,6 +59,12 @@ public class LarvaAnalysisReport {
     /** Tells if full replay reparsing was required to get complete event streams. */
     private final boolean fullReplayParseUsed;
 
+    /** Tells if replay times are currently shown in real time. */
+    private final boolean realTime;
+
+    /** Relative converter game speed used by Scelight for loop-to-time conversion. */
+    private final long converterGameSpeedRelative;
+
     /** Player resource snapshots collected from tracker events. */
     private final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName;
 
@@ -74,6 +83,8 @@ public class LarvaAnalysisReport {
      * @param injectCorrelatedAssignmentCount inject-correlated assignments
      * @param heuristicAssignmentCount pure heuristic assignments
          * @param hatcheryMorphCount number of hatchery morph continuations detected
+         * @param realTime tells if replay times are currently shown in real time
+         * @param converterGameSpeedRelative relative converter game speed used by Scelight
          * @param resourceSnapshotsByPlayerName player resource snapshots collected from tracker events
      */
     public LarvaAnalysisReport( final LarvaHeuristicCalibration calibration, final List< HatcheryLarvaTimeline > timelineList,
@@ -81,6 +92,7 @@ public class LarvaAnalysisReport {
             final int ambiguousLarvaCount, final int noEligibleHatcheryLarvaCount,
             final int directAssignmentCount, final int injectCorrelatedAssignmentCount, final int heuristicAssignmentCount,
              final int hatcheryMorphCount, final int trackerEventCount, final int gameEventCount, final boolean fullReplayParseUsed,
+             final boolean realTime, final long converterGameSpeedRelative,
              final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName ) {
         this.calibration = calibration;
         this.timelineList = Collections.unmodifiableList( new ArrayList<>( timelineList ) );
@@ -97,6 +109,8 @@ public class LarvaAnalysisReport {
         this.trackerEventCount = trackerEventCount;
         this.gameEventCount = gameEventCount;
         this.fullReplayParseUsed = fullReplayParseUsed;
+        this.realTime = realTime;
+        this.converterGameSpeedRelative = converterGameSpeedRelative;
         this.resourceSnapshotsByPlayerName = copySnapshotMap( resourceSnapshotsByPlayerName );
     }
 
@@ -160,6 +174,14 @@ public class LarvaAnalysisReport {
         return fullReplayParseUsed;
     }
 
+    public boolean isRealTime() {
+        return realTime;
+    }
+
+    public long getConverterGameSpeedRelative() {
+        return converterGameSpeedRelative;
+    }
+
     public Map< String, List< LarvaPlayerResourceSnapshot > > getResourceSnapshotsByPlayerName() {
         return resourceSnapshotsByPlayerName;
     }
@@ -209,6 +231,58 @@ public class LarvaAnalysisReport {
                 return snapshot;
 
         return null;
+    }
+
+    /**
+     * Converts replay loops to milliseconds using the same time basis as Scelight.
+     *
+     * @param gameloop replay loop
+     * @return converted milliseconds
+     */
+    public long loopToTimeMs( final int gameloop ) {
+        if ( gameloop <= 0 )
+            return 0L;
+
+        long gameMs = ( gameloop * 125L ) / 2L;
+        if ( realTime && converterGameSpeedRelative != NORMAL_GAME_SPEED_RELATIVE )
+            gameMs = gameMs * converterGameSpeedRelative / NORMAL_GAME_SPEED_RELATIVE;
+        return gameMs;
+    }
+
+    /**
+     * Formats replay loops using the same time basis as Scelight.
+     *
+     * @param gameloop replay loop
+     * @return formatted time label
+     */
+    public String formatLoopTime( final int gameloop ) {
+        return formatDuration( loopToTimeMs( gameloop ) );
+    }
+
+    /**
+     * Formats milliseconds as $m:ss$ or $h:mm:ss$.
+     *
+     * @param ms duration in milliseconds
+     * @return formatted duration text
+     */
+    private String formatDuration( final long ms ) {
+        final long totalSeconds = ms / 1000L;
+        final long hours = totalSeconds / 3600L;
+        final long minutes = ( totalSeconds % 3600L ) / 60L;
+        final long seconds = totalSeconds % 60L;
+        if ( hours > 0L )
+            return hours + ":" + padTwoDigits( minutes ) + ":" + padTwoDigits( seconds );
+        return minutes + ":" + padTwoDigits( seconds );
+    }
+
+    /**
+     * Pads a time component to two digits.
+     *
+     * @param value value to pad
+     * @return padded text
+     */
+    private String padTwoDigits( final long value ) {
+        return value < 10L ? "0" + value : String.valueOf( value );
     }
 
     /**

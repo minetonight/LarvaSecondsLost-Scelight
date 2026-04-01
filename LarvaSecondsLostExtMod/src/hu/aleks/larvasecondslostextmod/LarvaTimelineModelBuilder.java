@@ -98,8 +98,8 @@ public class LarvaTimelineModelBuilder {
         if ( visibleStartLoop < 0 || visibleEndLoop <= visibleStartLoop )
             return null;
 
-        final long startMs = clampToReplay( saturationWindowCalculator.loopsToMs( visibleStartLoop ), replayLengthMs );
-        final long endMs = clampToReplay( saturationWindowCalculator.loopsToMs( visibleEndLoop ), replayLengthMs );
+        final long startMs = clampToReplay( toTimelineMs( larvaAnalysisReport, visibleStartLoop ), replayLengthMs );
+        final long endMs = clampToReplay( toTimelineMs( larvaAnalysisReport, visibleEndLoop ), replayLengthMs );
         if ( endMs <= startMs )
             return null;
 
@@ -113,8 +113,8 @@ public class LarvaTimelineModelBuilder {
 
         final List< LarvaTimelineSegment > segmentList = new ArrayList<>();
         for ( final LarvaSaturationWindow window : saturationWindowList )
-            segmentList.add( new LarvaTimelineSegment( window.getStartMs(), window.getEndMs(),
-                "3+ larva " + window.getStartTimeLabel() + "-" + window.getEndTimeLabel(), LarvaTimelineSegment.Kind.SATURATION_WINDOW,
+            segmentList.add( new LarvaTimelineSegment( toTimelineMs( larvaAnalysisReport, window.getStartLoop() ), toTimelineMs( larvaAnalysisReport, window.getEndLoop() ),
+                "3+ larva " + formatTimelineLoop( larvaAnalysisReport, window.getStartLoop() ) + "-" + formatTimelineLoop( larvaAnalysisReport, window.getEndLoop() ), LarvaTimelineSegment.Kind.SATURATION_WINDOW,
                 buildWindowTooltipText( window, playerName, larvaAnalysisReport ) ) );
 
         final String rowLabel = hatcheryType + " (tag " + hatcheryTagText + ")";
@@ -142,8 +142,9 @@ public class LarvaTimelineModelBuilder {
             final LarvaMarkerHoverData hoverData = snapshot == null ? null
                 : new LarvaMarkerHoverData( playerName, snapshot.getLoop(), snapshot.getTimeLabel(), snapshot.getMineralsCurrent(), snapshot.getGasCurrent(),
                     snapshot.getFoodUsed(), snapshot.getFoodMade(), snapshotSelection.futureSnapshot );
-            enrichedMarkerList.add( new LarvaTimelineMarker( marker.getLoop(), marker.getTimeMs(), marker.getLabel(), marker.getKind(), hoverData,
-                    buildMarkerTooltipText( marker, hoverData ) ) );
+            final String markerLabel = buildMarkerLabel( marker, larvaAnalysisReport );
+            enrichedMarkerList.add( new LarvaTimelineMarker( marker.getLoop(), toTimelineMs( larvaAnalysisReport, marker.getLoop() ), markerLabel, marker.getKind(),
+                hoverData, buildMarkerTooltipText( markerLabel, hoverData ) ) );
         }
 
         return enrichedMarkerList;
@@ -165,8 +166,9 @@ public class LarvaTimelineModelBuilder {
                 window.getStartLoop() );
 
         final StringBuilder builder = new StringBuilder( "<html><b>3+ larva window</b><br/>" );
-        builder.append( "Window: " ).append( window.getStartTimeLabel() ).append( " - " ).append( window.getEndTimeLabel() ).append( "<br/>" );
-        builder.append( buildSnapshotTooltipLines( "Window start", window.getStartTimeLabel(), snapshotSelection ) );
+        builder.append( "Window: " ).append( formatTimelineLoop( larvaAnalysisReport, window.getStartLoop() ) ).append( " - " )
+            .append( formatTimelineLoop( larvaAnalysisReport, window.getEndLoop() ) ).append( "<br/>" );
+        builder.append( buildSnapshotTooltipLines( "Window start", formatTimelineLoop( larvaAnalysisReport, window.getStartLoop() ), snapshotSelection ) );
         builder.append( "</html>" );
         return builder.toString();
     }
@@ -178,13 +180,13 @@ public class LarvaTimelineModelBuilder {
      * @param hoverData attached hover metadata; may be <code>null</code>
      * @return tooltip text
      */
-    private String buildMarkerTooltipText( final LarvaTimelineMarker marker, final LarvaMarkerHoverData hoverData ) {
-        if ( marker == null )
+    private String buildMarkerTooltipText( final String markerLabel, final LarvaMarkerHoverData hoverData ) {
+        if ( markerLabel == null )
             return null;
 
         final StringBuilder builder = new StringBuilder( "<html><b>Potential larva missed</b><br/>" );
-        builder.append( marker.getLabel() ).append( "<br/>" );
-        builder.append( buildSnapshotTooltipLines( "Missed moment", extractTimeFromMarkerLabel( marker.getLabel() ), hoverData ) );
+        builder.append( markerLabel ).append( "<br/>" );
+        builder.append( buildSnapshotTooltipLines( "Missed moment", extractTimeFromMarkerLabel( markerLabel ), hoverData ) );
         builder.append( "</html>" );
         return builder.toString();
     }
@@ -319,6 +321,44 @@ public class LarvaTimelineModelBuilder {
 
         final int atIndex = label.lastIndexOf( " at " );
         return atIndex < 0 ? label : label.substring( atIndex + 4 );
+    }
+
+    /**
+     * Builds the visible marker label using Scelight-consistent time formatting.
+     *
+     * @param marker marker to label
+     * @return formatted marker label
+     */
+    private String buildMarkerLabel( final LarvaTimelineMarker marker, final LarvaAnalysisReport larvaAnalysisReport ) {
+        if ( marker == null )
+            return null;
+
+        final String prefix = marker.getLabel() == null ? "Missed larva" : marker.getLabel();
+        final int atIndex = prefix.lastIndexOf( " at " );
+        final String countPrefix = atIndex < 0 ? prefix : prefix.substring( 0, atIndex );
+        return countPrefix + " at " + formatTimelineLoop( larvaAnalysisReport, marker.getLoop() );
+    }
+
+    /**
+     * Converts a loop to timeline milliseconds using Scelight-consistent time conversion when available.
+     *
+     * @param larvaAnalysisReport analysis report containing time-conversion settings
+     * @param loop replay loop
+     * @return converted milliseconds
+     */
+    private long toTimelineMs( final LarvaAnalysisReport larvaAnalysisReport, final int loop ) {
+        return larvaAnalysisReport == null ? saturationWindowCalculator.loopsToMs( loop ) : larvaAnalysisReport.loopToTimeMs( loop );
+    }
+
+    /**
+     * Formats a loop with the same time basis Scelight uses for replay pages.
+     *
+     * @param larvaAnalysisReport analysis report containing time-conversion settings
+     * @param loop replay loop
+     * @return formatted time label
+     */
+    private String formatTimelineLoop( final LarvaAnalysisReport larvaAnalysisReport, final int loop ) {
+        return larvaAnalysisReport == null ? saturationWindowCalculator.formatLoopTime( loop ) : larvaAnalysisReport.formatLoopTime( loop );
     }
 
     /**
