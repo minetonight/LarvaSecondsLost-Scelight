@@ -11,3 +11,11 @@ see folder knowhow. use java 7 syntax strictly.
 # success criteria 
 a new view choosable in the `chart` dropdown as "larva", and it shows a graph as described in the goal.
 
+# overview features - stats
+when one hatchery accumulates 11 seconds over time with 3+ larva, one thick black line is shown on the line chart. that happens every 11 accumulated seconds. 
+below the line of the hatchery there is a text with message "[x] potential larva missed".
+on top of the charts there is overview message saying "[y] total potential larva missed in this match".
+do not show charts for hatcheries that we not completed during building, that created zero larva. 
+
+# extra feature - minerals
+in a hover over a missed larva, show current minerals and gas with blue and green numbers.
