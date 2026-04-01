@@ -370,6 +370,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         builder.append( "Larva page diagnostics:" ).append( '\n' );
         builder.append( "Integration mode: " ).append( summary.getIntegrationMode() ).append( '\n' );
         builder.append( "Native larva chart registration: " ).append( module.getChartIntegrationCapability().getRegistrationStatus() ).append( '\n' );
+        builder.append( "Native Base Control augmentation: " ).append( module.getBaseControlAugmentationCapability().getAugmentationStatus() ).append( '\n' );
         if ( summary.getTimelineModel() != null ) {
             builder.append( "Timeline title: " ).append( summary.getTimelineModel().getTitle() ).append( '\n' );
             builder.append( "Timeline subtitle: " ).append( summary.getTimelineModel().getSubtitle() ).append( '\n' );
@@ -409,7 +410,9 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
             .append( baseControlCapability.isAugmentationSupported() ? "supported" : "unsupported" )
             .append( '\n' );
         builder.append( baseControlCapability.getExplanation() ).append( '\n' );
-        builder.append( "Technical evidence: " ).append( baseControlCapability.getTechnicalEvidence() ).append( '\n' );
+        builder.append( "Public API review: " ).append( baseControlCapability.getPublicApiEvidence() ).append( '\n' );
+        builder.append( "Internal Base Control wiring review: " ).append( baseControlCapability.getTechnicalEvidence() ).append( '\n' );
+        builder.append( "Augmentation status: " ).append( baseControlCapability.getAugmentationStatus() ).append( '\n' );
         builder.append( "Recommended path: " ).append( baseControlCapability.getRecommendedPath() ).append( '\n' );
         return builder.toString();
     }

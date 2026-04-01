@@ -215,7 +215,9 @@ public class DevDiagnosticDumpWriter {
             builder.append( "Epic 5 native Base Control augmentation: " )
                     .append( baseControlCapability.isAugmentationSupported() ? "supported" : "unsupported" )
                     .append( '\n' );
-            builder.append( "Technical evidence: " ).append( baseControlCapability.getTechnicalEvidence() ).append( '\n' );
+            builder.append( "Public API review: " ).append( baseControlCapability.getPublicApiEvidence() ).append( '\n' );
+            builder.append( "Internal Base Control wiring review: " ).append( baseControlCapability.getTechnicalEvidence() ).append( '\n' );
+            builder.append( "Augmentation status: " ).append( baseControlCapability.getAugmentationStatus() ).append( '\n' );
             builder.append( "Recommended path: " ).append( baseControlCapability.getRecommendedPath() );
         }
 

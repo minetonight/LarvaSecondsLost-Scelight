@@ -80,7 +80,8 @@ public class ReplaySummaryService {
         module.logger.debug( "Larva analysis summary for " + replayFile.getFileName() + ": trackerEvents=" + larvaAnalysisReport.getTrackerEventCount()
             + ", gameEvents=" + larvaAnalysisReport.getGameEventCount() + ", hatcheries=" + larvaAnalysisReport.getTrackedHatcheryCount() + ", larvaBirths="
             + larvaAnalysisReport.getLarvaBirthCount() + ", assigned=" + larvaAnalysisReport.getAssignedLarvaCount() + ", unassigned="
-            + larvaAnalysisReport.getUnassignedLarvaCount() + ", fullReplayParseUsed=" + larvaAnalysisReport.isFullReplayParseUsed() );
+            + larvaAnalysisReport.getUnassignedLarvaCount() + ", ambiguous=" + larvaAnalysisReport.getAmbiguousLarvaCount() + ", noEligible="
+            + larvaAnalysisReport.getNoEligibleHatcheryLarvaCount() + ", fullReplayParseUsed=" + larvaAnalysisReport.isFullReplayParseUsed() );
 
         final ReplaySummary replaySummary = new ReplaySummary( replayFile, safe( sourceDescription, "Unknown" ),
             safe( details == null ? null : details.getTitle(), "Unknown map" ),

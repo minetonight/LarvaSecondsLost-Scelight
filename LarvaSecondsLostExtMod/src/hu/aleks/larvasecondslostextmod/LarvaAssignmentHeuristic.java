@@ -11,6 +11,21 @@ import java.util.Map;
  */
 public class LarvaAssignmentHeuristic {
 
+    /** Assignment reason used when no eligible hatchery matched. */
+    public static final String REASON_NO_ELIGIBLE_HATCHERY = "no eligible hatchery within calibrated radius";
+
+    /** Assignment reason used when multiple hatcheries matched too closely. */
+    public static final String REASON_AMBIGUOUS_MATCH = "multiple hatcheries matched the larva birth with similar score";
+
+    /** Assignment reason used when creator tag matched a recent Spawn Larva. */
+    public static final String REASON_DIRECT_CREATOR_MATCH = "creatorUnitTag matched SpawnLarva";
+
+    /** Assignment reason used when inject correlation strengthened the best spatial match. */
+    public static final String REASON_INJECT_CORRELATED_MATCH = "recent SpawnLarva command strengthened the spatial match";
+
+    /** Assignment reason used when calibrated spatial matching selected the best hatchery. */
+    public static final String REASON_CALIBRATED_SPATIAL_MATCH = "nearest calibrated hatchery offset match";
+
     /** Confidence level of an assignment. */
     public enum Confidence {
         DIRECT,
@@ -60,6 +75,14 @@ public class LarvaAssignmentHeuristic {
             return hatcheryTag != null;
         }
 
+        public boolean isAmbiguous() {
+            return REASON_AMBIGUOUS_MATCH.equals( reason );
+        }
+
+        public boolean isNoEligibleHatchery() {
+            return REASON_NO_ELIGIBLE_HATCHERY.equals( reason );
+        }
+
     }
 
     /** Signal window for matching a larva birth to a recent Spawn Larva command. */
@@ -99,7 +122,7 @@ public class LarvaAssignmentHeuristic {
         if ( creatorTag != null && IAbility.ID_SPAWN_LARVA.equals( creatorAbilityName ) ) {
             for ( final LarvaReplayAnalyzer.HatcherySnapshot hatcheryState : hatcheryStates ) {
                 if ( hatcheryState.getHatcheryTag() == creatorTag.intValue() && hatcheryState.isAlive() && hatcheryState.isCompleted() )
-                    return new AssignmentResult( creatorTag, Confidence.DIRECT, "creatorUnitTag matched SpawnLarva" );
+                    return new AssignmentResult( creatorTag, Confidence.DIRECT, REASON_DIRECT_CREATOR_MATCH );
             }
         }
 
@@ -139,14 +162,14 @@ public class LarvaAssignmentHeuristic {
         }
 
         if ( best == null )
-            return new AssignmentResult( null, Confidence.UNASSIGNED, "no eligible hatchery within calibrated radius" );
+            return new AssignmentResult( null, Confidence.UNASSIGNED, REASON_NO_ELIGIBLE_HATCHERY );
 
         if ( second != null && second.score - best.score < AMBIGUITY_MARGIN )
-            return new AssignmentResult( null, Confidence.UNASSIGNED, "multiple hatcheries matched the larva birth with similar score" );
+            return new AssignmentResult( null, Confidence.UNASSIGNED, REASON_AMBIGUOUS_MATCH );
 
         return new AssignmentResult( Integer.valueOf( best.hatcheryState.getHatcheryTag() ),
                 best.injectCorrelated ? Confidence.INJECT_CORRELATED : Confidence.HEURISTIC,
-                best.injectCorrelated ? "recent SpawnLarva command strengthened the spatial match" : "nearest calibrated hatchery offset match" );
+                best.injectCorrelated ? REASON_INJECT_CORRELATED_MATCH : REASON_CALIBRATED_SPATIAL_MATCH );
     }
 
     /**

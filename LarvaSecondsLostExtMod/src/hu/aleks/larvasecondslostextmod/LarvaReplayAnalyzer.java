@@ -153,6 +153,8 @@ public class LarvaReplayAnalyzer {
         int larvaBirthCount = 0;
         int assignedLarvaCount = 0;
         int unassignedLarvaCount = 0;
+        int ambiguousLarvaCount = 0;
+        int noEligibleHatcheryLarvaCount = 0;
         int directAssignmentCount = 0;
         int injectCorrelatedAssignmentCount = 0;
         int heuristicAssignmentCount = 0;
@@ -213,6 +215,10 @@ public class LarvaReplayAnalyzer {
                                 }
                             } else {
                                 unassignedLarvaCount++;
+                                if ( assignment.isAmbiguous() )
+                                    ambiguousLarvaCount++;
+                                else if ( assignment.isNoEligibleHatchery() )
+                                    noEligibleHatcheryLarvaCount++;
                             }
                         }
                         break;
@@ -301,6 +307,7 @@ public class LarvaReplayAnalyzer {
         } );
 
         return new LarvaAnalysisReport( calibration, timelineList, hatcheryByTag.size(), larvaBirthCount, assignedLarvaCount, unassignedLarvaCount,
+            ambiguousLarvaCount, noEligibleHatcheryLarvaCount,
             directAssignmentCount, injectCorrelatedAssignmentCount, heuristicAssignmentCount, hatcheryMorphCount,
             trackerEventArray == null ? 0 : trackerEventArray.length, gameEventArray == null ? 0 : gameEventArray.length, fullReplayParseUsed );
     }

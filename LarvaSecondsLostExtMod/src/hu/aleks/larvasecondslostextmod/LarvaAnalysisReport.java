@@ -27,6 +27,12 @@ public class LarvaAnalysisReport {
     /** Number of larva that remained ambiguous or unassigned. */
     private final int unassignedLarvaCount;
 
+    /** Number of unassigned larva caused by ambiguous multi-hatchery matches. */
+    private final int ambiguousLarvaCount;
+
+    /** Number of unassigned larva caused by no eligible hatchery within range. */
+    private final int noEligibleHatcheryLarvaCount;
+
     /** Direct creator-based assignments. */
     private final int directAssignmentCount;
 
@@ -57,6 +63,8 @@ public class LarvaAnalysisReport {
      * @param larvaBirthCount number of larva birth events observed
      * @param assignedLarvaCount number of assigned larva
      * @param unassignedLarvaCount number of unassigned larva
+    * @param ambiguousLarvaCount number of ambiguous larva births
+    * @param noEligibleHatcheryLarvaCount number of larva births with no eligible hatchery
      * @param directAssignmentCount direct creator-based assignments
      * @param injectCorrelatedAssignmentCount inject-correlated assignments
      * @param heuristicAssignmentCount pure heuristic assignments
@@ -64,6 +72,7 @@ public class LarvaAnalysisReport {
      */
     public LarvaAnalysisReport( final LarvaHeuristicCalibration calibration, final List< HatcheryLarvaTimeline > timelineList,
             final int trackedHatcheryCount, final int larvaBirthCount, final int assignedLarvaCount, final int unassignedLarvaCount,
+            final int ambiguousLarvaCount, final int noEligibleHatcheryLarvaCount,
             final int directAssignmentCount, final int injectCorrelatedAssignmentCount, final int heuristicAssignmentCount,
             final int hatcheryMorphCount, final int trackerEventCount, final int gameEventCount, final boolean fullReplayParseUsed ) {
         this.calibration = calibration;
@@ -72,6 +81,8 @@ public class LarvaAnalysisReport {
         this.larvaBirthCount = larvaBirthCount;
         this.assignedLarvaCount = assignedLarvaCount;
         this.unassignedLarvaCount = unassignedLarvaCount;
+        this.ambiguousLarvaCount = ambiguousLarvaCount;
+        this.noEligibleHatcheryLarvaCount = noEligibleHatcheryLarvaCount;
         this.directAssignmentCount = directAssignmentCount;
         this.injectCorrelatedAssignmentCount = injectCorrelatedAssignmentCount;
         this.heuristicAssignmentCount = heuristicAssignmentCount;
@@ -103,6 +114,14 @@ public class LarvaAnalysisReport {
 
     public int getUnassignedLarvaCount() {
         return unassignedLarvaCount;
+    }
+
+    public int getAmbiguousLarvaCount() {
+        return ambiguousLarvaCount;
+    }
+
+    public int getNoEligibleHatcheryLarvaCount() {
+        return noEligibleHatcheryLarvaCount;
     }
 
     public int getDirectAssignmentCount() {
@@ -161,6 +180,9 @@ public class LarvaAnalysisReport {
                 .append( ", heuristic=" ).append( heuristicAssignmentCount )
                 .append( ", unassigned=" ).append( unassignedLarvaCount )
                 .append( '\n' );
+        builder.append( "- Unassigned details: ambiguous=" ).append( ambiguousLarvaCount )
+            .append( ", no eligible hatchery=" ).append( noEligibleHatcheryLarvaCount )
+            .append( '\n' );
         builder.append( "- Assigned larva total: " ).append( assignedLarvaCount ).append( '\n' );
 
         if ( timelineList.isEmpty() ) {

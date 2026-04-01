@@ -103,8 +103,11 @@ When the module is enabled:
 ## Epic 01S05 Base Control chart augmentation
 
 - The public external module API does not expose the internal Base Control chart or any supported callback to append extra rectangles to it.
+- Review of the public SDK-style external module surface found page registration, replay parsing, replay processing, replay-folder monitoring, settings, logging, and utility services, but no Base Control augmentation hook, chart dataset mutator, or replay-analyzer chart adapter.
 - Scelight constructs Base Control through internal app classes: `ChartType.BASE_CONTROL` selects `BaseControlChartFactory` inside `ChartsComp`, and that factory creates `BaseControlChart` instances backed by internal `BaseControlChartDataSet` objects.
+- Source inspection confirms Base Control is constructed entirely through internal replay-analyzer classes and internal chart-factory wiring rather than an external registry.
 - Because those classes are internal and no external augmentation registry exists, a pure external module cannot extend Base Control in a supported way.
+- The module now evaluates this through a dedicated capability-check layer before page rendering, and the runtime result is logged, shown on the `Larva` page, and written to the optional dev diagnostic dump.
 - The module now reports this capability result directly on the `Larva` page so the separate Larva timeline remains the supported rendering path for later epics.
 
 ## Epic 01S06 larva-to-hatchery assignment foundation
@@ -197,4 +200,50 @@ Can a pure external module register a native `larva` chart entry in Scelight's c
 ### Retrospective note
 
 That Epic 04 question has since been answered in practice: the public external module API does not expose supported native chart dropdown registration, so the module-owned `Larva` page remains the supported rendering path. This handoff section preserves the state at the end of Epic 03 before Epic 04 was concluded.
+
+## Epic 05 handoff
+
+### Proven now
+
+- Epic 04 proved that a pure external module cannot register a native `larva` chart entry in Scelight's built-in chart dropdown through the public external module API.
+- Epic 05 proved that the public external module API also does not expose the native `Base Control` chart, its data model, or any supported callback that would let an external module append larva rectangles there.
+- Epic 05 proved through source inspection that Base Control is constructed internally from `ChartType.BASE_CONTROL`, `ChartsComp`, `BaseControlChartFactory`, and internal `BaseControlChartDataSet` objects rather than an external augmentation registry.
+- Epic 05 proved that Base Control feasibility can be evaluated through a dedicated capability-check layer whose result is logged, shown on the `Larva` page, and written to the optional dev diagnostic dump.
+- Epic 05 proved that the separate module-owned `Larva` timeline remains the supported rendering path once both native chart registration and native Base Control augmentation are ruled out.
+
+### Still unknown
+
+- How larva births should be attributed to hatcheries reliably enough to reconstruct per-hatchery larva counts.
+- How a replay-derived hatchery-to-larva offset should be calibrated when replay openings do not expose the ideal simple Zerg start.
+- How per-hatchery larva counts should later be converted into stable `3+ larva` windows.
+- How missed-larva totals, threshold markers, and hover resource details should be layered on top of those later windows.
+
+### Next technical question
+
+How can larva births be assigned to hatcheries reliably enough to build per-hatchery larva timelines?
+
+### Retrospective note
+
+That Epic 05 question has since been answered in practice: the public external module API does not expose supported Base Control augmentation, so the module-owned `Larva` timeline remains the supported rendering path. This handoff section preserves the state at the end of Epic 04 before Epic 06 replay-analysis foundation work was concluded.
+
+## Epic 06 handoff
+
+### Proven now
+
+- Epic 06 now parses hatchery-like tracker events for `Hatchery`, `Lair`, and `Hive`, preserving morph continuity on the same unit tag across completion, morph, owner change, and death.
+- Epic 06 now correlates `SpawnLarva` command targets by hatchery tag and uses that signal to strengthen larva birth assignment before pure spatial fallback is attempted.
+- Epic 06 now derives a replay-specific hatchery-to-larva offset and assignment radius from simple Zerg openings when available, and it falls back to documented default values when replay calibration is unavailable.
+- Epic 06 now assigns larva births through direct creator matches, inject-correlated matches, and calibrated spatial matches, while keeping ambiguous or ineligible births explicitly unassigned.
+- Epic 06 now emits per-hatchery larva count timelines together with calibration details, assignment-confidence counts, and unassigned-reason diagnostics on the supported module-owned `Larva` page.
+
+### Still unknown
+
+- How the derived per-hatchery larva count timelines should be converted into stable `3+ larva` windows.
+- How hatchery lifetime bounds should control the visible start and end of each later row.
+- How 11-second missed-larva thresholds, per-hatchery totals, and match totals should be accumulated from those windows.
+- How hover-time minerals and gas should be attached to later missed-larva markers.
+
+### Next technical question
+
+How should the derived per-hatchery larva counts be converted into stable `3+ larva` windows and visualized on the Larva timeline?
 

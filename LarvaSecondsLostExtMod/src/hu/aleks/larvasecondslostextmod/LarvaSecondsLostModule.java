@@ -44,8 +44,8 @@ public class LarvaSecondsLostModule extends BaseExtModule {
     /** Cached chart integration capability report. */
     private ChartIntegrationCapability chartIntegrationCapability;
 
-    /** Detects Base Control augmentation capability. */
-    private BaseControlAugmentationCapabilityDetector baseControlAugmentationCapabilityDetector;
+    /** Owns Base Control augmentation capability evaluation. */
+    private BaseControlAugmentationManager baseControlAugmentationManager;
 
     /** Cached Base Control augmentation capability report. */
     private BaseControlAugmentationCapability baseControlAugmentationCapability;
@@ -79,8 +79,8 @@ public class LarvaSecondsLostModule extends BaseExtModule {
             latestReplayResolver = new LatestReplayResolver( this );
             chartIntegrationManager = new ChartIntegrationManager( new ChartIntegrationCapabilityDetector() );
             chartIntegrationCapability = chartIntegrationManager.initialize( logger );
-            baseControlAugmentationCapabilityDetector = new BaseControlAugmentationCapabilityDetector();
-            baseControlAugmentationCapability = baseControlAugmentationCapabilityDetector.detect();
+            baseControlAugmentationManager = new BaseControlAugmentationManager( new BaseControlAugmentationCapabilityDetector() );
+            baseControlAugmentationCapability = baseControlAugmentationManager.initialize( logger );
             if ( devDiagnosticDumpWriter != null && devDiagnosticDumpWriter.isEnabled() )
                 devDiagnosticDumpWriter.recordCapabilitySummary( chartIntegrationCapability, baseControlAugmentationCapability );
             recordLifecycleUpdate( "initializing", "Replay services and capability detectors created successfully." );
