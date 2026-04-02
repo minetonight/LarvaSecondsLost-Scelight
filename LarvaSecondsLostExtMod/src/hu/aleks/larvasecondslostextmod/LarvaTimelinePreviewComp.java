@@ -55,6 +55,9 @@ public class LarvaTimelinePreviewComp extends JPanel {
     /** Missed-larva marker color. */
     private static final Color MISSED_LARVA_MARKER_COLOR = Color.BLACK;
 
+    /** Subtle gray used for larva count dots and accumulation labels. */
+    private static final Color RHYTHM_HINT_COLOR = new Color( 132, 140, 148 );
+
     /** Left padding. */
     private static final int LEFT_PAD = 12;
 
@@ -80,7 +83,13 @@ public class LarvaTimelinePreviewComp extends JPanel {
     private static final int GROUP_GAP = 16;
 
     /** Space reserved below the axis for labels and legend. */
-    private static final int AXIS_BOTTOM_PAD = 38;
+    private static final int AXIS_BOTTOM_PAD = 54;
+
+    /** Size of one small larva rhythm dot. */
+    private static final int RHYTHM_DOT_SIZE = 4;
+
+    /** Minimum horizontal spacing between accumulation labels to avoid clutter. */
+    private static final int MIN_ACCUMULATION_LABEL_GAP = 16;
 
     /** Current normalized timeline model to render. */
     private LarvaTimelineModel timelineModel;
@@ -209,6 +218,8 @@ public class LarvaTimelinePreviewComp extends JPanel {
         for ( final LarvaTimelineSegment segment : row.getSegmentList() )
             drawSegment( g, fm, segment, railLeft, railY, railWidth );
 
+        drawDecorations( g, fm, row, railLeft, railY, railWidth );
+
         for ( final LarvaTimelineMarker marker : row.getMarkerList() )
             drawMarker( g, marker, railLeft, railY, railWidth );
     }
@@ -240,11 +251,6 @@ public class LarvaTimelinePreviewComp extends JPanel {
         if ( segment.getTooltipText() != null && segment.getTooltipText().length() > 0 )
             tooltipHotspotList.add( new TooltipHotspot( new Rectangle( startX, railY + 2, segmentWidth, RAIL_HEIGHT - 4 ), segment.getTooltipText() ) );
 
-        if ( !marker && segmentWidth >= 36 ) {
-            final int labelX = Math.max( railLeft, Math.min( startX, railLeft + railWidth - fm.stringWidth( segment.getLabel() ) ) );
-            g.setColor( SUBTLE_TEXT_COLOR );
-            g.drawString( segment.getLabel(), labelX, railY - 4 );
-        }
     }
 
     /**
@@ -265,6 +271,78 @@ public class LarvaTimelinePreviewComp extends JPanel {
 
         if ( marker.getTooltipText() != null && marker.getTooltipText().length() > 0 )
             tooltipHotspotList.add( new TooltipHotspot( new Rectangle( markerX - 2, railY - 2, MARKER_WIDTH + 4, RAIL_HEIGHT + 4 ), marker.getTooltipText() ) );
+    }
+
+    /**
+     * Draws one small rhythm decoration without adding tooltip hotspots.
+     *
+     * @param g graphics context
+     * @param fm font metrics
+     * @param decoration decoration to draw
+     * @param railLeft rail left position
+     * @param railY rail top position
+     * @param railWidth rail width
+     */
+    private void drawDecoration( final Graphics2D g, final FontMetrics fm, final LarvaTimelineDecoration decoration, final int railLeft, final int railY,
+            final int railWidth ) {
+        if ( decoration == null )
+            return;
+
+        final int centerX = railLeft + scaleToWidth( decoration.getTimeMs(), timelineModel.getReplayLengthMs(), railWidth );
+        g.setColor( RHYTHM_HINT_COLOR );
+
+        if ( decoration.getKind() == LarvaTimelineDecoration.Kind.LARVA_DOT_COLUMN ) {
+            final int dotCount = Math.max( 1, Math.min( 2, decoration.getLarvaCount() ) );
+            final int firstDotY = railY + RAIL_HEIGHT / 2 - ( dotCount == 2 ? 5 : 2 );
+            for ( int i = 0; i < dotCount; i++ )
+                g.fillOval( centerX - RHYTHM_DOT_SIZE / 2, firstDotY + i * 6, RHYTHM_DOT_SIZE, RHYTHM_DOT_SIZE );
+            return;
+        }
+
+        if ( decoration.getKind() == LarvaTimelineDecoration.Kind.ACCUMULATION_LABEL && decoration.getLabel() != null ) {
+            final int textX = centerX - fm.stringWidth( decoration.getLabel() ) / 2;
+            g.drawString( decoration.getLabel(), textX, railY + RAIL_HEIGHT - 3 );
+        }
+    }
+
+    /**
+     * Draws row decorations while thinning accumulation labels so long windows stay readable.
+     *
+     * @param g graphics context
+     * @param fm font metrics
+     * @param row row whose decorations should be drawn
+     * @param railLeft rail left position
+     * @param railY rail top position
+     * @param railWidth rail width
+     */
+    private void drawDecorations( final Graphics2D g, final FontMetrics fm, final LarvaTimelineRow row, final int railLeft, final int railY,
+            final int railWidth ) {
+        if ( row == null || row.getDecorationList().isEmpty() )
+            return;
+
+        int lastAccumulationLabelRight = Integer.MIN_VALUE;
+        for ( final LarvaTimelineDecoration decoration : row.getDecorationList() ) {
+            if ( decoration == null )
+                continue;
+
+            if ( decoration.getKind() != LarvaTimelineDecoration.Kind.ACCUMULATION_LABEL ) {
+                drawDecoration( g, fm, decoration, railLeft, railY, railWidth );
+                continue;
+            }
+
+            final String label = decoration.getLabel();
+            if ( label == null || label.length() == 0 )
+                continue;
+
+            final int centerX = railLeft + scaleToWidth( decoration.getTimeMs(), timelineModel.getReplayLengthMs(), railWidth );
+            final int textWidth = fm.stringWidth( label );
+            final int textX = centerX - textWidth / 2;
+            if ( textX <= lastAccumulationLabelRight + MIN_ACCUMULATION_LABEL_GAP )
+                continue;
+
+            drawDecoration( g, fm, decoration, railLeft, railY, railWidth );
+            lastAccumulationLabelRight = textX + textWidth;
+        }
     }
 
     @Override
@@ -302,7 +380,8 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.drawString( startLabel, railLeft, axisY + 16 );
         g.drawString( endLabel, railLeft + railWidth - fm.stringWidth( endLabel ), axisY + 16 );
         g.setColor( SUBTLE_TEXT_COLOR );
-        g.drawString( "Legend: red bars = 3+ larva, black ticks = missed larva", LEFT_PAD, axisY + 32 );
+        g.drawString( "Legend: gray dots = 1-2 larva, red bars = 3+ larva, black ticks = missed larva", LEFT_PAD, axisY + 32 );
+        g.drawString( "Gray 6/9/12... labels mark moments when a hatchery reaches those larva counts", LEFT_PAD, axisY + 46 );
     }
 
     /**

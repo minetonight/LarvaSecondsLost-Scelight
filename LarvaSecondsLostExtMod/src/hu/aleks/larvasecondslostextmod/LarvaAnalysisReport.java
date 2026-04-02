@@ -375,6 +375,7 @@ public class LarvaAnalysisReport {
                 .append( formatOptionalTimeLabel( timeline.getDestroyedTimeLabel() ) )
                 .append( '\n' );
             builder.append( "    points: " ).append( formatPoints( timeline.getCountPointList() ) ).append( '\n' );
+            builder.append( "    milestones: " ).append( formatLarvaCountMilestones( timeline ) ).append( '\n' );
         }
 
         return builder.toString();
@@ -403,6 +404,36 @@ public class LarvaAnalysisReport {
             builder.append( ", ... (" ).append( pointList.size() - limit ).append( " more)" );
 
         return builder.toString();
+    }
+
+    /**
+     * Formats hatchery moments when the tracked larva count reaches 3, 6, 9, 12, ...
+     *
+     * @param timeline hatchery timeline
+     * @return formatted milestone list
+     */
+    private String formatLarvaCountMilestones( final HatcheryLarvaTimeline timeline ) {
+        if ( timeline == null || timeline.getCountPointList().isEmpty() )
+            return "none";
+
+        final StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for ( final HatcheryLarvaTimeline.CountPoint point : timeline.getCountPointList() ) {
+            if ( point == null || point.getLarvaCount() <= 0 || point.getLarvaCount() % 3 != 0 )
+                continue;
+
+            if ( !first )
+                builder.append( ", " );
+            builder.append( "tag " )
+                .append( timeline.getHatcheryTagText() )
+                .append( ' ' )
+                .append( point.getTimeLabel() )
+                .append( '=' )
+                .append( point.getLarvaCount() );
+            first = false;
+        }
+
+        return first ? "none" : builder.toString();
     }
 
     /**

@@ -2,6 +2,8 @@ package hu.aleks.larvasecondslostextmod;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,18 @@ public class LarvaTimelineModelBuilder {
 
     /** Maximum allowed distance between a hovered point and a resource snapshot. */
     private static final int SNAPSHOT_MATCH_WINDOW_LOOPS = 10 * 16;
+
+    /** Replay loops per second used by SC2 timing. */
+    private static final int REPLAY_LOOPS_PER_SECOND = 16;
+
+    /** Dot-column spacing for 1- and 2-larva rhythm hints. */
+    private static final int LARVA_DOT_STEP_LOOPS = 2 * REPLAY_LOOPS_PER_SECOND;
+
+    /** First cumulative label shown inside a 3+ larva window. */
+    private static final int ACCUMULATION_LABEL_START = 6;
+
+    /** Step between cumulative labels shown inside a 3+ larva window. */
+    private static final int ACCUMULATION_LABEL_STEP = 3;
 
     /** Minimum width of a placeholder interval so it remains visible on short replays. */
     private static final long MIN_PLACEHOLDER_WINDOW_MS = 10000L;
@@ -114,6 +128,7 @@ public class LarvaTimelineModelBuilder {
         final long gameSpeedRelative = larvaAnalysisReport == null ? 0L : larvaAnalysisReport.getConverterGameSpeedRelative();
         final List< LarvaTimelineMarker > markerList = attachMarkerHoverData( missedLarvaMarkerCalculator.buildMarkers( saturationWindowList, gameSpeedRelative ),
             playerName, larvaAnalysisReport );
+        final List< LarvaTimelineDecoration > decorationList = buildDecorations( timeline, visibleStartLoop, visibleEndLoop, larvaAnalysisReport );
 
         final List< LarvaTimelineSegment > segmentList = new ArrayList<>();
         for ( final LarvaSaturationWindow window : saturationWindowList )
@@ -123,7 +138,7 @@ public class LarvaTimelineModelBuilder {
 
         final String rowLabel = hatcheryType + " (tag " + hatcheryTagText + ")";
         final String detailLabel = markerList.size() + POTENTIAL_LARVA_MISSED_SUFFIX;
-        return new LarvaTimelineRow( playerName, rowLabel, detailLabel, startMs, endMs, markerList.size(), segmentList, markerList );
+        return new LarvaTimelineRow( playerName, rowLabel, detailLabel, startMs, endMs, markerList.size(), segmentList, markerList, decorationList );
     }
 
     /**
@@ -478,7 +493,134 @@ public class LarvaTimelineModelBuilder {
         segmentList.add( new LarvaTimelineSegment( startMs, endMs, "Replay-length-derived placeholder interval",
                 LarvaTimelineSegment.Kind.PREVIEW_INTERVAL ) );
         return new LarvaTimelineRow( "Replay context", "Replay overview", "No 3+ larva windows reached the warning threshold",
-            0L, replayLengthMs, 0, segmentList, new ArrayList< LarvaTimelineMarker >() );
+            0L, replayLengthMs, 0, segmentList, new ArrayList< LarvaTimelineMarker >(), new ArrayList< LarvaTimelineDecoration >() );
+    }
+
+    /**
+     * Builds small rhythm decorations for a hatchery row.
+     *
+     * @param timeline hatchery timeline
+     * @param visibleStartLoop visible start loop
+     * @param visibleEndLoop visible end loop
+     * @param larvaAnalysisReport analysis report used for time conversion
+     * @return small row decorations
+     */
+    private List< LarvaTimelineDecoration > buildDecorations( final HatcheryLarvaTimeline timeline, final int visibleStartLoop, final int visibleEndLoop,
+            final LarvaAnalysisReport larvaAnalysisReport ) {
+        final List< HatcheryLarvaTimeline.CountPoint > pointList = normalizeCountPoints( timeline, visibleEndLoop );
+        if ( pointList.isEmpty() )
+            return Collections.emptyList();
+
+        final List< LarvaTimelineDecoration > decorationList = new ArrayList<>();
+        int previousLarvaCount = 0;
+
+        for ( int i = 0; i < pointList.size(); i++ ) {
+            final HatcheryLarvaTimeline.CountPoint point = pointList.get( i );
+            final int intervalStartLoop = Math.max( point.getLoop(), visibleStartLoop );
+            final int nextLoop = i + 1 < pointList.size() ? pointList.get( i + 1 ).getLoop() : visibleEndLoop;
+            final int intervalEndLoop = Math.min( nextLoop, visibleEndLoop );
+            if ( intervalEndLoop <= intervalStartLoop )
+                continue;
+
+            final int larvaCount = point.getLarvaCount();
+            if ( larvaCount == 1 || larvaCount == 2 )
+                addDotDecorations( decorationList, intervalStartLoop, intervalEndLoop, larvaCount, larvaAnalysisReport );
+
+            if ( larvaCount >= 3 )
+                addLarvaCountLabels( decorationList, intervalStartLoop, previousLarvaCount, larvaCount, larvaAnalysisReport );
+
+            previousLarvaCount = larvaCount;
+        }
+
+        return decorationList;
+    }
+
+    /**
+     * Adds one- or two-larva dot columns for a visible interval.
+     *
+     * @param decorationList target decoration list
+     * @param startLoop visible interval start loop
+     * @param endLoop visible interval end loop
+     * @param larvaCount larva count represented by the dots
+     * @param larvaAnalysisReport analysis report used for time conversion
+     */
+    private void addDotDecorations( final List< LarvaTimelineDecoration > decorationList, final int startLoop, final int endLoop, final int larvaCount,
+            final LarvaAnalysisReport larvaAnalysisReport ) {
+        final int durationLoops = endLoop - startLoop;
+        if ( durationLoops <= 0 )
+            return;
+
+        if ( durationLoops <= LARVA_DOT_STEP_LOOPS ) {
+            decorationList.add( new LarvaTimelineDecoration( LarvaTimelineDecoration.Kind.LARVA_DOT_COLUMN,
+                toTimelineMs( larvaAnalysisReport, startLoop + durationLoops / 2 ), larvaCount, null ) );
+            return;
+        }
+
+        for ( int loop = startLoop + LARVA_DOT_STEP_LOOPS / 2; loop < endLoop; loop += LARVA_DOT_STEP_LOOPS )
+            decorationList.add( new LarvaTimelineDecoration( LarvaTimelineDecoration.Kind.LARVA_DOT_COLUMN, toTimelineMs( larvaAnalysisReport, loop ),
+                larvaCount, null ) );
+    }
+
+    /**
+     * Adds actual 6/9/12... larva-count labels when a hatchery reaches those counts.
+     *
+     * @param decorationList target decoration list
+     * @param loop loop where the current larva count becomes active
+     * @param previousLarvaCount previous larva count before the change
+     * @param larvaCount current larva count after the change
+     * @param larvaAnalysisReport analysis report used for time conversion
+     */
+    private void addLarvaCountLabels( final List< LarvaTimelineDecoration > decorationList, final int loop, final int previousLarvaCount,
+            final int larvaCount, final LarvaAnalysisReport larvaAnalysisReport ) {
+        if ( larvaCount < ACCUMULATION_LABEL_START || larvaCount <= previousLarvaCount )
+            return;
+
+        for ( int labelValue = ACCUMULATION_LABEL_START; labelValue <= larvaCount; labelValue += ACCUMULATION_LABEL_STEP ) {
+            if ( labelValue <= previousLarvaCount )
+                continue;
+
+            decorationList.add( new LarvaTimelineDecoration( LarvaTimelineDecoration.Kind.ACCUMULATION_LABEL,
+                toTimelineMs( larvaAnalysisReport, loop ), 0, String.valueOf( labelValue ) ) );
+        }
+    }
+
+    /**
+     * Normalizes count points for deterministic row-decoration placement.
+     *
+     * @param timeline hatchery timeline
+     * @param visibleEndLoop visible row end loop
+     * @return normalized point list
+     */
+    private List< HatcheryLarvaTimeline.CountPoint > normalizeCountPoints( final HatcheryLarvaTimeline timeline, final int visibleEndLoop ) {
+        if ( timeline == null || timeline.getCountPointList().isEmpty() )
+            return Collections.emptyList();
+
+        final List< HatcheryLarvaTimeline.CountPoint > sortedPointList = new ArrayList<>();
+        for ( final HatcheryLarvaTimeline.CountPoint point : timeline.getCountPointList() ) {
+            if ( point == null || point.getLoop() < 0 || point.getLoop() > visibleEndLoop )
+                continue;
+            sortedPointList.add( point );
+        }
+
+        if ( sortedPointList.isEmpty() )
+            return Collections.emptyList();
+
+        Collections.sort( sortedPointList, new Comparator< HatcheryLarvaTimeline.CountPoint >() {
+            @Override
+            public int compare( final HatcheryLarvaTimeline.CountPoint left, final HatcheryLarvaTimeline.CountPoint right ) {
+                return left.getLoop() < right.getLoop() ? -1 : left.getLoop() == right.getLoop() ? 0 : 1;
+            }
+        } );
+
+        final List< HatcheryLarvaTimeline.CountPoint > normalizedPointList = new ArrayList<>( sortedPointList.size() );
+        for ( final HatcheryLarvaTimeline.CountPoint point : sortedPointList ) {
+            if ( !normalizedPointList.isEmpty() && normalizedPointList.get( normalizedPointList.size() - 1 ).getLoop() == point.getLoop() )
+                normalizedPointList.set( normalizedPointList.size() - 1, point );
+            else
+                normalizedPointList.add( point );
+        }
+
+        return normalizedPointList;
     }
 
     /**

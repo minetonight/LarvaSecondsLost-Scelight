@@ -33,6 +33,9 @@ public class LarvaTimelineRow {
     /** Row markers. */
     private final List< LarvaTimelineMarker > markerList;
 
+    /** Small row decorations rendered without tooltips. */
+    private final List< LarvaTimelineDecoration > decorationList;
+
     /**
      * Creates a new timeline row.
      *
@@ -44,9 +47,11 @@ public class LarvaTimelineRow {
      * @param missedLarvaCount number of missed-larva thresholds reached on the row
      * @param segmentList row segments
      * @param markerList row markers
+         * @param decorationList small row decorations rendered without tooltips
      */
     public LarvaTimelineRow( final String groupLabel, final String rowLabel, final String detailLabel, final long startMs, final long endMs,
-            final int missedLarvaCount, final List< LarvaTimelineSegment > segmentList, final List< LarvaTimelineMarker > markerList ) {
+             final int missedLarvaCount, final List< LarvaTimelineSegment > segmentList, final List< LarvaTimelineMarker > markerList,
+             final List< LarvaTimelineDecoration > decorationList ) {
         this.groupLabel = groupLabel;
         this.rowLabel = rowLabel;
         this.detailLabel = detailLabel;
@@ -55,6 +60,7 @@ public class LarvaTimelineRow {
         this.missedLarvaCount = missedLarvaCount;
         this.segmentList = Collections.unmodifiableList( new ArrayList<>( segmentList ) );
         this.markerList = Collections.unmodifiableList( new ArrayList<>( markerList ) );
+        this.decorationList = Collections.unmodifiableList( new ArrayList<>( decorationList ) );
     }
 
     public String getGroupLabel() {
@@ -87,6 +93,10 @@ public class LarvaTimelineRow {
 
     public List< LarvaTimelineMarker > getMarkerList() {
         return markerList;
+    }
+
+    public List< LarvaTimelineDecoration > getDecorationList() {
+        return decorationList;
     }
 
 }
