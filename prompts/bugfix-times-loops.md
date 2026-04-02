@@ -36,3 +36,11 @@ currently the larva missed lines are demonstrated every 8 seconds, why? the corr
 finer time measurements:
 use the full available resolution in loop and sum loops with 3+ larva on hatch. currently there might be rounding up errors that punish the player stats. show the times on the tooltip with 10th of a second resolution.
 
+4) see #file:LarvaSecondsLost-dev-dump.txt . i read that i got a line for missed larva only 5 seconds into the accumulation. is that so:
+looking at first hatch
+.3 sec on start, 
+1.4 sec on 14/14
+3.17.9 - 3.11.7 = 6.2sec
+first larva moment is 3:17.9 and total time 3+ larva is 7.9 sec.
+so we still have the issue with bad times. 
+analyse and fix.

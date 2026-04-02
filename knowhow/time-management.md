@@ -42,9 +42,15 @@ Examples:
 
 Convert loops to visible time only when rendering labels, tooltips, or dumps.
 
-Use Scelight-consistent conversion:
-- base loop to milliseconds: `(gameloop * 125L) / 2`
-- then apply the replay time mode / speed conversion the same way Scelight does
+For the Larva module, visible chart time should use **gameplay time**, not the replay page's optional
+real-time mode. The larva mechanic itself is gameplay-timed, so the chart must show the same elapsed
+duration that the 11-second threshold uses.
+
+Use this conversion:
+- base loop to gameplay milliseconds: `(gameloop * 125L) / 2`
+
+Do not compress those labels for Faster real-time display, or the visible missed-larva spacing will
+shrink to about 7.9 seconds instead of 11 seconds.
 
 In this module that conversion is centralized in `LarvaAnalysisReport`.
 
@@ -58,14 +64,22 @@ In this module that conversion is centralized in `LarvaAnalysisReport`.
 
 ### Marker thresholds
 
-The missed-larva rule is still an 11-second gameplay threshold.
+The missed-larva rule is tied to the visible in-game timer pace, and Blizzard keeps that timer pace
+linked to game speed.
 
 Implementation rule:
-- convert the threshold once into loops
+- start from the base `11` visible in-game seconds
+- convert that threshold into loops using replay speed
+- Scelight relative speeds are `36` for Normal and `26` for Faster
+- threshold formula: `11 * 16 * (36 / gameSpeedRelative)`
 - compare loop deltas against that threshold
 - only format human-readable time at render time
 
-This prevents Faster-speed replays from showing ~8 second spacing for an 11 second gameplay rule.
+Examples:
+- Faster: `11 * 16 * (36 / 26) ≈ 243` loops
+- Normal: `11 * 16 * (36 / 36) = 176` loops
+- Slower speeds use fewer loops per visible timer second, so the visible time between missed-larva
+	markers stretches accordingly
 
 ### Tooltips
 
@@ -82,7 +96,7 @@ Resource snapshots come from replay tracker `PlayerStats` events, so they are sp
 Rule:
 - if the latest past snapshot is older than 10 seconds, show `Unknown at this timestamp`
 - if an upcoming snapshot is within 10 seconds, prefer it and mark it as near-future
-- snapshot timestamps must be formatted with the same replay-time conversion as windows and markers
+- snapshot timestamps must be formatted with the same gameplay-time conversion as windows and markers
 
 ## Implementation checklist
 
@@ -91,7 +105,7 @@ When touching timing code, verify these questions:
 1. Is this value a raw replay loop or a displayed time?
 2. Am I doing calculations only in loops?
 3. Am I formatting time only at the presentation boundary?
-4. Am I using Scelight-consistent loop-to-time conversion?
+4. Am I formatting larva mechanic timings in gameplay time?
 5. Am I avoiding fixed `16 loops/sec` reverse conversion from displayed milliseconds?
 
 ## Files involved
@@ -107,6 +121,7 @@ Main timing owners:
 
 - loops are authoritative
 - display time is derived from loops
+- larva chart labels use gameplay time so 11 gameplay seconds still look like 11 seconds
 - replay end comes from replay loops, not converted display milliseconds
 - thresholds stay in loops
 - tooltips may show tenths, but scoring still uses loop precision

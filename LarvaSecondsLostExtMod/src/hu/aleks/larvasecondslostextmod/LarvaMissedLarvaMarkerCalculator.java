@@ -11,10 +11,16 @@ import java.util.List;
 public class LarvaMissedLarvaMarkerCalculator {
 
     /** Replay loops per second in SC2 timelines. */
-    private static final int LOOPS_PER_SECOND = 16;
+    private static final int REPLAY_LOOPS_PER_SECOND = 16;
 
-    /** One missed larva every 11 seconds of accumulated 3+ larva saturation. */
-    static final int MISSED_LARVA_THRESHOLD_LOOPS = 11 * LOOPS_PER_SECOND;
+    /** Base missed-larva threshold in displayed game-timer seconds. */
+    private static final int MISSED_LARVA_THRESHOLD_SECONDS = 11;
+
+    /** Scelight normal-speed relative value. */
+    private static final double NORMAL_GAME_SPEED_RELATIVE = 36.0d;
+
+    /** Scelight Faster-speed relative value used as the fallback default. */
+    private static final long DEFAULT_GAME_SPEED_RELATIVE = 26L;
 
     /**
      * Builds the missed-larva threshold markers for a hatchery.
@@ -22,7 +28,7 @@ public class LarvaMissedLarvaMarkerCalculator {
      * @param saturationWindowList replay-derived 3+ larva windows
      * @return threshold markers in chronological order
      */
-    public List< LarvaTimelineMarker > buildMarkers( final List< LarvaSaturationWindow > saturationWindowList ) {
+    public List< LarvaTimelineMarker > buildMarkers( final List< LarvaSaturationWindow > saturationWindowList, final long gameSpeedRelative ) {
         if ( saturationWindowList == null || saturationWindowList.isEmpty() )
             return Collections.emptyList();
 
@@ -31,6 +37,7 @@ public class LarvaMissedLarvaMarkerCalculator {
             return Collections.emptyList();
 
         final List< LarvaTimelineMarker > markerList = new ArrayList<>();
+        final int missedLarvaThresholdLoops = resolveMissedLarvaThresholdLoops( gameSpeedRelative );
         int accumulatedLoops = 0;
         int missedLarvaCount = 0;
 
@@ -42,8 +49,8 @@ public class LarvaMissedLarvaMarkerCalculator {
             int loopsRemainingInWindow = windowDurationLoops;
             int markerLoop = window.getStartLoop();
 
-            while ( accumulatedLoops + loopsRemainingInWindow >= MISSED_LARVA_THRESHOLD_LOOPS ) {
-                final int loopsUntilThreshold = MISSED_LARVA_THRESHOLD_LOOPS - accumulatedLoops;
+            while ( accumulatedLoops + loopsRemainingInWindow >= missedLarvaThresholdLoops ) {
+                final int loopsUntilThreshold = missedLarvaThresholdLoops - accumulatedLoops;
                 markerLoop += loopsUntilThreshold;
                 missedLarvaCount++;
                 markerList.add( new LarvaTimelineMarker( markerLoop, loopsToMs( markerLoop ),
@@ -57,6 +64,27 @@ public class LarvaMissedLarvaMarkerCalculator {
         }
 
         return markerList;
+    }
+
+    /**
+     * Builds markers using the default Faster-speed timing when no replay speed is available.
+     *
+     * @param saturationWindowList replay-derived 3+ larva windows
+     * @return threshold markers in chronological order
+     */
+    public List< LarvaTimelineMarker > buildMarkers( final List< LarvaSaturationWindow > saturationWindowList ) {
+        return buildMarkers( saturationWindowList, DEFAULT_GAME_SPEED_RELATIVE );
+    }
+
+    /**
+     * Resolves the loop threshold corresponding to 11 visible game-timer seconds at the supplied game speed.
+     *
+     * @param gameSpeedRelative replay game-speed relative value
+     * @return missed-larva threshold in loops
+     */
+    private int resolveMissedLarvaThresholdLoops( final long gameSpeedRelative ) {
+        final double effectiveGameSpeedRelative = gameSpeedRelative <= 0L ? DEFAULT_GAME_SPEED_RELATIVE : gameSpeedRelative;
+        return (int) ( MISSED_LARVA_THRESHOLD_SECONDS * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / effectiveGameSpeedRelative ) );
     }
 
     /**
@@ -135,7 +163,7 @@ public class LarvaMissedLarvaMarkerCalculator {
     private long loopsToMs( final int loops ) {
         if ( loops <= 0 )
             return 0L;
-        return ( loops * 1000L ) / LOOPS_PER_SECOND;
+        return ( loops * 1000L ) / REPLAY_LOOPS_PER_SECOND;
     }
 
     /**

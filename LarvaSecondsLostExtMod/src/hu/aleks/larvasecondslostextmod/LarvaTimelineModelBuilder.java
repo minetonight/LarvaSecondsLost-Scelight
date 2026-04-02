@@ -111,7 +111,8 @@ public class LarvaTimelineModelBuilder {
         final String hatcheryType = safeText( timeline.getHatcheryType(), "Hatchery" );
         final String hatcheryTagText = safeText( timeline.getHatcheryTagText(), String.valueOf( timeline.getHatcheryTag() ) );
 
-        final List< LarvaTimelineMarker > markerList = attachMarkerHoverData( missedLarvaMarkerCalculator.buildMarkers( saturationWindowList ),
+        final long gameSpeedRelative = larvaAnalysisReport == null ? 0L : larvaAnalysisReport.getConverterGameSpeedRelative();
+        final List< LarvaTimelineMarker > markerList = attachMarkerHoverData( missedLarvaMarkerCalculator.buildMarkers( saturationWindowList, gameSpeedRelative ),
             playerName, larvaAnalysisReport );
 
         final List< LarvaTimelineSegment > segmentList = new ArrayList<>();
