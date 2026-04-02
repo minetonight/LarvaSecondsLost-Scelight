@@ -330,6 +330,7 @@ public class LarvaReplayAnalyzer {
             directAssignmentCount, injectCorrelatedAssignmentCount, heuristicAssignmentCount, hatcheryMorphCount,
             trackerEventArray == null ? 0 : trackerEventArray.length, gameEventArray == null ? 0 : gameEventArray.length, fullReplayParseUsed,
             repProc.isRealTime(), repProc.getConverterGameSpeed() == null ? 36L : repProc.getConverterGameSpeed().getRelativeSpeed(),
+            replay.getHeader() == null || replay.getHeader().getElapsedGameLoops() == null ? 0 : replay.getHeader().getElapsedGameLoops().intValue(),
             resourceSnapshotsByPlayerName );
     }
 

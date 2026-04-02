@@ -33,14 +33,13 @@ public class LarvaSaturationWindowCalculator {
      * Resolves the visible row end loop for a hatchery timeline.
      *
      * @param timeline hatchery timeline
-     * @param replayLengthMs replay length in milliseconds
+     * @param replayEndLoop replay end loop from the replay header
      * @return visible end loop, or <code>-1</code> if unavailable
      */
-    public int resolveVisibleEndLoop( final HatcheryLarvaTimeline timeline, final long replayLengthMs ) {
+    public int resolveVisibleEndLoop( final HatcheryLarvaTimeline timeline, final int replayEndLoop ) {
         if ( timeline == null )
             return NO_LOOP;
 
-        final int replayEndLoop = msToLoops( replayLengthMs );
         if ( replayEndLoop <= 0 )
             return NO_LOOP;
 
@@ -54,15 +53,15 @@ public class LarvaSaturationWindowCalculator {
      * Converts a hatchery timeline into stable 3+ larva windows.
      *
      * @param timeline hatchery timeline
-     * @param replayLengthMs replay length in milliseconds
+     * @param replayEndLoop replay end loop from the replay header
      * @return stable saturation windows
      */
-    public List< LarvaSaturationWindow > buildWindows( final HatcheryLarvaTimeline timeline, final long replayLengthMs ) {
+    public List< LarvaSaturationWindow > buildWindows( final HatcheryLarvaTimeline timeline, final int replayEndLoop ) {
         if ( timeline == null || timeline.getCountPointList().isEmpty() )
             return Collections.emptyList();
 
         final int visibleStartLoop = resolveVisibleStartLoop( timeline );
-        final int visibleEndLoop = resolveVisibleEndLoop( timeline, replayLengthMs );
+        final int visibleEndLoop = resolveVisibleEndLoop( timeline, replayEndLoop );
         if ( visibleStartLoop < 0 || visibleEndLoop <= visibleStartLoop )
             return Collections.emptyList();
 
@@ -182,18 +181,6 @@ public class LarvaSaturationWindowCalculator {
 
         windowList.add( new LarvaSaturationWindow( startLoop, endLoop, loopsToMs( startLoop ), loopsToMs( endLoop ),
                 formatLoopTime( startLoop ), formatLoopTime( endLoop ) ) );
-    }
-
-    /**
-     * Converts milliseconds to replay loops.
-     *
-     * @param ms replay milliseconds
-     * @return replay loops
-     */
-    private int msToLoops( final long ms ) {
-        if ( ms <= 0L )
-            return 0;
-        return (int) ( ( ms * LOOPS_PER_SECOND ) / 1000L );
     }
 
 }

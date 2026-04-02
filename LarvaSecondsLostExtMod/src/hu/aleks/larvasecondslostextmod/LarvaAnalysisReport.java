@@ -65,6 +65,9 @@ public class LarvaAnalysisReport {
     /** Relative converter game speed used by Scelight for loop-to-time conversion. */
     private final long converterGameSpeedRelative;
 
+    /** Replay length in raw game loops from the replay header. */
+    private final int replayLengthLoops;
+
     /** Player resource snapshots collected from tracker events. */
     private final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName;
 
@@ -83,16 +86,17 @@ public class LarvaAnalysisReport {
      * @param injectCorrelatedAssignmentCount inject-correlated assignments
      * @param heuristicAssignmentCount pure heuristic assignments
          * @param hatcheryMorphCount number of hatchery morph continuations detected
-         * @param realTime tells if replay times are currently shown in real time
-         * @param converterGameSpeedRelative relative converter game speed used by Scelight
-         * @param resourceSnapshotsByPlayerName player resource snapshots collected from tracker events
+     * @param realTime tells if replay times are currently shown in real time
+     * @param converterGameSpeedRelative relative converter game speed used by Scelight
+     * @param replayLengthLoops replay length in raw game loops from the replay header
+     * @param resourceSnapshotsByPlayerName player resource snapshots collected from tracker events
      */
     public LarvaAnalysisReport( final LarvaHeuristicCalibration calibration, final List< HatcheryLarvaTimeline > timelineList,
             final int trackedHatcheryCount, final int larvaBirthCount, final int assignedLarvaCount, final int unassignedLarvaCount,
             final int ambiguousLarvaCount, final int noEligibleHatcheryLarvaCount,
             final int directAssignmentCount, final int injectCorrelatedAssignmentCount, final int heuristicAssignmentCount,
              final int hatcheryMorphCount, final int trackerEventCount, final int gameEventCount, final boolean fullReplayParseUsed,
-             final boolean realTime, final long converterGameSpeedRelative,
+             final boolean realTime, final long converterGameSpeedRelative, final int replayLengthLoops,
              final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName ) {
         this.calibration = calibration;
         this.timelineList = Collections.unmodifiableList( new ArrayList<>( timelineList ) );
@@ -111,6 +115,7 @@ public class LarvaAnalysisReport {
         this.fullReplayParseUsed = fullReplayParseUsed;
         this.realTime = realTime;
         this.converterGameSpeedRelative = converterGameSpeedRelative;
+        this.replayLengthLoops = replayLengthLoops;
         this.resourceSnapshotsByPlayerName = copySnapshotMap( resourceSnapshotsByPlayerName );
     }
 
@@ -180,6 +185,10 @@ public class LarvaAnalysisReport {
 
     public long getConverterGameSpeedRelative() {
         return converterGameSpeedRelative;
+    }
+
+    public int getReplayLengthLoops() {
+        return replayLengthLoops;
     }
 
     public Map< String, List< LarvaPlayerResourceSnapshot > > getResourceSnapshotsByPlayerName() {
@@ -256,23 +265,36 @@ public class LarvaAnalysisReport {
      * @return formatted time label
      */
     public String formatLoopTime( final int gameloop ) {
-        return formatDuration( loopToTimeMs( gameloop ) );
+        return formatDuration( loopToTimeMs( gameloop ), false );
     }
 
     /**
-     * Formats milliseconds as $m:ss$ or $h:mm:ss$.
+     * Formats replay loops with tenth-of-a-second precision using the same time basis as Scelight.
+     *
+     * @param gameloop replay loop
+     * @return formatted time label with tenths
+     */
+    public String formatLoopTimeTenths( final int gameloop ) {
+        return formatDuration( loopToTimeMs( gameloop ), true );
+    }
+
+    /**
+     * Formats milliseconds as $m:ss$ or $h:mm:ss$, optionally with tenths.
      *
      * @param ms duration in milliseconds
+     * @param includeTenths tells if tenth-of-a-second precision should be included
      * @return formatted duration text
      */
-    private String formatDuration( final long ms ) {
+    private String formatDuration( final long ms, final boolean includeTenths ) {
         final long totalSeconds = ms / 1000L;
         final long hours = totalSeconds / 3600L;
         final long minutes = ( totalSeconds % 3600L ) / 60L;
         final long seconds = totalSeconds % 60L;
+        final long tenths = ( ms % 1000L ) / 100L;
+        final String suffix = includeTenths ? "." + tenths : "";
         if ( hours > 0L )
-            return hours + ":" + padTwoDigits( minutes ) + ":" + padTwoDigits( seconds );
-        return minutes + ":" + padTwoDigits( seconds );
+            return hours + ":" + padTwoDigits( minutes ) + ":" + padTwoDigits( seconds ) + suffix;
+        return minutes + ":" + padTwoDigits( seconds ) + suffix;
     }
 
     /**
