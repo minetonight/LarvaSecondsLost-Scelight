@@ -58,7 +58,7 @@ From the Epic 11 feature request:
 - show red idle-inject-queen periods when nearby queens have 25+ energy and the hatchery is not injected
 - count missed inject opportunities in separate accumulated 29-second windows, worth 3 larva each per hatchery
 - keep missed-inject larva in a separate variable from the existing potential-larva-missed metric
-- show those missed-inject larva as separate purple summary lines after the existing potential-larva-missed line
+- show those missed-inject larva as separate summary lines after the existing potential-larva-missed line
 
 ## Non-goals
 

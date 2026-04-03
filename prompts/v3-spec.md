@@ -1,10 +1,12 @@
 1) injection indication
- - a purple line below the hatchery rail for the time a hatch is injected
+ - a green line below the hatchery rail for the time a hatch is injected
   * Q: how do we know if a hatch is injected in a replay, do we see the tag/property of the building that it is producing extra larva?
  - see base control tab in the original scelight code, injects, for implementation inspiration
  - idle inject queens indication - red lines below the rail for the periods when there are queen/s with 25+ energy, in the near vicinity of the hatchery and the hatchery is not injected.
  - count potential larva missed by missed injects via accumulation windows. the inject duration is 29s and the larva for each such window is 3 per hatchery. keep that in a separate variable.
- - show those missed inject larva in separate lines with purple color, after the potential larva missed. 
+ - show those missed inject larva in separate lines with green color, after the potential larva missed. 
+
+TODO: trace why my injects are missed from the analysis
 
 2) stats per game phase
  - larva lost per phase
