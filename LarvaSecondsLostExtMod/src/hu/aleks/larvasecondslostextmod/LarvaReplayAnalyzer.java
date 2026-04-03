@@ -26,11 +26,20 @@ import java.util.Map;
  */
 public class LarvaReplayAnalyzer {
 
-    /** Duration of one inject-active window in replay loops. */
-    private static final int INJECT_ACTIVE_DURATION_LOOPS = 29 * 16;
+    /** Replay loops per second in SC2 timelines. */
+    private static final int REPLAY_LOOPS_PER_SECOND = 16;
+
+    /** Visible inject-active duration in gameplay seconds. */
+    private static final int INJECT_ACTIVE_DURATION_SECONDS = 29;
+
+    /** Scelight normal-speed relative value. */
+    private static final double NORMAL_GAME_SPEED_RELATIVE = 36.0d;
+
+    /** Scelight Faster-speed relative value used as the fallback default. */
+    private static final long DEFAULT_GAME_SPEED_RELATIVE = 26L;
 
     /** Public replay-surface conclusion for Story 11.01. */
-    private static final String INJECT_SIGNAL_CONCLUSION = "No direct injected-building state is exposed by the public external-module replay model, so inject-active windows are reconstructed from SpawnLarva target commands plus a 29-second active duration.";
+    private static final String INJECT_SIGNAL_CONCLUSION = "No direct injected-building state is exposed by the public external-module replay model, so inject-active windows are reconstructed from SpawnLarva target commands plus a 29-second gameplay-time active duration converted to replay loops by game speed.";
 
     /** Field name available on newer UnitBorn tracker events. */
     private static final String F_CREATOR_UNIT_TAG_INDEX = "creatorUnitTagIndex";
@@ -331,7 +340,9 @@ public class LarvaReplayAnalyzer {
 
         sortResourceSnapshotsByLoop( resourceSnapshotsByPlayerName );
 
+        final int injectActiveDurationLoops = resolveInjectActiveDurationLoops( repProc );
         final List< HatcheryInjectTimeline > injectTimelineList = buildInjectTimelines( repProc, hatcheryByTag, injectLoopsByTag,
+            injectActiveDurationLoops,
                 replay.getHeader() == null || replay.getHeader().getElapsedGameLoops() == null ? 0 : replay.getHeader().getElapsedGameLoops().intValue() );
 
         return new LarvaAnalysisReport( calibration, timelineList, injectTimelineList, INJECT_SIGNAL_CONCLUSION,
@@ -354,11 +365,12 @@ public class LarvaReplayAnalyzer {
      * @param repProc replay processor
      * @param hatcheryByTag tracked hatcheries by tag
      * @param injectLoopsByTag raw SpawnLarva loops grouped by target tag
-     * @param replayEndLoop replay end loop from the replay header
+         * @param injectActiveDurationLoops normalized inject-active duration in replay loops
+         * @param replayEndLoop replay end loop from the replay header
      * @return sorted immutable inject timelines
      */
     private List< HatcheryInjectTimeline > buildInjectTimelines( final IRepProcessor repProc, final Map< Integer, HatcheryState > hatcheryByTag,
-            final Map< Integer, List< Integer > > injectLoopsByTag, final int replayEndLoop ) {
+             final Map< Integer, List< Integer > > injectLoopsByTag, final int injectActiveDurationLoops, final int replayEndLoop ) {
         if ( hatcheryByTag == null || hatcheryByTag.isEmpty() )
             return Collections.emptyList();
 
@@ -376,7 +388,7 @@ public class LarvaReplayAnalyzer {
             final List< Integer > rawInjectLoopList = injectLoopsByTag == null ? null : injectLoopsByTag.get( Integer.valueOf( hatcheryState.hatcheryTag ) );
             if ( ( rawInjectLoopList == null || rawInjectLoopList.isEmpty() ) && hatcheryState.countPointList.isEmpty() )
                 continue;
-            injectTimelineList.add( buildInjectTimeline( repProc, hatcheryState, rawInjectLoopList, replayEndLoop ) );
+            injectTimelineList.add( buildInjectTimeline( repProc, hatcheryState, rawInjectLoopList, injectActiveDurationLoops, replayEndLoop ) );
         }
 
         return injectTimelineList;
@@ -388,11 +400,12 @@ public class LarvaReplayAnalyzer {
      * @param repProc replay processor
      * @param hatcheryState hatchery state
      * @param rawInjectLoopList raw SpawnLarva command loops targeting the hatchery
-     * @param replayEndLoop replay end loop
+         * @param injectActiveDurationLoops normalized inject-active duration in replay loops
+         * @param replayEndLoop replay end loop
      * @return immutable inject timeline
      */
     private HatcheryInjectTimeline buildInjectTimeline( final IRepProcessor repProc, final HatcheryState hatcheryState,
-            final List< Integer > rawInjectLoopList, final int replayEndLoop ) {
+             final List< Integer > rawInjectLoopList, final int injectActiveDurationLoops, final int replayEndLoop ) {
         final List< Integer > sortedInjectLoopList = normalizeInjectLoops( rawInjectLoopList );
         final List< HatcheryInjectWindow > injectWindowList = new ArrayList<>();
         final List< String > diagnosticLineList = new ArrayList<>();
@@ -409,7 +422,7 @@ public class LarvaReplayAnalyzer {
                 continue;
 
             final int injectLoop = injectLoop_.intValue();
-            final int rawWindowEndLoop = injectLoop + INJECT_ACTIVE_DURATION_LOOPS;
+            final int rawWindowEndLoop = injectLoop + injectActiveDurationLoops;
 
             if ( previousCandidate != null && injectLoop < previousCandidate.rawEndLoop ) {
                 if ( !injectWindowList.isEmpty() )
@@ -418,7 +431,7 @@ public class LarvaReplayAnalyzer {
                     trimmedWindowCount--;
                 overlapDiscardCount++;
                 diagnosticLineList.add( "Discarded SpawnLarva at " + previousCandidate.commandTimeLabel + " because a later SpawnLarva at "
-                        + repProc.formatLoopTime( injectLoop ) + " overlapped before the earlier 29-second inject window ended." );
+                        + repProc.formatLoopTime( injectLoop ) + " overlapped before the earlier " + INJECT_ACTIVE_DURATION_SECONDS + "-second inject window ended." );
                 previousCandidate = null;
             }
 
@@ -485,7 +498,7 @@ public class LarvaReplayAnalyzer {
         }
 
         if ( effectiveEndLoop <= effectiveStartLoop ) {
-            final String reason = trimReasonList.isEmpty() ? "its normalized 29-second window collapsed outside the valid hatchery lifetime"
+                final String reason = trimReasonList.isEmpty() ? "its normalized " + INJECT_ACTIVE_DURATION_SECONDS + "-second window collapsed outside the valid hatchery lifetime"
                     : "normalization collapsed the window after " + joinReasons( trimReasonList );
             return new InjectWindowDecision( null, "Discarded SpawnLarva at " + commandTimeLabel + " because " + reason + '.', false );
         }
@@ -504,6 +517,18 @@ public class LarvaReplayAnalyzer {
                 repProc.loopToTime( effectiveStartLoop ), repProc.loopToTime( effectiveEndLoop ), startTimeLabel, endTimeLabel,
                 trimmedAtStart, trimmedAtEnd, diagnosticBuilder.toString() );
         return new InjectWindowDecision( injectWindow, diagnosticBuilder.toString(), trimmedAtStart || trimmedAtEnd );
+    }
+
+    /**
+     * Resolves the inject-active window length in replay loops for the replay game speed.
+     *
+     * @param repProc replay processor
+     * @return inject-active window duration in replay loops
+     */
+    private int resolveInjectActiveDurationLoops( final IRepProcessor repProc ) {
+        final long gameSpeedRelative = repProc == null || repProc.getConverterGameSpeed() == null ? DEFAULT_GAME_SPEED_RELATIVE : repProc.getConverterGameSpeed().getRelativeSpeed();
+        final double effectiveGameSpeedRelative = gameSpeedRelative <= 0L ? DEFAULT_GAME_SPEED_RELATIVE : gameSpeedRelative;
+        return (int) ( INJECT_ACTIVE_DURATION_SECONDS * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / effectiveGameSpeedRelative ) );
     }
 
     /**

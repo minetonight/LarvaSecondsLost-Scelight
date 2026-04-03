@@ -21,10 +21,10 @@ public class LarvaTimelineModelBuilder {
     private static final String TITLE = "Larva pressure timeline";
 
     /** Timeline subtitle. */
-    private static final String SUBTITLE = "Red bars show 3+ larva windows for completed Zerg hatcheries.";
+    private static final String SUBTITLE = "Red bars show 3+ larva windows; green lanes show inject uptime for completed Zerg hatcheries.";
 
     /** Timeline legend. */
-    private static final String MODE_LABEL = "Black ticks mark each 11-second missed-potential-larva threshold while a hatchery stayed at 3+ larva.";
+    private static final String MODE_LABEL = "Green lanes show inject uptime; black ticks still mark each 11-second missed-potential-larva threshold while a hatchery stayed at 3+ larva.";
 
     /** Empty message used when no rows are available yet. */
     private static final String EMPTY_MESSAGE = "No qualifying Zerg hatcheries were found in this replay.";
@@ -108,8 +108,10 @@ public class LarvaTimelineModelBuilder {
         final String hatcheryType = safeText( timeline.getHatcheryType(), "Hatchery" );
         final String hatcheryTagText = safeText( timeline.getHatcheryTagText(), String.valueOf( timeline.getHatcheryTag() ) );
 
-        final List< LarvaTimelineMarker > markerList = attachMarkerHoverData( missedLarvaMarkerCalculator.buildMarkers( saturationWindowList ),
+        final List< LarvaTimelineMarker > markerList = attachMarkerHoverData( missedLarvaMarkerCalculator.buildMarkers( saturationWindowList,
+            larvaAnalysisReport.getConverterGameSpeedRelative() ),
             playerName, larvaAnalysisReport );
+        final List< LarvaTimelineDecoration > decorationList = buildDecorations( timeline, larvaAnalysisReport );
 
         final List< LarvaTimelineSegment > segmentList = new ArrayList<>();
         for ( final LarvaSaturationWindow window : saturationWindowList )
@@ -117,9 +119,80 @@ public class LarvaTimelineModelBuilder {
                 "3+ larva " + formatTimelineLoop( larvaAnalysisReport, window.getStartLoop() ) + "-" + formatTimelineLoop( larvaAnalysisReport, window.getEndLoop() ), LarvaTimelineSegment.Kind.SATURATION_WINDOW,
                 buildWindowTooltipText( window, playerName, larvaAnalysisReport ) ) );
 
+        appendInjectSegments( segmentList, findInjectTimeline( larvaAnalysisReport, timeline.getHatcheryTag() ), larvaAnalysisReport );
+
         final String rowLabel = hatcheryType + " (tag " + hatcheryTagText + ")";
         final String detailLabel = markerList.size() + POTENTIAL_LARVA_MISSED_SUFFIX;
-        return new LarvaTimelineRow( playerName, rowLabel, detailLabel, startMs, endMs, markerList.size(), segmentList, markerList );
+        return new LarvaTimelineRow( playerName, rowLabel, detailLabel, startMs, endMs, markerList.size(), segmentList, markerList, decorationList );
+    }
+
+    /**
+     * Rebuilds gray dot and accumulation-label decorations from hatchery count points.
+     *
+     * @param timeline hatchery timeline
+     * @param larvaAnalysisReport analysis report used for loop-to-time conversion
+     * @return immutable-ready decoration list
+     */
+    private List< LarvaTimelineDecoration > buildDecorations( final HatcheryLarvaTimeline timeline, final LarvaAnalysisReport larvaAnalysisReport ) {
+        if ( timeline == null || timeline.getCountPointList().isEmpty() )
+            return new ArrayList< LarvaTimelineDecoration >( 0 );
+
+        final List< LarvaTimelineDecoration > decorationList = new ArrayList<>();
+        for ( final HatcheryLarvaTimeline.CountPoint countPoint : timeline.getCountPointList() ) {
+            if ( countPoint == null || countPoint.getLoop() < 0 )
+                continue;
+
+            final int larvaCount = countPoint.getLarvaCount();
+            final long timeMs = toTimelineMs( larvaAnalysisReport, countPoint.getLoop() );
+
+            if ( larvaCount == 1 || larvaCount == 2 )
+                decorationList.add( new LarvaTimelineDecoration( LarvaTimelineDecoration.Kind.LARVA_DOT_COLUMN, timeMs, larvaCount, null ) );
+
+            if ( larvaCount >= 6 && larvaCount % 3 == 0 )
+                decorationList.add( new LarvaTimelineDecoration( LarvaTimelineDecoration.Kind.ACCUMULATION_LABEL, timeMs, larvaCount, String.valueOf( larvaCount ) ) );
+        }
+
+        return decorationList;
+    }
+
+    /**
+     * Resolves the inject timeline for a hatchery tag.
+     *
+     * @param larvaAnalysisReport analysis report
+     * @param hatcheryTag hatchery tag to resolve
+     * @return matching inject timeline; may be <code>null</code>
+     */
+    private HatcheryInjectTimeline findInjectTimeline( final LarvaAnalysisReport larvaAnalysisReport, final int hatcheryTag ) {
+        if ( larvaAnalysisReport == null || larvaAnalysisReport.getInjectTimelineList() == null )
+            return null;
+
+        for ( final HatcheryInjectTimeline injectTimeline : larvaAnalysisReport.getInjectTimelineList() )
+            if ( injectTimeline != null && injectTimeline.getHatcheryTag() == hatcheryTag )
+                return injectTimeline;
+
+        return null;
+    }
+
+    /**
+     * Appends normalized inject-window segments to a row segment list.
+     *
+     * @param segmentList target segment list
+     * @param injectTimeline inject timeline for the hatchery
+     * @param larvaAnalysisReport analysis report used for snapshot lookup
+     */
+    private void appendInjectSegments( final List< LarvaTimelineSegment > segmentList, final HatcheryInjectTimeline injectTimeline,
+            final LarvaAnalysisReport larvaAnalysisReport ) {
+        if ( segmentList == null || injectTimeline == null || injectTimeline.getInjectWindowList().isEmpty() )
+            return;
+
+        for ( final HatcheryInjectWindow injectWindow : injectTimeline.getInjectWindowList() ) {
+            if ( injectWindow == null )
+                continue;
+
+            segmentList.add( new LarvaTimelineSegment( injectWindow.getStartMs(), injectWindow.getEndMs(),
+                    "Inject " + injectWindow.getStartTimeLabel() + "-" + injectWindow.getEndTimeLabel(), LarvaTimelineSegment.Kind.INJECT_WINDOW,
+                    buildInjectTooltipText( injectWindow, injectTimeline, larvaAnalysisReport ) ) );
+        }
     }
 
     /**
@@ -169,6 +242,31 @@ public class LarvaTimelineModelBuilder {
         builder.append( "Window: " ).append( formatTimelineLoop( larvaAnalysisReport, window.getStartLoop() ) ).append( " - " )
             .append( formatTimelineLoop( larvaAnalysisReport, window.getEndLoop() ) ).append( "<br/>" );
         builder.append( buildSnapshotTooltipLines( "Window start", formatTimelineLoop( larvaAnalysisReport, window.getStartLoop() ), snapshotSelection ) );
+        builder.append( "</html>" );
+        return builder.toString();
+    }
+
+    /**
+     * Builds the tooltip text for a replay-derived inject-active window.
+     *
+     * @param injectWindow inject window
+     * @param injectTimeline timeline owning the window
+     * @param larvaAnalysisReport analysis report containing resource snapshots
+     * @return tooltip text
+     */
+    private String buildInjectTooltipText( final HatcheryInjectWindow injectWindow, final HatcheryInjectTimeline injectTimeline,
+            final LarvaAnalysisReport larvaAnalysisReport ) {
+        if ( injectWindow == null )
+            return null;
+
+        final SnapshotSelection snapshotSelection = larvaAnalysisReport == null || injectTimeline == null ? SnapshotSelection.NONE
+                : selectSnapshot( larvaAnalysisReport, injectTimeline.getPlayerName(), injectWindow.getStartLoop() );
+
+        final StringBuilder builder = new StringBuilder( "<html><b>Inject active</b><br/>" );
+        builder.append( "Window: " ).append( safeText( injectWindow.getStartTimeLabel(), "n/a" ) ).append( " - " )
+                .append( safeText( injectWindow.getEndTimeLabel(), "n/a" ) ).append( "<br/>" );
+        builder.append( "Command: " ).append( safeText( injectWindow.getCommandTimeLabel(), "n/a" ) ).append( "<br/>" );
+        builder.append( buildSnapshotTooltipLines( "Inject start", safeText( injectWindow.getStartTimeLabel(), "n/a" ), snapshotSelection ) );
         builder.append( "</html>" );
         return builder.toString();
     }

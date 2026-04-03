@@ -31,6 +31,9 @@ public class LarvaTimelinePreviewComp extends JPanel {
     /** Preview window color. */
     private static final Color WINDOW_COLOR = new Color( 220, 70, 70 );
 
+    /** Inject-uptime lane color. */
+    private static final Color INJECT_WINDOW_COLOR = new Color( 67, 160, 71 );
+
     /** Placeholder interval color. */
     private static final Color PREVIEW_INTERVAL_COLOR = new Color( 239, 170, 170 );
 
@@ -73,11 +76,17 @@ public class LarvaTimelinePreviewComp extends JPanel {
     /** Height of a timeline rail. */
     private static final int RAIL_HEIGHT = 16;
 
+    /** Height of the dedicated inject lane. */
+    private static final int INJECT_LANE_HEIGHT = 6;
+
+    /** Vertical gap between the main rail and the inject lane. */
+    private static final int INJECT_LANE_GAP = 4;
+
     /** Width of a missed-larva threshold marker. */
     private static final int MARKER_WIDTH = 4;
 
     /** Vertical step between rows. */
-    private static final int ROW_STEP = 34;
+    private static final int ROW_STEP = 42;
 
     /** Extra gap inserted when a new player group begins. */
     private static final int GROUP_GAP = 16;
@@ -137,7 +146,7 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.setColor( OUTLINE_COLOR );
         g.drawString( timelineModel == null ? "Larva timeline" : timelineModel.getTitle(), LEFT_PAD, TOP_PAD + 4 );
         g.setColor( SUBTLE_TEXT_COLOR );
-        g.drawString( timelineModel == null ? "Load a replay to see 3+ larva windows and missed inject pressure."
+        g.drawString( timelineModel == null ? "Load a replay to see 3+ larva windows, inject uptime, and missed larva pressure."
                 : timelineModel.getSubtitle(), LEFT_PAD, TOP_PAD + 22 );
 
         if ( timelineModel == null || timelineModel.getReplayLengthMs() <= 0L ) {
@@ -207,6 +216,7 @@ public class LarvaTimelinePreviewComp extends JPanel {
         final int rowStartX = railLeft + scaleToWidth( row.getStartMs(), timelineModel.getReplayLengthMs(), railWidth );
         final int rowEndX = railLeft + scaleToWidth( row.getEndMs(), timelineModel.getReplayLengthMs(), railWidth );
         final int lifetimeWidth = Math.max( 6, rowEndX - rowStartX );
+        final int injectLaneY = railY + RAIL_HEIGHT + INJECT_LANE_GAP;
 
         g.setColor( RAIL_COLOR );
         g.fillRoundRect( rowStartX, railY, lifetimeWidth, RAIL_HEIGHT, 10, 10 );
@@ -215,8 +225,15 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.setColor( OUTLINE_COLOR );
         g.drawRoundRect( rowStartX, railY, lifetimeWidth, RAIL_HEIGHT, 10, 10 );
 
+        g.setColor( RAIL_COLOR );
+        g.fillRoundRect( rowStartX, injectLaneY, lifetimeWidth, INJECT_LANE_HEIGHT, 6, 6 );
+        g.setColor( LIFETIME_RAIL_COLOR );
+        g.fillRoundRect( rowStartX + 1, injectLaneY + 1, Math.max( 4, lifetimeWidth - 2 ), Math.max( 3, INJECT_LANE_HEIGHT - 2 ), 5, 5 );
+        g.setColor( OUTLINE_COLOR );
+        g.drawRoundRect( rowStartX, injectLaneY, lifetimeWidth, INJECT_LANE_HEIGHT, 6, 6 );
+
         for ( final LarvaTimelineSegment segment : row.getSegmentList() )
-            drawSegment( g, fm, segment, railLeft, railY, railWidth );
+            drawSegment( g, fm, segment, railLeft, railY, injectLaneY, railWidth );
 
         drawDecorations( g, fm, row, railLeft, railY, railWidth );
 
@@ -235,22 +252,43 @@ public class LarvaTimelinePreviewComp extends JPanel {
      * @param railWidth rail width
      */
     private void drawSegment( final Graphics2D g, final FontMetrics fm, final LarvaTimelineSegment segment, final int railLeft, final int railY,
-            final int railWidth ) {
+            final int injectLaneY, final int railWidth ) {
         final int startX = railLeft + scaleToWidth( segment.getStartMs(), timelineModel.getReplayLengthMs(), railWidth );
         final int endX = railLeft + scaleToWidth( segment.getEndMs(), timelineModel.getReplayLengthMs(), railWidth );
         final boolean marker = segment.getKind() == LarvaTimelineSegment.Kind.PREVIEW_MARKER;
         final int segmentWidth = Math.max( marker ? 4 : 8, endX - startX );
-        final Color segmentColor = marker ? MARKER_COLOR
-            : segment.getKind() == LarvaTimelineSegment.Kind.SATURATION_WINDOW ? WINDOW_COLOR : PREVIEW_INTERVAL_COLOR;
+        final SegmentVisual segmentVisual = resolveSegmentVisual( segment, railY, injectLaneY, marker );
 
-        g.setColor( segmentColor );
-        g.fillRoundRect( startX, railY + 2, segmentWidth, RAIL_HEIGHT - 4, 8, 8 );
+        g.setColor( segmentVisual.color );
+        g.fillRoundRect( startX, segmentVisual.y, segmentWidth, segmentVisual.height, segmentVisual.arc, segmentVisual.arc );
         g.setColor( OUTLINE_COLOR );
-        g.drawRoundRect( startX, railY + 2, segmentWidth, RAIL_HEIGHT - 4, 8, 8 );
+        g.drawRoundRect( startX, segmentVisual.y, segmentWidth, segmentVisual.height, segmentVisual.arc, segmentVisual.arc );
 
         if ( segment.getTooltipText() != null && segment.getTooltipText().length() > 0 )
-            tooltipHotspotList.add( new TooltipHotspot( new Rectangle( startX, railY + 2, segmentWidth, RAIL_HEIGHT - 4 ), segment.getTooltipText() ) );
+            tooltipHotspotList.add( new TooltipHotspot( new Rectangle( startX, segmentVisual.y, segmentWidth, segmentVisual.height ), segment.getTooltipText() ) );
 
+    }
+
+    /**
+     * Resolves the visual placement and color for a timeline segment.
+     *
+     * @param segment segment to render
+     * @param railY main rail top position
+     * @param injectLaneY inject lane top position
+     * @param marker tells if the segment is a narrow marker
+     * @return visual settings for the segment
+     */
+    private SegmentVisual resolveSegmentVisual( final LarvaTimelineSegment segment, final int railY, final int injectLaneY, final boolean marker ) {
+        if ( segment != null && segment.getKind() == LarvaTimelineSegment.Kind.INJECT_WINDOW )
+            return new SegmentVisual( injectLaneY + 1, Math.max( 3, INJECT_LANE_HEIGHT - 2 ), 6, INJECT_WINDOW_COLOR );
+
+        if ( marker )
+            return new SegmentVisual( railY + 2, RAIL_HEIGHT - 4, 8, MARKER_COLOR );
+
+        if ( segment != null && segment.getKind() == LarvaTimelineSegment.Kind.SATURATION_WINDOW )
+            return new SegmentVisual( railY + 2, RAIL_HEIGHT - 4, 8, WINDOW_COLOR );
+
+        return new SegmentVisual( railY + 2, RAIL_HEIGHT - 4, 8, PREVIEW_INTERVAL_COLOR );
     }
 
     /**
@@ -380,7 +418,7 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.drawString( startLabel, railLeft, axisY + 16 );
         g.drawString( endLabel, railLeft + railWidth - fm.stringWidth( endLabel ), axisY + 16 );
         g.setColor( SUBTLE_TEXT_COLOR );
-        g.drawString( "Legend: gray dots = 1-2 larva, red bars = 3+ larva, black ticks = missed larva", LEFT_PAD, axisY + 32 );
+        g.drawString( "Legend: gray dots = 1-2 larva, red bars = 3+ larva, green lanes = inject uptime, black ticks = missed larva", LEFT_PAD, axisY + 32 );
         g.drawString( "Gray 6/9/12... labels mark moments when a hatchery reaches those larva counts", LEFT_PAD, axisY + 46 );
     }
 
@@ -460,6 +498,38 @@ public class LarvaTimelinePreviewComp extends JPanel {
         private TooltipHotspot( final Rectangle bounds, final String tooltipText ) {
             this.bounds = bounds;
             this.tooltipText = tooltipText;
+        }
+
+    }
+
+    /** Resolved visual settings for one timeline segment. */
+    private static class SegmentVisual {
+
+        /** Top y position. */
+        private final int y;
+
+        /** Segment height. */
+        private final int height;
+
+        /** Rounded-corner arc size. */
+        private final int arc;
+
+        /** Fill color. */
+        private final Color color;
+
+        /**
+         * Creates a new visual descriptor.
+         *
+         * @param y top y position
+         * @param height segment height
+         * @param arc rounded-corner arc size
+         * @param color fill color
+         */
+        private SegmentVisual( final int y, final int height, final int arc, final Color color ) {
+            this.y = y;
+            this.height = height;
+            this.arc = arc;
+            this.color = color;
         }
 
     }

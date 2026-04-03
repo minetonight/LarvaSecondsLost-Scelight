@@ -9,6 +9,8 @@ public class LarvaTimelineSegment {
     public static enum Kind {
         /** Stable replay-derived interval where a hatchery had 3 or more larva. */
         SATURATION_WINDOW,
+        /** Stable replay-derived interval where a hatchery was actively injected. */
+        INJECT_WINDOW,
         /** Interval-style placeholder segment derived from replay timing data. */
         PREVIEW_INTERVAL,
         /** Narrow marker-style placeholder segment derived from a single replay timing point. */
