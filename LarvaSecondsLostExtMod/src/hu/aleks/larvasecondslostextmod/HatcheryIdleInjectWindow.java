@@ -26,6 +26,18 @@ public class HatcheryIdleInjectWindow {
     /** Number of queens contributing trustworthy eligibility to this window. */
     private final int qualifyingQueenCount;
 
+    /** Minimum estimated queen energy at window start. */
+    private final double minEstimatedStartEnergy;
+
+    /** Maximum estimated queen energy at window start. */
+    private final double maxEstimatedStartEnergy;
+
+    /** Minimum estimated queen energy at window end. */
+    private final double minEstimatedEndEnergy;
+
+    /** Maximum estimated queen energy at window end. */
+    private final double maxEstimatedEndEnergy;
+
     /** Human-readable explanation of why the window exists and how it was qualified. */
     private final String diagnosticNote;
 
@@ -42,11 +54,17 @@ public class HatcheryIdleInjectWindow {
      * @param startTimeLabel formatted effective window start
      * @param endTimeLabel formatted effective window end
      * @param qualifyingQueenCount number of queens contributing trustworthy eligibility
+     * @param minEstimatedStartEnergy minimum estimated queen energy at window start
+     * @param maxEstimatedStartEnergy maximum estimated queen energy at window start
+     * @param minEstimatedEndEnergy minimum estimated queen energy at window end
+     * @param maxEstimatedEndEnergy maximum estimated queen energy at window end
      * @param queenSummary compact queen summary
      * @param diagnosticNote explanation of why the window exists and how it was qualified
      */
     public HatcheryIdleInjectWindow( final int startLoop, final int endLoop, final long startMs, final long endMs,
             final String startTimeLabel, final String endTimeLabel, final int qualifyingQueenCount,
+            final double minEstimatedStartEnergy, final double maxEstimatedStartEnergy,
+            final double minEstimatedEndEnergy, final double maxEstimatedEndEnergy,
             final String queenSummary, final String diagnosticNote ) {
         this.startLoop = startLoop;
         this.endLoop = endLoop;
@@ -55,6 +73,10 @@ public class HatcheryIdleInjectWindow {
         this.startTimeLabel = startTimeLabel;
         this.endTimeLabel = endTimeLabel;
         this.qualifyingQueenCount = qualifyingQueenCount;
+        this.minEstimatedStartEnergy = minEstimatedStartEnergy;
+        this.maxEstimatedStartEnergy = maxEstimatedStartEnergy;
+        this.minEstimatedEndEnergy = minEstimatedEndEnergy;
+        this.maxEstimatedEndEnergy = maxEstimatedEndEnergy;
         this.queenSummary = queenSummary;
         this.diagnosticNote = diagnosticNote;
     }
@@ -85,6 +107,22 @@ public class HatcheryIdleInjectWindow {
 
     public int getQualifyingQueenCount() {
         return qualifyingQueenCount;
+    }
+
+    public double getMinEstimatedStartEnergy() {
+        return minEstimatedStartEnergy;
+    }
+
+    public double getMaxEstimatedStartEnergy() {
+        return maxEstimatedStartEnergy;
+    }
+
+    public double getMinEstimatedEndEnergy() {
+        return minEstimatedEndEnergy;
+    }
+
+    public double getMaxEstimatedEndEnergy() {
+        return maxEstimatedEndEnergy;
     }
 
     public String getQueenSummary() {

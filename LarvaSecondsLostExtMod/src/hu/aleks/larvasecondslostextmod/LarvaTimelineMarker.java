@@ -25,6 +25,9 @@ public class LarvaTimelineMarker {
     /** Marker kind. */
     private final Kind kind;
 
+    /** Optional extra detail text for tooltips. */
+    private final String detailText;
+
     /** Optional hover metadata for the marker. */
     private final LarvaMarkerHoverData hoverData;
 
@@ -40,7 +43,7 @@ public class LarvaTimelineMarker {
      * @param kind marker kind
      */
     public LarvaTimelineMarker( final int loop, final long timeMs, final String label, final Kind kind ) {
-        this( loop, timeMs, label, kind, null, null );
+        this( loop, timeMs, label, kind, null, null, null );
     }
 
     /**
@@ -53,7 +56,20 @@ public class LarvaTimelineMarker {
      * @param hoverData optional hover metadata
      */
     public LarvaTimelineMarker( final int loop, final long timeMs, final String label, final Kind kind, final LarvaMarkerHoverData hoverData ) {
-        this( loop, timeMs, label, kind, hoverData, null );
+        this( loop, timeMs, label, kind, null, hoverData, null );
+    }
+
+    /**
+     * Creates a new timeline marker.
+     *
+     * @param loop marker loop
+     * @param timeMs marker time in milliseconds
+     * @param label marker label
+     * @param kind marker kind
+     * @param detailText optional extra detail text
+     */
+    public LarvaTimelineMarker( final int loop, final long timeMs, final String label, final Kind kind, final String detailText ) {
+        this( loop, timeMs, label, kind, detailText, null, null );
     }
 
     /**
@@ -68,10 +84,27 @@ public class LarvaTimelineMarker {
      */
     public LarvaTimelineMarker( final int loop, final long timeMs, final String label, final Kind kind, final LarvaMarkerHoverData hoverData,
             final String tooltipText ) {
+        this( loop, timeMs, label, kind, null, hoverData, tooltipText );
+    }
+
+    /**
+     * Creates a new timeline marker.
+     *
+     * @param loop marker loop
+     * @param timeMs marker time in milliseconds
+     * @param label marker label
+     * @param kind marker kind
+     * @param detailText optional extra detail text
+     * @param hoverData optional hover metadata
+     * @param tooltipText optional tooltip text shown when the marker is hovered
+     */
+    public LarvaTimelineMarker( final int loop, final long timeMs, final String label, final Kind kind, final String detailText,
+            final LarvaMarkerHoverData hoverData, final String tooltipText ) {
         this.loop = loop;
         this.timeMs = timeMs;
         this.label = label;
         this.kind = kind;
+        this.detailText = detailText;
         this.hoverData = hoverData;
         this.tooltipText = tooltipText;
     }
@@ -90,6 +123,10 @@ public class LarvaTimelineMarker {
 
     public Kind getKind() {
         return kind;
+    }
+
+    public String getDetailText() {
+        return detailText;
     }
 
     public LarvaMarkerHoverData getHoverData() {

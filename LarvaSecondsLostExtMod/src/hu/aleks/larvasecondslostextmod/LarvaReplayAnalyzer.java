@@ -58,6 +58,9 @@ public class LarvaReplayAnalyzer {
     /** Queen energy regeneration in visible gameplay seconds. */
     private static final double QUEEN_ENERGY_REGEN_PER_SECOND = 0.5625d;
 
+    /** Conservative SC2 queen max energy cap used for estimates. */
+    private static final double QUEEN_MAX_ENERGY = 200.0d;
+
     /** Conservative Story 11.03 public replay-surface conclusion. */
     private static final String IDLE_INJECT_SIGNAL_CONCLUSION = "Idle-inject windows are derived conservatively from singleton-selected queen command attribution plus a dedicated queen radius. Known queen energy spends such as SpawnLarva, creep tumor, and transfuse delay readiness, and periods without trustworthy queen command or unique nearby-queen proof are suppressed instead of guessed.";
 
@@ -775,21 +778,21 @@ public class LarvaReplayAnalyzer {
                     break;
 
                 if ( injectWindow.getStartLoop() > cursor )
-                    addCandidateIdleWindow( repProc, hatcheryTag, cursor, Math.min( effectiveEndLoop, injectWindow.getStartLoop() ), queenState,
+                        addCandidateIdleWindow( repProc, hatcheryTag, cursor, Math.min( effectiveEndLoop, injectWindow.getStartLoop() ), queenState, nextReadyLoop,
                             candidateWindowsByHatchTag, diagnosticsByHatchTag );
                 cursor = Math.max( cursor, injectWindow.getEndLoop() );
             }
         }
 
         if ( cursor < effectiveEndLoop )
-            addCandidateIdleWindow( repProc, hatcheryTag, cursor, effectiveEndLoop, queenState, candidateWindowsByHatchTag, diagnosticsByHatchTag );
+                    addCandidateIdleWindow( repProc, hatcheryTag, cursor, effectiveEndLoop, queenState, nextReadyLoop, candidateWindowsByHatchTag, diagnosticsByHatchTag );
     }
 
     /**
      * Adds one candidate idle window if it has positive width.
      */
     private void addCandidateIdleWindow( final IRepProcessor repProc, final int hatcheryTag, final int startLoop, final int endLoop,
-            final QueenState queenState, final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag,
+            final QueenState queenState, final int nextReadyLoop, final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag,
             final Map< Integer, List< String > > diagnosticsByHatchTag ) {
         if ( endLoop <= startLoop )
             return;
@@ -802,7 +805,9 @@ public class LarvaReplayAnalyzer {
 
         final String queenSummary = queenState.queenTagText;
         final String diagnosticNote = "Qualified by queen " + queenState.queenTagText + " with conservative singleton-command attribution.";
-        candidateWindowList.add( new CandidateIdleWindow( startLoop, endLoop, queenSummary, diagnosticNote ) );
+    candidateWindowList.add( new CandidateIdleWindow( startLoop, endLoop,
+        estimateQueenEnergyAtLoop( repProc, nextReadyLoop, startLoop ), estimateQueenEnergyAtLoop( repProc, nextReadyLoop, endLoop ),
+        queenSummary, diagnosticNote ) );
         addDiagnostic( diagnosticsByHatchTag, hatcheryTag, "Kept idle-inject candidate " + repProc.formatLoopTime( startLoop ) + '-'
                 + repProc.formatLoopTime( endLoop ) + " from queen " + queenState.queenTagText + '.' );
     }
@@ -827,6 +832,10 @@ public class LarvaReplayAnalyzer {
         final List< HatcheryIdleInjectWindow > mergedWindowList = new ArrayList<>();
         int mergedStartLoop = -1;
         int mergedEndLoop = -1;
+        double mergedMinStartEnergy = 0.0d;
+        double mergedMaxStartEnergy = 0.0d;
+        double mergedMinEndEnergy = 0.0d;
+        double mergedMaxEndEnergy = 0.0d;
         final Set< String > mergedQueenSummarySet = new LinkedHashSet<>();
         final List< String > mergedDiagnosticList = new ArrayList<>();
 
@@ -834,6 +843,10 @@ public class LarvaReplayAnalyzer {
             if ( mergedStartLoop < 0 ) {
                 mergedStartLoop = candidateWindow.startLoop;
                 mergedEndLoop = candidateWindow.endLoop;
+                mergedMinStartEnergy = candidateWindow.estimatedStartEnergy;
+                mergedMaxStartEnergy = candidateWindow.estimatedStartEnergy;
+                mergedMinEndEnergy = candidateWindow.estimatedEndEnergy;
+                mergedMaxEndEnergy = candidateWindow.estimatedEndEnergy;
                 mergedQueenSummarySet.add( candidateWindow.queenSummary );
                 mergedDiagnosticList.add( candidateWindow.diagnosticNote );
                 continue;
@@ -842,14 +855,23 @@ public class LarvaReplayAnalyzer {
             if ( candidateWindow.startLoop <= mergedEndLoop ) {
                 if ( candidateWindow.endLoop > mergedEndLoop )
                     mergedEndLoop = candidateWindow.endLoop;
+                mergedMinStartEnergy = Math.min( mergedMinStartEnergy, candidateWindow.estimatedStartEnergy );
+                mergedMaxStartEnergy = Math.max( mergedMaxStartEnergy, candidateWindow.estimatedStartEnergy );
+                mergedMinEndEnergy = Math.min( mergedMinEndEnergy, candidateWindow.estimatedEndEnergy );
+                mergedMaxEndEnergy = Math.max( mergedMaxEndEnergy, candidateWindow.estimatedEndEnergy );
                 mergedQueenSummarySet.add( candidateWindow.queenSummary );
                 mergedDiagnosticList.add( candidateWindow.diagnosticNote );
                 continue;
             }
 
-            mergedWindowList.add( buildMergedIdleWindow( repProc, mergedStartLoop, mergedEndLoop, mergedQueenSummarySet, mergedDiagnosticList ) );
+            mergedWindowList.add( buildMergedIdleWindow( repProc, mergedStartLoop, mergedEndLoop, mergedMinStartEnergy, mergedMaxStartEnergy,
+                    mergedMinEndEnergy, mergedMaxEndEnergy, mergedQueenSummarySet, mergedDiagnosticList ) );
             mergedStartLoop = candidateWindow.startLoop;
             mergedEndLoop = candidateWindow.endLoop;
+            mergedMinStartEnergy = candidateWindow.estimatedStartEnergy;
+            mergedMaxStartEnergy = candidateWindow.estimatedStartEnergy;
+            mergedMinEndEnergy = candidateWindow.estimatedEndEnergy;
+            mergedMaxEndEnergy = candidateWindow.estimatedEndEnergy;
             mergedQueenSummarySet.clear();
             mergedDiagnosticList.clear();
             mergedQueenSummarySet.add( candidateWindow.queenSummary );
@@ -857,7 +879,8 @@ public class LarvaReplayAnalyzer {
         }
 
         if ( mergedStartLoop >= 0 )
-            mergedWindowList.add( buildMergedIdleWindow( repProc, mergedStartLoop, mergedEndLoop, mergedQueenSummarySet, mergedDiagnosticList ) );
+            mergedWindowList.add( buildMergedIdleWindow( repProc, mergedStartLoop, mergedEndLoop, mergedMinStartEnergy, mergedMaxStartEnergy,
+                    mergedMinEndEnergy, mergedMaxEndEnergy, mergedQueenSummarySet, mergedDiagnosticList ) );
 
         return mergedWindowList;
     }
@@ -866,14 +889,29 @@ public class LarvaReplayAnalyzer {
      * Creates one immutable merged idle window.
      */
         private HatcheryIdleInjectWindow buildMergedIdleWindow( final IRepProcessor repProc, final int startLoop, final int endLoop,
-            final Set< String > queenSummarySet, final List< String > diagnosticList ) {
+            final double minEstimatedStartEnergy, final double maxEstimatedStartEnergy, final double minEstimatedEndEnergy,
+            final double maxEstimatedEndEnergy, final Set< String > queenSummarySet, final List< String > diagnosticList ) {
         final String queenSummary = joinStrings( queenSummarySet );
         final long startMs = toTimelineMs( repProc, startLoop );
         final long endMs = toTimelineMs( repProc, endLoop );
         final String startTimeLabel = repProc == null ? null : repProc.formatLoopTime( startLoop );
         final String endTimeLabel = repProc == null ? null : repProc.formatLoopTime( endLoop );
         return new HatcheryIdleInjectWindow( startLoop, endLoop, startMs, endMs, startTimeLabel, endTimeLabel,
-            queenSummarySet.size(), queenSummary, joinStrings( diagnosticList ) );
+            queenSummarySet.size(), minEstimatedStartEnergy, maxEstimatedStartEnergy, minEstimatedEndEnergy, maxEstimatedEndEnergy,
+            queenSummary, joinStrings( diagnosticList ) );
+    }
+
+    /**
+     * Estimates queen energy at the specified loop using the conservative ready-loop baseline.
+     */
+    private double estimateQueenEnergyAtLoop( final IRepProcessor repProc, final int nextReadyLoop, final int targetLoop ) {
+        if ( targetLoop <= nextReadyLoop )
+            return QUEEN_INJECT_ENERGY_COST;
+
+        final long gameSpeedRelative = repProc == null || repProc.getConverterGameSpeed() == null ? DEFAULT_GAME_SPEED_RELATIVE
+                : repProc.getConverterGameSpeed().getRelativeSpeed();
+        final double gameplaySeconds = ( targetLoop - nextReadyLoop ) / ( REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / gameSpeedRelative ) );
+        return Math.min( QUEEN_MAX_ENERGY, QUEEN_INJECT_ENERGY_COST + gameplaySeconds * QUEEN_ENERGY_REGEN_PER_SECOND );
     }
 
     /**
@@ -1643,15 +1681,24 @@ public class LarvaReplayAnalyzer {
         /** End loop. */
         private final int endLoop;
 
+        /** Estimated queen energy at candidate start. */
+        private final double estimatedStartEnergy;
+
+        /** Estimated queen energy at candidate end. */
+        private final double estimatedEndEnergy;
+
         /** Queen summary text. */
         private final String queenSummary;
 
         /** Diagnostic note. */
         private final String diagnosticNote;
 
-        private CandidateIdleWindow( final int startLoop, final int endLoop, final String queenSummary, final String diagnosticNote ) {
+        private CandidateIdleWindow( final int startLoop, final int endLoop, final double estimatedStartEnergy,
+                final double estimatedEndEnergy, final String queenSummary, final String diagnosticNote ) {
             this.startLoop = startLoop;
             this.endLoop = endLoop;
+            this.estimatedStartEnergy = estimatedStartEnergy;
+            this.estimatedEndEnergy = estimatedEndEnergy;
             this.queenSummary = queenSummary;
             this.diagnosticNote = diagnosticNote;
         }

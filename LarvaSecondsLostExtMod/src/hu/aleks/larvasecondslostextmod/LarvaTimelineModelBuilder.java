@@ -431,7 +431,7 @@ public class LarvaTimelineModelBuilder {
                 potentialInjectedLarvaMissedCount += MISSED_INJECT_LARVA_PER_THRESHOLD;
                 markerList.add( new LarvaTimelineMarker( markerLoop, toTimelineMs( larvaAnalysisReport, markerLoop ),
                         "Potential injected larva missed " + potentialInjectedLarvaMissedCount + " at " + formatTimelineLoop( larvaAnalysisReport, markerLoop ),
-                        LarvaTimelineMarker.Kind.MISSED_INJECT_LARVA ) );
+                        LarvaTimelineMarker.Kind.MISSED_INJECT_LARVA, estimateMissedInjectMarkerEnergyText( idleWindow, markerLoop ) ) );
 
                 loopsRemainingInWindow -= loopsUntilThreshold;
                 accumulatedLoops = 0;
@@ -493,12 +493,14 @@ public class LarvaTimelineModelBuilder {
      */
     private String buildIdleInjectTooltipText( final HatcheryIdleInjectWindow idleWindow, final HatcheryIdleInjectTimeline idleInjectTimeline,
             final LarvaAnalysisReport larvaAnalysisReport, final String startTimeLabel, final String endTimeLabel ) {
+        final SnapshotSelection snapshotSelection = larvaAnalysisReport == null || idleInjectTimeline == null ? SnapshotSelection.NONE
+            : selectSnapshot( larvaAnalysisReport, idleInjectTimeline.getPlayerName(), idleWindow.getStartLoop() );
+
         final StringBuilder builder = new StringBuilder( "<html><b>Missed inject window</b><br/>" );
-        builder.append( "Hatchery: " ).append( safeText( idleInjectTimeline == null ? null : idleInjectTimeline.getHatcheryTagText(), "n/a" ) ).append( "<br/>" );
         builder.append( "Window: " ).append( safeText( startTimeLabel, "n/a" ) ).append( " - " ).append( safeText( endTimeLabel, "n/a" ) ).append( "<br/>" );
-        builder.append( "This hatchery appears to have been ready for an inject during this period.<br/>" );
-        builder.append( "Each full 29-second stretch without an inject is worth 3 potential larva.<br/>" );
-        builder.append( "This is an estimate reconstructed from replay events." );
+        builder.append( "Estimated queen energy: " ).append( probableQueenEnergyText( idleWindow ) ).append( "<br/>" );
+        builder.append( "Potential loss after 29s: 3 larva<br/>" );
+        builder.append( buildSnapshotTooltipLines( "Window start", safeText( startTimeLabel, "n/a" ), snapshotSelection ) );
         builder.append( "</html>" );
         return builder.toString();
     }
@@ -525,7 +527,7 @@ public class LarvaTimelineModelBuilder {
                     snapshot.getFoodUsed(), snapshot.getFoodMade(), snapshotSelection.futureSnapshot );
             final String markerLabel = buildMarkerLabel( marker, larvaAnalysisReport );
             enrichedMarkerList.add( new LarvaTimelineMarker( marker.getLoop(), toTimelineMs( larvaAnalysisReport, marker.getLoop() ), markerLabel, marker.getKind(),
-                hoverData, buildMarkerTooltipText( marker, markerLabel, hoverData ) ) );
+                marker.getDetailText(), hoverData, buildMarkerTooltipText( marker, markerLabel, hoverData ) ) );
         }
 
         return enrichedMarkerList;
@@ -592,9 +594,9 @@ public class LarvaTimelineModelBuilder {
 
         if ( marker != null && marker.getKind() == LarvaTimelineMarker.Kind.MISSED_INJECT_LARVA ) {
             final StringBuilder injectBuilder = new StringBuilder( "<html><b>Potential injected larva missed</b><br/>" );
-            injectBuilder.append( markerLabel ).append( "<br/>" );
-            injectBuilder.append( "This black tick marks another full missed inject cycle.<br/>" );
-            injectBuilder.append( "Value: 3 potential larva from one hatchery over 29 seconds.<br/>" );
+            injectBuilder.append( "Threshold reached: " ).append( extractTimeFromMarkerLabel( markerLabel ) ).append( "<br/>" );
+            injectBuilder.append( "Value of this tick: 3 larva<br/>" );
+            injectBuilder.append( "Estimated queen energy: " ).append( safeText( marker.getDetailText(), "n/a" ) ).append( "<br/>" );
             injectBuilder.append( buildSnapshotTooltipLines( "Replay moment", extractTimeFromMarkerLabel( markerLabel ), hoverData ) );
             injectBuilder.append( "</html>" );
             return injectBuilder.toString();
@@ -829,6 +831,50 @@ public class LarvaTimelineModelBuilder {
      */
     private String safeText( final String value, final String fallback ) {
         return value == null || value.length() == 0 ? fallback : value;
+    }
+
+    /**
+     * Returns a compact probable queen energy text for missed-inject windows.
+     */
+    private String probableQueenEnergyText( final HatcheryIdleInjectWindow idleWindow ) {
+        if ( idleWindow == null )
+            return "n/a";
+
+        final String startEnergyText = formatEnergyRange( idleWindow.getMinEstimatedStartEnergy(), idleWindow.getMaxEstimatedStartEnergy() );
+        final String endEnergyText = formatEnergyRange( idleWindow.getMinEstimatedEndEnergy(), idleWindow.getMaxEstimatedEndEnergy() );
+        return startEnergyText.equals( endEnergyText ) ? startEnergyText : startEnergyText + " → " + endEnergyText;
+    }
+
+    /**
+     * Estimates queen energy text for a missed-inject threshold marker.
+     */
+    private String estimateMissedInjectMarkerEnergyText( final HatcheryIdleInjectWindow idleWindow, final int markerLoop ) {
+        if ( idleWindow == null )
+            return "n/a";
+
+        final int windowDurationLoops = Math.max( 1, idleWindow.getEndLoop() - idleWindow.getStartLoop() );
+        final double progress = Math.max( 0.0d, Math.min( 1.0d, ( markerLoop - idleWindow.getStartLoop() ) / (double) windowDurationLoops ) );
+        final double minEnergy = idleWindow.getMinEstimatedStartEnergy()
+                + ( idleWindow.getMinEstimatedEndEnergy() - idleWindow.getMinEstimatedStartEnergy() ) * progress;
+        final double maxEnergy = idleWindow.getMaxEstimatedStartEnergy()
+                + ( idleWindow.getMaxEstimatedEndEnergy() - idleWindow.getMaxEstimatedStartEnergy() ) * progress;
+        return formatEnergyRange( minEnergy, maxEnergy );
+    }
+
+    /**
+     * Formats an estimated queen energy range.
+     */
+    private String formatEnergyRange( final double minEnergy, final double maxEnergy ) {
+        final double roundedMin = roundToOneDecimal( minEnergy );
+        final double roundedMax = roundToOneDecimal( maxEnergy );
+        return roundedMin == roundedMax ? String.valueOf( roundedMin ) : roundedMin + "-" + roundedMax;
+    }
+
+    /**
+     * Rounds a value to one decimal place.
+     */
+    private double roundToOneDecimal( final double value ) {
+        return Math.round( value * 10.0d ) / 10.0d;
     }
 
     /**
