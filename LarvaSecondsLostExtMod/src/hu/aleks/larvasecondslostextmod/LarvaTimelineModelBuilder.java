@@ -161,8 +161,7 @@ public class LarvaTimelineModelBuilder {
         final int missedLarvaCount = countMarkers( markerList, LarvaTimelineMarker.Kind.MISSED_LARVA );
         final int potentialInjectedLarvaMissedCount = countMarkers( markerList, LarvaTimelineMarker.Kind.MISSED_INJECT_LARVA ) * MISSED_INJECT_LARVA_PER_THRESHOLD;
         final String detailLabel = missedLarvaCount + POTENTIAL_LARVA_MISSED_SUFFIX;
-        final String secondaryDetailLabel = potentialInjectedLarvaMissedCount + POTENTIAL_INJECTED_LARVA_MISSED_SUFFIX
-            + " (3 per 29s per hatchery)";
+        final String secondaryDetailLabel = potentialInjectedLarvaMissedCount + POTENTIAL_INJECTED_LARVA_MISSED_SUFFIX;
         return new LarvaTimelineRow( playerName, rowLabel, detailLabel, secondaryDetailLabel, startMs, endMs, missedLarvaCount,
             potentialInjectedLarvaMissedCount, segmentList, markerList, decorationList );
     }
@@ -494,13 +493,13 @@ public class LarvaTimelineModelBuilder {
      */
     private String buildIdleInjectTooltipText( final HatcheryIdleInjectWindow idleWindow, final HatcheryIdleInjectTimeline idleInjectTimeline,
             final LarvaAnalysisReport larvaAnalysisReport, final String startTimeLabel, final String endTimeLabel ) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append( "Idle inject opportunity" ).append( '\n' );
-        builder.append( "Hatchery: " ).append( safeText( idleInjectTimeline == null ? null : idleInjectTimeline.getHatcheryTagText(), "n/a" ) ).append( '\n' );
-        builder.append( "Window: " ).append( startTimeLabel ).append( " - " ).append( endTimeLabel ).append( '\n' );
-        builder.append( "Dedicated queen radius: " ).append( larvaAnalysisReport == null ? "n/a" : String.valueOf( larvaAnalysisReport.getIdleInjectRadius() ) ).append( '\n' );
-        builder.append( "Qualifying queens: " ).append( idleWindow == null ? "n/a" : safeText( idleWindow.getQueenSummary(), "n/a" ) ).append( '\n' );
-        builder.append( "Qualification note: " ).append( idleWindow == null ? "n/a" : safeText( idleWindow.getDiagnosticNote(), "n/a" ) );
+        final StringBuilder builder = new StringBuilder( "<html><b>Missed inject window</b><br/>" );
+        builder.append( "Hatchery: " ).append( safeText( idleInjectTimeline == null ? null : idleInjectTimeline.getHatcheryTagText(), "n/a" ) ).append( "<br/>" );
+        builder.append( "Window: " ).append( safeText( startTimeLabel, "n/a" ) ).append( " - " ).append( safeText( endTimeLabel, "n/a" ) ).append( "<br/>" );
+        builder.append( "This hatchery appears to have been ready for an inject during this period.<br/>" );
+        builder.append( "Each full 29-second stretch without an inject is worth 3 potential larva.<br/>" );
+        builder.append( "This is an estimate reconstructed from replay events." );
+        builder.append( "</html>" );
         return builder.toString();
     }
 
@@ -590,6 +589,16 @@ public class LarvaTimelineModelBuilder {
     private String buildMarkerTooltipText( final LarvaTimelineMarker marker, final String markerLabel, final LarvaMarkerHoverData hoverData ) {
         if ( markerLabel == null )
             return null;
+
+        if ( marker != null && marker.getKind() == LarvaTimelineMarker.Kind.MISSED_INJECT_LARVA ) {
+            final StringBuilder injectBuilder = new StringBuilder( "<html><b>Potential injected larva missed</b><br/>" );
+            injectBuilder.append( markerLabel ).append( "<br/>" );
+            injectBuilder.append( "This black tick marks another full missed inject cycle.<br/>" );
+            injectBuilder.append( "Value: 3 potential larva from one hatchery over 29 seconds.<br/>" );
+            injectBuilder.append( buildSnapshotTooltipLines( "Replay moment", extractTimeFromMarkerLabel( markerLabel ), hoverData ) );
+            injectBuilder.append( "</html>" );
+            return injectBuilder.toString();
+        }
 
         final StringBuilder builder = new StringBuilder( "<html><b>" );
         builder.append( marker != null && marker.getKind() == LarvaTimelineMarker.Kind.MISSED_INJECT_LARVA ? "Potential injected larva missed"
