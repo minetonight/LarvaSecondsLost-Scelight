@@ -2,8 +2,6 @@ package hu.aleks.larvasecondslostextmod;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,18 +13,6 @@ public class LarvaTimelineModelBuilder {
 
     /** Maximum allowed distance between a hovered point and a resource snapshot. */
     private static final int SNAPSHOT_MATCH_WINDOW_LOOPS = 10 * 16;
-
-    /** Replay loops per second used by SC2 timing. */
-    private static final int REPLAY_LOOPS_PER_SECOND = 16;
-
-    /** Dot-column spacing for 1- and 2-larva rhythm hints. */
-    private static final int LARVA_DOT_STEP_LOOPS = 2 * REPLAY_LOOPS_PER_SECOND;
-
-    /** First cumulative label shown inside a 3+ larva window. */
-    private static final int ACCUMULATION_LABEL_START = 6;
-
-    /** Step between cumulative labels shown inside a 3+ larva window. */
-    private static final int ACCUMULATION_LABEL_STEP = 3;
 
     /** Minimum width of a placeholder interval so it remains visible on short replays. */
     private static final long MIN_PLACEHOLDER_WINDOW_MS = 10000L;
@@ -65,12 +51,11 @@ public class LarvaTimelineModelBuilder {
     public LarvaTimelineModel build( final ReplaySummary replaySummary, final String integrationMode, final LarvaAnalysisReport larvaAnalysisReport,
             final long fallbackPreviewStartMs, final long fallbackPreviewEndMs ) {
         final long replayLengthMs = replaySummary == null ? 0L : replaySummary.getLengthMs();
-        final int replayLengthLoops = larvaAnalysisReport == null ? 0 : larvaAnalysisReport.getReplayLengthLoops();
         final String replayLengthLabel = replaySummary == null ? "0:00" : replaySummary.getLength();
 
         final List< LarvaTimelineRow > rowList = new ArrayList<>();
         if ( replaySummary != null && replayLengthMs > 0L && larvaAnalysisReport != null && !larvaAnalysisReport.getTimelineList().isEmpty() )
-            populateReplayDerivedRows( replayLengthMs, replayLengthLoops, larvaAnalysisReport, rowList );
+            populateReplayDerivedRows( replayLengthMs, larvaAnalysisReport, rowList );
 
         if ( rowList.isEmpty() && replaySummary != null && replayLengthMs > 0L )
             rowList.add( createFallbackRow( replayLengthMs, fallbackPreviewStartMs, fallbackPreviewEndMs ) );
@@ -83,14 +68,13 @@ public class LarvaTimelineModelBuilder {
      * Builds replay-derived placeholder rows from per-hatchery timelines.
      *
      * @param replayLengthMs replay length in milliseconds
-     * @param replayLengthLoops replay length in raw loops
      * @param larvaAnalysisReport larva analysis report
      * @param rowList target row list
      */
-    private void populateReplayDerivedRows( final long replayLengthMs, final int replayLengthLoops, final LarvaAnalysisReport larvaAnalysisReport,
+    private void populateReplayDerivedRows( final long replayLengthMs, final LarvaAnalysisReport larvaAnalysisReport,
             final List< LarvaTimelineRow > rowList ) {
         for ( final HatcheryLarvaTimeline timeline : larvaAnalysisReport.getTimelineList() ) {
-            final LarvaTimelineRow row = createReplayDerivedRow( replayLengthMs, replayLengthLoops, timeline, larvaAnalysisReport );
+            final LarvaTimelineRow row = createReplayDerivedRow( replayLengthMs, timeline, larvaAnalysisReport );
             if ( row != null )
                 rowList.add( row );
         }
@@ -100,18 +84,17 @@ public class LarvaTimelineModelBuilder {
      * Creates one replay-derived placeholder row from a hatchery timeline.
      *
      * @param replayLengthMs replay length in milliseconds
-     * @param replayLengthLoops replay length in raw loops
-     * @param timeline hatchery larva timeline
-     * @param larvaAnalysisReport larva analysis report
+         * @param timeline hatchery larva timeline
+         * @param larvaAnalysisReport larva analysis report
      * @return timeline row; may be <code>null</code>
      */
-    private LarvaTimelineRow createReplayDerivedRow( final long replayLengthMs, final int replayLengthLoops, final HatcheryLarvaTimeline timeline,
+        private LarvaTimelineRow createReplayDerivedRow( final long replayLengthMs, final HatcheryLarvaTimeline timeline,
             final LarvaAnalysisReport larvaAnalysisReport ) {
         if ( timeline.getCountPointList().isEmpty() || !timeline.isCompleted() || timeline.getCreatedLarvaCount() <= 0 )
             return null;
 
         final int visibleStartLoop = saturationWindowCalculator.resolveVisibleStartLoop( timeline );
-        final int visibleEndLoop = saturationWindowCalculator.resolveVisibleEndLoop( timeline, replayLengthLoops );
+        final int visibleEndLoop = saturationWindowCalculator.resolveVisibleEndLoop( timeline, replayLengthMs );
         if ( visibleStartLoop < 0 || visibleEndLoop <= visibleStartLoop )
             return null;
 
@@ -120,15 +103,13 @@ public class LarvaTimelineModelBuilder {
         if ( endMs <= startMs )
             return null;
 
-        final List< LarvaSaturationWindow > saturationWindowList = saturationWindowCalculator.buildWindows( timeline, replayLengthLoops );
+        final List< LarvaSaturationWindow > saturationWindowList = saturationWindowCalculator.buildWindows( timeline, replayLengthMs );
         final String playerName = safeText( timeline.getPlayerName(), "Unknown player" );
         final String hatcheryType = safeText( timeline.getHatcheryType(), "Hatchery" );
         final String hatcheryTagText = safeText( timeline.getHatcheryTagText(), String.valueOf( timeline.getHatcheryTag() ) );
 
-        final long gameSpeedRelative = larvaAnalysisReport == null ? 0L : larvaAnalysisReport.getConverterGameSpeedRelative();
-        final List< LarvaTimelineMarker > markerList = attachMarkerHoverData( missedLarvaMarkerCalculator.buildMarkers( saturationWindowList, gameSpeedRelative ),
+        final List< LarvaTimelineMarker > markerList = attachMarkerHoverData( missedLarvaMarkerCalculator.buildMarkers( saturationWindowList ),
             playerName, larvaAnalysisReport );
-        final List< LarvaTimelineDecoration > decorationList = buildDecorations( timeline, visibleStartLoop, visibleEndLoop, larvaAnalysisReport );
 
         final List< LarvaTimelineSegment > segmentList = new ArrayList<>();
         for ( final LarvaSaturationWindow window : saturationWindowList )
@@ -138,7 +119,7 @@ public class LarvaTimelineModelBuilder {
 
         final String rowLabel = hatcheryType + " (tag " + hatcheryTagText + ")";
         final String detailLabel = markerList.size() + POTENTIAL_LARVA_MISSED_SUFFIX;
-        return new LarvaTimelineRow( playerName, rowLabel, detailLabel, startMs, endMs, markerList.size(), segmentList, markerList, decorationList );
+        return new LarvaTimelineRow( playerName, rowLabel, detailLabel, startMs, endMs, markerList.size(), segmentList, markerList );
     }
 
     /**
@@ -163,7 +144,7 @@ public class LarvaTimelineModelBuilder {
                     snapshot.getFoodUsed(), snapshot.getFoodMade(), snapshotSelection.futureSnapshot );
             final String markerLabel = buildMarkerLabel( marker, larvaAnalysisReport );
             enrichedMarkerList.add( new LarvaTimelineMarker( marker.getLoop(), toTimelineMs( larvaAnalysisReport, marker.getLoop() ), markerLabel, marker.getKind(),
-                hoverData, buildMarkerTooltipText( markerLabel, marker.getLoop(), hoverData, larvaAnalysisReport ) ) );
+                hoverData, buildMarkerTooltipText( markerLabel, hoverData ) ) );
         }
 
         return enrichedMarkerList;
@@ -185,9 +166,9 @@ public class LarvaTimelineModelBuilder {
                 window.getStartLoop() );
 
         final StringBuilder builder = new StringBuilder( "<html><b>3+ larva window</b><br/>" );
-        builder.append( "Window: " ).append( formatTooltipLoop( larvaAnalysisReport, window.getStartLoop() ) ).append( " - " )
-            .append( formatTooltipLoop( larvaAnalysisReport, window.getEndLoop() ) ).append( "<br/>" );
-        builder.append( buildSnapshotTooltipLines( "Window start", formatTooltipLoop( larvaAnalysisReport, window.getStartLoop() ), snapshotSelection ) );
+        builder.append( "Window: " ).append( formatTimelineLoop( larvaAnalysisReport, window.getStartLoop() ) ).append( " - " )
+            .append( formatTimelineLoop( larvaAnalysisReport, window.getEndLoop() ) ).append( "<br/>" );
+        builder.append( buildSnapshotTooltipLines( "Window start", formatTimelineLoop( larvaAnalysisReport, window.getStartLoop() ), snapshotSelection ) );
         builder.append( "</html>" );
         return builder.toString();
     }
@@ -195,20 +176,17 @@ public class LarvaTimelineModelBuilder {
     /**
      * Builds the tooltip text for a missed-larva marker.
      *
-     * @param markerLabel visible missed-larva label
-         * @param markerLoop replay loop of the marker
-         * @param hoverData attached hover metadata; may be <code>null</code>
-     * @param larvaAnalysisReport analysis report containing replay time conversion
+     * @param marker missed-larva marker
+     * @param hoverData attached hover metadata; may be <code>null</code>
      * @return tooltip text
      */
-        private String buildMarkerTooltipText( final String markerLabel, final int markerLoop, final LarvaMarkerHoverData hoverData,
-            final LarvaAnalysisReport larvaAnalysisReport ) {
+    private String buildMarkerTooltipText( final String markerLabel, final LarvaMarkerHoverData hoverData ) {
         if ( markerLabel == null )
             return null;
 
         final StringBuilder builder = new StringBuilder( "<html><b>Potential larva missed</b><br/>" );
         builder.append( markerLabel ).append( "<br/>" );
-        builder.append( buildSnapshotTooltipLines( "Missed moment", formatTooltipLoop( larvaAnalysisReport, markerLoop ), hoverData, larvaAnalysisReport ) );
+        builder.append( buildSnapshotTooltipLines( "Missed moment", extractTimeFromMarkerLabel( markerLabel ), hoverData ) );
         builder.append( "</html>" );
         return builder.toString();
     }
@@ -234,8 +212,8 @@ public class LarvaTimelineModelBuilder {
         if ( snapshotSelection.futureSnapshot )
             builder.append( "<font color='#c62828'>" );
         builder.append( snapshotSelection.futureSnapshot ? "Near-future snapshot: " : "Resource snapshot: " )
-            .append( formatSnapshotLoopTime( snapshotSelection.formatter, snapshot ) ).append( "<br/>" );
-        builder.append( "Minerals: " ).append( formatInt( snapshot.getMineralsCurrent() ) )
+                .append( safeText( snapshot.getTimeLabel(), "n/a" ) ).append( "<br/>" );
+        builder.append( snapshotSelection.futureSnapshot ? "Minerals: " : "Minerals: " ).append( formatInt( snapshot.getMineralsCurrent() ) )
                 .append( ", Gas: " ).append( formatInt( snapshot.getGasCurrent() ) ).append( "<br/>" );
         builder.append( "Supply: " ).append( formatSupply( snapshot.getFoodUsed(), snapshot.getFoodMade() ) );
         if ( snapshotSelection.futureSnapshot )
@@ -249,11 +227,9 @@ public class LarvaTimelineModelBuilder {
      * @param pointLabel label describing the relevant replay point
      * @param pointTimeLabel formatted replay time of the relevant point
      * @param hoverData hover metadata to render; may be <code>null</code>
-     * @param larvaAnalysisReport analysis report containing replay time conversion
      * @return HTML snippet without surrounding html/body tags
      */
-    private String buildSnapshotTooltipLines( final String pointLabel, final String pointTimeLabel, final LarvaMarkerHoverData hoverData,
-            final LarvaAnalysisReport larvaAnalysisReport ) {
+    private String buildSnapshotTooltipLines( final String pointLabel, final String pointTimeLabel, final LarvaMarkerHoverData hoverData ) {
         final StringBuilder builder = new StringBuilder();
         builder.append( pointLabel ).append( ": " ).append( safeText( pointTimeLabel, "n/a" ) ).append( "<br/>" );
         if ( hoverData == null ) {
@@ -264,7 +240,7 @@ public class LarvaTimelineModelBuilder {
         if ( hoverData.isFutureSnapshot() )
             builder.append( "<font color='#c62828'>" );
         builder.append( hoverData.isFutureSnapshot() ? "Near-future snapshot: " : "Resource snapshot: " )
-            .append( formatSnapshotLoopTime( larvaAnalysisReport, hoverData.getSnapshotLoop(), hoverData.getSnapshotTimeLabel() ) ).append( "<br/>" );
+                .append( safeText( hoverData.getSnapshotTimeLabel(), "n/a" ) ).append( "<br/>" );
         builder.append( "Minerals: " ).append( formatInt( hoverData.getMineralsCurrent() ) )
                 .append( ", Gas: " ).append( formatInt( hoverData.getGasCurrent() ) ).append( "<br/>" );
         builder.append( "Supply: " ).append( formatSupply( hoverData.getFoodUsed(), hoverData.getFoodMade() ) );
@@ -299,11 +275,11 @@ public class LarvaTimelineModelBuilder {
 
         final LarvaPlayerResourceSnapshot futureSnapshot = larvaAnalysisReport.findEarliestFutureResourceSnapshot( playerName, pointLoop );
         if ( futureSnapshot != null && futureSnapshot.getLoop() - pointLoop <= SNAPSHOT_MATCH_WINDOW_LOOPS )
-            return new SnapshotSelection( futureSnapshot, true, larvaAnalysisReport );
+            return new SnapshotSelection( futureSnapshot, true );
 
         final LarvaPlayerResourceSnapshot latestSnapshot = larvaAnalysisReport.findLatestResourceSnapshot( playerName, pointLoop );
         if ( latestSnapshot != null && pointLoop - latestSnapshot.getLoop() <= SNAPSHOT_MATCH_WINDOW_LOOPS )
-            return new SnapshotSelection( latestSnapshot, false, larvaAnalysisReport );
+            return new SnapshotSelection( latestSnapshot, false );
 
         return SnapshotSelection.NONE;
     }
@@ -312,7 +288,7 @@ public class LarvaTimelineModelBuilder {
     private static class SnapshotSelection {
 
         /** Empty selection instance. */
-        private static final SnapshotSelection NONE = new SnapshotSelection( null, false, null );
+        private static final SnapshotSelection NONE = new SnapshotSelection( null, false );
 
         /** Selected snapshot. */
         private final LarvaPlayerResourceSnapshot snapshot;
@@ -320,20 +296,15 @@ public class LarvaTimelineModelBuilder {
         /** Tells if the snapshot is from shortly after the hovered point. */
         private final boolean futureSnapshot;
 
-        /** Analysis report used to format replay-time values. */
-        private final LarvaAnalysisReport formatter;
-
         /**
          * Creates a new snapshot selection.
          *
          * @param snapshot selected snapshot
          * @param futureSnapshot tells if the snapshot is from shortly after the hovered point
-         * @param formatter analysis report used to format replay-time values
          */
-        private SnapshotSelection( final LarvaPlayerResourceSnapshot snapshot, final boolean futureSnapshot, final LarvaAnalysisReport formatter ) {
+        private SnapshotSelection( final LarvaPlayerResourceSnapshot snapshot, final boolean futureSnapshot ) {
             this.snapshot = snapshot;
             this.futureSnapshot = futureSnapshot;
-            this.formatter = formatter;
         }
 
     }
@@ -388,43 +359,6 @@ public class LarvaTimelineModelBuilder {
      */
     private String formatTimelineLoop( final LarvaAnalysisReport larvaAnalysisReport, final int loop ) {
         return larvaAnalysisReport == null ? saturationWindowCalculator.formatLoopTime( loop ) : larvaAnalysisReport.formatLoopTime( loop );
-    }
-
-    /**
-     * Formats a loop with tenth-of-a-second precision for tooltip text.
-     *
-     * @param larvaAnalysisReport analysis report containing time-conversion settings
-     * @param loop replay loop
-     * @return formatted tooltip time label
-     */
-    private String formatTooltipLoop( final LarvaAnalysisReport larvaAnalysisReport, final int loop ) {
-        return larvaAnalysisReport == null ? saturationWindowCalculator.formatLoopTime( loop ) : larvaAnalysisReport.formatLoopTimeTenths( loop );
-    }
-
-    /**
-     * Formats a snapshot time using the replay time basis when possible.
-     *
-     * @param formatter analysis report containing time-conversion settings
-     * @param snapshot resource snapshot to format
-     * @return formatted snapshot time label
-     */
-    private String formatSnapshotLoopTime( final LarvaAnalysisReport formatter, final LarvaPlayerResourceSnapshot snapshot ) {
-        if ( snapshot == null )
-            return "n/a";
-
-        return formatter == null ? safeText( snapshot.getTimeLabel(), "n/a" ) : formatter.formatLoopTimeTenths( snapshot.getLoop() );
-    }
-
-    /**
-     * Formats a snapshot time from raw loop data with a label fallback.
-     *
-     * @param formatter analysis report containing time-conversion settings
-     * @param snapshotLoop snapshot loop
-     * @param fallbackLabel fallback label when no formatter is available
-     * @return formatted snapshot time label
-     */
-    private String formatSnapshotLoopTime( final LarvaAnalysisReport formatter, final int snapshotLoop, final String fallbackLabel ) {
-        return formatter == null ? safeText( fallbackLabel, "n/a" ) : formatter.formatLoopTimeTenths( snapshotLoop );
     }
 
     /**
@@ -493,134 +427,7 @@ public class LarvaTimelineModelBuilder {
         segmentList.add( new LarvaTimelineSegment( startMs, endMs, "Replay-length-derived placeholder interval",
                 LarvaTimelineSegment.Kind.PREVIEW_INTERVAL ) );
         return new LarvaTimelineRow( "Replay context", "Replay overview", "No 3+ larva windows reached the warning threshold",
-            0L, replayLengthMs, 0, segmentList, new ArrayList< LarvaTimelineMarker >(), new ArrayList< LarvaTimelineDecoration >() );
-    }
-
-    /**
-     * Builds small rhythm decorations for a hatchery row.
-     *
-     * @param timeline hatchery timeline
-     * @param visibleStartLoop visible start loop
-     * @param visibleEndLoop visible end loop
-     * @param larvaAnalysisReport analysis report used for time conversion
-     * @return small row decorations
-     */
-    private List< LarvaTimelineDecoration > buildDecorations( final HatcheryLarvaTimeline timeline, final int visibleStartLoop, final int visibleEndLoop,
-            final LarvaAnalysisReport larvaAnalysisReport ) {
-        final List< HatcheryLarvaTimeline.CountPoint > pointList = normalizeCountPoints( timeline, visibleEndLoop );
-        if ( pointList.isEmpty() )
-            return Collections.emptyList();
-
-        final List< LarvaTimelineDecoration > decorationList = new ArrayList<>();
-        int previousLarvaCount = 0;
-
-        for ( int i = 0; i < pointList.size(); i++ ) {
-            final HatcheryLarvaTimeline.CountPoint point = pointList.get( i );
-            final int intervalStartLoop = Math.max( point.getLoop(), visibleStartLoop );
-            final int nextLoop = i + 1 < pointList.size() ? pointList.get( i + 1 ).getLoop() : visibleEndLoop;
-            final int intervalEndLoop = Math.min( nextLoop, visibleEndLoop );
-            if ( intervalEndLoop <= intervalStartLoop )
-                continue;
-
-            final int larvaCount = point.getLarvaCount();
-            if ( larvaCount == 1 || larvaCount == 2 )
-                addDotDecorations( decorationList, intervalStartLoop, intervalEndLoop, larvaCount, larvaAnalysisReport );
-
-            if ( larvaCount >= 3 )
-                addLarvaCountLabels( decorationList, intervalStartLoop, previousLarvaCount, larvaCount, larvaAnalysisReport );
-
-            previousLarvaCount = larvaCount;
-        }
-
-        return decorationList;
-    }
-
-    /**
-     * Adds one- or two-larva dot columns for a visible interval.
-     *
-     * @param decorationList target decoration list
-     * @param startLoop visible interval start loop
-     * @param endLoop visible interval end loop
-     * @param larvaCount larva count represented by the dots
-     * @param larvaAnalysisReport analysis report used for time conversion
-     */
-    private void addDotDecorations( final List< LarvaTimelineDecoration > decorationList, final int startLoop, final int endLoop, final int larvaCount,
-            final LarvaAnalysisReport larvaAnalysisReport ) {
-        final int durationLoops = endLoop - startLoop;
-        if ( durationLoops <= 0 )
-            return;
-
-        if ( durationLoops <= LARVA_DOT_STEP_LOOPS ) {
-            decorationList.add( new LarvaTimelineDecoration( LarvaTimelineDecoration.Kind.LARVA_DOT_COLUMN,
-                toTimelineMs( larvaAnalysisReport, startLoop + durationLoops / 2 ), larvaCount, null ) );
-            return;
-        }
-
-        for ( int loop = startLoop + LARVA_DOT_STEP_LOOPS / 2; loop < endLoop; loop += LARVA_DOT_STEP_LOOPS )
-            decorationList.add( new LarvaTimelineDecoration( LarvaTimelineDecoration.Kind.LARVA_DOT_COLUMN, toTimelineMs( larvaAnalysisReport, loop ),
-                larvaCount, null ) );
-    }
-
-    /**
-     * Adds actual 6/9/12... larva-count labels when a hatchery reaches those counts.
-     *
-     * @param decorationList target decoration list
-     * @param loop loop where the current larva count becomes active
-     * @param previousLarvaCount previous larva count before the change
-     * @param larvaCount current larva count after the change
-     * @param larvaAnalysisReport analysis report used for time conversion
-     */
-    private void addLarvaCountLabels( final List< LarvaTimelineDecoration > decorationList, final int loop, final int previousLarvaCount,
-            final int larvaCount, final LarvaAnalysisReport larvaAnalysisReport ) {
-        if ( larvaCount < ACCUMULATION_LABEL_START || larvaCount <= previousLarvaCount )
-            return;
-
-        for ( int labelValue = ACCUMULATION_LABEL_START; labelValue <= larvaCount; labelValue += ACCUMULATION_LABEL_STEP ) {
-            if ( labelValue <= previousLarvaCount )
-                continue;
-
-            decorationList.add( new LarvaTimelineDecoration( LarvaTimelineDecoration.Kind.ACCUMULATION_LABEL,
-                toTimelineMs( larvaAnalysisReport, loop ), 0, String.valueOf( labelValue ) ) );
-        }
-    }
-
-    /**
-     * Normalizes count points for deterministic row-decoration placement.
-     *
-     * @param timeline hatchery timeline
-     * @param visibleEndLoop visible row end loop
-     * @return normalized point list
-     */
-    private List< HatcheryLarvaTimeline.CountPoint > normalizeCountPoints( final HatcheryLarvaTimeline timeline, final int visibleEndLoop ) {
-        if ( timeline == null || timeline.getCountPointList().isEmpty() )
-            return Collections.emptyList();
-
-        final List< HatcheryLarvaTimeline.CountPoint > sortedPointList = new ArrayList<>();
-        for ( final HatcheryLarvaTimeline.CountPoint point : timeline.getCountPointList() ) {
-            if ( point == null || point.getLoop() < 0 || point.getLoop() > visibleEndLoop )
-                continue;
-            sortedPointList.add( point );
-        }
-
-        if ( sortedPointList.isEmpty() )
-            return Collections.emptyList();
-
-        Collections.sort( sortedPointList, new Comparator< HatcheryLarvaTimeline.CountPoint >() {
-            @Override
-            public int compare( final HatcheryLarvaTimeline.CountPoint left, final HatcheryLarvaTimeline.CountPoint right ) {
-                return left.getLoop() < right.getLoop() ? -1 : left.getLoop() == right.getLoop() ? 0 : 1;
-            }
-        } );
-
-        final List< HatcheryLarvaTimeline.CountPoint > normalizedPointList = new ArrayList<>( sortedPointList.size() );
-        for ( final HatcheryLarvaTimeline.CountPoint point : sortedPointList ) {
-            if ( !normalizedPointList.isEmpty() && normalizedPointList.get( normalizedPointList.size() - 1 ).getLoop() == point.getLoop() )
-                normalizedPointList.set( normalizedPointList.size() - 1, point );
-            else
-                normalizedPointList.add( point );
-        }
-
-        return normalizedPointList;
+            0L, replayLengthMs, 0, segmentList, new ArrayList< LarvaTimelineMarker >() );
     }
 
     /**
