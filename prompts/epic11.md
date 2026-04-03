@@ -15,7 +15,7 @@ Epic 11 is intentionally limited to injection-status tracking and missed-inject 
 ## Working assumptions confirmed for this epic
 
 - Treat the README handoff summaries as the last formal baseline, but also account for the current unpublished Epic 09 / Epic 10 state reflected in the module text and bugfix notes.
-- Use a **new queen-to-hatchery radius** for inject eligibility instead of reusing the larva-assignment radius.
+- Use a **new queen-to-hatchery radius** for inject eligibility instead of reusing the larva-assignment radius. Current implementation baseline: `12.0` tracker-map units center-to-center.
 - Missed inject pressure should use **accumulated qualifying time across gaps** until each 29-second threshold is reached.
 - Epic 11 scope is **injection tracking only**.
 

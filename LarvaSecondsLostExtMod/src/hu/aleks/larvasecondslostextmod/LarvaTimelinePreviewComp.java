@@ -34,6 +34,9 @@ public class LarvaTimelinePreviewComp extends JPanel {
     /** Inject-uptime lane color. */
     private static final Color INJECT_WINDOW_COLOR = new Color( 67, 160, 71 );
 
+    /** Idle-inject lane color. */
+    private static final Color IDLE_INJECT_WINDOW_COLOR = new Color( 196, 40, 40 );
+
     /** Placeholder interval color. */
     private static final Color PREVIEW_INTERVAL_COLOR = new Color( 239, 170, 170 );
 
@@ -71,7 +74,7 @@ public class LarvaTimelinePreviewComp extends JPanel {
     private static final int TOP_PAD = 12;
 
     /** Space reserved for row labels. */
-    private static final int LABEL_WIDTH = 168;
+    private static final int LABEL_WIDTH = 280;
 
     /** Height of a timeline rail. */
     private static final int RAIL_HEIGHT = 16;
@@ -82,23 +85,32 @@ public class LarvaTimelinePreviewComp extends JPanel {
     /** Vertical gap between the main rail and the inject lane. */
     private static final int INJECT_LANE_GAP = 4;
 
+    /** Height of the dedicated idle-inject lane. */
+    private static final int IDLE_INJECT_LANE_HEIGHT = 6;
+
+    /** Vertical gap between the inject lane and the idle-inject lane. */
+    private static final int IDLE_INJECT_LANE_GAP = 3;
+
     /** Width of a missed-larva threshold marker. */
     private static final int MARKER_WIDTH = 4;
 
     /** Vertical step between rows. */
-    private static final int ROW_STEP = 42;
+    private static final int ROW_STEP = 52;
 
     /** Extra gap inserted when a new player group begins. */
     private static final int GROUP_GAP = 16;
 
     /** Space reserved below the axis for labels and legend. */
-    private static final int AXIS_BOTTOM_PAD = 54;
+    private static final int AXIS_BOTTOM_PAD = 68;
 
     /** Size of one small larva rhythm dot. */
     private static final int RHYTHM_DOT_SIZE = 4;
 
     /** Minimum horizontal spacing between accumulation labels to avoid clutter. */
     private static final int MIN_ACCUMULATION_LABEL_GAP = 16;
+
+    /** Horizontal padding between lane labels and the timeline rail. */
+    private static final int STATUS_LABEL_GAP = 8;
 
     /** Current normalized timeline model to render. */
     private LarvaTimelineModel timelineModel;
@@ -146,7 +158,7 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.setColor( OUTLINE_COLOR );
         g.drawString( timelineModel == null ? "Larva timeline" : timelineModel.getTitle(), LEFT_PAD, TOP_PAD + 4 );
         g.setColor( SUBTLE_TEXT_COLOR );
-        g.drawString( timelineModel == null ? "Load a replay to see 3+ larva windows, inject uptime, and missed larva pressure."
+        g.drawString( timelineModel == null ? "Load a replay to see 3+ larva windows, inject uptime, conservative idle inject windows, and missed larva pressure."
                 : timelineModel.getSubtitle(), LEFT_PAD, TOP_PAD + 22 );
 
         if ( timelineModel == null || timelineModel.getReplayLengthMs() <= 0L ) {
@@ -211,12 +223,16 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.drawString( row.getRowLabel(), LEFT_PAD, y + 2 );
         g.setColor( SUBTLE_TEXT_COLOR );
         g.drawString( row.getDetailLabel(), LEFT_PAD, y + 16 );
+        if ( row.getSecondaryDetailLabel() != null && row.getSecondaryDetailLabel().length() > 0 )
+            g.drawString( row.getSecondaryDetailLabel(), LEFT_PAD, y + 30 );
 
         final int railY = y + 2;
         final int rowStartX = railLeft + scaleToWidth( row.getStartMs(), timelineModel.getReplayLengthMs(), railWidth );
         final int rowEndX = railLeft + scaleToWidth( row.getEndMs(), timelineModel.getReplayLengthMs(), railWidth );
         final int lifetimeWidth = Math.max( 6, rowEndX - rowStartX );
         final int injectLaneY = railY + RAIL_HEIGHT + INJECT_LANE_GAP;
+        final int idleInjectLaneY = injectLaneY + INJECT_LANE_HEIGHT + IDLE_INJECT_LANE_GAP;
+        final int statusLabelRightX = railLeft - STATUS_LABEL_GAP;
 
         g.setColor( RAIL_COLOR );
         g.fillRoundRect( rowStartX, railY, lifetimeWidth, RAIL_HEIGHT, 10, 10 );
@@ -231,14 +247,25 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.fillRoundRect( rowStartX + 1, injectLaneY + 1, Math.max( 4, lifetimeWidth - 2 ), Math.max( 3, INJECT_LANE_HEIGHT - 2 ), 5, 5 );
         g.setColor( OUTLINE_COLOR );
         g.drawRoundRect( rowStartX, injectLaneY, lifetimeWidth, INJECT_LANE_HEIGHT, 6, 6 );
+        g.setColor( INJECT_WINDOW_COLOR );
+        drawRightAlignedString( g, fm, "Inject", statusLabelRightX, injectLaneY + INJECT_LANE_HEIGHT );
+
+        g.setColor( RAIL_COLOR );
+        g.fillRoundRect( rowStartX, idleInjectLaneY, lifetimeWidth, IDLE_INJECT_LANE_HEIGHT, 6, 6 );
+        g.setColor( LIFETIME_RAIL_COLOR );
+        g.fillRoundRect( rowStartX + 1, idleInjectLaneY + 1, Math.max( 4, lifetimeWidth - 2 ), Math.max( 3, IDLE_INJECT_LANE_HEIGHT - 2 ), 5, 5 );
+        g.setColor( OUTLINE_COLOR );
+        g.drawRoundRect( rowStartX, idleInjectLaneY, lifetimeWidth, IDLE_INJECT_LANE_HEIGHT, 6, 6 );
+        g.setColor( IDLE_INJECT_WINDOW_COLOR );
+        drawRightAlignedString( g, fm, "Missed", statusLabelRightX, idleInjectLaneY + IDLE_INJECT_LANE_HEIGHT );
 
         for ( final LarvaTimelineSegment segment : row.getSegmentList() )
-            drawSegment( g, fm, segment, railLeft, railY, injectLaneY, railWidth );
+            drawSegment( g, fm, segment, railLeft, railY, injectLaneY, idleInjectLaneY, railWidth );
 
         drawDecorations( g, fm, row, railLeft, railY, railWidth );
 
         for ( final LarvaTimelineMarker marker : row.getMarkerList() )
-            drawMarker( g, marker, railLeft, railY, railWidth );
+            drawMarker( g, marker, railLeft, railY, idleInjectLaneY, railWidth );
     }
 
     /**
@@ -251,13 +278,13 @@ public class LarvaTimelinePreviewComp extends JPanel {
      * @param railY rail top position
      * @param railWidth rail width
      */
-    private void drawSegment( final Graphics2D g, final FontMetrics fm, final LarvaTimelineSegment segment, final int railLeft, final int railY,
-            final int injectLaneY, final int railWidth ) {
+            private void drawSegment( final Graphics2D g, final FontMetrics fm, final LarvaTimelineSegment segment, final int railLeft, final int railY,
+                final int injectLaneY, final int idleInjectLaneY, final int railWidth ) {
         final int startX = railLeft + scaleToWidth( segment.getStartMs(), timelineModel.getReplayLengthMs(), railWidth );
         final int endX = railLeft + scaleToWidth( segment.getEndMs(), timelineModel.getReplayLengthMs(), railWidth );
         final boolean marker = segment.getKind() == LarvaTimelineSegment.Kind.PREVIEW_MARKER;
         final int segmentWidth = Math.max( marker ? 4 : 8, endX - startX );
-        final SegmentVisual segmentVisual = resolveSegmentVisual( segment, railY, injectLaneY, marker );
+        final SegmentVisual segmentVisual = resolveSegmentVisual( segment, railY, injectLaneY, idleInjectLaneY, marker );
 
         g.setColor( segmentVisual.color );
         g.fillRoundRect( startX, segmentVisual.y, segmentWidth, segmentVisual.height, segmentVisual.arc, segmentVisual.arc );
@@ -278,9 +305,13 @@ public class LarvaTimelinePreviewComp extends JPanel {
      * @param marker tells if the segment is a narrow marker
      * @return visual settings for the segment
      */
-    private SegmentVisual resolveSegmentVisual( final LarvaTimelineSegment segment, final int railY, final int injectLaneY, final boolean marker ) {
+    private SegmentVisual resolveSegmentVisual( final LarvaTimelineSegment segment, final int railY, final int injectLaneY,
+            final int idleInjectLaneY, final boolean marker ) {
         if ( segment != null && segment.getKind() == LarvaTimelineSegment.Kind.INJECT_WINDOW )
             return new SegmentVisual( injectLaneY + 1, Math.max( 3, INJECT_LANE_HEIGHT - 2 ), 6, INJECT_WINDOW_COLOR );
+
+        if ( segment != null && segment.getKind() == LarvaTimelineSegment.Kind.IDLE_INJECT_WINDOW )
+            return new SegmentVisual( idleInjectLaneY + 1, Math.max( 3, IDLE_INJECT_LANE_HEIGHT - 2 ), 6, IDLE_INJECT_WINDOW_COLOR );
 
         if ( marker )
             return new SegmentVisual( railY + 2, RAIL_HEIGHT - 4, 8, MARKER_COLOR );
@@ -300,15 +331,35 @@ public class LarvaTimelinePreviewComp extends JPanel {
      * @param railY rail top position
      * @param railWidth rail width
      */
-    private void drawMarker( final Graphics2D g, final LarvaTimelineMarker marker, final int railLeft, final int railY, final int railWidth ) {
+    private void drawMarker( final Graphics2D g, final LarvaTimelineMarker marker, final int railLeft, final int railY, final int idleInjectLaneY,
+            final int railWidth ) {
         final int centerX = railLeft + scaleToWidth( marker.getTimeMs(), timelineModel.getReplayLengthMs(), railWidth );
         final int markerX = centerX - MARKER_WIDTH / 2;
+        final boolean injectLossMarker = marker.getKind() == LarvaTimelineMarker.Kind.MISSED_INJECT_LARVA;
+        final int markerY = injectLossMarker ? idleInjectLaneY - 1 : railY - 1;
+        final int markerHeight = injectLossMarker ? IDLE_INJECT_LANE_HEIGHT + 2 : RAIL_HEIGHT + 2;
 
         g.setColor( MISSED_LARVA_MARKER_COLOR );
-        g.fillRoundRect( markerX, railY - 1, MARKER_WIDTH, RAIL_HEIGHT + 2, 3, 3 );
+        g.fillRoundRect( markerX, markerY, MARKER_WIDTH, markerHeight, 3, 3 );
 
         if ( marker.getTooltipText() != null && marker.getTooltipText().length() > 0 )
-            tooltipHotspotList.add( new TooltipHotspot( new Rectangle( markerX - 2, railY - 2, MARKER_WIDTH + 4, RAIL_HEIGHT + 4 ), marker.getTooltipText() ) );
+            tooltipHotspotList.add( new TooltipHotspot( new Rectangle( markerX - 2, markerY - 1, MARKER_WIDTH + 4, markerHeight + 2 ), marker.getTooltipText() ) );
+    }
+
+    /**
+     * Draws a right-aligned label.
+     *
+     * @param g graphics context
+     * @param fm font metrics
+     * @param text text to draw
+     * @param rightX right edge position
+     * @param baselineY baseline y position
+     */
+    private void drawRightAlignedString( final Graphics2D g, final FontMetrics fm, final String text, final int rightX, final int baselineY ) {
+        if ( text == null || text.length() == 0 )
+            return;
+
+        g.drawString( text, rightX - fm.stringWidth( text ), baselineY );
     }
 
     /**
@@ -418,8 +469,9 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.drawString( startLabel, railLeft, axisY + 16 );
         g.drawString( endLabel, railLeft + railWidth - fm.stringWidth( endLabel ), axisY + 16 );
         g.setColor( SUBTLE_TEXT_COLOR );
-        g.drawString( "Legend: gray dots = 1-2 larva waiting; red bars = 3+ larva unspent, green lanes = inject uptime, black ticks = missed larva", LEFT_PAD, axisY + 32 );
-        g.drawString( "Gray 6/9/12... labels mark moments when a hatchery reaches those idle larva counts", LEFT_PAD, axisY + 46 );
+        g.drawString( "Legend: gray dots = 1-2 larva waiting; red bars = 3+ larva unspent; green lanes = inject uptime; dark red lanes = missed inject windows", LEFT_PAD, axisY + 32 );
+        g.drawString( "Black ticks = 11s missed larva on the main rail, and 29s missed inject thresholds on the dark red lane (3 larva each)", LEFT_PAD, axisY + 46 );
+        g.drawString( "Gray 6/9/12... labels mark moments when a hatchery reaches those idle larva counts", LEFT_PAD, axisY + 60 );
     }
 
     /**
@@ -461,7 +513,7 @@ public class LarvaTimelinePreviewComp extends JPanel {
                 groupOverviewCount++;
         }
 
-        final int preferredHeight = 118 + timelineModel.getRowList().size() * ROW_STEP + Math.max( 0, groupCount - 1 ) * GROUP_GAP + groupCount * 14
+        final int preferredHeight = 132 + timelineModel.getRowList().size() * ROW_STEP + Math.max( 0, groupCount - 1 ) * GROUP_GAP + groupCount * 14
             + groupOverviewCount * 14 + 18;
         setPreferredSize( new Dimension( 220, preferredHeight ) );
     }

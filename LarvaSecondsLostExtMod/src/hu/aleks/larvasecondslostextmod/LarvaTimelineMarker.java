@@ -8,7 +8,9 @@ public class LarvaTimelineMarker {
     /** Semantic marker kind. */
     public static enum Kind {
         /** One missed-larva threshold marker at 11 seconds of accumulated 3+ larva saturation. */
-        MISSED_LARVA
+        MISSED_LARVA,
+        /** One missed-inject threshold marker at 29 seconds of accumulated idle inject opportunity. */
+        MISSED_INJECT_LARVA
     }
 
     /** Marker loop. */

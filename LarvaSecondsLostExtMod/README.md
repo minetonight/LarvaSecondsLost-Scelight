@@ -121,6 +121,13 @@ When the module is enabled:
 - That preview is module-owned, grouped for later per-player/per-hatchery evolution, and fed by a normalized presentation model instead of painting directly from replay parser objects.
 - When enabled by JVM property, the module also writes a predictable dev diagnostic dump file outside the UI.
 
+## Current replay-analysis caveat for queen-energy-based windows
+
+- Replay-exposed `SpawnLarva` commands are used directly for green inject-active windows.
+- Queen energy is **not** read directly from the replay data exposed to the external-module API.
+- Therefore the queen-energy-based idle inject / missed-larva opportunity windows are conservative approximations derived from reconstructed queen timing, singleton command attribution, and proximity checks.
+- When queen evidence is not trustworthy enough, those dark red opportunity windows are suppressed instead of guessed.
+
 ## Epic 01S02 replay-view presence
 
 - The external module API does not expose a public hook into Scelight's internal replay analyzer tab lifecycle.

@@ -146,12 +146,14 @@ public class LarvaVerificationReportFormatter {
         int saturationWindowCount = 0;
         int markerCount = 0;
         int missedLarvaTotal = 0;
+        int missedInjectedLarvaTotal = 0;
         for ( final LarvaTimelineRow row : timelineModel.getRowList() ) {
             final List< LarvaTimelineSegment > segmentList = row.getSegmentList();
             final List< LarvaTimelineMarker > markerList = row.getMarkerList();
             segmentCount += segmentList.size();
             markerCount += markerList.size();
             missedLarvaTotal += row.getMissedLarvaCount();
+            missedInjectedLarvaTotal += row.getPotentialInjectedLarvaMissedCount();
             for ( final LarvaTimelineSegment segment : segmentList )
                 if ( LarvaTimelineSegment.Kind.SATURATION_WINDOW == segment.getKind() )
                     saturationWindowCount++;
@@ -163,7 +165,8 @@ public class LarvaVerificationReportFormatter {
         builder.append( "- saturation-window conversion: windows=" ).append( saturationWindowCount )
                 .append( ", total segments=" ).append( segmentCount ).append( '\n' );
         builder.append( "- marker accumulation: markers=" ).append( markerCount )
-                .append( ", missed larva total=" ).append( missedLarvaTotal ).append( '\n' );
+            .append( ", missed larva total=" ).append( missedLarvaTotal )
+            .append( ", potential injected larva missed total=" ).append( missedInjectedLarvaTotal ).append( '\n' );
         builder.append( "- per-player totals: " ).append( formatGroupTotals( timelineModel.getGroupOverviewLabelMap() ) ).append( '\n' );
     }
 

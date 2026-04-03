@@ -41,16 +41,25 @@ public class LarvaTimelineModelBuilder {
     private static final String TITLE = "Larva pressure timeline";
 
     /** Timeline subtitle. */
-    private static final String SUBTITLE = "Red bars show 3+ larva windows; green lanes show inject uptime for completed Zerg hatcheries.";
+    private static final String SUBTITLE = "Red bars show 3+ larva windows; a green lane shows injected status windows; a lower dark red lane shows missed inject potential windows with black 29-second threshold ticks.";
 
     /** Timeline legend. */
-    private static final String MODE_LABEL = "Green lanes show inject uptime; black ticks still mark each 11-second missed-potential-larva threshold while a hatchery stayed at 3+ larva.";
+    private static final String MODE_LABEL = "Green lanes show injected status windows; lower dark red lanes show conservative missed inject potential windows; black ticks mark 11-second larva-loss thresholds on the main rail and 29-second inject-loss thresholds on the dark red lane.";
 
     /** Empty message used when no rows are available yet. */
     private static final String EMPTY_MESSAGE = "No qualifying Zerg hatcheries were found in this replay.";
 
     /** Suffix used for per-hatchery totals. */
     private static final String POTENTIAL_LARVA_MISSED_SUFFIX = " potential larva missed";
+
+    /** Suffix used for per-hatchery injected-larva totals. */
+    private static final String POTENTIAL_INJECTED_LARVA_MISSED_SUFFIX = " potential injected larva missed";
+
+    /** Visible gameplay seconds represented by one missed-inject threshold. */
+    private static final int MISSED_INJECT_THRESHOLD_SECONDS = 29;
+
+    /** Potential injected larva counted for each missed-inject threshold. */
+    private static final int MISSED_INJECT_LARVA_PER_THRESHOLD = 3;
 
     /** Stable 3+ larva window calculator. */
     private final LarvaSaturationWindowCalculator saturationWindowCalculator = new LarvaSaturationWindowCalculator();
@@ -128,9 +137,15 @@ public class LarvaTimelineModelBuilder {
         final String hatcheryType = safeText( timeline.getHatcheryType(), "Hatchery" );
         final String hatcheryTagText = safeText( timeline.getHatcheryTagText(), String.valueOf( timeline.getHatcheryTag() ) );
 
-        final List< LarvaTimelineMarker > markerList = attachMarkerHoverData( missedLarvaMarkerCalculator.buildMarkers( saturationWindowList,
-            larvaAnalysisReport.getConverterGameSpeedRelative() ),
-            playerName, larvaAnalysisReport );
+        final HatcheryInjectTimeline injectTimeline = findInjectTimeline( larvaAnalysisReport, timeline.getHatcheryTag() );
+        final HatcheryIdleInjectTimeline idleInjectTimeline = findIdleInjectTimeline( larvaAnalysisReport, timeline.getHatcheryTag() );
+
+        final List< LarvaTimelineMarker > rawMarkerList = new ArrayList<>();
+        rawMarkerList.addAll( missedLarvaMarkerCalculator.buildMarkers( saturationWindowList, larvaAnalysisReport.getConverterGameSpeedRelative() ) );
+        rawMarkerList.addAll( buildMissedInjectMarkers( idleInjectTimeline, larvaAnalysisReport ) );
+        sortMarkersByLoop( rawMarkerList );
+
+        final List< LarvaTimelineMarker > markerList = attachMarkerHoverData( rawMarkerList, playerName, larvaAnalysisReport );
         final List< LarvaTimelineDecoration > decorationList = buildDecorations( timeline, visibleStartLoop, visibleEndLoop, larvaAnalysisReport );
 
         final List< LarvaTimelineSegment > segmentList = new ArrayList<>();
@@ -139,11 +154,17 @@ public class LarvaTimelineModelBuilder {
                 "3+ larva " + formatTimelineLoop( larvaAnalysisReport, window.getStartLoop() ) + "-" + formatTimelineLoop( larvaAnalysisReport, window.getEndLoop() ), LarvaTimelineSegment.Kind.SATURATION_WINDOW,
                 buildWindowTooltipText( window, playerName, larvaAnalysisReport ) ) );
 
-        appendInjectSegments( segmentList, findInjectTimeline( larvaAnalysisReport, timeline.getHatcheryTag() ), larvaAnalysisReport );
+        appendInjectSegments( segmentList, injectTimeline, larvaAnalysisReport );
+        appendIdleInjectSegments( segmentList, idleInjectTimeline, larvaAnalysisReport );
 
         final String rowLabel = hatcheryType + " (tag " + hatcheryTagText + ")";
-        final String detailLabel = markerList.size() + POTENTIAL_LARVA_MISSED_SUFFIX;
-        return new LarvaTimelineRow( playerName, rowLabel, detailLabel, startMs, endMs, markerList.size(), segmentList, markerList, decorationList );
+        final int missedLarvaCount = countMarkers( markerList, LarvaTimelineMarker.Kind.MISSED_LARVA );
+        final int potentialInjectedLarvaMissedCount = countMarkers( markerList, LarvaTimelineMarker.Kind.MISSED_INJECT_LARVA ) * MISSED_INJECT_LARVA_PER_THRESHOLD;
+        final String detailLabel = missedLarvaCount + POTENTIAL_LARVA_MISSED_SUFFIX;
+        final String secondaryDetailLabel = potentialInjectedLarvaMissedCount + POTENTIAL_INJECTED_LARVA_MISSED_SUFFIX
+            + " (3 per 29s per hatchery)";
+        return new LarvaTimelineRow( playerName, rowLabel, detailLabel, secondaryDetailLabel, startMs, endMs, missedLarvaCount,
+            potentialInjectedLarvaMissedCount, segmentList, markerList, decorationList );
     }
 
     /**
@@ -300,6 +321,24 @@ public class LarvaTimelineModelBuilder {
     }
 
     /**
+     * Resolves the idle-inject timeline for a hatchery tag.
+     *
+     * @param larvaAnalysisReport analysis report
+     * @param hatcheryTag hatchery tag to resolve
+     * @return matching idle-inject timeline; may be <code>null</code>
+     */
+    private HatcheryIdleInjectTimeline findIdleInjectTimeline( final LarvaAnalysisReport larvaAnalysisReport, final int hatcheryTag ) {
+        if ( larvaAnalysisReport == null || larvaAnalysisReport.getIdleInjectTimelineList() == null )
+            return null;
+
+        for ( final HatcheryIdleInjectTimeline idleInjectTimeline : larvaAnalysisReport.getIdleInjectTimelineList() )
+            if ( idleInjectTimeline != null && idleInjectTimeline.getHatcheryTag() == hatcheryTag )
+                return idleInjectTimeline;
+
+        return null;
+    }
+
+    /**
      * Appends normalized inject-window segments to a row segment list.
      *
      * @param segmentList target segment list
@@ -319,6 +358,150 @@ public class LarvaTimelineModelBuilder {
                     "Inject " + injectWindow.getStartTimeLabel() + "-" + injectWindow.getEndTimeLabel(), LarvaTimelineSegment.Kind.INJECT_WINDOW,
                     buildInjectTooltipText( injectWindow, injectTimeline, larvaAnalysisReport ) ) );
         }
+    }
+
+    /**
+     * Appends normalized idle-inject segments to a row segment list.
+     *
+     * @param segmentList target segment list
+     * @param idleInjectTimeline idle-inject timeline for the hatchery
+     * @param larvaAnalysisReport analysis report used for snapshot lookup
+     */
+    private void appendIdleInjectSegments( final List< LarvaTimelineSegment > segmentList,
+            final HatcheryIdleInjectTimeline idleInjectTimeline, final LarvaAnalysisReport larvaAnalysisReport ) {
+        if ( segmentList == null || idleInjectTimeline == null || idleInjectTimeline.getIdleWindowList().isEmpty() )
+            return;
+
+        for ( final HatcheryIdleInjectWindow idleWindow : idleInjectTimeline.getIdleWindowList() ) {
+            if ( idleWindow == null )
+                continue;
+
+            final long startMs = idleWindow.getStartTimeLabel() == null ? toTimelineMs( larvaAnalysisReport, idleWindow.getStartLoop() ) : idleWindow.getStartMs();
+            final long endMs = idleWindow.getEndTimeLabel() == null ? toTimelineMs( larvaAnalysisReport, idleWindow.getEndLoop() ) : idleWindow.getEndMs();
+            final String startTimeLabel = idleWindow.getStartTimeLabel() == null ? formatTimelineLoop( larvaAnalysisReport, idleWindow.getStartLoop() ) : idleWindow.getStartTimeLabel();
+            final String endTimeLabel = idleWindow.getEndTimeLabel() == null ? formatTimelineLoop( larvaAnalysisReport, idleWindow.getEndLoop() ) : idleWindow.getEndTimeLabel();
+            segmentList.add( new LarvaTimelineSegment( startMs, endMs,
+                    "Idle inject " + startTimeLabel + "-" + endTimeLabel, LarvaTimelineSegment.Kind.IDLE_INJECT_WINDOW,
+                    buildIdleInjectTooltipText( idleWindow, idleInjectTimeline, larvaAnalysisReport, startTimeLabel, endTimeLabel ) ) );
+        }
+    }
+
+    /**
+     * Builds black threshold markers for accumulated missed inject windows.
+     *
+     * @param idleInjectTimeline idle inject timeline
+     * @param larvaAnalysisReport analysis report used for timing conversion
+     * @return chronological marker list
+     */
+    private List< LarvaTimelineMarker > buildMissedInjectMarkers( final HatcheryIdleInjectTimeline idleInjectTimeline,
+            final LarvaAnalysisReport larvaAnalysisReport ) {
+        if ( idleInjectTimeline == null || idleInjectTimeline.getIdleWindowList().isEmpty() )
+            return Collections.emptyList();
+
+        final List< HatcheryIdleInjectWindow > sortedWindowList = new ArrayList<>( idleInjectTimeline.getIdleWindowList() );
+        Collections.sort( sortedWindowList, new Comparator< HatcheryIdleInjectWindow >() {
+            @Override
+            public int compare( final HatcheryIdleInjectWindow left, final HatcheryIdleInjectWindow right ) {
+                if ( left.getStartLoop() != right.getStartLoop() )
+                    return left.getStartLoop() < right.getStartLoop() ? -1 : 1;
+                return left.getEndLoop() < right.getEndLoop() ? -1 : left.getEndLoop() == right.getEndLoop() ? 0 : 1;
+            }
+        } );
+
+        final List< LarvaTimelineMarker > markerList = new ArrayList<>();
+        final int thresholdLoops = resolveMissedInjectThresholdLoops( larvaAnalysisReport == null ? 0L : larvaAnalysisReport.getConverterGameSpeedRelative() );
+        int accumulatedLoops = 0;
+        int potentialInjectedLarvaMissedCount = 0;
+        int coveredUntilLoop = Integer.MIN_VALUE;
+
+        for ( final HatcheryIdleInjectWindow idleWindow : sortedWindowList ) {
+            if ( idleWindow == null )
+                continue;
+
+            final int effectiveStartLoop = Math.max( idleWindow.getStartLoop(), coveredUntilLoop );
+            final int effectiveEndLoop = idleWindow.getEndLoop();
+            if ( effectiveEndLoop <= effectiveStartLoop )
+                continue;
+
+            int loopsRemainingInWindow = effectiveEndLoop - effectiveStartLoop;
+            int markerLoop = effectiveStartLoop;
+
+            while ( accumulatedLoops + loopsRemainingInWindow >= thresholdLoops ) {
+                final int loopsUntilThreshold = thresholdLoops - accumulatedLoops;
+                markerLoop += loopsUntilThreshold;
+                potentialInjectedLarvaMissedCount += MISSED_INJECT_LARVA_PER_THRESHOLD;
+                markerList.add( new LarvaTimelineMarker( markerLoop, toTimelineMs( larvaAnalysisReport, markerLoop ),
+                        "Potential injected larva missed " + potentialInjectedLarvaMissedCount + " at " + formatTimelineLoop( larvaAnalysisReport, markerLoop ),
+                        LarvaTimelineMarker.Kind.MISSED_INJECT_LARVA ) );
+
+                loopsRemainingInWindow -= loopsUntilThreshold;
+                accumulatedLoops = 0;
+            }
+
+            accumulatedLoops += loopsRemainingInWindow;
+            coveredUntilLoop = Math.max( coveredUntilLoop, effectiveEndLoop );
+        }
+
+        return markerList;
+    }
+
+    /**
+     * Resolves the loop threshold corresponding to 29 visible game-timer seconds.
+     *
+     * @param gameSpeedRelative replay game-speed relative value
+     * @return threshold in replay loops
+     */
+    private int resolveMissedInjectThresholdLoops( final long gameSpeedRelative ) {
+        final double effectiveGameSpeedRelative = gameSpeedRelative <= 0L ? DEFAULT_GAME_SPEED_RELATIVE : gameSpeedRelative;
+        return (int) ( MISSED_INJECT_THRESHOLD_SECONDS * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / effectiveGameSpeedRelative ) );
+    }
+
+    /**
+     * Sorts markers chronologically, keeping main-rail markers before dark-red-lane markers on ties.
+     *
+     * @param markerList marker list to sort in place
+     */
+    private void sortMarkersByLoop( final List< LarvaTimelineMarker > markerList ) {
+        Collections.sort( markerList, new Comparator< LarvaTimelineMarker >() {
+            @Override
+            public int compare( final LarvaTimelineMarker left, final LarvaTimelineMarker right ) {
+                if ( left.getLoop() != right.getLoop() )
+                    return left.getLoop() < right.getLoop() ? -1 : 1;
+                if ( left.getKind() == right.getKind() )
+                    return 0;
+                return left.getKind() == LarvaTimelineMarker.Kind.MISSED_LARVA ? -1 : 1;
+            }
+        } );
+    }
+
+    /**
+     * Counts markers of the specified kind.
+     *
+     * @param markerList marker list
+     * @param kind marker kind
+     * @return marker count
+     */
+    private int countMarkers( final List< LarvaTimelineMarker > markerList, final LarvaTimelineMarker.Kind kind ) {
+        int count = 0;
+        for ( final LarvaTimelineMarker marker : markerList )
+            if ( marker != null && marker.getKind() == kind )
+                count++;
+        return count;
+    }
+
+    /**
+     * Builds the tooltip text for a replay-derived idle-inject window.
+     */
+    private String buildIdleInjectTooltipText( final HatcheryIdleInjectWindow idleWindow, final HatcheryIdleInjectTimeline idleInjectTimeline,
+            final LarvaAnalysisReport larvaAnalysisReport, final String startTimeLabel, final String endTimeLabel ) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append( "Idle inject opportunity" ).append( '\n' );
+        builder.append( "Hatchery: " ).append( safeText( idleInjectTimeline == null ? null : idleInjectTimeline.getHatcheryTagText(), "n/a" ) ).append( '\n' );
+        builder.append( "Window: " ).append( startTimeLabel ).append( " - " ).append( endTimeLabel ).append( '\n' );
+        builder.append( "Dedicated queen radius: " ).append( larvaAnalysisReport == null ? "n/a" : String.valueOf( larvaAnalysisReport.getIdleInjectRadius() ) ).append( '\n' );
+        builder.append( "Qualifying queens: " ).append( idleWindow == null ? "n/a" : safeText( idleWindow.getQueenSummary(), "n/a" ) ).append( '\n' );
+        builder.append( "Qualification note: " ).append( idleWindow == null ? "n/a" : safeText( idleWindow.getDiagnosticNote(), "n/a" ) );
+        return builder.toString();
     }
 
     /**
@@ -343,7 +526,7 @@ public class LarvaTimelineModelBuilder {
                     snapshot.getFoodUsed(), snapshot.getFoodMade(), snapshotSelection.futureSnapshot );
             final String markerLabel = buildMarkerLabel( marker, larvaAnalysisReport );
             enrichedMarkerList.add( new LarvaTimelineMarker( marker.getLoop(), toTimelineMs( larvaAnalysisReport, marker.getLoop() ), markerLabel, marker.getKind(),
-                hoverData, buildMarkerTooltipText( markerLabel, hoverData ) ) );
+                hoverData, buildMarkerTooltipText( marker, markerLabel, hoverData ) ) );
         }
 
         return enrichedMarkerList;
@@ -404,11 +587,14 @@ public class LarvaTimelineModelBuilder {
      * @param hoverData attached hover metadata; may be <code>null</code>
      * @return tooltip text
      */
-    private String buildMarkerTooltipText( final String markerLabel, final LarvaMarkerHoverData hoverData ) {
+    private String buildMarkerTooltipText( final LarvaTimelineMarker marker, final String markerLabel, final LarvaMarkerHoverData hoverData ) {
         if ( markerLabel == null )
             return null;
 
-        final StringBuilder builder = new StringBuilder( "<html><b>Potential larva missed</b><br/>" );
+        final StringBuilder builder = new StringBuilder( "<html><b>" );
+        builder.append( marker != null && marker.getKind() == LarvaTimelineMarker.Kind.MISSED_INJECT_LARVA ? "Potential injected larva missed"
+                : "Potential larva missed" );
+        builder.append( "</b><br/>" );
         builder.append( markerLabel ).append( "<br/>" );
         builder.append( buildSnapshotTooltipLines( "Missed moment", extractTimeFromMarkerLabel( markerLabel ), hoverData ) );
         builder.append( "</html>" );
@@ -662,6 +848,7 @@ public class LarvaTimelineModelBuilder {
      */
     private Map< String, String > buildGroupOverviewLabelMap( final List< LarvaTimelineRow > rowList ) {
         final Map< String, Integer > playerTotals = new LinkedHashMap<>();
+        final Map< String, Integer > playerInjectedTotals = new LinkedHashMap<>();
 
         for ( final LarvaTimelineRow row : rowList ) {
             if ( row.getMissedLarvaCount() < 0 )
@@ -673,11 +860,17 @@ public class LarvaTimelineModelBuilder {
 
             final Integer currentTotal = playerTotals.get( playerName );
             playerTotals.put( playerName, Integer.valueOf( ( currentTotal == null ? 0 : currentTotal.intValue() ) + row.getMissedLarvaCount() ) );
+
+        final Integer currentInjectedTotal = playerInjectedTotals.get( playerName );
+        playerInjectedTotals.put( playerName,
+            Integer.valueOf( ( currentInjectedTotal == null ? 0 : currentInjectedTotal.intValue() ) + row.getPotentialInjectedLarvaMissedCount() ) );
         }
 
         final Map< String, String > groupOverviewLabelMap = new LinkedHashMap<>();
         for ( final Map.Entry< String, Integer > entry : playerTotals.entrySet() ) {
-            groupOverviewLabelMap.put( entry.getKey(), entry.getValue().intValue() + POTENTIAL_LARVA_MISSED_SUFFIX );
+        final Integer injectedTotal = playerInjectedTotals.get( entry.getKey() );
+        groupOverviewLabelMap.put( entry.getKey(), entry.getValue().intValue() + POTENTIAL_LARVA_MISSED_SUFFIX + "; "
+            + ( injectedTotal == null ? 0 : injectedTotal.intValue() ) + POTENTIAL_INJECTED_LARVA_MISSED_SUFFIX );
         }
 
         return groupOverviewLabelMap;

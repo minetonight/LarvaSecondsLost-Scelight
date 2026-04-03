@@ -1,9 +1,14 @@
 package hu.aleks.larvasecondslostextmod;
 
+import hu.scelightapi.sc2.balancedata.model.IAbility;
+import hu.scelightapi.sc2.rep.model.IEvent;
 import hu.scelightapi.sc2.rep.model.IReplay;
 import hu.scelightapi.sc2.rep.model.details.IDetails;
 import hu.scelightapi.sc2.rep.model.details.IPlayer;
+import hu.scelightapi.sc2.rep.model.gameevents.IGameEvents;
+import hu.scelightapi.sc2.rep.model.gameevents.cmd.ICmdEvent;
 import hu.scelightapi.sc2.rep.repproc.IRepProcessor;
+import hu.scelightapi.sc2.rep.repproc.IUser;
 
 import java.awt.Color;
 import java.nio.file.Files;
@@ -40,7 +45,7 @@ public class ReplaySummaryService {
      */
     public ReplaySummaryService( final LarvaSecondsLostModule module ) {
         this.module = module;
-        larvaReplayAnalyzer = new LarvaReplayAnalyzer();
+        larvaReplayAnalyzer = new LarvaReplayAnalyzer( module.services.getFactory() );
         timelineModelBuilder = new LarvaTimelineModelBuilder();
     }
 
@@ -88,6 +93,7 @@ public class ReplaySummaryService {
             + larvaAnalysisReport.getNoEligibleHatcheryLarvaCount() + ", injectCommands=" + larvaAnalysisReport.getInjectCommandCount()
             + ", injectWindows=" + larvaAnalysisReport.getInjectWindowCount() + ", injectOverlapDiscarded="
             + larvaAnalysisReport.getInjectOverlapDiscardCount() + ", fullReplayParseUsed=" + larvaAnalysisReport.isFullReplayParseUsed() );
+        logSpawnLarvaCommands( repProc );
 
         final ReplaySummary replaySummary = new ReplaySummary( replayFile, safe( sourceDescription, "Unknown" ),
             safe( details == null ? null : details.getTitle(), "Unknown map" ),
@@ -152,6 +158,69 @@ public class ReplaySummaryService {
      */
     private String safe( final String value, final String fallback ) {
         return value == null || value.length() == 0 ? fallback : value;
+    }
+
+    /**
+     * Logs all replay-exposed SpawnLarva commands in a simple player / hatch / timestamp form.
+     *
+     * @param repProc replay processor
+     */
+    private void logSpawnLarvaCommands( final IRepProcessor repProc ) {
+        final IReplay replay = repProc.getReplay();
+        final IEvent[] gameEventArray = replay == null || replay.getGameEvents() == null ? null : replay.getGameEvents().getEvents();
+
+        if ( gameEventArray == null ) {
+            module.logger.debug( "Larva inject command dump unavailable because the replay has no game events." );
+            return;
+        }
+
+        int injectCommandCount = 0;
+        for ( final IEvent event : gameEventArray ) {
+            if ( event == null || event.getId() != IGameEvents.ID_CMD || !( event instanceof ICmdEvent ) )
+                continue;
+
+            final ICmdEvent cmdEvent = (ICmdEvent) event;
+            if ( cmdEvent.getCommand() == null || !IAbility.ID_SPAWN_LARVA.equals( cmdEvent.getCommand().getAbilId() ) || cmdEvent.getTargetUnit() == null
+                    || cmdEvent.getTargetUnit().getTag() == null )
+                continue;
+
+            injectCommandCount++;
+
+            final Integer hatcheryTag = cmdEvent.getTargetUnit().getTag();
+            final String hatcheryTagText = repProc.getTagTransformation() == null ? String.valueOf( hatcheryTag )
+                    : repProc.getTagTransformation().tagToString( hatcheryTag.intValue() );
+            final String playerName = resolvePlayerName( repProc, event.getPlayerId(), event.getUserId() );
+
+            module.logger.debug( "Larva inject command: " + playerName + " injected hatch " + hatcheryTagText + " at "
+                    + repProc.formatLoopTime( event.getLoop() ) + " (loop " + event.getLoop() + ")." );
+        }
+
+        if ( injectCommandCount == 0 )
+            module.logger.debug( "Larva inject command dump: no SpawnLarva target commands were exposed for this replay." );
+    }
+
+    /**
+     * Resolves a player name from either player id or user id.
+     *
+     * @param repProc replay processor
+     * @param playerId player id if available
+     * @param userId user id if available
+     * @return resolved player name
+     */
+    private String resolvePlayerName( final IRepProcessor repProc, final Integer playerId, final int userId ) {
+        if ( playerId != null ) {
+            final IUser[] usersByPlayerId = repProc.getUsersByPlayerId();
+            if ( usersByPlayerId != null && playerId.intValue() > 0 && playerId.intValue() < usersByPlayerId.length
+                    && usersByPlayerId[ playerId.intValue() ] != null && usersByPlayerId[ playerId.intValue() ].getName() != null
+                    && usersByPlayerId[ playerId.intValue() ].getName().length() > 0 )
+                return usersByPlayerId[ playerId.intValue() ].getName();
+        }
+
+        final IUser user = repProc.getUser( userId );
+        if ( user != null && user.getName() != null && user.getName().length() > 0 )
+            return user.getName();
+
+        return playerId == null ? "Unknown player" : "Player " + playerId;
     }
 
     /**

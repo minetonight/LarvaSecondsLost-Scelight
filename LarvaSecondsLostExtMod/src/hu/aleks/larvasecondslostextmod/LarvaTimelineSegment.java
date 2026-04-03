@@ -11,6 +11,8 @@ public class LarvaTimelineSegment {
         SATURATION_WINDOW,
         /** Stable replay-derived interval where a hatchery was actively injected. */
         INJECT_WINDOW,
+        /** Stable replay-derived interval where a hatchery had an idle inject opportunity. */
+        IDLE_INJECT_WINDOW,
         /** Interval-style placeholder segment derived from replay timing data. */
         PREVIEW_INTERVAL,
         /** Narrow marker-style placeholder segment derived from a single replay timing point. */

@@ -26,6 +26,15 @@ public class LarvaAnalysisReport {
     /** Per-hatchery normalized inject-window diagnostics. */
     private final List< HatcheryInjectTimeline > injectTimelineList;
 
+    /** Story 11.03 answer for the replay-native idle inject qualification question. */
+    private final String idleInjectConclusion;
+
+    /** Dedicated queen-to-hatchery radius used for Story 11.03. */
+    private final double idleInjectRadius;
+
+    /** Per-hatchery normalized idle-inject diagnostics. */
+    private final List< HatcheryIdleInjectTimeline > idleInjectTimelineList;
+
     /** Number of hatcheries tracked during replay analysis. */
     private final int trackedHatcheryCount;
 
@@ -99,6 +108,7 @@ public class LarvaAnalysisReport {
      */
         public LarvaAnalysisReport( final LarvaHeuristicCalibration calibration, final List< HatcheryLarvaTimeline > timelineList,
             final List< HatcheryInjectTimeline > injectTimelineList, final String injectSignalConclusion,
+            final List< HatcheryIdleInjectTimeline > idleInjectTimelineList, final String idleInjectConclusion, final double idleInjectRadius,
             final int trackedHatcheryCount, final int larvaBirthCount, final int assignedLarvaCount, final int unassignedLarvaCount,
             final int ambiguousLarvaCount, final int noEligibleHatcheryLarvaCount,
             final int directAssignmentCount, final int injectCorrelatedAssignmentCount, final int heuristicAssignmentCount,
@@ -109,6 +119,9 @@ public class LarvaAnalysisReport {
         this.timelineList = Collections.unmodifiableList( new ArrayList<>( timelineList ) );
         this.injectTimelineList = Collections.unmodifiableList( new ArrayList<>( injectTimelineList ) );
         this.injectSignalConclusion = injectSignalConclusion;
+        this.idleInjectTimelineList = Collections.unmodifiableList( new ArrayList<>( idleInjectTimelineList ) );
+        this.idleInjectConclusion = idleInjectConclusion;
+        this.idleInjectRadius = idleInjectRadius;
         this.trackedHatcheryCount = trackedHatcheryCount;
         this.larvaBirthCount = larvaBirthCount;
         this.assignedLarvaCount = assignedLarvaCount;
@@ -144,6 +157,18 @@ public class LarvaAnalysisReport {
         return injectTimelineList;
     }
 
+    public String getIdleInjectConclusion() {
+        return idleInjectConclusion;
+    }
+
+    public double getIdleInjectRadius() {
+        return idleInjectRadius;
+    }
+
+    public List< HatcheryIdleInjectTimeline > getIdleInjectTimelineList() {
+        return idleInjectTimelineList;
+    }
+
     public int getInjectCommandCount() {
         int injectCommandCount = 0;
         for ( final HatcheryInjectTimeline injectTimeline : injectTimelineList )
@@ -177,6 +202,20 @@ public class LarvaAnalysisReport {
         for ( final HatcheryInjectTimeline injectTimeline : injectTimelineList )
             injectTrimmedWindowCount += injectTimeline.getTrimmedWindowCount();
         return injectTrimmedWindowCount;
+    }
+
+    public int getIdleInjectWindowCount() {
+        int idleInjectWindowCount = 0;
+        for ( final HatcheryIdleInjectTimeline idleInjectTimeline : idleInjectTimelineList )
+            idleInjectWindowCount += idleInjectTimeline.getKeptWindowCount();
+        return idleInjectWindowCount;
+    }
+
+    public int getIdleInjectUncertaintyDiscardCount() {
+        int idleInjectUncertaintyDiscardCount = 0;
+        for ( final HatcheryIdleInjectTimeline idleInjectTimeline : idleInjectTimelineList )
+            idleInjectUncertaintyDiscardCount += idleInjectTimeline.getUncertaintyDiscardCount();
+        return idleInjectUncertaintyDiscardCount;
     }
 
     public int getTrackedHatcheryCount() {
@@ -430,6 +469,7 @@ public class LarvaAnalysisReport {
         }
 
         appendInjectDiagnostics( builder );
+        appendIdleInjectDiagnostics( builder );
 
         return builder.toString();
     }
@@ -476,6 +516,79 @@ public class LarvaAnalysisReport {
             builder.append( "    inject windows: " ).append( formatInjectWindows( injectTimeline.getInjectWindowList() ) ).append( '\n' );
             builder.append( "    inject diagnostics: " ).append( formatDiagnostics( injectTimeline.getDiagnosticLineList() ) ).append( '\n' );
         }
+    }
+
+    /**
+     * Appends Story 11.03 idle-inject diagnostics.
+     *
+     * @param builder target builder
+     */
+    private void appendIdleInjectDiagnostics( final StringBuilder builder ) {
+        builder.append( "Epic 11 Story 11.03 idle inject qualification:" ).append( '\n' );
+        builder.append( "- Idle inject answer: " ).append( idleInjectConclusion == null ? "n/a" : idleInjectConclusion ).append( '\n' );
+        builder.append( "- Dedicated queen radius: " ).append( formatDouble( idleInjectRadius ) ).append( '\n' );
+        builder.append( "- Idle inject totals: kept windows=" ).append( getIdleInjectWindowCount() )
+                .append( ", uncertainty discarded=" ).append( getIdleInjectUncertaintyDiscardCount() )
+                .append( '\n' );
+
+        if ( idleInjectTimelineList.isEmpty() ) {
+            builder.append( "- No hatchery idle-inject timelines were available for Story 11.03 yet." );
+            return;
+        }
+
+        builder.append( "- Per-hatchery idle-inject windows:" ).append( '\n' );
+        for ( final HatcheryIdleInjectTimeline idleInjectTimeline : idleInjectTimelineList ) {
+            builder.append( "  * " )
+                    .append( idleInjectTimeline.getPlayerName() )
+                    .append( " / " )
+                    .append( idleInjectTimeline.getHatcheryType() )
+                    .append( " (tag " )
+                    .append( idleInjectTimeline.getHatcheryTagText() )
+                    .append( ") kept=" )
+                    .append( idleInjectTimeline.getKeptWindowCount() )
+                    .append( ", attributedQueenCommands=" )
+                    .append( idleInjectTimeline.getAttributedQueenCommandCount() )
+                    .append( ", attributedInjects=" )
+                    .append( idleInjectTimeline.getAttributedInjectCommandCount() )
+                    .append( ", uncertaintyDiscarded=" )
+                    .append( idleInjectTimeline.getUncertaintyDiscardCount() )
+                    .append( '\n' );
+            builder.append( "    idle windows: " ).append( formatIdleInjectWindows( idleInjectTimeline.getIdleWindowList() ) ).append( '\n' );
+            builder.append( "    idle diagnostics: " ).append( formatDiagnostics( idleInjectTimeline.getDiagnosticLineList() ) ).append( '\n' );
+        }
+    }
+
+    /**
+     * Formats idle-inject windows in compact deterministic form.
+     *
+     * @param idleWindowList idle windows to format
+     * @return compact formatted text
+     */
+    private String formatIdleInjectWindows( final List< HatcheryIdleInjectWindow > idleWindowList ) {
+        if ( idleWindowList == null || idleWindowList.isEmpty() )
+            return "none";
+
+        final StringBuilder builder = new StringBuilder();
+        for ( int i = 0; i < idleWindowList.size(); i++ ) {
+            if ( i > 0 )
+                builder.append( ", " );
+
+            final HatcheryIdleInjectWindow idleWindow = idleWindowList.get( i );
+            builder.append( idleWindow.getStartTimeLabel() ).append( '-' ).append( idleWindow.getEndTimeLabel() )
+                    .append( " [q=" ).append( idleWindow.getQualifyingQueenCount() ).append( ']' );
+        }
+        return builder.toString();
+    }
+
+    /**
+     * Formats one decimal-place number without locale dependence.
+     *
+     * @param value value to format
+     * @return deterministic text
+     */
+    private String formatDouble( final double value ) {
+        final long scaled = Math.round( value * 10.0d );
+        return String.valueOf( scaled / 10L ) + '.' + Math.abs( scaled % 10L );
     }
 
     /**

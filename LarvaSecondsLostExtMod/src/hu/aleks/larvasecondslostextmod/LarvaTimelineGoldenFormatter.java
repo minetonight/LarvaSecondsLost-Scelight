@@ -97,8 +97,10 @@ public class LarvaTimelineGoldenFormatter {
             builder.append( "row[" ).append( rowIndex ).append( "].group=" ).append( safe( row.getGroupLabel() ) ).append( '\n' );
             builder.append( "row[" ).append( rowIndex ).append( "].label=" ).append( safe( row.getRowLabel() ) ).append( '\n' );
             builder.append( "row[" ).append( rowIndex ).append( "].detail=" ).append( safe( row.getDetailLabel() ) ).append( '\n' );
+            builder.append( "row[" ).append( rowIndex ).append( "].detail2=" ).append( safe( row.getSecondaryDetailLabel() ) ).append( '\n' );
             builder.append( "row[" ).append( rowIndex ).append( "].rangeMs=" ).append( row.getStartMs() ).append( '-' ).append( row.getEndMs() ).append( '\n' );
             builder.append( "row[" ).append( rowIndex ).append( "].missedLarvaCount=" ).append( row.getMissedLarvaCount() ).append( '\n' );
+            builder.append( "row[" ).append( rowIndex ).append( "].missedInjectedLarvaCount=" ).append( row.getPotentialInjectedLarvaMissedCount() ).append( '\n' );
             appendSegments( builder, rowIndex, row.getSegmentList() );
             appendMarkers( builder, rowIndex, row.getMarkerList() );
         }
@@ -167,7 +169,12 @@ public class LarvaTimelineGoldenFormatter {
         builder.append( "analysis.injectOverlapDiscarded=" ).append( larvaAnalysisReport.getInjectOverlapDiscardCount() ).append( '\n' );
         builder.append( "analysis.injectBoundsDiscarded=" ).append( larvaAnalysisReport.getInjectBoundsDiscardCount() ).append( '\n' );
         builder.append( "analysis.injectTrimmedWindows=" ).append( larvaAnalysisReport.getInjectTrimmedWindowCount() ).append( '\n' );
+        builder.append( "analysis.idleInjectSignal=" ).append( safe( larvaAnalysisReport.getIdleInjectConclusion() ) ).append( '\n' );
+        builder.append( "analysis.idleInjectRadius=" ).append( larvaAnalysisReport.getIdleInjectRadius() ).append( '\n' );
+        builder.append( "analysis.idleInjectWindows=" ).append( larvaAnalysisReport.getIdleInjectWindowCount() ).append( '\n' );
+        builder.append( "analysis.idleInjectUncertaintyDiscarded=" ).append( larvaAnalysisReport.getIdleInjectUncertaintyDiscardCount() ).append( '\n' );
         appendInjectTimelines( builder, larvaAnalysisReport.getInjectTimelineList() );
+        appendIdleInjectTimelines( builder, larvaAnalysisReport.getIdleInjectTimelineList() );
     }
 
     /**
@@ -199,6 +206,34 @@ public class LarvaTimelineGoldenFormatter {
                         .append( safe( injectWindow.getStartTimeLabel() ) ).append( '-' ).append( safe( injectWindow.getEndTimeLabel() ) ).append( '\n' );
                 builder.append( "inject[" ).append( injectIndex ).append( "].window[" ).append( windowIndex ).append( "].trimmed=" )
                         .append( injectWindow.isTrimmedAtStart() || injectWindow.isTrimmedAtEnd() ).append( '\n' );
+            }
+        }
+    }
+
+    /**
+     * Appends per-hatchery idle-inject output.
+     *
+     * @param builder target builder
+     * @param idleInjectTimelineList per-hatchery idle-inject timelines
+     */
+    private void appendIdleInjectTimelines( final StringBuilder builder, final List< HatcheryIdleInjectTimeline > idleInjectTimelineList ) {
+        builder.append( "analysis.idleInjectHatcheryCount=" ).append( idleInjectTimelineList == null ? 0 : idleInjectTimelineList.size() ).append( '\n' );
+        if ( idleInjectTimelineList == null )
+            return;
+
+        for ( int idleIndex = 0; idleIndex < idleInjectTimelineList.size(); idleIndex++ ) {
+            final HatcheryIdleInjectTimeline idleInjectTimeline = idleInjectTimelineList.get( idleIndex );
+            builder.append( "idleInject[" ).append( idleIndex ).append( "].player=" ).append( safe( idleInjectTimeline.getPlayerName() ) ).append( '\n' );
+            builder.append( "idleInject[" ).append( idleIndex ).append( "].tag=" ).append( safe( idleInjectTimeline.getHatcheryTagText() ) ).append( '\n' );
+            builder.append( "idleInject[" ).append( idleIndex ).append( "].keptWindows=" ).append( idleInjectTimeline.getKeptWindowCount() ).append( '\n' );
+            builder.append( "idleInject[" ).append( idleIndex ).append( "].uncertaintyDiscarded=" ).append( idleInjectTimeline.getUncertaintyDiscardCount() ).append( '\n' );
+            builder.append( "idleInject[" ).append( idleIndex ).append( "].windowCount=" ).append( idleInjectTimeline.getIdleWindowList().size() ).append( '\n' );
+            for ( int windowIndex = 0; windowIndex < idleInjectTimeline.getIdleWindowList().size(); windowIndex++ ) {
+                final HatcheryIdleInjectWindow idleWindow = idleInjectTimeline.getIdleWindowList().get( windowIndex );
+                builder.append( "idleInject[" ).append( idleIndex ).append( "].window[" ).append( windowIndex ).append( "].range=" )
+                        .append( safe( idleWindow.getStartTimeLabel() ) ).append( '-' ).append( safe( idleWindow.getEndTimeLabel() ) ).append( '\n' );
+                builder.append( "idleInject[" ).append( idleIndex ).append( "].window[" ).append( windowIndex ).append( "].queens=" )
+                        .append( safe( idleWindow.getQueenSummary() ) ).append( '\n' );
             }
         }
     }

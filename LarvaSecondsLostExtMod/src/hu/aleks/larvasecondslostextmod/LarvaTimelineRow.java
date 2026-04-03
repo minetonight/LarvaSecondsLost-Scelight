@@ -18,6 +18,9 @@ public class LarvaTimelineRow {
     /** Row detail text. */
     private final String detailLabel;
 
+    /** Optional second row detail text. */
+    private final String secondaryDetailLabel;
+
     /** Visible row start in milliseconds. */
     private final long startMs;
 
@@ -26,6 +29,9 @@ public class LarvaTimelineRow {
 
     /** Number of missed-larva thresholds reached on the row. */
     private final int missedLarvaCount;
+
+    /** Number of potential injected larva missed on the row. */
+    private final int potentialInjectedLarvaMissedCount;
 
     /** Row segments. */
     private final List< LarvaTimelineSegment > segmentList;
@@ -49,15 +55,18 @@ public class LarvaTimelineRow {
      * @param markerList row markers
      * @param decorationList small row decorations rendered without tooltips
      */
-    public LarvaTimelineRow( final String groupLabel, final String rowLabel, final String detailLabel, final long startMs, final long endMs,
-             final int missedLarvaCount, final List< LarvaTimelineSegment > segmentList, final List< LarvaTimelineMarker > markerList,
+    public LarvaTimelineRow( final String groupLabel, final String rowLabel, final String detailLabel, final String secondaryDetailLabel,
+             final long startMs, final long endMs, final int missedLarvaCount, final int potentialInjectedLarvaMissedCount,
+             final List< LarvaTimelineSegment > segmentList, final List< LarvaTimelineMarker > markerList,
              final List< LarvaTimelineDecoration > decorationList ) {
         this.groupLabel = groupLabel;
         this.rowLabel = rowLabel;
         this.detailLabel = detailLabel;
+        this.secondaryDetailLabel = secondaryDetailLabel;
         this.startMs = startMs;
         this.endMs = endMs;
         this.missedLarvaCount = missedLarvaCount;
+        this.potentialInjectedLarvaMissedCount = potentialInjectedLarvaMissedCount;
         this.segmentList = Collections.unmodifiableList( new ArrayList<>( segmentList ) );
         this.markerList = Collections.unmodifiableList( new ArrayList<>( markerList ) );
         this.decorationList = Collections.unmodifiableList( new ArrayList<>( decorationList ) );
@@ -77,7 +86,7 @@ public class LarvaTimelineRow {
      */
     public LarvaTimelineRow( final String groupLabel, final String rowLabel, final String detailLabel, final long startMs, final long endMs,
             final int missedLarvaCount, final List< LarvaTimelineSegment > segmentList, final List< LarvaTimelineMarker > markerList ) {
-        this( groupLabel, rowLabel, detailLabel, startMs, endMs, missedLarvaCount, segmentList, markerList,
+        this( groupLabel, rowLabel, detailLabel, null, startMs, endMs, missedLarvaCount, 0, segmentList, markerList,
                 Collections.< LarvaTimelineDecoration >emptyList() );
     }
 
@@ -93,6 +102,10 @@ public class LarvaTimelineRow {
         return detailLabel;
     }
 
+    public String getSecondaryDetailLabel() {
+        return secondaryDetailLabel;
+    }
+
     public long getStartMs() {
         return startMs;
     }
@@ -103,6 +116,10 @@ public class LarvaTimelineRow {
 
     public int getMissedLarvaCount() {
         return missedLarvaCount;
+    }
+
+    public int getPotentialInjectedLarvaMissedCount() {
+        return potentialInjectedLarvaMissedCount;
     }
 
     public List< LarvaTimelineSegment > getSegmentList() {
