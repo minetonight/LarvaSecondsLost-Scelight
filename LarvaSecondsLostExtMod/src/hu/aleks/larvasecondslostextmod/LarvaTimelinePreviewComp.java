@@ -418,8 +418,8 @@ public class LarvaTimelinePreviewComp extends JPanel {
         g.drawString( startLabel, railLeft, axisY + 16 );
         g.drawString( endLabel, railLeft + railWidth - fm.stringWidth( endLabel ), axisY + 16 );
         g.setColor( SUBTLE_TEXT_COLOR );
-        g.drawString( "Legend: gray dots = 1-2 larva, red bars = 3+ larva, green lanes = inject uptime, black ticks = missed larva", LEFT_PAD, axisY + 32 );
-        g.drawString( "Gray 6/9/12... labels mark moments when a hatchery reaches those larva counts", LEFT_PAD, axisY + 46 );
+        g.drawString( "Legend: gray dots = 1-2 larva waiting; red bars = 3+ larva unspent, green lanes = inject uptime, black ticks = missed larva", LEFT_PAD, axisY + 32 );
+        g.drawString( "Gray 6/9/12... labels mark moments when a hatchery reaches those idle larva counts", LEFT_PAD, axisY + 46 );
     }
 
     /**

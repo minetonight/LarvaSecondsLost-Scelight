@@ -19,8 +19,14 @@ public class LarvaTimelineModelBuilder {
     /** Replay loops per second used by SC2 timing. */
     private static final int REPLAY_LOOPS_PER_SECOND = 16;
 
-    /** Dot-column spacing for 1- and 2-larva rhythm hints. */
-    private static final int LARVA_DOT_STEP_LOOPS = 2 * REPLAY_LOOPS_PER_SECOND;
+    /** Dot-column spacing in visible gameplay seconds for 1- and 2-larva rhythm hints. */
+    private static final int LARVA_DOT_STEP_SECONDS = 2;
+
+    /** Scelight normal-speed relative value. */
+    private static final double NORMAL_GAME_SPEED_RELATIVE = 36.0d;
+
+    /** Scelight Faster-speed relative value used as the fallback default. */
+    private static final long DEFAULT_GAME_SPEED_RELATIVE = 26L;
 
     /** First cumulative label shown inside a 3+ larva window. */
     private static final int ACCUMULATION_LABEL_START = 6;
@@ -186,19 +192,31 @@ public class LarvaTimelineModelBuilder {
      */
     private void addDotDecorations( final List< LarvaTimelineDecoration > decorationList, final int startLoop, final int endLoop,
             final int larvaCount, final LarvaAnalysisReport larvaAnalysisReport ) {
+        final int larvaDotStepLoops = resolveLarvaDotStepLoops( larvaAnalysisReport == null ? 0L : larvaAnalysisReport.getConverterGameSpeedRelative() );
         final int durationLoops = endLoop - startLoop;
-        if ( durationLoops <= 0 )
+        if ( durationLoops <= 0 || larvaDotStepLoops <= 0 )
             return;
 
-        if ( durationLoops <= LARVA_DOT_STEP_LOOPS ) {
+        if ( durationLoops <= larvaDotStepLoops ) {
             decorationList.add( new LarvaTimelineDecoration( LarvaTimelineDecoration.Kind.LARVA_DOT_COLUMN,
                     toTimelineMs( larvaAnalysisReport, startLoop + durationLoops / 2 ), larvaCount, null ) );
             return;
         }
 
-        for ( int loop = startLoop + LARVA_DOT_STEP_LOOPS / 2; loop < endLoop; loop += LARVA_DOT_STEP_LOOPS )
+        for ( int loop = startLoop + larvaDotStepLoops / 2; loop < endLoop; loop += larvaDotStepLoops )
             decorationList.add( new LarvaTimelineDecoration( LarvaTimelineDecoration.Kind.LARVA_DOT_COLUMN,
                     toTimelineMs( larvaAnalysisReport, loop ), larvaCount, null ) );
+    }
+
+    /**
+     * Resolves the periodic gray-dot spacing in replay loops for the replay game speed.
+     *
+     * @param gameSpeedRelative replay game-speed relative value
+     * @return gray-dot spacing in replay loops
+     */
+    private int resolveLarvaDotStepLoops( final long gameSpeedRelative ) {
+        final double effectiveGameSpeedRelative = gameSpeedRelative <= 0L ? DEFAULT_GAME_SPEED_RELATIVE : gameSpeedRelative;
+        return (int) ( LARVA_DOT_STEP_SECONDS * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / effectiveGameSpeedRelative ) );
     }
 
     /**
