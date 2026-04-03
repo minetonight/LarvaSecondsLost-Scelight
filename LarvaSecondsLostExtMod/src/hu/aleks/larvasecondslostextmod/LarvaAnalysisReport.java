@@ -20,6 +20,12 @@ public class LarvaAnalysisReport {
     /** Per-hatchery count timelines. */
     private final List< HatcheryLarvaTimeline > timelineList;
 
+    /** Story 11.01 answer for the replay-native inject signal question. */
+    private final String injectSignalConclusion;
+
+    /** Per-hatchery normalized inject-window diagnostics. */
+    private final List< HatcheryInjectTimeline > injectTimelineList;
+
     /** Number of hatcheries tracked during replay analysis. */
     private final int trackedHatcheryCount;
 
@@ -91,7 +97,8 @@ public class LarvaAnalysisReport {
      * @param replayLengthLoops replay length in raw game loops from the replay header
      * @param resourceSnapshotsByPlayerName player resource snapshots collected from tracker events
      */
-    public LarvaAnalysisReport( final LarvaHeuristicCalibration calibration, final List< HatcheryLarvaTimeline > timelineList,
+        public LarvaAnalysisReport( final LarvaHeuristicCalibration calibration, final List< HatcheryLarvaTimeline > timelineList,
+            final List< HatcheryInjectTimeline > injectTimelineList, final String injectSignalConclusion,
             final int trackedHatcheryCount, final int larvaBirthCount, final int assignedLarvaCount, final int unassignedLarvaCount,
             final int ambiguousLarvaCount, final int noEligibleHatcheryLarvaCount,
             final int directAssignmentCount, final int injectCorrelatedAssignmentCount, final int heuristicAssignmentCount,
@@ -100,6 +107,8 @@ public class LarvaAnalysisReport {
              final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName ) {
         this.calibration = calibration;
         this.timelineList = Collections.unmodifiableList( new ArrayList<>( timelineList ) );
+        this.injectTimelineList = Collections.unmodifiableList( new ArrayList<>( injectTimelineList ) );
+        this.injectSignalConclusion = injectSignalConclusion;
         this.trackedHatcheryCount = trackedHatcheryCount;
         this.larvaBirthCount = larvaBirthCount;
         this.assignedLarvaCount = assignedLarvaCount;
@@ -125,6 +134,49 @@ public class LarvaAnalysisReport {
 
     public List< HatcheryLarvaTimeline > getTimelineList() {
         return timelineList;
+    }
+
+    public String getInjectSignalConclusion() {
+        return injectSignalConclusion;
+    }
+
+    public List< HatcheryInjectTimeline > getInjectTimelineList() {
+        return injectTimelineList;
+    }
+
+    public int getInjectCommandCount() {
+        int injectCommandCount = 0;
+        for ( final HatcheryInjectTimeline injectTimeline : injectTimelineList )
+            injectCommandCount += injectTimeline.getRawInjectCommandCount();
+        return injectCommandCount;
+    }
+
+    public int getInjectWindowCount() {
+        int injectWindowCount = 0;
+        for ( final HatcheryInjectTimeline injectTimeline : injectTimelineList )
+            injectWindowCount += injectTimeline.getKeptWindowCount();
+        return injectWindowCount;
+    }
+
+    public int getInjectOverlapDiscardCount() {
+        int injectOverlapDiscardCount = 0;
+        for ( final HatcheryInjectTimeline injectTimeline : injectTimelineList )
+            injectOverlapDiscardCount += injectTimeline.getOverlapDiscardCount();
+        return injectOverlapDiscardCount;
+    }
+
+    public int getInjectBoundsDiscardCount() {
+        int injectBoundsDiscardCount = 0;
+        for ( final HatcheryInjectTimeline injectTimeline : injectTimelineList )
+            injectBoundsDiscardCount += injectTimeline.getBoundsDiscardCount();
+        return injectBoundsDiscardCount;
+    }
+
+    public int getInjectTrimmedWindowCount() {
+        int injectTrimmedWindowCount = 0;
+        for ( final HatcheryInjectTimeline injectTimeline : injectTimelineList )
+            injectTrimmedWindowCount += injectTimeline.getTrimmedWindowCount();
+        return injectTrimmedWindowCount;
     }
 
     public int getTrackedHatcheryCount() {
@@ -342,42 +394,129 @@ public class LarvaAnalysisReport {
         builder.append( "- Resource snapshot support: " ).append( formatResourceSnapshotCounts() ).append( '\n' );
 
         if ( timelineList.isEmpty() ) {
-            builder.append( "- No per-hatchery timelines were derived from this replay yet." );
-            return builder.toString();
-        }
-
-        builder.append( "- Per-hatchery count timelines:" ).append( '\n' );
-        for ( final HatcheryLarvaTimeline timeline : timelineList ) {
-            builder.append( "  * " )
-                    .append( timeline.getPlayerName() )
-                    .append( " / " )
-                    .append( timeline.getHatcheryType() )
-                    .append( " (tag " )
-                    .append( timeline.getHatcheryTagText() )
-                    .append( ") max=" )
-                    .append( timeline.getMaxLarvaCount() )
-                .append( ", completed=" )
-                .append( timeline.isCompleted() )
-                .append( ", larva=" )
-                .append( timeline.getCreatedLarvaCount() )
-                    .append( ", direct=" )
-                    .append( timeline.getDirectAssignmentCount() )
-                    .append( ", inject=" )
-                    .append( timeline.getInjectCorrelatedAssignmentCount() )
-                    .append( ", heuristic=" )
-                    .append( timeline.getHeuristicAssignmentCount() )
+            builder.append( "- No per-hatchery timelines were derived from this replay yet." ).append( '\n' );
+        } else {
+            builder.append( "- Per-hatchery count timelines:" ).append( '\n' );
+            for ( final HatcheryLarvaTimeline timeline : timelineList ) {
+                builder.append( "  * " )
+                        .append( timeline.getPlayerName() )
+                        .append( " / " )
+                        .append( timeline.getHatcheryType() )
+                        .append( " (tag " )
+                        .append( timeline.getHatcheryTagText() )
+                        .append( ") max=" )
+                        .append( timeline.getMaxLarvaCount() )
+                    .append( ", completed=" )
+                    .append( timeline.isCompleted() )
+                    .append( ", larva=" )
+                    .append( timeline.getCreatedLarvaCount() )
+                        .append( ", direct=" )
+                        .append( timeline.getDirectAssignmentCount() )
+                        .append( ", inject=" )
+                        .append( timeline.getInjectCorrelatedAssignmentCount() )
+                        .append( ", heuristic=" )
+                        .append( timeline.getHeuristicAssignmentCount() )
+                        .append( '\n' );
+                builder.append( "    lifecycle: completion=" )
+                    .append( formatOptionalTimeLabel( timeline.getCompletionTimeLabel() ) )
+                    .append( ", first larva=" )
+                    .append( formatOptionalTimeLabel( timeline.getFirstLarvaTimeLabel() ) )
+                    .append( ", destroyed=" )
+                    .append( formatOptionalTimeLabel( timeline.getDestroyedTimeLabel() ) )
                     .append( '\n' );
-            builder.append( "    lifecycle: completion=" )
-                .append( formatOptionalTimeLabel( timeline.getCompletionTimeLabel() ) )
-                .append( ", first larva=" )
-                .append( formatOptionalTimeLabel( timeline.getFirstLarvaTimeLabel() ) )
-                .append( ", destroyed=" )
-                .append( formatOptionalTimeLabel( timeline.getDestroyedTimeLabel() ) )
-                .append( '\n' );
-            builder.append( "    points: " ).append( formatPoints( timeline.getCountPointList() ) ).append( '\n' );
-            builder.append( "    milestones: " ).append( formatLarvaCountMilestones( timeline ) ).append( '\n' );
+                builder.append( "    points: " ).append( formatPoints( timeline.getCountPointList() ) ).append( '\n' );
+                builder.append( "    milestones: " ).append( formatLarvaCountMilestones( timeline ) ).append( '\n' );
+            }
         }
 
+        appendInjectDiagnostics( builder );
+
+        return builder.toString();
+    }
+
+    /**
+     * Appends Story 11.01 inject-window diagnostics.
+     *
+     * @param builder target builder
+     */
+    private void appendInjectDiagnostics( final StringBuilder builder ) {
+        builder.append( "Epic 11 Story 11.01 inject-active reconstruction:" ).append( '\n' );
+        builder.append( "- Inject signal answer: " ).append( injectSignalConclusion == null ? "n/a" : injectSignalConclusion ).append( '\n' );
+        builder.append( "- Inject totals: commands=" ).append( getInjectCommandCount() )
+                .append( ", kept windows=" ).append( getInjectWindowCount() )
+                .append( ", overlap discarded=" ).append( getInjectOverlapDiscardCount() )
+                .append( ", bounds discarded=" ).append( getInjectBoundsDiscardCount() )
+                .append( ", trimmed=" ).append( getInjectTrimmedWindowCount() )
+                .append( '\n' );
+
+        if ( injectTimelineList.isEmpty() ) {
+            builder.append( "- No hatchery inject timelines were available for Story 11.01 yet." );
+            return;
+        }
+
+        builder.append( "- Per-hatchery inject windows:" ).append( '\n' );
+        for ( final HatcheryInjectTimeline injectTimeline : injectTimelineList ) {
+            builder.append( "  * " )
+                    .append( injectTimeline.getPlayerName() )
+                    .append( " / " )
+                    .append( injectTimeline.getHatcheryType() )
+                    .append( " (tag " )
+                    .append( injectTimeline.getHatcheryTagText() )
+                    .append( ") commands=" )
+                    .append( injectTimeline.getRawInjectCommandCount() )
+                    .append( ", kept=" )
+                    .append( injectTimeline.getKeptWindowCount() )
+                    .append( ", overlapDiscarded=" )
+                    .append( injectTimeline.getOverlapDiscardCount() )
+                    .append( ", boundsDiscarded=" )
+                    .append( injectTimeline.getBoundsDiscardCount() )
+                    .append( ", trimmed=" )
+                    .append( injectTimeline.getTrimmedWindowCount() )
+                    .append( '\n' );
+            builder.append( "    inject windows: " ).append( formatInjectWindows( injectTimeline.getInjectWindowList() ) ).append( '\n' );
+            builder.append( "    inject diagnostics: " ).append( formatDiagnostics( injectTimeline.getDiagnosticLineList() ) ).append( '\n' );
+        }
+    }
+
+    /**
+     * Formats inject windows in compact deterministic form.
+     *
+     * @param injectWindowList inject windows to format
+     * @return compact formatted text
+     */
+    private String formatInjectWindows( final List< HatcheryInjectWindow > injectWindowList ) {
+        if ( injectWindowList == null || injectWindowList.isEmpty() )
+            return "none";
+
+        final StringBuilder builder = new StringBuilder();
+        for ( int i = 0; i < injectWindowList.size(); i++ ) {
+            if ( i > 0 )
+                builder.append( ", " );
+
+            final HatcheryInjectWindow injectWindow = injectWindowList.get( i );
+            builder.append( injectWindow.getStartTimeLabel() ).append( '-' ).append( injectWindow.getEndTimeLabel() );
+            if ( injectWindow.isTrimmedAtStart() || injectWindow.isTrimmedAtEnd() )
+                builder.append( " [trimmed]" );
+        }
+        return builder.toString();
+    }
+
+    /**
+     * Formats deterministic inject diagnostics on a single line.
+     *
+     * @param diagnosticLineList diagnostic lines to format
+     * @return compact formatted diagnostics
+     */
+    private String formatDiagnostics( final List< String > diagnosticLineList ) {
+        if ( diagnosticLineList == null || diagnosticLineList.isEmpty() )
+            return "none";
+
+        final StringBuilder builder = new StringBuilder();
+        for ( int i = 0; i < diagnosticLineList.size(); i++ ) {
+            if ( i > 0 )
+                builder.append( " | " );
+            builder.append( diagnosticLineList.get( i ) );
+        }
         return builder.toString();
     }
 

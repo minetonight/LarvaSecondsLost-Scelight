@@ -229,7 +229,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         detailsArea.setText( "Choose a replay to see where Zerg hatcheries floated at 3+ larva.\n\n"
             + "What you are looking at:\n"
             + "- Red bars show how long a hatchery stayed at 3 or more larva.\n"
-            + "- Black ticks mark every 11 seconds of missed inject time.\n"
+            + "- Black ticks mark every 11 seconds of missed potential larva while a hatchery stayed at 3 or more larva.\n"
             + "- Player totals add up all missed larva across visible hatcheries.\n\n"
             + "Use the buttons above to open a replay, analyze the latest replay, or refresh the current one." );
         detailsArea.setCaretPosition( 0 );
@@ -293,7 +293,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         builder.append( buildHatcheryBreakdownSection( summary ) ).append( '\n' );
         builder.append( "Legend:\n" );
         builder.append( "- Red bars: time spent at 3+ larva.\n" );
-        builder.append( "- Black ticks: every 11 seconds of missed inject time.\n" );
+        builder.append( "- Black ticks: every 11 seconds of missed potential larva while a hatchery stayed at 3+ larva.\n" );
         builder.append( "- Hover a bar or tick for resource and supply context." );
 
         return builder.toString();

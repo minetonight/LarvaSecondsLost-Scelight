@@ -310,17 +310,18 @@ public class DevDiagnosticDumpWriter {
             builder.append( "Timeline rows: " ).append( summary.getTimelineModel().getRowList().size() ).append( '\n' );
             builder.append( "Timeline subtitle: " ).append( summary.getTimelineModel().getSubtitle() ).append( '\n' );
         }
-        builder.append( '\n' ).append( "Epic 07 handoff" ).append( '\n' );
+        builder.append( '\n' ).append( "Epic 11 Story 11.01 handoff" ).append( '\n' );
         builder.append( "Proven now:" ).append( '\n' );
         builder.append( "- Replay-derived per-hatchery larva counts now produce stable red 3+ larva windows." ).append( '\n' );
         builder.append( "- The supported module-owned Larva timeline now renders one qualifying hatchery row per player grouping with lifetime bounds." ).append( '\n' );
         builder.append( "- Missed-larva markers, per-hatchery totals, and per-player totals now come from the same normalized model." ).append( '\n' );
         builder.append( "- Hover tooltips now show minerals, gas, and supply context on window starts and missed-larva moments." ).append( '\n' );
+        builder.append( "- Inject-active windows are now reconstructed from SpawnLarva target commands because the public replay surface exposes no direct injected-building state." ).append( '\n' );
         builder.append( "Still unresolved:" ).append( '\n' );
-        builder.append( "- Replay edge-case hardening for morph timing, replay truncation, sparse player-stats sampling, and hatchery death corner cases." ).append( '\n' );
-        builder.append( "- Replay-fixture validation and golden-output coverage." ).append( '\n' );
-        builder.append( "- Final documentation cleanup." ).append( '\n' );
-        builder.append( "Next technical question: how should Epic 07's larva-window and missed-larva visualization be hardened and validated across replay fixtures and edge cases?" ).append( '\n' );
+        builder.append( "- Rendering the new inject-active windows as a dedicated green lane on the supported module-owned Larva page." ).append( '\n' );
+        builder.append( "- Queen-radius and 25-energy based idle-inject opportunity detection." ).append( '\n' );
+        builder.append( "- Separate missed-inject accumulation, fixture validation, and final handoff documentation." ).append( '\n' );
+        builder.append( "Next technical question: how should the normalized inject-active windows be rendered as a dedicated green lane below each hatchery row?" ).append( '\n' );
         builder.append( '\n' ).append( "Deterministic validation snapshot" ).append( '\n' );
         builder.append( timelineGoldenFormatter.format( summary ) ).append( '\n' );
         if ( summary.getLarvaAnalysisReport() != null )

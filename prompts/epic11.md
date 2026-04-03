@@ -43,6 +43,7 @@ From the current replay-analysis foundation:
 - Epic 06 already correlates `SpawnLarva` command targets by hatchery tag
 - Epic 07 / Epic 08 already normalize replay-derived hatchery rows, stable time windows, markers, and diagnostics
 - the current model pipeline already supports per-row segments, markers, hover text, and per-player summaries on the supported `Larva` page
+- the existing black timeline ticks already mean the old larva-pressure metric: one marker every 11 seconds of `3+ larva` saturation, not inject status and not missed-inject accounting
 
 From Scelight source used for implementation inspiration:
 
@@ -107,6 +108,7 @@ This story resolves the core uncertainty first. If no direct replay-side injecte
 ### Notes
 
 The inject lane is a subordinate lane under the existing hatchery rail, not a replacement for the main larva-pressure row.
+The existing black ticks remain the separate `3+ larva` missed-potential-larva markers unless a later story explicitly changes that behavior.
 
 ## Story 11.03 — Detect idle inject queens with a dedicated queen radius
 

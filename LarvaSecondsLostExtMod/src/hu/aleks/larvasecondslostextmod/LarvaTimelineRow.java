@@ -47,7 +47,7 @@ public class LarvaTimelineRow {
      * @param missedLarvaCount number of missed-larva thresholds reached on the row
      * @param segmentList row segments
      * @param markerList row markers
-         * @param decorationList small row decorations rendered without tooltips
+     * @param decorationList small row decorations rendered without tooltips
      */
     public LarvaTimelineRow( final String groupLabel, final String rowLabel, final String detailLabel, final long startMs, final long endMs,
              final int missedLarvaCount, final List< LarvaTimelineSegment > segmentList, final List< LarvaTimelineMarker > markerList,
@@ -61,6 +61,24 @@ public class LarvaTimelineRow {
         this.segmentList = Collections.unmodifiableList( new ArrayList<>( segmentList ) );
         this.markerList = Collections.unmodifiableList( new ArrayList<>( markerList ) );
         this.decorationList = Collections.unmodifiableList( new ArrayList<>( decorationList ) );
+    }
+
+    /**
+     * Creates a new timeline row without decorations.
+     *
+     * @param groupLabel player grouping label
+     * @param rowLabel row label
+     * @param detailLabel row detail label
+     * @param startMs visible row start in milliseconds
+     * @param endMs visible row end in milliseconds
+     * @param missedLarvaCount number of missed-larva thresholds reached on the row
+     * @param segmentList row segments
+     * @param markerList row markers
+     */
+    public LarvaTimelineRow( final String groupLabel, final String rowLabel, final String detailLabel, final long startMs, final long endMs,
+            final int missedLarvaCount, final List< LarvaTimelineSegment > segmentList, final List< LarvaTimelineMarker > markerList ) {
+        this( groupLabel, rowLabel, detailLabel, startMs, endMs, missedLarvaCount, segmentList, markerList,
+                Collections.< LarvaTimelineDecoration >emptyList() );
     }
 
     public String getGroupLabel() {

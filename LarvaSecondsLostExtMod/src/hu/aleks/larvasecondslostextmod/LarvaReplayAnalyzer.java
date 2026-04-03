@@ -26,6 +26,12 @@ import java.util.Map;
  */
 public class LarvaReplayAnalyzer {
 
+    /** Duration of one inject-active window in replay loops. */
+    private static final int INJECT_ACTIVE_DURATION_LOOPS = 29 * 16;
+
+    /** Public replay-surface conclusion for Story 11.01. */
+    private static final String INJECT_SIGNAL_CONCLUSION = "No direct injected-building state is exposed by the public external-module replay model, so inject-active windows are reconstructed from SpawnLarva target commands plus a 29-second active duration.";
+
     /** Field name available on newer UnitBorn tracker events. */
     private static final String F_CREATOR_UNIT_TAG_INDEX = "creatorUnitTagIndex";
 
@@ -325,13 +331,232 @@ public class LarvaReplayAnalyzer {
 
         sortResourceSnapshotsByLoop( resourceSnapshotsByPlayerName );
 
-        return new LarvaAnalysisReport( calibration, timelineList, hatcheryByTag.size(), larvaBirthCount, assignedLarvaCount, unassignedLarvaCount,
+        final List< HatcheryInjectTimeline > injectTimelineList = buildInjectTimelines( repProc, hatcheryByTag, injectLoopsByTag,
+                replay.getHeader() == null || replay.getHeader().getElapsedGameLoops() == null ? 0 : replay.getHeader().getElapsedGameLoops().intValue() );
+
+        return new LarvaAnalysisReport( calibration, timelineList, injectTimelineList, INJECT_SIGNAL_CONCLUSION,
+            hatcheryByTag.size(), larvaBirthCount, assignedLarvaCount, unassignedLarvaCount,
             ambiguousLarvaCount, noEligibleHatcheryLarvaCount,
             directAssignmentCount, injectCorrelatedAssignmentCount, heuristicAssignmentCount, hatcheryMorphCount,
             trackerEventArray == null ? 0 : trackerEventArray.length, gameEventArray == null ? 0 : gameEventArray.length, fullReplayParseUsed,
             repProc.isRealTime(), repProc.getConverterGameSpeed() == null ? 36L : repProc.getConverterGameSpeed().getRelativeSpeed(),
             replay.getHeader() == null || replay.getHeader().getElapsedGameLoops() == null ? 0 : replay.getHeader().getElapsedGameLoops().intValue(),
             resourceSnapshotsByPlayerName );
+    }
+
+    /**
+     * Builds per-hatchery inject timelines from SpawnLarva command targets.
+     *
+     * <p>The public external-module replay model exposes command targets and unit lifecycle events,
+     * but it does not expose a direct building-side injected-state flag or tracker buff surface.
+     * Story 11.01 therefore formalizes command-target reconstruction as the supported approach.</p>
+     *
+     * @param repProc replay processor
+     * @param hatcheryByTag tracked hatcheries by tag
+     * @param injectLoopsByTag raw SpawnLarva loops grouped by target tag
+     * @param replayEndLoop replay end loop from the replay header
+     * @return sorted immutable inject timelines
+     */
+    private List< HatcheryInjectTimeline > buildInjectTimelines( final IRepProcessor repProc, final Map< Integer, HatcheryState > hatcheryByTag,
+            final Map< Integer, List< Integer > > injectLoopsByTag, final int replayEndLoop ) {
+        if ( hatcheryByTag == null || hatcheryByTag.isEmpty() )
+            return Collections.emptyList();
+
+        final List< HatcheryState > hatcheryStateList = new ArrayList<>( hatcheryByTag.values() );
+        Collections.sort( hatcheryStateList, new Comparator< HatcheryState >() {
+            @Override
+            public int compare( final HatcheryState left, final HatcheryState right ) {
+                final int playerCompare = compareIgnoreCaseSafe( left.playerName, right.playerName );
+                return playerCompare != 0 ? playerCompare : compareIgnoreCaseSafe( left.hatcheryTagText, right.hatcheryTagText );
+            }
+        } );
+
+        final List< HatcheryInjectTimeline > injectTimelineList = new ArrayList<>( hatcheryStateList.size() );
+        for ( final HatcheryState hatcheryState : hatcheryStateList ) {
+            final List< Integer > rawInjectLoopList = injectLoopsByTag == null ? null : injectLoopsByTag.get( Integer.valueOf( hatcheryState.hatcheryTag ) );
+            if ( ( rawInjectLoopList == null || rawInjectLoopList.isEmpty() ) && hatcheryState.countPointList.isEmpty() )
+                continue;
+            injectTimelineList.add( buildInjectTimeline( repProc, hatcheryState, rawInjectLoopList, replayEndLoop ) );
+        }
+
+        return injectTimelineList;
+    }
+
+    /**
+     * Builds one normalized inject timeline for a hatchery.
+     *
+     * @param repProc replay processor
+     * @param hatcheryState hatchery state
+     * @param rawInjectLoopList raw SpawnLarva command loops targeting the hatchery
+     * @param replayEndLoop replay end loop
+     * @return immutable inject timeline
+     */
+    private HatcheryInjectTimeline buildInjectTimeline( final IRepProcessor repProc, final HatcheryState hatcheryState,
+            final List< Integer > rawInjectLoopList, final int replayEndLoop ) {
+        final List< Integer > sortedInjectLoopList = normalizeInjectLoops( rawInjectLoopList );
+        final List< HatcheryInjectWindow > injectWindowList = new ArrayList<>();
+        final List< String > diagnosticLineList = new ArrayList<>();
+        int overlapDiscardCount = 0;
+        int boundsDiscardCount = 0;
+        int trimmedWindowCount = 0;
+        InjectWindowCandidate previousCandidate = null;
+
+        if ( sortedInjectLoopList.isEmpty() )
+            diagnosticLineList.add( "No SpawnLarva command targets were recorded for this hatchery." );
+
+        for ( final Integer injectLoop_ : sortedInjectLoopList ) {
+            if ( injectLoop_ == null )
+                continue;
+
+            final int injectLoop = injectLoop_.intValue();
+            final int rawWindowEndLoop = injectLoop + INJECT_ACTIVE_DURATION_LOOPS;
+
+            if ( previousCandidate != null && injectLoop < previousCandidate.rawEndLoop ) {
+                if ( !injectWindowList.isEmpty() )
+                    injectWindowList.remove( injectWindowList.size() - 1 );
+                if ( previousCandidate.trimmed && trimmedWindowCount > 0 )
+                    trimmedWindowCount--;
+                overlapDiscardCount++;
+                diagnosticLineList.add( "Discarded SpawnLarva at " + previousCandidate.commandTimeLabel + " because a later SpawnLarva at "
+                        + repProc.formatLoopTime( injectLoop ) + " overlapped before the earlier 29-second inject window ended." );
+                previousCandidate = null;
+            }
+
+            final InjectWindowDecision decision = buildInjectWindowDecision( repProc, hatcheryState, injectLoop, rawWindowEndLoop, replayEndLoop );
+            diagnosticLineList.add( decision.diagnosticLine );
+            if ( decision.injectWindow == null ) {
+                boundsDiscardCount++;
+                continue;
+            }
+
+            injectWindowList.add( decision.injectWindow );
+            if ( decision.trimmed )
+                trimmedWindowCount++;
+            previousCandidate = new InjectWindowCandidate( rawWindowEndLoop, decision.injectWindow.getCommandTimeLabel(), decision.trimmed );
+        }
+
+        return new HatcheryInjectTimeline( hatcheryState.hatcheryTag, hatcheryState.hatcheryTagText,
+                hatcheryState.playerName == null ? hatcheryState.resolveFallbackPlayerName( repProc, hatcheryState.playerId ) : hatcheryState.playerName,
+                hatcheryState.hatcheryType, hatcheryState.completed, hatcheryState.completionLoop, hatcheryState.completionTimeLabel,
+                hatcheryState.destroyedLoop, hatcheryState.destroyedTimeLabel, sortedInjectLoopList.size(), overlapDiscardCount, boundsDiscardCount,
+                trimmedWindowCount, injectWindowList, diagnosticLineList );
+    }
+
+    /**
+     * Builds one inject-window decision from a raw SpawnLarva command loop.
+     *
+     * @param repProc replay processor
+     * @param hatcheryState hatchery state
+     * @param injectLoop raw SpawnLarva command loop
+     * @param rawWindowEndLoop raw window end loop before clipping
+     * @param replayEndLoop replay end loop
+     * @return normalized decision containing either a kept window or a discard explanation
+     */
+    private InjectWindowDecision buildInjectWindowDecision( final IRepProcessor repProc, final HatcheryState hatcheryState, final int injectLoop,
+            final int rawWindowEndLoop, final int replayEndLoop ) {
+        final String commandTimeLabel = repProc.formatLoopTime( injectLoop );
+
+        if ( !hatcheryState.completed || hatcheryState.completionLoop < 0 )
+            return new InjectWindowDecision( null,
+                    "Discarded SpawnLarva at " + commandTimeLabel + " because the hatchery never reached a confirmed completion loop.", false );
+
+        int effectiveStartLoop = injectLoop;
+        int effectiveEndLoop = rawWindowEndLoop;
+        boolean trimmedAtStart = false;
+        boolean trimmedAtEnd = false;
+        final List< String > trimReasonList = new ArrayList<>( 2 );
+
+        if ( effectiveStartLoop < hatcheryState.completionLoop ) {
+            effectiveStartLoop = hatcheryState.completionLoop;
+            trimmedAtStart = true;
+            trimReasonList.add( "start trimmed to completion at " + safeTimeLabel( hatcheryState.completionTimeLabel ) );
+        }
+
+        if ( hatcheryState.destroyedLoop >= 0 && effectiveEndLoop > hatcheryState.destroyedLoop ) {
+            effectiveEndLoop = hatcheryState.destroyedLoop;
+            trimmedAtEnd = true;
+            trimReasonList.add( "end trimmed to destruction at " + safeTimeLabel( hatcheryState.destroyedTimeLabel ) );
+        }
+
+        if ( replayEndLoop > 0 && effectiveEndLoop > replayEndLoop ) {
+            effectiveEndLoop = replayEndLoop;
+            trimmedAtEnd = true;
+            trimReasonList.add( "end trimmed to replay end at " + repProc.formatLoopTime( replayEndLoop ) );
+        }
+
+        if ( effectiveEndLoop <= effectiveStartLoop ) {
+            final String reason = trimReasonList.isEmpty() ? "its normalized 29-second window collapsed outside the valid hatchery lifetime"
+                    : "normalization collapsed the window after " + joinReasons( trimReasonList );
+            return new InjectWindowDecision( null, "Discarded SpawnLarva at " + commandTimeLabel + " because " + reason + '.', false );
+        }
+
+        final String startTimeLabel = repProc.formatLoopTime( effectiveStartLoop );
+        final String endTimeLabel = repProc.formatLoopTime( effectiveEndLoop );
+        final StringBuilder diagnosticBuilder = new StringBuilder();
+        diagnosticBuilder.append( "Kept SpawnLarva at " ).append( commandTimeLabel ).append( " as inject-active window " )
+                .append( startTimeLabel ).append( "-" ).append( endTimeLabel );
+        if ( trimReasonList.isEmpty() )
+            diagnosticBuilder.append( " using command-target reconstruction." );
+        else
+            diagnosticBuilder.append( " with " ).append( joinReasons( trimReasonList ) ).append( '.' );
+
+        final HatcheryInjectWindow injectWindow = new HatcheryInjectWindow( injectLoop, commandTimeLabel, effectiveStartLoop, effectiveEndLoop,
+                repProc.loopToTime( effectiveStartLoop ), repProc.loopToTime( effectiveEndLoop ), startTimeLabel, endTimeLabel,
+                trimmedAtStart, trimmedAtEnd, diagnosticBuilder.toString() );
+        return new InjectWindowDecision( injectWindow, diagnosticBuilder.toString(), trimmedAtStart || trimmedAtEnd );
+    }
+
+    /**
+     * Sorts raw inject loops into deterministic order.
+     *
+     * @param rawInjectLoopList raw inject loops
+     * @return sorted loop list
+     */
+    private List< Integer > normalizeInjectLoops( final List< Integer > rawInjectLoopList ) {
+        if ( rawInjectLoopList == null || rawInjectLoopList.isEmpty() )
+            return Collections.emptyList();
+
+        final List< Integer > sortedInjectLoopList = new ArrayList<>( rawInjectLoopList );
+        Collections.sort( sortedInjectLoopList, new Comparator< Integer >() {
+            @Override
+            public int compare( final Integer left, final Integer right ) {
+                final int leftValue = left == null ? Integer.MIN_VALUE : left.intValue();
+                final int rightValue = right == null ? Integer.MIN_VALUE : right.intValue();
+                return leftValue < rightValue ? -1 : leftValue == rightValue ? 0 : 1;
+            }
+        } );
+        return sortedInjectLoopList;
+    }
+
+    /**
+     * Joins normalization reasons into readable diagnostics.
+     *
+     * @param trimReasonList reasons to join
+     * @return joined readable text
+     */
+    private String joinReasons( final List< String > trimReasonList ) {
+        if ( trimReasonList == null || trimReasonList.isEmpty() )
+            return "no additional normalization";
+        if ( trimReasonList.size() == 1 )
+            return trimReasonList.get( 0 );
+
+        final StringBuilder builder = new StringBuilder();
+        for ( int i = 0; i < trimReasonList.size(); i++ ) {
+            if ( i > 0 )
+                builder.append( i == trimReasonList.size() - 1 ? " and " : ", " );
+            builder.append( trimReasonList.get( i ) );
+        }
+        return builder.toString();
+    }
+
+    /**
+     * Returns a readable time label even if the source value is absent.
+     *
+     * @param timeLabel source time label
+     * @return readable label
+     */
+    private String safeTimeLabel( final String timeLabel ) {
+        return timeLabel == null || timeLabel.length() == 0 ? "n/a" : timeLabel;
     }
 
     /**
@@ -594,6 +819,60 @@ public class LarvaReplayAnalyzer {
         private EarlyUnitSample( final Integer x, final Integer y ) {
             this.x = x;
             this.y = y;
+        }
+
+    }
+
+    /** One normalized inject-window decision. */
+    private static class InjectWindowDecision {
+
+        /** Kept inject window, or <code>null</code> if discarded. */
+        private final HatcheryInjectWindow injectWindow;
+
+        /** Deterministic explanation of the decision. */
+        private final String diagnosticLine;
+
+        /** Tells if the kept window was trimmed. */
+        private final boolean trimmed;
+
+        /**
+         * Creates a new inject-window decision.
+         *
+         * @param injectWindow kept inject window, or <code>null</code> if discarded
+         * @param diagnosticLine deterministic explanation of the decision
+         * @param trimmed tells if the kept window was trimmed
+         */
+        private InjectWindowDecision( final HatcheryInjectWindow injectWindow, final String diagnosticLine, final boolean trimmed ) {
+            this.injectWindow = injectWindow;
+            this.diagnosticLine = diagnosticLine;
+            this.trimmed = trimmed;
+        }
+
+    }
+
+    /** Raw overlap tracking state for the previously kept inject window. */
+    private static class InjectWindowCandidate {
+
+        /** Raw untrimmed end loop of the previous window. */
+        private final int rawEndLoop;
+
+        /** Previous command time label. */
+        private final String commandTimeLabel;
+
+        /** Tells if the previous kept window was trimmed. */
+        private final boolean trimmed;
+
+        /**
+         * Creates a new overlap-tracking candidate.
+         *
+         * @param rawEndLoop raw untrimmed end loop of the previous window
+         * @param commandTimeLabel previous command time label
+         * @param trimmed tells if the previous kept window was trimmed
+         */
+        private InjectWindowCandidate( final int rawEndLoop, final String commandTimeLabel, final boolean trimmed ) {
+            this.rawEndLoop = rawEndLoop;
+            this.commandTimeLabel = commandTimeLabel;
+            this.trimmed = trimmed;
         }
 
     }

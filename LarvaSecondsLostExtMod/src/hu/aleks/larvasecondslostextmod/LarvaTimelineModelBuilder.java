@@ -24,7 +24,7 @@ public class LarvaTimelineModelBuilder {
     private static final String SUBTITLE = "Red bars show 3+ larva windows for completed Zerg hatcheries.";
 
     /** Timeline legend. */
-    private static final String MODE_LABEL = "Black ticks mark each 11-second missed-inject threshold.";
+    private static final String MODE_LABEL = "Black ticks mark each 11-second missed-potential-larva threshold while a hatchery stayed at 3+ larva.";
 
     /** Empty message used when no rows are available yet. */
     private static final String EMPTY_MESSAGE = "No qualifying Zerg hatcheries were found in this replay.";
@@ -94,7 +94,7 @@ public class LarvaTimelineModelBuilder {
             return null;
 
         final int visibleStartLoop = saturationWindowCalculator.resolveVisibleStartLoop( timeline );
-        final int visibleEndLoop = saturationWindowCalculator.resolveVisibleEndLoop( timeline, replayLengthMs );
+        final int visibleEndLoop = saturationWindowCalculator.resolveVisibleEndLoop( timeline, larvaAnalysisReport.getReplayLengthLoops() );
         if ( visibleStartLoop < 0 || visibleEndLoop <= visibleStartLoop )
             return null;
 
@@ -103,7 +103,7 @@ public class LarvaTimelineModelBuilder {
         if ( endMs <= startMs )
             return null;
 
-        final List< LarvaSaturationWindow > saturationWindowList = saturationWindowCalculator.buildWindows( timeline, replayLengthMs );
+        final List< LarvaSaturationWindow > saturationWindowList = saturationWindowCalculator.buildWindows( timeline, larvaAnalysisReport.getReplayLengthLoops() );
         final String playerName = safeText( timeline.getPlayerName(), "Unknown player" );
         final String hatcheryType = safeText( timeline.getHatcheryType(), "Hatchery" );
         final String hatcheryTagText = safeText( timeline.getHatcheryTagText(), String.valueOf( timeline.getHatcheryTag() ) );

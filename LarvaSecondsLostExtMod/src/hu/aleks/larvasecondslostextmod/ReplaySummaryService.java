@@ -85,7 +85,9 @@ public class ReplaySummaryService {
             + ", gameEvents=" + larvaAnalysisReport.getGameEventCount() + ", hatcheries=" + larvaAnalysisReport.getTrackedHatcheryCount() + ", larvaBirths="
             + larvaAnalysisReport.getLarvaBirthCount() + ", assigned=" + larvaAnalysisReport.getAssignedLarvaCount() + ", unassigned="
             + larvaAnalysisReport.getUnassignedLarvaCount() + ", ambiguous=" + larvaAnalysisReport.getAmbiguousLarvaCount() + ", noEligible="
-            + larvaAnalysisReport.getNoEligibleHatcheryLarvaCount() + ", fullReplayParseUsed=" + larvaAnalysisReport.isFullReplayParseUsed() );
+            + larvaAnalysisReport.getNoEligibleHatcheryLarvaCount() + ", injectCommands=" + larvaAnalysisReport.getInjectCommandCount()
+            + ", injectWindows=" + larvaAnalysisReport.getInjectWindowCount() + ", injectOverlapDiscarded="
+            + larvaAnalysisReport.getInjectOverlapDiscardCount() + ", fullReplayParseUsed=" + larvaAnalysisReport.isFullReplayParseUsed() );
 
         final ReplaySummary replaySummary = new ReplaySummary( replayFile, safe( sourceDescription, "Unknown" ),
             safe( details == null ? null : details.getTitle(), "Unknown map" ),

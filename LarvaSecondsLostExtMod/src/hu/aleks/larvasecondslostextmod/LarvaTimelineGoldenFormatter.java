@@ -10,7 +10,7 @@ import java.util.Map;
 public class LarvaTimelineGoldenFormatter {
 
     /** Validation snapshot format version. */
-    private static final String FORMAT_VERSION = "1";
+    private static final String FORMAT_VERSION = "2";
 
     /**
      * Formats a replay page summary into a stable text representation.
@@ -160,7 +160,47 @@ public class LarvaTimelineGoldenFormatter {
         builder.append( "analysis.assignedLarva=" ).append( larvaAnalysisReport.getAssignedLarvaCount() ).append( '\n' );
         builder.append( "analysis.unassignedLarva=" ).append( larvaAnalysisReport.getUnassignedLarvaCount() ).append( '\n' );
         builder.append( "analysis.ambiguousLarva=" ).append( larvaAnalysisReport.getAmbiguousLarvaCount() ).append( '\n' );
-        builder.append( "analysis.noEligibleLarva=" ).append( larvaAnalysisReport.getNoEligibleHatcheryLarvaCount() );
+        builder.append( "analysis.noEligibleLarva=" ).append( larvaAnalysisReport.getNoEligibleHatcheryLarvaCount() ).append( '\n' );
+        builder.append( "analysis.injectSignal=" ).append( safe( larvaAnalysisReport.getInjectSignalConclusion() ) ).append( '\n' );
+        builder.append( "analysis.injectCommands=" ).append( larvaAnalysisReport.getInjectCommandCount() ).append( '\n' );
+        builder.append( "analysis.injectWindows=" ).append( larvaAnalysisReport.getInjectWindowCount() ).append( '\n' );
+        builder.append( "analysis.injectOverlapDiscarded=" ).append( larvaAnalysisReport.getInjectOverlapDiscardCount() ).append( '\n' );
+        builder.append( "analysis.injectBoundsDiscarded=" ).append( larvaAnalysisReport.getInjectBoundsDiscardCount() ).append( '\n' );
+        builder.append( "analysis.injectTrimmedWindows=" ).append( larvaAnalysisReport.getInjectTrimmedWindowCount() ).append( '\n' );
+        appendInjectTimelines( builder, larvaAnalysisReport.getInjectTimelineList() );
+    }
+
+    /**
+     * Appends per-hatchery inject-window output.
+     *
+     * @param builder target builder
+     * @param injectTimelineList per-hatchery inject timelines
+     */
+    private void appendInjectTimelines( final StringBuilder builder, final List< HatcheryInjectTimeline > injectTimelineList ) {
+        builder.append( "analysis.injectHatcheryCount=" ).append( injectTimelineList == null ? 0 : injectTimelineList.size() ).append( '\n' );
+        if ( injectTimelineList == null )
+            return;
+
+        for ( int injectIndex = 0; injectIndex < injectTimelineList.size(); injectIndex++ ) {
+            final HatcheryInjectTimeline injectTimeline = injectTimelineList.get( injectIndex );
+            builder.append( "inject[" ).append( injectIndex ).append( "].player=" ).append( safe( injectTimeline.getPlayerName() ) ).append( '\n' );
+            builder.append( "inject[" ).append( injectIndex ).append( "].tag=" ).append( safe( injectTimeline.getHatcheryTagText() ) ).append( '\n' );
+            builder.append( "inject[" ).append( injectIndex ).append( "].commands=" ).append( injectTimeline.getRawInjectCommandCount() ).append( '\n' );
+            builder.append( "inject[" ).append( injectIndex ).append( "].keptWindows=" ).append( injectTimeline.getKeptWindowCount() ).append( '\n' );
+            builder.append( "inject[" ).append( injectIndex ).append( "].overlapDiscarded=" ).append( injectTimeline.getOverlapDiscardCount() ).append( '\n' );
+            builder.append( "inject[" ).append( injectIndex ).append( "].boundsDiscarded=" ).append( injectTimeline.getBoundsDiscardCount() ).append( '\n' );
+            builder.append( "inject[" ).append( injectIndex ).append( "].trimmed=" ).append( injectTimeline.getTrimmedWindowCount() ).append( '\n' );
+            builder.append( "inject[" ).append( injectIndex ).append( "].windowCount=" ).append( injectTimeline.getInjectWindowList().size() ).append( '\n' );
+            for ( int windowIndex = 0; windowIndex < injectTimeline.getInjectWindowList().size(); windowIndex++ ) {
+                final HatcheryInjectWindow injectWindow = injectTimeline.getInjectWindowList().get( windowIndex );
+                builder.append( "inject[" ).append( injectIndex ).append( "].window[" ).append( windowIndex ).append( "].command=" )
+                        .append( safe( injectWindow.getCommandTimeLabel() ) ).append( '\n' );
+                builder.append( "inject[" ).append( injectIndex ).append( "].window[" ).append( windowIndex ).append( "].range=" )
+                        .append( safe( injectWindow.getStartTimeLabel() ) ).append( '-' ).append( safe( injectWindow.getEndTimeLabel() ) ).append( '\n' );
+                builder.append( "inject[" ).append( injectIndex ).append( "].window[" ).append( windowIndex ).append( "].trimmed=" )
+                        .append( injectWindow.isTrimmedAtStart() || injectWindow.isTrimmedAtEnd() ).append( '\n' );
+            }
+        }
     }
 
     /**
