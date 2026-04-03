@@ -49,11 +49,17 @@ public class LarvaReplayAnalyzer {
     /** Queen SpawnLarva energy cost. */
     private static final double QUEEN_INJECT_ENERGY_COST = 25.0d;
 
+    /** Queen creep tumor energy cost. */
+    private static final double QUEEN_CREEP_TUMOR_ENERGY_COST = 25.0d;
+
+    /** Queen transfuse energy cost. */
+    private static final double QUEEN_TRANSFUSE_ENERGY_COST = 50.0d;
+
     /** Queen energy regeneration in visible gameplay seconds. */
     private static final double QUEEN_ENERGY_REGEN_PER_SECOND = 0.5625d;
 
     /** Conservative Story 11.03 public replay-surface conclusion. */
-    private static final String IDLE_INJECT_SIGNAL_CONCLUSION = "Idle-inject windows are derived conservatively from singleton-selected queen command attribution plus a dedicated queen radius. Periods without trustworthy queen command or unique nearby-queen proof are suppressed instead of guessed.";
+    private static final String IDLE_INJECT_SIGNAL_CONCLUSION = "Idle-inject windows are derived conservatively from singleton-selected queen command attribution plus a dedicated queen radius. Known queen energy spends such as SpawnLarva, creep tumor, and transfuse delay readiness, and periods without trustworthy queen command or unique nearby-queen proof are suppressed instead of guessed.";
 
     /** Replay loops per second in SC2 timelines. */
     private static final int REPLAY_LOOPS_PER_SECOND = 16;
@@ -519,6 +525,7 @@ public class LarvaReplayAnalyzer {
         final String abilityId = command == null ? null : command.getAbilId();
         final Integer targetHatcheryTag = cmdEvent.getTargetUnit() == null ? null : cmdEvent.getTargetUnit().getTag();
         final boolean inject = IAbility.ID_SPAWN_LARVA.equals( abilityId ) && targetHatcheryTag != null;
+        final int energyCost = resolveQueenEnergyCost( command );
 
         List< QueenCommandEvidence > evidenceList = evidenceByQueenTag.get( queenTag );
         if ( evidenceList == null ) {
@@ -527,7 +534,7 @@ public class LarvaReplayAnalyzer {
         }
 
         evidenceList.add( new QueenCommandEvidence( queenTag.intValue(), cmdEvent.getLoop(), repProc.formatLoopTime( cmdEvent.getLoop() ),
-                inject ? targetHatcheryTag.intValue() : -1, abilityId, inject ) );
+        inject ? targetHatcheryTag.intValue() : -1, abilityId, inject, energyCost ) );
     }
 
     /**
@@ -662,10 +669,19 @@ public class LarvaReplayAnalyzer {
             if ( evidence.inject && evidence.targetHatcheryTag >= 0 && hatcheryByTag.containsKey( Integer.valueOf( evidence.targetHatcheryTag ) ) ) {
                 boundHatchTag = evidence.targetHatcheryTag;
                 boundStartLoop = evidence.loop;
-                nextReadyLoop = evidence.loop + resolveQueenReadyDelayLoops( repProc );
+                nextReadyLoop = evidence.loop + resolveQueenReadyDelayLoops( repProc, evidence.energyCost );
                 addCount( attributedInjectCommandCountByHatchTag, boundHatchTag, 1 );
                 addDiagnostic( diagnosticsByHatchTag, boundHatchTag, "Queen " + queenState.queenTagText + " bound by singleton SpawnLarva at "
                         + evidence.timeLabel + "; next 25 energy reaches at " + repProc.formatLoopTime( nextReadyLoop ) + '.' );
+            } else if ( evidence.energyCost > 0 && boundHatchTag >= 0 ) {
+                final int spentReadyLoop = evidence.loop + resolveQueenReadyDelayLoops( repProc, evidence.energyCost );
+                addDiagnostic( diagnosticsByHatchTag, boundHatchTag, "Queen " + queenState.queenTagText + " spent " + evidence.energyCost
+                        + " energy on " + safeAbilityId( evidence.abilityId ) + " at " + evidence.timeLabel
+                        + "; inject proof reset conservatively to avoid false missed-inject windows. Earliest re-ready time would be "
+                        + repProc.formatLoopTime( spentReadyLoop ) + '.' );
+                boundHatchTag = -1;
+                boundStartLoop = -1;
+                nextReadyLoop = Integer.MAX_VALUE;
             } else if ( boundHatchTag >= 0 ) {
                 addDiagnostic( diagnosticsByHatchTag, boundHatchTag, "Queen " + queenState.queenTagText + " proof stopped at " + evidence.timeLabel
                         + " due to singleton-selected non-inject command " + safeAbilityId( evidence.abilityId ) + '.' );
@@ -876,11 +892,75 @@ public class LarvaReplayAnalyzer {
     /**
      * Resolves the replay-loop delay for a queen to regenerate 25 energy.
      */
-    private int resolveQueenReadyDelayLoops( final IRepProcessor repProc ) {
+    private int resolveQueenReadyDelayLoops( final IRepProcessor repProc, final double energyCost ) {
         final long gameSpeedRelative = repProc == null || repProc.getConverterGameSpeed() == null ? DEFAULT_GAME_SPEED_RELATIVE
                 : repProc.getConverterGameSpeed().getRelativeSpeed();
-        final double seconds = QUEEN_INJECT_ENERGY_COST / QUEEN_ENERGY_REGEN_PER_SECOND;
+        final double seconds = energyCost / QUEEN_ENERGY_REGEN_PER_SECOND;
         return (int) Math.ceil( seconds * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / gameSpeedRelative ) );
+    }
+
+    /**
+     * Resolves the energy cost of a confidently singleton-attributed queen command.
+     */
+    private int resolveQueenEnergyCost( final ICommand command ) {
+        if ( command == null )
+            return 0;
+
+        final String abilityId = normalizeCommandText( command.getAbilId() );
+        final String commandId = normalizeCommandText( command.getId() );
+        final String commandText = normalizeCommandText( command.getText() );
+
+        if ( containsAny( abilityId, commandId, commandText, "spawnlarva", "injectlarva" ) )
+            return (int) QUEEN_INJECT_ENERGY_COST;
+
+        if ( containsAny( abilityId, commandId, commandText, "transfusion", "transfuse" ) )
+            return (int) QUEEN_TRANSFUSE_ENERGY_COST;
+
+        if ( containsAny( abilityId, commandId, commandText, "creeptumor", "buildcreeptumor", "tumor" ) )
+            return (int) QUEEN_CREEP_TUMOR_ENERGY_COST;
+
+        return 0;
+    }
+
+    /**
+     * Lower-cases command text for ability matching.
+     */
+    private String normalizeCommandText( final String value ) {
+        return value == null ? "" : value.toLowerCase();
+    }
+
+    /**
+     * Tells if any haystack contains any of the needles.
+     */
+    private boolean containsAny( final String haystack1, final String haystack2, final String haystack3, final String needle1, final String needle2 ) {
+        return containsAny( haystack1, needle1, needle2 ) || containsAny( haystack2, needle1, needle2 ) || containsAny( haystack3, needle1, needle2 );
+    }
+
+    /**
+     * Tells if any haystack contains any of the three needles.
+     */
+    private boolean containsAny( final String haystack1, final String haystack2, final String haystack3, final String needle1, final String needle2,
+            final String needle3 ) {
+        return containsAny( haystack1, needle1, needle2, needle3 ) || containsAny( haystack2, needle1, needle2, needle3 )
+                || containsAny( haystack3, needle1, needle2, needle3 );
+    }
+
+    /**
+     * Tells if the haystack contains any of the needles.
+     */
+    private boolean containsAny( final String haystack, final String needle1, final String needle2 ) {
+        if ( haystack == null || haystack.length() == 0 )
+            return false;
+        return haystack.indexOf( needle1 ) >= 0 || haystack.indexOf( needle2 ) >= 0;
+    }
+
+    /**
+     * Tells if the haystack contains any of the three needles.
+     */
+    private boolean containsAny( final String haystack, final String needle1, final String needle2, final String needle3 ) {
+        if ( haystack == null || haystack.length() == 0 )
+            return false;
+        return haystack.indexOf( needle1 ) >= 0 || haystack.indexOf( needle2 ) >= 0 || haystack.indexOf( needle3 ) >= 0;
     }
 
     /**
@@ -1538,14 +1618,18 @@ public class LarvaReplayAnalyzer {
         /** Tells if this was a SpawnLarva command. */
         private final boolean inject;
 
+        /** Known energy cost of the command, or 0 if not a tracked queen energy spend. */
+        private final int energyCost;
+
         private QueenCommandEvidence( final int queenTag, final int loop, final String timeLabel, final int targetHatcheryTag,
-                final String abilityId, final boolean inject ) {
+                final String abilityId, final boolean inject, final int energyCost ) {
             this.queenTag = queenTag;
             this.loop = loop;
             this.timeLabel = timeLabel;
             this.targetHatcheryTag = targetHatcheryTag;
             this.abilityId = abilityId;
             this.inject = inject;
+            this.energyCost = energyCost;
         }
 
     }

@@ -135,6 +135,27 @@ The existing black ticks remain the separate `3+ larva` missed-potential-larva m
 
 This story is intentionally strict. The output should prefer trustworthy missed-inject opportunity windows over aggressive speculative detection.
 
+## Story 11.03A — Track queen non-inject energy spending conservatively
+
+**As a** user  
+**I want** missed inject detection to account for queen energy spent on other spells  
+**So that** a queen that used creep tumor or transfuse does not create false missed-inject windows.
+
+### Acceptance criteria
+
+- Singleton-attributed queen commands recognize at least these energy spends:
+  - `SpawnLarva` = 25 energy,
+  - `Creep Tumor` = 25 energy,
+  - `Transfuse` = 50 energy.
+- When one of those known queen energy-spend commands is seen, idle-inject readiness is delayed by the corresponding replay-loop regeneration time.
+- A known non-inject queen energy spend does **not** produce a false red idle-inject window immediately afterward.
+- If replay evidence cannot safely prove that the queen remained bound to the same hatchery after spending energy elsewhere, the implementation fails safe and suppresses later red windows until trustworthy proof resumes.
+- Diagnostics and code-facing notes explain that this conservative handling exists specifically to avoid false positives from tumor / transfuse energy usage.
+
+### Notes
+
+This story is intentionally conservative. It is better to miss a borderline red window than to report a missed inject for a queen that actually spent its energy on another legitimate spell.
+
 ## Story 11.04 — Accumulate missed-inject larva separately from existing larva-pressure loss
 
 **As a** user  
@@ -214,5 +235,6 @@ Epic 11 is done when:
 1. Story 11.01 — Prove the replay-native inject signal and build normalized inject windows
 2. Story 11.02 — Render a green inject-status lane below each hatchery rail
 3. Story 11.03 — Detect idle inject queens with a dedicated queen radius
-4. Story 11.04 — Accumulate missed-inject larva separately from existing larva-pressure loss
-5. Story 11.05 — Add validation coverage and Epic 11 handoff documentation
+4. Story 11.03A — Track queen non-inject energy spending conservatively
+5. Story 11.04 — Accumulate missed-inject larva separately from existing larva-pressure loss
+6. Story 11.05 — Add validation coverage and Epic 11 handoff documentation
