@@ -169,11 +169,15 @@ public class LarvaAnalysisReport {
         return idleInjectTimelineList;
     }
 
-    public int getInjectCommandCount() {
-        int injectCommandCount = 0;
+    public int getInjectEvidenceCount() {
+        int injectEvidenceCount = 0;
         for ( final HatcheryInjectTimeline injectTimeline : injectTimelineList )
-            injectCommandCount += injectTimeline.getRawInjectCommandCount();
-        return injectCommandCount;
+            injectEvidenceCount += injectTimeline.getRawInjectEvidenceCount();
+        return injectEvidenceCount;
+    }
+
+    public int getInjectCommandCount() {
+        return getInjectEvidenceCount();
     }
 
     public int getInjectWindowCount() {
@@ -482,7 +486,7 @@ public class LarvaAnalysisReport {
     private void appendInjectDiagnostics( final StringBuilder builder ) {
         builder.append( "Epic 11 Story 11.01 inject-active reconstruction:" ).append( '\n' );
         builder.append( "- Inject signal answer: " ).append( injectSignalConclusion == null ? "n/a" : injectSignalConclusion ).append( '\n' );
-        builder.append( "- Inject totals: commands=" ).append( getInjectCommandCount() )
+        builder.append( "- Inject totals: inferred evidence=" ).append( getInjectEvidenceCount() )
                 .append( ", kept windows=" ).append( getInjectWindowCount() )
                 .append( ", overlap discarded=" ).append( getInjectOverlapDiscardCount() )
                 .append( ", bounds discarded=" ).append( getInjectBoundsDiscardCount() )
@@ -502,8 +506,8 @@ public class LarvaAnalysisReport {
                     .append( injectTimeline.getHatcheryType() )
                     .append( " (tag " )
                     .append( injectTimeline.getHatcheryTagText() )
-                    .append( ") commands=" )
-                    .append( injectTimeline.getRawInjectCommandCount() )
+                    .append( ") evidence=" )
+                    .append( injectTimeline.getRawInjectEvidenceCount() )
                     .append( ", kept=" )
                     .append( injectTimeline.getKeptWindowCount() )
                     .append( ", overlapDiscarded=" )

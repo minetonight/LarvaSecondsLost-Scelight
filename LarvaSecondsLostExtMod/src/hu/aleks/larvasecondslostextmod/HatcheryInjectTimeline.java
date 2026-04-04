@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Normalized inject-window diagnostics for one hatchery identity.
+ * Normalized inferred inject-window diagnostics for one hatchery identity.
  */
 public class HatcheryInjectTimeline {
 
@@ -36,8 +36,8 @@ public class HatcheryInjectTimeline {
     /** Destroyed time label, or <code>null</code> if the hatchery survived. */
     private final String destroyedTimeLabel;
 
-    /** Number of raw SpawnLarva commands that targeted this hatchery. */
-    private final int rawInjectCommandCount;
+    /** Number of raw inferred inject evidence points detected for this hatchery. */
+    private final int rawInjectEvidenceCount;
 
     /** Number of previous windows discarded because a later inject overlapped them. */
     private final int overlapDiscardCount;
@@ -66,7 +66,7 @@ public class HatcheryInjectTimeline {
      * @param completionTimeLabel completion time label
      * @param destroyedLoop destroyed loop
      * @param destroyedTimeLabel destroyed time label
-     * @param rawInjectCommandCount number of raw SpawnLarva commands targeting this hatchery
+    * @param rawInjectEvidenceCount number of raw inferred inject evidence points detected for this hatchery
      * @param overlapDiscardCount number of overlap discards
      * @param boundsDiscardCount number of bounds discards
      * @param trimmedWindowCount number of kept windows trimmed to valid bounds
@@ -75,7 +75,7 @@ public class HatcheryInjectTimeline {
      */
     public HatcheryInjectTimeline( final int hatcheryTag, final String hatcheryTagText, final String playerName, final String hatcheryType,
             final boolean completed, final int completionLoop, final String completionTimeLabel, final int destroyedLoop,
-            final String destroyedTimeLabel, final int rawInjectCommandCount, final int overlapDiscardCount, final int boundsDiscardCount,
+            final String destroyedTimeLabel, final int rawInjectEvidenceCount, final int overlapDiscardCount, final int boundsDiscardCount,
             final int trimmedWindowCount, final List< HatcheryInjectWindow > injectWindowList, final List< String > diagnosticLineList ) {
         this.hatcheryTag = hatcheryTag;
         this.hatcheryTagText = hatcheryTagText;
@@ -86,7 +86,7 @@ public class HatcheryInjectTimeline {
         this.completionTimeLabel = completionTimeLabel;
         this.destroyedLoop = destroyedLoop;
         this.destroyedTimeLabel = destroyedTimeLabel;
-        this.rawInjectCommandCount = rawInjectCommandCount;
+        this.rawInjectEvidenceCount = rawInjectEvidenceCount;
         this.overlapDiscardCount = overlapDiscardCount;
         this.boundsDiscardCount = boundsDiscardCount;
         this.trimmedWindowCount = trimmedWindowCount;
@@ -130,8 +130,8 @@ public class HatcheryInjectTimeline {
         return destroyedTimeLabel;
     }
 
-    public int getRawInjectCommandCount() {
-        return rawInjectCommandCount;
+    public int getRawInjectEvidenceCount() {
+        return rawInjectEvidenceCount;
     }
 
     public int getOverlapDiscardCount() {
@@ -156,6 +156,10 @@ public class HatcheryInjectTimeline {
 
     public int getKeptWindowCount() {
         return injectWindowList.size();
+    }
+
+    public int getRawInjectCommandCount() {
+        return getRawInjectEvidenceCount();
     }
 
 }

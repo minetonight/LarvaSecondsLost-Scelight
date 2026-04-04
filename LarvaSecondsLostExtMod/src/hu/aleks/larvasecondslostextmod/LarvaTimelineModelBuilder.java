@@ -575,7 +575,8 @@ public class LarvaTimelineModelBuilder {
         final StringBuilder builder = new StringBuilder( "<html><b>Inject active</b><br/>" );
         builder.append( "Window: " ).append( safeText( injectWindow.getStartTimeLabel(), "n/a" ) ).append( " - " )
                 .append( safeText( injectWindow.getEndTimeLabel(), "n/a" ) ).append( "<br/>" );
-        builder.append( "Command: " ).append( safeText( injectWindow.getCommandTimeLabel(), "n/a" ) ).append( "<br/>" );
+        builder.append( "Inference: " ).append( safeText( injectWindow.getEvidenceKind(), "n/a" ) ).append( " at " )
+            .append( safeText( injectWindow.getEvidenceTimeLabel(), "n/a" ) ).append( "<br/>" );
         builder.append( buildSnapshotTooltipLines( "Inject start", safeText( injectWindow.getStartTimeLabel(), "n/a" ), snapshotSelection ) );
         builder.append( "</html>" );
         return builder.toString();

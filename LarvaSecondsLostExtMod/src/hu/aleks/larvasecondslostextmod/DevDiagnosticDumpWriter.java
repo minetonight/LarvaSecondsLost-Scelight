@@ -316,7 +316,7 @@ public class DevDiagnosticDumpWriter {
         builder.append( "- The supported module-owned Larva timeline now renders one qualifying hatchery row per player grouping with lifetime bounds." ).append( '\n' );
         builder.append( "- Missed-larva markers, per-hatchery totals, and per-player totals now come from the same normalized model." ).append( '\n' );
         builder.append( "- Hover tooltips now show minerals, gas, and supply context on window starts and missed-larva moments." ).append( '\n' );
-        builder.append( "- Inject-active windows are now reconstructed from SpawnLarva target commands because the public replay surface exposes no direct injected-building state." ).append( '\n' );
+        builder.append( "- Inject-active windows are now inferred from replay-derived bursts where 3 larva appear for one hatchery within 8 replay loops because the public replay surface exposes no direct injected-building state." ).append( '\n' );
         builder.append( "Still unresolved:" ).append( '\n' );
         builder.append( "- Rendering the new inject-active windows as a dedicated green lane on the supported module-owned Larva page." ).append( '\n' );
         builder.append( "- Queen-radius and 25-energy based idle-inject opportunity detection." ).append( '\n' );

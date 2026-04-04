@@ -229,7 +229,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         detailsArea.setText( "Choose a replay to see where Zerg hatcheries floated at 3+ larva.\n\n"
             + "What you are looking at:\n"
             + "- Red bars show how long a hatchery stayed at 3 or more larva.\n"
-            + "- A green lane shows injected status windows.\n"
+            + "- A green lane shows inject-active windows inferred from replay-derived triple-larva bursts.\n"
             + "- A dark red lane shows conservative missed inject potential windows backed by trustworthy queen evidence.\n"
             + "- Black ticks on the main rail mark every 11 seconds of missed potential larva while a hatchery stayed at 3 or more larva.\n"
             + "- Black ticks on the dark red lane mark every 29 seconds of accumulated missed inject potential, worth 3 potential larva per hatchery.\n"
@@ -296,7 +296,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         builder.append( buildHatcheryBreakdownSection( summary ) ).append( '\n' );
         builder.append( "Legend:\n" );
         builder.append( "- Red bars: time spent at 3+ larva.\n" );
-        builder.append( "- Green lanes: inject-active uptime reconstructed from SpawnLarva commands.\n" );
+        builder.append( "- Green lanes: inject-active uptime inferred from replay-derived bursts where 3 larva appear within 8 loops.\n" );
         builder.append( "- Dark red lanes: conservative missed inject potential windows backed by singleton-queen command attribution and the dedicated queen radius.\n" );
         builder.append( "- Black ticks on the main rail: every 11 seconds of missed potential larva while a hatchery stayed at 3+ larva.\n" );
         builder.append( "- Black ticks on the dark red lane: every 29 seconds of accumulated missed inject potential, worth 3 potential larva per hatchery.\n" );

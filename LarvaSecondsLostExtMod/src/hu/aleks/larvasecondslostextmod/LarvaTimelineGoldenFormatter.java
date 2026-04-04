@@ -164,7 +164,7 @@ public class LarvaTimelineGoldenFormatter {
         builder.append( "analysis.ambiguousLarva=" ).append( larvaAnalysisReport.getAmbiguousLarvaCount() ).append( '\n' );
         builder.append( "analysis.noEligibleLarva=" ).append( larvaAnalysisReport.getNoEligibleHatcheryLarvaCount() ).append( '\n' );
         builder.append( "analysis.injectSignal=" ).append( safe( larvaAnalysisReport.getInjectSignalConclusion() ) ).append( '\n' );
-        builder.append( "analysis.injectCommands=" ).append( larvaAnalysisReport.getInjectCommandCount() ).append( '\n' );
+        builder.append( "analysis.injectEvidence=" ).append( larvaAnalysisReport.getInjectEvidenceCount() ).append( '\n' );
         builder.append( "analysis.injectWindows=" ).append( larvaAnalysisReport.getInjectWindowCount() ).append( '\n' );
         builder.append( "analysis.injectOverlapDiscarded=" ).append( larvaAnalysisReport.getInjectOverlapDiscardCount() ).append( '\n' );
         builder.append( "analysis.injectBoundsDiscarded=" ).append( larvaAnalysisReport.getInjectBoundsDiscardCount() ).append( '\n' );
@@ -192,7 +192,7 @@ public class LarvaTimelineGoldenFormatter {
             final HatcheryInjectTimeline injectTimeline = injectTimelineList.get( injectIndex );
             builder.append( "inject[" ).append( injectIndex ).append( "].player=" ).append( safe( injectTimeline.getPlayerName() ) ).append( '\n' );
             builder.append( "inject[" ).append( injectIndex ).append( "].tag=" ).append( safe( injectTimeline.getHatcheryTagText() ) ).append( '\n' );
-            builder.append( "inject[" ).append( injectIndex ).append( "].commands=" ).append( injectTimeline.getRawInjectCommandCount() ).append( '\n' );
+            builder.append( "inject[" ).append( injectIndex ).append( "].evidence=" ).append( injectTimeline.getRawInjectEvidenceCount() ).append( '\n' );
             builder.append( "inject[" ).append( injectIndex ).append( "].keptWindows=" ).append( injectTimeline.getKeptWindowCount() ).append( '\n' );
             builder.append( "inject[" ).append( injectIndex ).append( "].overlapDiscarded=" ).append( injectTimeline.getOverlapDiscardCount() ).append( '\n' );
             builder.append( "inject[" ).append( injectIndex ).append( "].boundsDiscarded=" ).append( injectTimeline.getBoundsDiscardCount() ).append( '\n' );
@@ -200,8 +200,8 @@ public class LarvaTimelineGoldenFormatter {
             builder.append( "inject[" ).append( injectIndex ).append( "].windowCount=" ).append( injectTimeline.getInjectWindowList().size() ).append( '\n' );
             for ( int windowIndex = 0; windowIndex < injectTimeline.getInjectWindowList().size(); windowIndex++ ) {
                 final HatcheryInjectWindow injectWindow = injectTimeline.getInjectWindowList().get( windowIndex );
-                builder.append( "inject[" ).append( injectIndex ).append( "].window[" ).append( windowIndex ).append( "].command=" )
-                        .append( safe( injectWindow.getCommandTimeLabel() ) ).append( '\n' );
+                builder.append( "inject[" ).append( injectIndex ).append( "].window[" ).append( windowIndex ).append( "].evidence=" )
+                    .append( safe( injectWindow.getEvidenceTimeLabel() ) ).append( '\n' );
                 builder.append( "inject[" ).append( injectIndex ).append( "].window[" ).append( windowIndex ).append( "].range=" )
                         .append( safe( injectWindow.getStartTimeLabel() ) ).append( '-' ).append( safe( injectWindow.getEndTimeLabel() ) ).append( '\n' );
                 builder.append( "inject[" ).append( injectIndex ).append( "].window[" ).append( windowIndex ).append( "].trimmed=" )

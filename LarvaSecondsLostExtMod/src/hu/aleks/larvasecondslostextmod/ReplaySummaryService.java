@@ -90,7 +90,7 @@ public class ReplaySummaryService {
             + ", gameEvents=" + larvaAnalysisReport.getGameEventCount() + ", hatcheries=" + larvaAnalysisReport.getTrackedHatcheryCount() + ", larvaBirths="
             + larvaAnalysisReport.getLarvaBirthCount() + ", assigned=" + larvaAnalysisReport.getAssignedLarvaCount() + ", unassigned="
             + larvaAnalysisReport.getUnassignedLarvaCount() + ", ambiguous=" + larvaAnalysisReport.getAmbiguousLarvaCount() + ", noEligible="
-            + larvaAnalysisReport.getNoEligibleHatcheryLarvaCount() + ", injectCommands=" + larvaAnalysisReport.getInjectCommandCount()
+            + larvaAnalysisReport.getNoEligibleHatcheryLarvaCount() + ", injectEvidence=" + larvaAnalysisReport.getInjectEvidenceCount()
             + ", injectWindows=" + larvaAnalysisReport.getInjectWindowCount() + ", injectOverlapDiscarded="
             + larvaAnalysisReport.getInjectOverlapDiscardCount() + ", fullReplayParseUsed=" + larvaAnalysisReport.isFullReplayParseUsed() );
         logSpawnLarvaCommands( repProc );

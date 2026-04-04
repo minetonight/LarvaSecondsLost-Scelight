@@ -5,11 +5,14 @@ package hu.aleks.larvasecondslostextmod;
  */
 public class HatcheryInjectWindow {
 
-    /** Replay loop of the originating SpawnLarva command. */
-    private final int commandLoop;
+     /** Replay loop of the evidence point that proves the inject completion. */
+     private final int evidenceLoop;
 
-    /** Formatted time of the originating SpawnLarva command. */
-    private final String commandTimeLabel;
+     /** Formatted time of the evidence point that proves the inject completion. */
+     private final String evidenceTimeLabel;
+
+     /** Short label describing the evidence type used to infer the inject. */
+     private final String evidenceKind;
 
     /** Effective window start loop after bounds normalization. */
     private final int startLoop;
@@ -41,8 +44,9 @@ public class HatcheryInjectWindow {
     /**
      * Creates a new inject window.
      *
-     * @param commandLoop originating SpawnLarva command loop
-     * @param commandTimeLabel formatted command time
+    * @param evidenceLoop evidence loop that proves the inject completion
+    * @param evidenceTimeLabel formatted evidence time
+    * @param evidenceKind short label describing the evidence type used to infer the inject
      * @param startLoop effective window start loop
      * @param endLoop effective window end loop
      * @param startMs effective window start in milliseconds
@@ -53,11 +57,12 @@ public class HatcheryInjectWindow {
      * @param trimmedAtEnd tells if the end was trimmed
      * @param diagnosticNote explanation of why the window exists and how it was normalized
      */
-    public HatcheryInjectWindow( final int commandLoop, final String commandTimeLabel, final int startLoop, final int endLoop,
+    public HatcheryInjectWindow( final int evidenceLoop, final String evidenceTimeLabel, final String evidenceKind, final int startLoop, final int endLoop,
             final long startMs, final long endMs, final String startTimeLabel, final String endTimeLabel,
             final boolean trimmedAtStart, final boolean trimmedAtEnd, final String diagnosticNote ) {
-        this.commandLoop = commandLoop;
-        this.commandTimeLabel = commandTimeLabel;
+        this.evidenceLoop = evidenceLoop;
+        this.evidenceTimeLabel = evidenceTimeLabel;
+        this.evidenceKind = evidenceKind;
         this.startLoop = startLoop;
         this.endLoop = endLoop;
         this.startMs = startMs;
@@ -69,12 +74,16 @@ public class HatcheryInjectWindow {
         this.diagnosticNote = diagnosticNote;
     }
 
-    public int getCommandLoop() {
-        return commandLoop;
+    public int getEvidenceLoop() {
+        return evidenceLoop;
     }
 
-    public String getCommandTimeLabel() {
-        return commandTimeLabel;
+    public String getEvidenceTimeLabel() {
+        return evidenceTimeLabel;
+    }
+
+    public String getEvidenceKind() {
+        return evidenceKind;
     }
 
     public int getStartLoop() {
@@ -111,6 +120,14 @@ public class HatcheryInjectWindow {
 
     public String getDiagnosticNote() {
         return diagnosticNote;
+    }
+
+    public int getCommandLoop() {
+        return getEvidenceLoop();
+    }
+
+    public String getCommandTimeLabel() {
+        return getEvidenceTimeLabel();
     }
 
 }

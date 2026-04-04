@@ -3,8 +3,8 @@
     <name>Larva Seconds Lost</name>
     <version major="1" minor="2" revision="0" v="1"/>
     <buildInfo v="1">
-        <buildNumber>104</buildNumber>
-        <date>2026-04-04T09:16:39.477+03:00</date>
+        <buildNumber>107</buildNumber>
+        <date>2026-04-04T12:21:05.588+03:00</date>
     </buildInfo>
     <apiVersion major="1" minor="5" revision="2" v="1"/>
     <folder>larva-seconds-lost</folder>
