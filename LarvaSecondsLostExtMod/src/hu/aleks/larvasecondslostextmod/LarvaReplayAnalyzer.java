@@ -2,7 +2,6 @@ package hu.aleks.larvasecondslostextmod;
 
 import hu.scelightapi.service.IFactory;
 import hu.scelightapi.sc2.balancedata.IBdUtil;
-import hu.scelightapi.sc2.balancedata.model.IAbility;
 import hu.scelightapi.sc2.balancedata.model.ICommand;
 import hu.scelightapi.sc2.balancedata.model.IUnit;
 import hu.scelightapi.sc2.rep.model.IEvent;
@@ -61,8 +60,8 @@ public class LarvaReplayAnalyzer {
     /** Conservative SC2 queen max energy cap used for estimates. */
     private static final double QUEEN_MAX_ENERGY = 200.0d;
 
-    /** Conservative Story 11.03 public replay-surface conclusion. */
-    private static final String IDLE_INJECT_SIGNAL_CONCLUSION = "Idle-inject windows are derived conservatively from singleton-selected queen command attribution plus a dedicated queen radius. Known queen energy spends such as SpawnLarva, creep tumor, and transfuse delay readiness, and periods without trustworthy queen command or unique nearby-queen proof are suppressed instead of guessed.";
+    /** Hybrid Story 11.03 public replay-surface conclusion. */
+    private static final String IDLE_INJECT_SIGNAL_CONCLUSION = "Idle-inject windows prefer singleton-selected queen command attribution, then fall back to unique nearby-queen proof. Known queen energy spends delay readiness when the hatchery proof stays intact, while ambiguous periods are still suppressed instead of guessed.";
 
     /** Replay loops per second in SC2 timelines. */
     private static final int REPLAY_LOOPS_PER_SECOND = 16;
@@ -532,7 +531,7 @@ public class LarvaReplayAnalyzer {
         final ICommand command = cmdEvent.getCommand();
         final String abilityId = command == null ? null : command.getAbilId();
         final Integer targetHatcheryTag = cmdEvent.getTargetUnit() == null ? null : cmdEvent.getTargetUnit().getTag();
-        final boolean inject = IAbility.ID_SPAWN_LARVA.equals( abilityId ) && targetHatcheryTag != null;
+        final boolean inject = targetHatcheryTag != null && isQueenInjectCommand( command );
         final int energyCost = resolveQueenEnergyCost( command );
 
         List< QueenCommandEvidence > evidenceList = evidenceByQueenTag.get( queenTag );
@@ -681,12 +680,21 @@ public class LarvaReplayAnalyzer {
                 addCount( attributedInjectCommandCountByHatchTag, boundHatchTag, 1 );
                 addDiagnostic( diagnosticsByHatchTag, boundHatchTag, "Queen " + queenState.queenTagText + " bound by singleton SpawnLarva at "
                         + evidence.timeLabel + "; next 25 energy reaches at " + repProc.formatLoopTime( nextReadyLoop ) + '.' );
+            } else if ( evidence.energyCost > 0 && boundHatchTag >= 0 && isKnownNonInjectQueenEnergySpend( evidence ) ) {
+                final int spentReadyLoop = evidence.loop + resolveQueenReadyDelayLoops( repProc, evidence.energyCost );
+                addDiagnostic( diagnosticsByHatchTag, boundHatchTag, "Queen " + queenState.queenTagText + " spent " + evidence.energyCost
+                        + " energy on " + safeAbilityId( evidence.abilityId ) + " at " + evidence.timeLabel
+                        + "; hybrid proof kept the same hatchery binding but delayed readiness until "
+                        + repProc.formatLoopTime( spentReadyLoop ) + '.' );
+                boundStartLoop = evidence.loop;
+                nextReadyLoop = Math.max( nextReadyLoop, spentReadyLoop );
             } else if ( evidence.energyCost > 0 && boundHatchTag >= 0 ) {
                 final int spentReadyLoop = evidence.loop + resolveQueenReadyDelayLoops( repProc, evidence.energyCost );
                 addDiagnostic( diagnosticsByHatchTag, boundHatchTag, "Queen " + queenState.queenTagText + " spent " + evidence.energyCost
                         + " energy on " + safeAbilityId( evidence.abilityId ) + " at " + evidence.timeLabel
-                        + "; inject proof reset conservatively to avoid false missed-inject windows. Earliest re-ready time would be "
+                        + "; the spend looked inject-like but lacked a trustworthy hatchery target, so proof was reset conservatively. Earliest re-ready time would be "
                         + repProc.formatLoopTime( spentReadyLoop ) + '.' );
+                addCount( uncertaintyDiscardCountByHatchTag, boundHatchTag, 1 );
                 boundHatchTag = -1;
                 boundStartLoop = -1;
                 nextReadyLoop = Integer.MAX_VALUE;
@@ -749,7 +757,7 @@ public class LarvaReplayAnalyzer {
         final HatcheryState hatcheryState = nearbyHatcheryList.get( 0 );
         final int intervalEndLoop = queenState.destroyedLoop >= 0 ? queenState.destroyedLoop : replayEndLoop;
         addDiagnostic( diagnosticsByHatchTag, hatcheryState.hatcheryTag, "Queen " + queenState.queenTagText + " completed at "
-                + queenState.completionTimeLabel + " within radius " + formatRadius() + " of this hatchery; conservative initial eligibility seeded." );
+            + queenState.completionTimeLabel + " within radius " + formatRadius() + " of this hatchery; hybrid nearby-queen eligibility seeded." );
         addQueenIdleCandidatesForBoundInterval( repProc, queenState, hatcheryState.hatcheryTag, queenState.completionLoop, intervalEndLoop,
                 queenState.completionLoop, hatcheryByTag, injectTimelineByHatchTag, candidateWindowsByHatchTag, diagnosticsByHatchTag );
     }
@@ -775,6 +783,7 @@ public class LarvaReplayAnalyzer {
 
         final HatcheryInjectTimeline injectTimeline = injectTimelineByHatchTag.get( Integer.valueOf( hatcheryTag ) );
         int cursor = effectiveStartLoop;
+        int currentReadyLoop = nextReadyLoop;
         if ( injectTimeline != null ) {
             for ( final HatcheryInjectWindow injectWindow : injectTimeline.getInjectWindowList() ) {
                 if ( injectWindow == null || injectWindow.getEndLoop() <= cursor )
@@ -783,14 +792,17 @@ public class LarvaReplayAnalyzer {
                     break;
 
                 if ( injectWindow.getStartLoop() > cursor )
-                        addCandidateIdleWindow( repProc, hatcheryTag, cursor, Math.min( effectiveEndLoop, injectWindow.getStartLoop() ), queenState, nextReadyLoop,
+                    addCandidateIdleWindow( repProc, hatcheryTag, Math.max( cursor, currentReadyLoop ),
+                            Math.min( effectiveEndLoop, injectWindow.getStartLoop() ), queenState, currentReadyLoop,
                             candidateWindowsByHatchTag, diagnosticsByHatchTag );
+                currentReadyLoop = Math.max( currentReadyLoop, injectWindow.getStartLoop() + resolveQueenReadyDelayLoops( repProc, QUEEN_INJECT_ENERGY_COST ) );
                 cursor = Math.max( cursor, injectWindow.getEndLoop() );
             }
         }
 
         if ( cursor < effectiveEndLoop )
-                    addCandidateIdleWindow( repProc, hatcheryTag, cursor, effectiveEndLoop, queenState, nextReadyLoop, candidateWindowsByHatchTag, diagnosticsByHatchTag );
+            addCandidateIdleWindow( repProc, hatcheryTag, Math.max( cursor, currentReadyLoop ), effectiveEndLoop, queenState, currentReadyLoop,
+                    candidateWindowsByHatchTag, diagnosticsByHatchTag );
     }
 
     /**
@@ -809,10 +821,10 @@ public class LarvaReplayAnalyzer {
         }
 
         final String queenSummary = queenState.queenTagText;
-        final String diagnosticNote = "Qualified by queen " + queenState.queenTagText + " with conservative singleton-command attribution.";
-    candidateWindowList.add( new CandidateIdleWindow( startLoop, endLoop,
-        estimateQueenEnergyAtLoop( repProc, nextReadyLoop, startLoop ), estimateQueenEnergyAtLoop( repProc, nextReadyLoop, endLoop ),
-        queenSummary, diagnosticNote ) );
+        final String diagnosticNote = "Qualified by queen " + queenState.queenTagText + " with hybrid queen-proof attribution.";
+        candidateWindowList.add( new CandidateIdleWindow( startLoop, endLoop,
+            estimateQueenEnergyAtLoop( repProc, nextReadyLoop, startLoop ), estimateQueenEnergyAtLoop( repProc, nextReadyLoop, endLoop ),
+            queenSummary, diagnosticNote ) );
         addDiagnostic( diagnosticsByHatchTag, hatcheryTag, "Kept idle-inject candidate " + repProc.formatLoopTime( startLoop ) + '-'
                 + repProc.formatLoopTime( endLoop ) + " from queen " + queenState.queenTagText + '.' );
     }
@@ -940,6 +952,27 @@ public class LarvaReplayAnalyzer {
                 : repProc.getConverterGameSpeed().getRelativeSpeed();
         final double seconds = energyCost / QUEEN_ENERGY_REGEN_PER_SECOND;
         return (int) Math.ceil( seconds * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / gameSpeedRelative ) );
+    }
+
+    /**
+     * Tells if the command is a queen inject ability.
+     */
+    private boolean isQueenInjectCommand( final ICommand command ) {
+        if ( command == null )
+            return false;
+
+        final String abilityId = normalizeCommandText( command.getAbilId() );
+        final String commandId = normalizeCommandText( command.getId() );
+        final String commandText = normalizeCommandText( command.getText() );
+        return containsAny( abilityId, commandId, commandText, "spawnlarva", "injectlarva", "effectinjectlarva" );
+    }
+
+    /**
+     * Tells if the evidence is a known non-inject queen energy spend that should keep the hatchery binding.
+     */
+    private boolean isKnownNonInjectQueenEnergySpend( final QueenCommandEvidence evidence ) {
+        return evidence != null && evidence.energyCost > 0 && !evidence.inject && !containsAny( normalizeCommandText( evidence.abilityId ),
+                "spawnlarva", "injectlarva", "effectinjectlarva" );
     }
 
     /**
