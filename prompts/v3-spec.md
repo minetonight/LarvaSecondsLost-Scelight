@@ -6,7 +6,14 @@
  - count potential larva missed by missed injects via accumulation windows. the inject duration is 29s and the larva for each such window is 3 per hatchery. keep that in a separate variable.
  - show those missed inject larva in separate lines with green color, after the potential larva missed. 
 
-TODO: trace why my injects are missed from the analysis
+## Why my injects are missed from the analysis
+see (knowhow.md)[knowhow/knowhow.md]
+
+### workaround 
+ - dont track inject events at all
+ - track moments where 3 larva spawn to a hatchery within 8 game loops
+ - then retroactively create a 29 second window in the injection charts.
+ - the current implementation for red missed inject windows are correct, keep them.
 
 2) stats per game phase
  - larva lost per phase
