@@ -54,8 +54,8 @@ public class LarvaReplayAnalyzer {
     /** Queen transfuse energy cost. */
     private static final double QUEEN_TRANSFUSE_ENERGY_COST = 50.0d;
 
-    /** Queen energy regeneration in visible gameplay seconds. */
-    private static final double QUEEN_ENERGY_REGEN_PER_SECOND = 0.5625d;
+    /** Real-time seconds required for a queen to regenerate 25 energy. */
+    private static final double QUEEN_RESTORE_25_ENERGY_SECONDS = 30.0d;
 
     /** Conservative SC2 queen max energy cap used for estimates. */
     private static final double QUEEN_MAX_ENERGY = 200.0d;
@@ -925,10 +925,12 @@ public class LarvaReplayAnalyzer {
         if ( targetLoop <= nextReadyLoop )
             return QUEEN_INJECT_ENERGY_COST;
 
-        final long gameSpeedRelative = repProc == null || repProc.getConverterGameSpeed() == null ? DEFAULT_GAME_SPEED_RELATIVE
-                : repProc.getConverterGameSpeed().getRelativeSpeed();
-        final double gameplaySeconds = ( targetLoop - nextReadyLoop ) / ( REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / gameSpeedRelative ) );
-        return Math.min( QUEEN_MAX_ENERGY, QUEEN_INJECT_ENERGY_COST + gameplaySeconds * QUEEN_ENERGY_REGEN_PER_SECOND );
+        final int loopsForTwentyFiveEnergy = resolveQueenReadyDelayLoops( repProc, QUEEN_INJECT_ENERGY_COST );
+        if ( loopsForTwentyFiveEnergy <= 0 )
+            return QUEEN_INJECT_ENERGY_COST;
+
+        final double energyPerLoop = QUEEN_INJECT_ENERGY_COST / loopsForTwentyFiveEnergy;
+        return Math.min( QUEEN_MAX_ENERGY, QUEEN_INJECT_ENERGY_COST + ( targetLoop - nextReadyLoop ) * energyPerLoop );
     }
 
     /**
@@ -945,12 +947,12 @@ public class LarvaReplayAnalyzer {
     }
 
     /**
-     * Resolves the replay-loop delay for a queen to regenerate 25 energy.
+     * Resolves the replay-loop delay for a queen to regenerate energy using the 25-energy-per-30-seconds heuristic.
      */
     private int resolveQueenReadyDelayLoops( final IRepProcessor repProc, final double energyCost ) {
         final long gameSpeedRelative = repProc == null || repProc.getConverterGameSpeed() == null ? DEFAULT_GAME_SPEED_RELATIVE
                 : repProc.getConverterGameSpeed().getRelativeSpeed();
-        final double seconds = energyCost / QUEEN_ENERGY_REGEN_PER_SECOND;
+        final double seconds = QUEEN_RESTORE_25_ENERGY_SECONDS * ( energyCost / QUEEN_INJECT_ENERGY_COST );
         return (int) Math.ceil( seconds * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / gameSpeedRelative ) );
     }
 
