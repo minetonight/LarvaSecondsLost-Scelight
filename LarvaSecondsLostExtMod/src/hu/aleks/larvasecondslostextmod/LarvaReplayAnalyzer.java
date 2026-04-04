@@ -422,7 +422,14 @@ public class LarvaReplayAnalyzer {
             @Override
             public int compare( final HatcheryLarvaTimeline left, final HatcheryLarvaTimeline right ) {
                 final int playerCompare = compareIgnoreCaseSafe( left.getPlayerName(), right.getPlayerName() );
-                return playerCompare != 0 ? playerCompare : compareIgnoreCaseSafe( left.getHatcheryTagText(), right.getHatcheryTagText() );
+                if ( playerCompare != 0 )
+                    return playerCompare;
+
+                final int completionCompare = compareCompletionLoops( left.getCompletionLoop(), right.getCompletionLoop() );
+                if ( completionCompare != 0 )
+                    return completionCompare;
+
+                return compareIgnoreCaseSafe( left.getHatcheryTagText(), right.getHatcheryTagText() );
             }
         } );
 
@@ -649,7 +656,17 @@ public class LarvaReplayAnalyzer {
             @Override
             public int compare( final HatcheryIdleInjectTimeline left, final HatcheryIdleInjectTimeline right ) {
                 final int playerCompare = compareIgnoreCaseSafe( left.getPlayerName(), right.getPlayerName() );
-                return playerCompare != 0 ? playerCompare : compareIgnoreCaseSafe( left.getHatcheryTagText(), right.getHatcheryTagText() );
+                if ( playerCompare != 0 )
+                    return playerCompare;
+
+                final HatcheryState leftState = hatcheryByTag.get( Integer.valueOf( left.getHatcheryTag() ) );
+                final HatcheryState rightState = hatcheryByTag.get( Integer.valueOf( right.getHatcheryTag() ) );
+                final int completionCompare = compareCompletionLoops( leftState == null ? -1 : leftState.completionLoop,
+                        rightState == null ? -1 : rightState.completionLoop );
+                if ( completionCompare != 0 )
+                    return completionCompare;
+
+                return compareIgnoreCaseSafe( left.getHatcheryTagText(), right.getHatcheryTagText() );
             }
         } );
         return idleTimelineList;
@@ -1240,7 +1257,14 @@ public class LarvaReplayAnalyzer {
             @Override
             public int compare( final HatcheryState left, final HatcheryState right ) {
                 final int playerCompare = compareIgnoreCaseSafe( left.playerName, right.playerName );
-                return playerCompare != 0 ? playerCompare : compareIgnoreCaseSafe( left.hatcheryTagText, right.hatcheryTagText );
+                if ( playerCompare != 0 )
+                    return playerCompare;
+
+                final int completionCompare = compareCompletionLoops( left.completionLoop, right.completionLoop );
+                if ( completionCompare != 0 )
+                    return completionCompare;
+
+                return compareIgnoreCaseSafe( left.hatcheryTagText, right.hatcheryTagText );
             }
         } );
 
@@ -1612,6 +1636,19 @@ public class LarvaReplayAnalyzer {
         final String safeLeft = left == null ? "" : left;
         final String safeRight = right == null ? "" : right;
         return safeLeft.compareToIgnoreCase( safeRight );
+    }
+
+    /**
+     * Sorts hatcheries by completion loop, placing unknown completions last.
+     */
+    private int compareCompletionLoops( final int leftCompletionLoop, final int rightCompletionLoop ) {
+        if ( leftCompletionLoop < 0 && rightCompletionLoop < 0 )
+            return 0;
+        if ( leftCompletionLoop < 0 )
+            return 1;
+        if ( rightCompletionLoop < 0 )
+            return -1;
+        return leftCompletionLoop < rightCompletionLoop ? -1 : leftCompletionLoop == rightCompletionLoop ? 0 : 1;
     }
 
     /**
