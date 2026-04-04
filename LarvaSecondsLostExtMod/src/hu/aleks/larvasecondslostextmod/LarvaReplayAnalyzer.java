@@ -60,8 +60,8 @@ public class LarvaReplayAnalyzer {
     /** Conservative SC2 queen max energy cap used for estimates. */
     private static final double QUEEN_MAX_ENERGY = 200.0d;
 
-    /** Hybrid Story 11.03 public replay-surface conclusion. */
-    private static final String IDLE_INJECT_SIGNAL_CONCLUSION = "Idle-inject windows prefer singleton-selected queen command attribution, then fall back to unique nearby-queen proof. Known queen energy spends delay readiness when the hatchery proof stays intact, while ambiguous periods are still suppressed instead of guessed.";
+    /** Hardened Story 11.03 public replay-surface conclusion. */
+    private static final String IDLE_INJECT_SIGNAL_CONCLUSION = "Idle-inject windows prefer singleton-selected queen command attribution, then assign each queen's available 25-energy chunks across nearby hatcheries using observed queen proximity. Known queen energy spends delay readiness, and nearby ambiguity is resolved into deterministic hatchery assignments so full inject opportunity cost can be displayed.";
 
     /** Replay loops per second in SC2 timelines. */
     private static final int REPLAY_LOOPS_PER_SECOND = 16;
@@ -621,10 +621,12 @@ public class LarvaReplayAnalyzer {
                 buildQueenIdleCandidatesFromCommands( repProc, queenState, evidenceList, hatcheryByTag, injectTimelineByHatchTag, replayEndLoop,
                         candidateWindowsByHatchTag, diagnosticsByHatchTag, attributedQueenCommandCountByHatchTag,
                         attributedInjectCommandCountByHatchTag, uncertaintyDiscardCountByHatchTag );
-            } else {
-                trySeedInitialIdleCandidateFromCompletion( repProc, queenState, hatcheryByTag, injectTimelineByHatchTag, replayEndLoop,
-                        candidateWindowsByHatchTag, diagnosticsByHatchTag, uncertaintyDiscardCountByHatchTag );
             }
+
+                trySeedInitialIdleCandidateFromCompletion( repProc, queenState, hatcheryByTag, injectTimelineByHatchTag, replayEndLoop,
+                    candidateWindowsByHatchTag, diagnosticsByHatchTag, uncertaintyDiscardCountByHatchTag );
+                trySeedObservedIdleCandidateFromNearbyQueen( repProc, queenState, hatcheryByTag, injectTimelineByHatchTag, replayEndLoop,
+                    candidateWindowsByHatchTag, diagnosticsByHatchTag, uncertaintyDiscardCountByHatchTag );
         }
 
         final List< HatcheryIdleInjectTimeline > idleTimelineList = new ArrayList<>();
@@ -746,11 +748,9 @@ public class LarvaReplayAnalyzer {
             return;
 
         if ( nearbyHatcheryList.size() > 1 ) {
-            for ( final HatcheryState hatcheryState : nearbyHatcheryList ) {
-                addDiagnostic( diagnosticsByHatchTag, hatcheryState.hatcheryTag, "Queen " + queenState.queenTagText + " completed at "
-                        + queenState.completionTimeLabel + " within the dedicated radius of multiple hatcheries; initial idle proof suppressed." );
-                addCount( uncertaintyDiscardCountByHatchTag, hatcheryState.hatcheryTag, 1 );
-            }
+            allocateNearbyQueenInjectOpportunity( repProc, queenState, nearbyHatcheryList, injectTimelineByHatchTag, queenState.completionLoop,
+                    queenState.completionLoop, replayEndLoop, hatcheryByTag, candidateWindowsByHatchTag, diagnosticsByHatchTag,
+                    "completed at " + queenState.completionTimeLabel + " within the dedicated radius of multiple hatcheries; allocated deterministic nearby inject opportunities" );
             return;
         }
 
@@ -760,6 +760,88 @@ public class LarvaReplayAnalyzer {
             + queenState.completionTimeLabel + " within radius " + formatRadius() + " of this hatchery; hybrid nearby-queen eligibility seeded." );
         addQueenIdleCandidatesForBoundInterval( repProc, queenState, hatcheryState.hatcheryTag, queenState.completionLoop, intervalEndLoop,
                 queenState.completionLoop, hatcheryByTag, injectTimelineByHatchTag, candidateWindowsByHatchTag, diagnosticsByHatchTag );
+    }
+
+    /**
+     * Tries to seed a hardened idle candidate from the latest observed unique nearby queen position.
+     */
+    private void trySeedObservedIdleCandidateFromNearbyQueen( final IRepProcessor repProc, final QueenState queenState,
+            final Map< Integer, HatcheryState > hatcheryByTag, final Map< Integer, HatcheryInjectTimeline > injectTimelineByHatchTag,
+            final int replayEndLoop, final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag,
+            final Map< Integer, List< String > > diagnosticsByHatchTag,
+            final Map< Integer, Integer > uncertaintyDiscardCountByHatchTag ) {
+        if ( queenState.lastKnownPositionLoop < 0 || queenState.x == null || queenState.y == null || queenState.playerId == null )
+            return;
+
+        final List< HatcheryState > nearbyHatcheryList = new ArrayList<>();
+        for ( final HatcheryState hatcheryState : hatcheryByTag.values() ) {
+            if ( hatcheryState == null || !hatcheryState.completed || !hatcheryState.alive || hatcheryState.playerId == null
+                    || !hatcheryState.playerId.equals( queenState.playerId ) || hatcheryState.completionLoop < 0
+                    || hatcheryState.completionLoop > queenState.lastKnownPositionLoop || hatcheryState.x == null || hatcheryState.y == null )
+                continue;
+
+            final double distance = distance( queenState.x.intValue(), queenState.y.intValue(), hatcheryState.x.intValue(), hatcheryState.y.intValue() );
+            if ( distance <= IDLE_INJECT_RADIUS )
+                nearbyHatcheryList.add( hatcheryState );
+        }
+
+        if ( nearbyHatcheryList.isEmpty() )
+            return;
+
+        if ( nearbyHatcheryList.size() > 1 ) {
+            final int readyLoop = resolveObservedNearbyQueenReadyLoop( repProc, queenState,
+                injectTimelineByHatchTag, queenState.lastKnownPositionLoop );
+            allocateNearbyQueenInjectOpportunity( repProc, queenState, nearbyHatcheryList, injectTimelineByHatchTag,
+                queenState.lastKnownPositionLoop, readyLoop, replayEndLoop, hatcheryByTag, candidateWindowsByHatchTag,
+                diagnosticsByHatchTag, "was observed at " + repProc.formatLoopTime( queenState.lastKnownPositionLoop )
+                + " within the dedicated radius of multiple hatcheries; allocated deterministic nearby inject opportunities" );
+            return;
+        }
+
+        final HatcheryState hatcheryState = nearbyHatcheryList.get( 0 );
+        final int intervalEndLoop = queenState.destroyedLoop >= 0 ? queenState.destroyedLoop : replayEndLoop;
+        final int readyLoop = resolveObservedNearbyQueenReadyLoop( repProc, queenState, injectTimelineByHatchTag, queenState.lastKnownPositionLoop );
+        addDiagnostic( diagnosticsByHatchTag, hatcheryState.hatcheryTag, "Queen " + queenState.queenTagText + " was observed at "
+                + repProc.formatLoopTime( queenState.lastKnownPositionLoop ) + " within radius " + formatRadius()
+                + " of this hatchery; hardened nearby-queen proof seeded from the latest observed position." );
+        addQueenIdleCandidatesForBoundInterval( repProc, queenState, hatcheryState.hatcheryTag, queenState.lastKnownPositionLoop, intervalEndLoop,
+                readyLoop, hatcheryByTag, injectTimelineByHatchTag, candidateWindowsByHatchTag, diagnosticsByHatchTag );
+    }
+
+    /**
+     * Allocates one queen's 25-energy inject opportunities across nearby hatcheries deterministically.
+     */
+    private void allocateNearbyQueenInjectOpportunity( final IRepProcessor repProc, final QueenState queenState,
+            final List< HatcheryState > nearbyHatcheryList, final Map< Integer, HatcheryInjectTimeline > injectTimelineByHatchTag,
+            final int intervalStartLoop, final int firstReadyLoop, final int replayEndLoop, final Map< Integer, HatcheryState > hatcheryByTag,
+            final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag,
+            final Map< Integer, List< String > > diagnosticsByHatchTag, final String diagnosticReason ) {
+        if ( nearbyHatcheryList == null || nearbyHatcheryList.isEmpty() )
+            return;
+
+        final List< HatcheryState > sortedNearbyHatcheryList = new ArrayList<>( nearbyHatcheryList );
+        Collections.sort( sortedNearbyHatcheryList, new Comparator< HatcheryState >() {
+            @Override
+            public int compare( final HatcheryState left, final HatcheryState right ) {
+                return left.hatcheryTag < right.hatcheryTag ? -1 : left.hatcheryTag == right.hatcheryTag ? 0 : 1;
+            }
+        } );
+
+        final int intervalEndLoop = queenState.destroyedLoop >= 0 ? queenState.destroyedLoop : replayEndLoop;
+        final int readyDelayLoops = resolveQueenReadyDelayLoops( repProc, QUEEN_INJECT_ENERGY_COST );
+        final int rotation = Math.abs( queenState.queenTag ) % sortedNearbyHatcheryList.size();
+        for ( int opportunityIndex = 0; opportunityIndex < sortedNearbyHatcheryList.size(); opportunityIndex++ ) {
+            final int hatcheryIndex = ( rotation + opportunityIndex ) % sortedNearbyHatcheryList.size();
+            final HatcheryState hatcheryState = sortedNearbyHatcheryList.get( hatcheryIndex );
+            final int readyLoop = firstReadyLoop + readyDelayLoops * opportunityIndex;
+            if ( readyLoop >= intervalEndLoop )
+                break;
+            addDiagnostic( diagnosticsByHatchTag, hatcheryState.hatcheryTag, "Queen " + queenState.queenTagText + ' ' + diagnosticReason
+                    + "; assigned inject opportunity #" + ( opportunityIndex + 1 ) + " to this hatchery starting at "
+                    + repProc.formatLoopTime( Math.max( intervalStartLoop, readyLoop ) ) + '.' );
+            addQueenIdleCandidatesForBoundInterval( repProc, queenState, hatcheryState.hatcheryTag, intervalStartLoop, intervalEndLoop,
+                    readyLoop, hatcheryByTag, injectTimelineByHatchTag, candidateWindowsByHatchTag, diagnosticsByHatchTag );
+        }
     }
 
     /**
@@ -954,6 +1036,27 @@ public class LarvaReplayAnalyzer {
                 : repProc.getConverterGameSpeed().getRelativeSpeed();
         final double seconds = QUEEN_RESTORE_25_ENERGY_SECONDS * ( energyCost / QUEEN_INJECT_ENERGY_COST );
         return (int) Math.ceil( seconds * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / gameSpeedRelative ) );
+    }
+
+    /**
+     * Resolves the earliest plausible ready loop for a queen observed next to a hatchery.
+     */
+    private int resolveObservedNearbyQueenReadyLoop( final IRepProcessor repProc, final QueenState queenState,
+            final Map< Integer, HatcheryInjectTimeline > injectTimelineByHatchTag, final int observationLoop ) {
+        int readyLoop = queenState.completionLoop < 0 ? observationLoop : queenState.completionLoop;
+        if ( injectTimelineByHatchTag == null || injectTimelineByHatchTag.isEmpty() )
+            return readyLoop;
+
+        for ( final HatcheryInjectTimeline injectTimeline : injectTimelineByHatchTag.values() ) {
+            if ( injectTimeline == null || injectTimeline.getInjectWindowList() == null )
+                continue;
+            for ( final HatcheryInjectWindow injectWindow : injectTimeline.getInjectWindowList() ) {
+                if ( injectWindow == null || injectWindow.getStartLoop() > observationLoop )
+                    continue;
+                readyLoop = Math.max( readyLoop, injectWindow.getStartLoop() + resolveQueenReadyDelayLoops( repProc, QUEEN_INJECT_ENERGY_COST ) );
+            }
+        }
+        return readyLoop;
     }
 
     /**
