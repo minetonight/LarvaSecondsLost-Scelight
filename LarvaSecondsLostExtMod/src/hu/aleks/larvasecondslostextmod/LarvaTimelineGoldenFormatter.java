@@ -10,7 +10,7 @@ import java.util.Map;
 public class LarvaTimelineGoldenFormatter {
 
     /** Validation snapshot format version. */
-    private static final String FORMAT_VERSION = "2";
+    private static final String FORMAT_VERSION = "3";
 
     /**
      * Formats a replay page summary into a stable text representation.
@@ -66,6 +66,7 @@ public class LarvaTimelineGoldenFormatter {
         builder.append( "timeline.mode=" ).append( safe( timelineModel.getModeLabel() ) ).append( '\n' );
         builder.append( "timeline.rowCount=" ).append( timelineModel.getRowList().size() ).append( '\n' );
         appendGroupTotals( builder, timelineModel.getGroupOverviewLabelMap() );
+        appendPhaseTables( builder, timelineModel.getPlayerPhaseTableMap() );
         appendRows( builder, timelineModel.getRowList() );
     }
 
@@ -82,6 +83,38 @@ public class LarvaTimelineGoldenFormatter {
             builder.append( "timeline.group[" ).append( index ).append( "].name=" ).append( safe( entry.getKey() ) ).append( '\n' );
             builder.append( "timeline.group[" ).append( index ).append( "].total=" ).append( safe( entry.getValue() ) ).append( '\n' );
             index++;
+        }
+    }
+
+    /**
+     * Appends per-player phase tables.
+     *
+     * @param builder target builder
+     * @param playerPhaseTableMap phase tables by player
+     */
+    private void appendPhaseTables( final StringBuilder builder, final Map< String, LarvaPlayerPhaseTable > playerPhaseTableMap ) {
+        builder.append( "timeline.phaseTableCount=" ).append( playerPhaseTableMap == null ? 0 : playerPhaseTableMap.size() ).append( '\n' );
+        if ( playerPhaseTableMap == null )
+            return;
+
+        int playerIndex = 0;
+        for ( final Map.Entry< String, LarvaPlayerPhaseTable > entry : playerPhaseTableMap.entrySet() ) {
+            builder.append( "timeline.phaseTable[" ).append( playerIndex ).append( "].name=" ).append( safe( entry.getKey() ) ).append( '\n' );
+            for ( final LarvaGamePhase phase : LarvaGamePhase.values() ) {
+                final LarvaPhaseInterval interval = entry.getValue().getPhaseInterval( phase );
+                final LarvaPhaseStats stats = entry.getValue().getPhaseStats( phase );
+                builder.append( "timeline.phaseTable[" ).append( playerIndex ).append( "]." ).append( phase.name() ).append( ".range=" )
+                        .append( interval == null ? "n/a" : interval.getStartLoop() + "-" + interval.getEndLoop() ).append( '\n' );
+                builder.append( "timeline.phaseTable[" ).append( playerIndex ).append( "]." ).append( phase.name() ).append( ".missedLarva=" )
+                        .append( stats == null ? "n/a" : safeDouble( stats.getMissedLarvaPerHatchPerMinute() ) ).append( '\n' );
+                builder.append( "timeline.phaseTable[" ).append( playerIndex ).append( "]." ).append( phase.name() ).append( ".missedInject=" )
+                        .append( stats == null ? "n/a" : safeDouble( stats.getMissedInjectLarvaPerHatchPerMinute() ) ).append( '\n' );
+                builder.append( "timeline.phaseTable[" ).append( playerIndex ).append( "]." ).append( phase.name() ).append( ".spawned=" )
+                        .append( stats == null ? "n/a" : safeDouble( stats.getSpawnedLarvaPerHatchPerMinute() ) ).append( '\n' );
+                builder.append( "timeline.phaseTable[" ).append( playerIndex ).append( "]." ).append( phase.name() ).append( ".uptime=" )
+                        .append( stats == null ? "n/a" : safeDouble( stats.getInjectUptimePercentage() ) ).append( '\n' );
+            }
+            playerIndex++;
         }
     }
 
@@ -177,8 +210,22 @@ public class LarvaTimelineGoldenFormatter {
         builder.append( "analysis.queenCommandEvidence=" ).append( larvaAnalysisReport.getQueenCommandEvidenceCount() ).append( '\n' );
         builder.append( "analysis.idleInjectWindows=" ).append( larvaAnalysisReport.getIdleInjectWindowCount() ).append( '\n' );
         builder.append( "analysis.idleInjectUncertaintyDiscarded=" ).append( larvaAnalysisReport.getIdleInjectUncertaintyDiscardCount() ).append( '\n' );
+        builder.append( "analysis.phaseTableCount=" ).append( larvaAnalysisReport.getPlayerPhaseTableByPlayerName().size() ).append( '\n' );
         appendInjectTimelines( builder, larvaAnalysisReport.getInjectTimelineList() );
         appendIdleInjectTimelines( builder, larvaAnalysisReport.getIdleInjectTimelineList() );
+    }
+
+    /**
+     * Formats a nullable decimal deterministically.
+     */
+    private String safeDouble( final Double value ) {
+        if ( value == null )
+            return "n/a";
+
+        final long scaled = Math.round( value.doubleValue() * 100.0d );
+        final long whole = scaled / 100L;
+        final long fraction = Math.abs( scaled % 100L );
+        return whole + "." + ( fraction < 10L ? "0" : "" ) + fraction;
     }
 
     /**

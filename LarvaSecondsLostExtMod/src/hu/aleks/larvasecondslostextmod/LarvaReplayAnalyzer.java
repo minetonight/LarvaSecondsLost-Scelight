@@ -69,6 +69,18 @@ public class LarvaReplayAnalyzer {
     /** Visible inject-active duration in gameplay seconds. */
     private static final int INJECT_ACTIVE_DURATION_SECONDS = 29;
 
+    /** Gameplay seconds required to confirm a phase promotion. */
+    private static final int PHASE_PROMOTION_DWELL_SECONDS = 30;
+
+    /** Gameplay seconds after Spawning Pool completion before inject uptime becomes eligible. */
+    private static final int INJECT_ELIGIBILITY_DELAY_SECONDS = 36;
+
+    /** Visible gameplay seconds represented by one missed-inject threshold. */
+    private static final int MISSED_INJECT_THRESHOLD_SECONDS = 29;
+
+    /** Potential injected larva counted for each missed-inject threshold. */
+    private static final int MISSED_INJECT_LARVA_PER_THRESHOLD = 3;
+
     /** Scelight normal-speed relative value. */
     private static final double NORMAL_GAME_SPEED_RELATIVE = 36.0d;
 
@@ -117,11 +129,20 @@ public class LarvaReplayAnalyzer {
     /** Hatchery-like Zerg main building unit id. */
     private static final String UNIT_HIVE = "Hive";
 
+    /** Zerg tech building used to unlock queen inject availability. */
+    private static final String UNIT_SPAWNING_POOL = "SpawningPool";
+
     /** Spawn Larva correlation helper. */
     private final SpawnLarvaCorrelator spawnLarvaCorrelator = new SpawnLarvaCorrelator();
 
     /** Inferred inject detector used for green inject reconstruction. */
     private final InferredInjectDetector inferredInjectDetector = new InferredInjectDetector();
+
+    /** Stable 3+ larva window calculator. */
+    private final LarvaSaturationWindowCalculator saturationWindowCalculator = new LarvaSaturationWindowCalculator();
+
+    /** Missed-larva threshold marker calculator. */
+    private final LarvaMissedLarvaMarkerCalculator missedLarvaMarkerCalculator = new LarvaMissedLarvaMarkerCalculator();
 
     /** General Scelight factory used to create selection trackers. */
     private final IFactory factory;
@@ -222,6 +243,8 @@ public class LarvaReplayAnalyzer {
         final Map< Integer, QueenState > queenByTag = new LinkedHashMap<>();
         final Map< Integer, LarvaState > larvaByTag = new HashMap<>();
         final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName = new LinkedHashMap<>();
+        final Map< String, Integer > spawningPoolCompletionLoopByPlayerName = new LinkedHashMap<>();
+        final Map< Integer, String > pendingSpawningPoolPlayerNameByTag = new HashMap<>();
 
         int larvaBirthCount = 0;
         int assignedLarvaCount = 0;
@@ -245,7 +268,7 @@ public class LarvaReplayAnalyzer {
                         final String playerName = resolvePlayerName( repProc, playerId );
                         addResourceSnapshot( resourceSnapshotsByPlayerName, new LarvaPlayerResourceSnapshot( playerName, event.getLoop(),
                             repProc.formatLoopTime( event.getLoop() ), playerStatsEvent.getMineralsCurrent(), playerStatsEvent.getGasCurrent(),
-                            playerStatsEvent.getFoodUsed(), playerStatsEvent.getFoodMade() ) );
+                            playerStatsEvent.getFoodUsed(), playerStatsEvent.getFoodMade(), playerStatsEvent.getWorkersActiveCount() ) );
                         break;
                     }
                     case ITrackerEvents.ID_UNIT_INIT :
@@ -304,11 +327,29 @@ public class LarvaReplayAnalyzer {
                                 else if ( assignment.isNoEligibleHatchery() )
                                     noEligibleHatcheryLarvaCount++;
                             }
+                        } else if ( isSpawningPoolLike( unitType ) ) {
+                            final String playerName = resolvePlayerName( repProc,
+                                    firstNonNull( baseUnitEvent.getControlPlayerId(), baseUnitEvent.getUpkeepPlayerId() ) );
+                            final Integer unitTag = buildCombinedTagOrNull( baseUnitEvent.getUnitTagIndex(), baseUnitEvent.getUnitTagRecycle() );
+                            if ( unitTag != null )
+                                pendingSpawningPoolPlayerNameByTag.put( unitTag, playerName );
+
+                            if ( event.getId() == ITrackerEvents.ID_UNIT_BORN ) {
+                                recordSpawningPoolCompletion( spawningPoolCompletionLoopByPlayerName, playerName, event.getLoop() );
+                                if ( unitTag != null )
+                                    pendingSpawningPoolPlayerNameByTag.remove( unitTag );
+                            }
                         }
                         break;
                     }
                     case ITrackerEvents.ID_UNIT_DONE : {
                         final Integer hatcheryTag = buildCombinedTagOrNull( event.get( IBaseUnitEvent.F_UNIT_TAG_INDEX ), event.get( IBaseUnitEvent.F_UNIT_TAG_RECYCLE ) );
+                        if ( hatcheryTag != null ) {
+                            final String pendingSpawningPoolPlayerName = pendingSpawningPoolPlayerNameByTag.remove( hatcheryTag );
+                            if ( pendingSpawningPoolPlayerName != null )
+                                recordSpawningPoolCompletion( spawningPoolCompletionLoopByPlayerName, pendingSpawningPoolPlayerName, event.getLoop() );
+                        }
+
                         if ( hatcheryTag != null ) {
                             final HatcheryState hatcheryState = hatcheryByTag.get( hatcheryTag );
                             if ( hatcheryState != null ) {
@@ -323,6 +364,8 @@ public class LarvaReplayAnalyzer {
                         final Integer tag = buildCombinedTagOrNull( event.get( IBaseUnitEvent.F_UNIT_TAG_INDEX ), event.get( IBaseUnitEvent.F_UNIT_TAG_RECYCLE ) );
                         if ( tag == null )
                             break;
+
+                        pendingSpawningPoolPlayerNameByTag.remove( tag );
 
                         final LarvaState larvaState = larvaByTag.remove( tag );
                         if ( larvaState != null ) {
@@ -349,6 +392,9 @@ public class LarvaReplayAnalyzer {
                         final String unitType = toStringValue( event.get( F_UNIT_TYPE_NAME ) );
                         if ( tag == null )
                             break;
+
+                        if ( !isSpawningPoolLike( unitType ) )
+                            pendingSpawningPoolPlayerNameByTag.remove( tag );
 
                         final HatcheryState hatcheryState = hatcheryByTag.get( tag );
                         if ( hatcheryState != null && isHatcheryLike( unitType ) ) {
@@ -448,6 +494,10 @@ public class LarvaReplayAnalyzer {
         final int trackerObservedQueenCount = countTrackerObservedQueens( queenByTag );
         final int commandSeededQueenCount = countCommandSeededQueens( queenByTag );
         final int queenCommandEvidenceCount = countQueenCommandEvidence( queenCommandEvidenceByTag );
+        final int replayEndLoop = replay.getHeader() == null || replay.getHeader().getElapsedGameLoops() == null ? 0 : replay.getHeader().getElapsedGameLoops().intValue();
+        final long gameSpeedRelative = repProc.getConverterGameSpeed() == null ? DEFAULT_GAME_SPEED_RELATIVE : repProc.getConverterGameSpeed().getRelativeSpeed();
+        final Map< String, LarvaPlayerPhaseTable > playerPhaseTableByPlayerName = buildPlayerPhaseTables( repProc, replayEndLoop, gameSpeedRelative,
+            resourceSnapshotsByPlayerName, spawningPoolCompletionLoopByPlayerName, hatcheryByTag, injectTimelineList, idleInjectTimelineList );
 
         return new LarvaAnalysisReport( calibration, timelineList, injectTimelineList, INJECT_SIGNAL_CONCLUSION,
             idleInjectTimelineList, IDLE_INJECT_SIGNAL_CONCLUSION, IDLE_INJECT_RADIUS,
@@ -456,9 +506,8 @@ public class LarvaReplayAnalyzer {
             ambiguousLarvaCount, noEligibleHatcheryLarvaCount,
             directAssignmentCount, injectCorrelatedAssignmentCount, heuristicAssignmentCount, hatcheryMorphCount,
             trackerEventArray == null ? 0 : trackerEventArray.length, gameEventArray == null ? 0 : gameEventArray.length, fullReplayParseUsed,
-            repProc.isRealTime(), repProc.getConverterGameSpeed() == null ? 36L : repProc.getConverterGameSpeed().getRelativeSpeed(),
-            replay.getHeader() == null || replay.getHeader().getElapsedGameLoops() == null ? 0 : replay.getHeader().getElapsedGameLoops().intValue(),
-            resourceSnapshotsByPlayerName );
+            repProc.isRealTime(), gameSpeedRelative,
+            replayEndLoop, resourceSnapshotsByPlayerName, playerPhaseTableByPlayerName );
     }
 
     /**
@@ -1733,6 +1782,314 @@ public class LarvaReplayAnalyzer {
     }
 
     /**
+     * Builds per-player Epic 12 phase tables.
+     */
+        private Map< String, LarvaPlayerPhaseTable > buildPlayerPhaseTables( final IRepProcessor repProc, final int replayEndLoop,
+            final long gameSpeedRelative,
+            final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName,
+            final Map< String, Integer > spawningPoolCompletionLoopByPlayerName, final Map< Integer, HatcheryState > hatcheryByTag,
+            final List< HatcheryInjectTimeline > injectTimelineList, final List< HatcheryIdleInjectTimeline > idleInjectTimelineList ) {
+        final Map< String, LarvaPlayerPhaseTable > playerPhaseTableByPlayerName = new LinkedHashMap<>();
+        if ( replayEndLoop <= 0 )
+            return playerPhaseTableByPlayerName;
+
+        final Set< String > playerNameSet = new LinkedHashSet<>();
+        playerNameSet.addAll( resourceSnapshotsByPlayerName.keySet() );
+        for ( final HatcheryState hatcheryState : hatcheryByTag.values() )
+            if ( hatcheryState != null && hatcheryState.playerName != null && hatcheryState.playerName.length() > 0 )
+                playerNameSet.add( hatcheryState.playerName );
+
+        final Map< Integer, HatcheryInjectTimeline > injectTimelineByTag = indexInjectTimelinesByTag( injectTimelineList );
+        final Map< Integer, HatcheryIdleInjectTimeline > idleInjectTimelineByTag = indexIdleInjectTimelinesByTag( idleInjectTimelineList );
+        for ( final String playerName : playerNameSet ) {
+            if ( playerName == null || playerName.length() == 0 )
+                continue;
+
+                final Map< LarvaGamePhase, LarvaPhaseInterval > phaseIntervalMap = resolvePhaseIntervalMap( resourceSnapshotsByPlayerName.get( playerName ), replayEndLoop,
+                    gameSpeedRelative );
+            final Map< LarvaGamePhase, LarvaPhaseStats > phaseStatsMap = buildPhaseStatsMap( repProc, playerName, replayEndLoop,
+                    gameSpeedRelative, spawningPoolCompletionLoopByPlayerName.get( playerName ), hatcheryByTag, injectTimelineByTag, idleInjectTimelineByTag,
+                    phaseIntervalMap );
+            playerPhaseTableByPlayerName.put( playerName, new LarvaPlayerPhaseTable( playerName, phaseIntervalMap, phaseStatsMap ) );
+        }
+
+        return playerPhaseTableByPlayerName;
+    }
+
+    /**
+     * Resolves monotonic phase intervals from worker-count snapshots.
+     */
+        private Map< LarvaGamePhase, LarvaPhaseInterval > resolvePhaseIntervalMap( final List< LarvaPlayerResourceSnapshot > snapshotList,
+            final int replayEndLoop, final long gameSpeedRelative ) {
+        final Map< LarvaGamePhase, LarvaPhaseInterval > phaseIntervalMap = new LinkedHashMap<>();
+        final int earlyEndLoop;
+        final int midStartLoop;
+        final int lateStartLoop;
+        final int endStartLoop;
+
+        int resolvedMidStartLoop = resolvePhasePromotionLoop( snapshotList, replayEndLoop, LarvaGamePhase.MID.getPromotionWorkerThreshold(), gameSpeedRelative );
+        int resolvedLateStartLoop = resolvePhasePromotionLoop( snapshotList, replayEndLoop, LarvaGamePhase.LATE.getPromotionWorkerThreshold(), gameSpeedRelative );
+        int resolvedEndStartLoop = resolvePhasePromotionLoop( snapshotList, replayEndLoop, LarvaGamePhase.END.getPromotionWorkerThreshold(), gameSpeedRelative );
+
+        if ( resolvedLateStartLoop >= 0 && resolvedMidStartLoop < 0 )
+            resolvedMidStartLoop = resolvedLateStartLoop;
+        if ( resolvedEndStartLoop >= 0 && resolvedLateStartLoop < 0 )
+            resolvedLateStartLoop = resolvedEndStartLoop;
+        if ( resolvedEndStartLoop >= 0 && resolvedMidStartLoop < 0 )
+            resolvedMidStartLoop = resolvedEndStartLoop;
+        if ( resolvedMidStartLoop >= 0 )
+            resolvedMidStartLoop = clampLoop( resolvedMidStartLoop, replayEndLoop );
+        if ( resolvedLateStartLoop >= 0 )
+            resolvedLateStartLoop = clampLoop( Math.max( resolvedLateStartLoop, resolvedMidStartLoop < 0 ? 0 : resolvedMidStartLoop ), replayEndLoop );
+        if ( resolvedEndStartLoop >= 0 )
+            resolvedEndStartLoop = clampLoop( Math.max( resolvedEndStartLoop, resolvedLateStartLoop < 0 ? 0 : resolvedLateStartLoop ), replayEndLoop );
+
+        midStartLoop = resolvedMidStartLoop < 0 ? replayEndLoop : resolvedMidStartLoop;
+        lateStartLoop = resolvedLateStartLoop < 0 ? replayEndLoop : resolvedLateStartLoop;
+        endStartLoop = resolvedEndStartLoop < 0 ? replayEndLoop : resolvedEndStartLoop;
+        earlyEndLoop = Math.min( midStartLoop, replayEndLoop );
+
+        phaseIntervalMap.put( LarvaGamePhase.EARLY, new LarvaPhaseInterval( LarvaGamePhase.EARLY, 0, earlyEndLoop ) );
+        phaseIntervalMap.put( LarvaGamePhase.MID, new LarvaPhaseInterval( LarvaGamePhase.MID, midStartLoop, lateStartLoop ) );
+        phaseIntervalMap.put( LarvaGamePhase.LATE, new LarvaPhaseInterval( LarvaGamePhase.LATE, lateStartLoop, endStartLoop ) );
+        phaseIntervalMap.put( LarvaGamePhase.END, new LarvaPhaseInterval( LarvaGamePhase.END, endStartLoop, replayEndLoop ) );
+        return phaseIntervalMap;
+    }
+
+    /**
+     * Resolves the first loop where a worker threshold stayed exceeded for more than the dwell time.
+     */
+    private int resolvePhasePromotionLoop( final List< LarvaPlayerResourceSnapshot > snapshotList, final int replayEndLoop, final int workerThreshold,
+            final long gameSpeedRelative ) {
+        if ( snapshotList == null || snapshotList.isEmpty() || replayEndLoop <= 0 )
+            return -1;
+
+        final int dwellLoops = toDisplayedGameLoops( PHASE_PROMOTION_DWELL_SECONDS, gameSpeedRelative );
+        int candidateStartLoop = -1;
+        for ( final LarvaPlayerResourceSnapshot snapshot : snapshotList ) {
+            if ( snapshot == null )
+                continue;
+
+            final Integer workersActiveCount = snapshot.getWorkersActiveCount();
+            if ( workersActiveCount != null && workersActiveCount.intValue() > workerThreshold ) {
+                if ( candidateStartLoop < 0 )
+                    candidateStartLoop = snapshot.getLoop();
+
+                if ( snapshot.getLoop() - candidateStartLoop > dwellLoops )
+                    return clampLoop( candidateStartLoop + dwellLoops + 1, replayEndLoop );
+            } else {
+                candidateStartLoop = -1;
+            }
+        }
+
+        if ( candidateStartLoop >= 0 && replayEndLoop - candidateStartLoop > dwellLoops )
+            return clampLoop( candidateStartLoop + dwellLoops + 1, replayEndLoop );
+
+        return -1;
+    }
+
+    /**
+     * Builds per-phase stats for one player.
+     */
+    private Map< LarvaGamePhase, LarvaPhaseStats > buildPhaseStatsMap( final IRepProcessor repProc, final String playerName, final int replayEndLoop,
+            final long gameSpeedRelative, final Integer spawningPoolCompletionLoop, final Map< Integer, HatcheryState > hatcheryByTag,
+            final Map< Integer, HatcheryInjectTimeline > injectTimelineByTag,
+            final Map< Integer, HatcheryIdleInjectTimeline > idleInjectTimelineByTag,
+            final Map< LarvaGamePhase, LarvaPhaseInterval > phaseIntervalMap ) {
+        final Map< LarvaGamePhase, LarvaPhaseStats > phaseStatsMap = new LinkedHashMap<>();
+        final int injectUnlockLoop = spawningPoolCompletionLoop == null ? -1 : spawningPoolCompletionLoop.intValue()
+                + toDisplayedGameLoops( INJECT_ELIGIBILITY_DELAY_SECONDS, gameSpeedRelative );
+
+        for ( final LarvaGamePhase phase : LarvaGamePhase.values() ) {
+            final LarvaPhaseInterval interval = phaseIntervalMap.get( phase );
+            int missedLarvaCount = 0;
+            int missedInjectLarvaCount = 0;
+            int totalSpawnedLarvaCount = 0;
+            long hatchEligibleLoops = 0L;
+            long injectEligibleLoops = 0L;
+            long injectActiveLoops = 0L;
+
+            for ( final HatcheryState hatcheryState : hatcheryByTag.values() ) {
+                if ( hatcheryState == null || !playerName.equals( hatcheryState.playerName ) )
+                    continue;
+
+                final int hatchStartLoop = hatcheryState.completionLoop;
+                final int hatchEndLoop = hatcheryState.destroyedLoop >= 0 ? Math.min( hatcheryState.destroyedLoop, replayEndLoop ) : replayEndLoop;
+                if ( hatchStartLoop < 0 || hatchEndLoop <= hatchStartLoop )
+                    continue;
+
+                hatchEligibleLoops += intersectDuration( interval.getStartLoop(), interval.getEndLoop(), hatchStartLoop, hatchEndLoop );
+
+                final HatcheryLarvaTimeline hatcheryTimeline = hatcheryState.toTimeline( repProc );
+                final List< Integer > missedLarvaMarkerLoops = buildMissedLarvaMarkerLoops( hatcheryTimeline, replayEndLoop, gameSpeedRelative );
+                missedLarvaCount += countLoopsInInterval( missedLarvaMarkerLoops, interval.getStartLoop(), interval.getEndLoop() );
+                totalSpawnedLarvaCount += countLoopsInInterval( hatcheryState.assignedLarvaBirthLoopList, interval.getStartLoop(), interval.getEndLoop() );
+
+                final HatcheryIdleInjectTimeline idleInjectTimeline = idleInjectTimelineByTag.get( Integer.valueOf( hatcheryState.hatcheryTag ) );
+                missedInjectLarvaCount += countLoopsInInterval( buildMissedInjectMarkerLoops( idleInjectTimeline, gameSpeedRelative ), interval.getStartLoop(), interval.getEndLoop() )
+                        * MISSED_INJECT_LARVA_PER_THRESHOLD;
+
+                if ( injectUnlockLoop >= 0 ) {
+                    final int effectiveInjectStartLoop = Math.max( hatchStartLoop, injectUnlockLoop );
+                    injectEligibleLoops += intersectDuration( interval.getStartLoop(), interval.getEndLoop(), effectiveInjectStartLoop, hatchEndLoop );
+
+                    final HatcheryInjectTimeline injectTimeline = injectTimelineByTag.get( Integer.valueOf( hatcheryState.hatcheryTag ) );
+                    if ( injectTimeline != null )
+                        for ( final HatcheryInjectWindow injectWindow : injectTimeline.getInjectWindowList() )
+                            injectActiveLoops += intersectDuration( interval.getStartLoop(), interval.getEndLoop(),
+                                    Math.max( injectWindow.getStartLoop(), effectiveInjectStartLoop ), Math.min( injectWindow.getEndLoop(), hatchEndLoop ) );
+                }
+            }
+
+            phaseStatsMap.put( phase, new LarvaPhaseStats( phase, interval, missedLarvaCount, missedInjectLarvaCount,
+                    totalSpawnedLarvaCount, hatchEligibleLoops, injectEligibleLoops, injectActiveLoops ) );
+        }
+
+        return phaseStatsMap;
+    }
+
+    /**
+     * Builds chronological missed-larva marker loops for a hatchery.
+     */
+    private List< Integer > buildMissedLarvaMarkerLoops( final HatcheryLarvaTimeline hatcheryTimeline, final int replayEndLoop,
+            final long gameSpeedRelative ) {
+        final List< LarvaSaturationWindow > saturationWindowList = saturationWindowCalculator.buildWindows( hatcheryTimeline, replayEndLoop );
+        final List< LarvaTimelineMarker > markerList = missedLarvaMarkerCalculator.buildMarkers( saturationWindowList, gameSpeedRelative );
+        final List< Integer > markerLoopList = new ArrayList<>( markerList.size() );
+        for ( final LarvaTimelineMarker marker : markerList )
+            markerLoopList.add( Integer.valueOf( marker.getLoop() ) );
+        return markerLoopList;
+    }
+
+    /**
+     * Builds chronological missed-inject marker loops for one hatchery.
+     */
+    private List< Integer > buildMissedInjectMarkerLoops( final HatcheryIdleInjectTimeline idleInjectTimeline, final long gameSpeedRelative ) {
+        if ( idleInjectTimeline == null || idleInjectTimeline.getIdleWindowList().isEmpty() )
+            return Collections.emptyList();
+
+        final List< HatcheryIdleInjectWindow > sortedWindowList = new ArrayList<>( idleInjectTimeline.getIdleWindowList() );
+        Collections.sort( sortedWindowList, new Comparator< HatcheryIdleInjectWindow >() {
+            @Override
+            public int compare( final HatcheryIdleInjectWindow left, final HatcheryIdleInjectWindow right ) {
+                if ( left.getStartLoop() != right.getStartLoop() )
+                    return left.getStartLoop() < right.getStartLoop() ? -1 : 1;
+                return left.getEndLoop() < right.getEndLoop() ? -1 : left.getEndLoop() == right.getEndLoop() ? 0 : 1;
+            }
+        } );
+
+        final List< Integer > markerLoopList = new ArrayList<>();
+        final int thresholdLoops = toDisplayedGameLoops( MISSED_INJECT_THRESHOLD_SECONDS, gameSpeedRelative );
+        int accumulatedLoops = 0;
+        int coveredUntilLoop = Integer.MIN_VALUE;
+        for ( final HatcheryIdleInjectWindow idleWindow : sortedWindowList ) {
+            if ( idleWindow == null )
+                continue;
+
+            final int effectiveStartLoop = Math.max( idleWindow.getStartLoop(), coveredUntilLoop );
+            final int effectiveEndLoop = idleWindow.getEndLoop();
+            if ( effectiveEndLoop <= effectiveStartLoop )
+                continue;
+
+            int loopsRemainingInWindow = effectiveEndLoop - effectiveStartLoop;
+            int markerLoop = effectiveStartLoop;
+            while ( accumulatedLoops + loopsRemainingInWindow >= thresholdLoops ) {
+                final int loopsUntilThreshold = thresholdLoops - accumulatedLoops;
+                markerLoop += loopsUntilThreshold;
+                markerLoopList.add( Integer.valueOf( markerLoop ) );
+                loopsRemainingInWindow -= loopsUntilThreshold;
+                accumulatedLoops = 0;
+            }
+
+            accumulatedLoops += loopsRemainingInWindow;
+            coveredUntilLoop = Math.max( coveredUntilLoop, effectiveEndLoop );
+        }
+
+        return markerLoopList;
+    }
+
+    /**
+     * Counts event loops inside an interval.
+     */
+    private int countLoopsInInterval( final List< Integer > loopList, final int startLoop, final int endLoop ) {
+        if ( loopList == null || loopList.isEmpty() || endLoop <= startLoop )
+            return 0;
+
+        int count = 0;
+        for ( final Integer loop : loopList )
+            if ( loop != null && loop.intValue() >= startLoop && loop.intValue() < endLoop )
+                count++;
+        return count;
+    }
+
+    /**
+     * Intersects two half-open replay-loop intervals.
+     */
+    private int intersectDuration( final int leftStartLoop, final int leftEndLoop, final int rightStartLoop, final int rightEndLoop ) {
+        final int effectiveStartLoop = Math.max( leftStartLoop, rightStartLoop );
+        final int effectiveEndLoop = Math.min( leftEndLoop, rightEndLoop );
+        return Math.max( 0, effectiveEndLoop - effectiveStartLoop );
+    }
+
+    /**
+     * Indexes inject timelines by hatchery tag.
+     */
+    private Map< Integer, HatcheryInjectTimeline > indexInjectTimelinesByTag( final List< HatcheryInjectTimeline > injectTimelineList ) {
+        final Map< Integer, HatcheryInjectTimeline > injectTimelineByTag = new HashMap<>();
+        if ( injectTimelineList == null )
+            return injectTimelineByTag;
+
+        for ( final HatcheryInjectTimeline injectTimeline : injectTimelineList )
+            if ( injectTimeline != null )
+                injectTimelineByTag.put( Integer.valueOf( injectTimeline.getHatcheryTag() ), injectTimeline );
+
+        return injectTimelineByTag;
+    }
+
+    /**
+     * Indexes idle-inject timelines by hatchery tag.
+     */
+    private Map< Integer, HatcheryIdleInjectTimeline > indexIdleInjectTimelinesByTag( final List< HatcheryIdleInjectTimeline > idleInjectTimelineList ) {
+        final Map< Integer, HatcheryIdleInjectTimeline > idleInjectTimelineByTag = new HashMap<>();
+        if ( idleInjectTimelineList == null )
+            return idleInjectTimelineByTag;
+
+        for ( final HatcheryIdleInjectTimeline idleInjectTimeline : idleInjectTimelineList )
+            if ( idleInjectTimeline != null )
+                idleInjectTimelineByTag.put( Integer.valueOf( idleInjectTimeline.getHatcheryTag() ), idleInjectTimeline );
+
+        return idleInjectTimelineByTag;
+    }
+
+    /**
+     * Records the earliest Spawning Pool completion per player.
+     */
+    private void recordSpawningPoolCompletion( final Map< String, Integer > spawningPoolCompletionLoopByPlayerName, final String playerName,
+            final int loop ) {
+        if ( playerName == null || playerName.length() == 0 )
+            return;
+
+        final Integer previousLoop = spawningPoolCompletionLoopByPlayerName.get( playerName );
+        if ( previousLoop == null || loop < previousLoop.intValue() )
+            spawningPoolCompletionLoopByPlayerName.put( playerName, Integer.valueOf( loop ) );
+    }
+
+    /**
+     * Converts displayed gameplay seconds to replay loops using the same speed basis as the rest of the module.
+     */
+    private int toDisplayedGameLoops( final int seconds, final long gameSpeedRelative ) {
+        final double effectiveGameSpeedRelative = gameSpeedRelative <= 0L ? DEFAULT_GAME_SPEED_RELATIVE : gameSpeedRelative;
+        return (int) ( seconds * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / effectiveGameSpeedRelative ) );
+    }
+
+    /**
+     * Clamps a loop into the replay bounds.
+     */
+    private int clampLoop( final int loop, final int replayEndLoop ) {
+        return Math.max( 0, Math.min( loop, replayEndLoop ) );
+    }
+
+    /**
      * Null-safe text comparison for deterministic sorting.
      *
      * @param left left text
@@ -1766,6 +2123,17 @@ public class LarvaReplayAnalyzer {
      */
     private boolean isHatcheryLike( final String unitType ) {
         return IBdUtil.UNIT_HATCHERY.equals( unitType ) || UNIT_LAIR.equals( unitType ) || UNIT_HIVE.equals( unitType );
+    }
+
+    /**
+     * Tells if a tracker unit type represents a Spawning Pool.
+     */
+    private boolean isSpawningPoolLike( final String unitType ) {
+        if ( unitType == null || unitType.length() == 0 )
+            return false;
+
+        final String normalizedUnitType = unitType.replace( "_", "" ).replace( " ", "" ).toLowerCase();
+        return UNIT_SPAWNING_POOL.equals( unitType ) || "spawningpool".equals( normalizedUnitType );
     }
 
     /**

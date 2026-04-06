@@ -161,13 +161,15 @@ public class LarvaVerificationReportFormatter {
 
         builder.append( "available" ).append( '\n' );
         builder.append( "- row assembly: rows=" ).append( timelineModel.getRowList().size() )
-                .append( ", player groups=" ).append( timelineModel.getGroupOverviewLabelMap().size() ).append( '\n' );
+            .append( ", player groups=" ).append( timelineModel.getGroupOverviewLabelMap().size() )
+            .append( ", phase tables=" ).append( timelineModel.getPlayerPhaseTableMap().size() ).append( '\n' );
         builder.append( "- saturation-window conversion: windows=" ).append( saturationWindowCount )
                 .append( ", total segments=" ).append( segmentCount ).append( '\n' );
         builder.append( "- marker accumulation: markers=" ).append( markerCount )
             .append( ", missed larva total=" ).append( missedLarvaTotal )
             .append( ", potential injected larva missed total=" ).append( missedInjectedLarvaTotal ).append( '\n' );
         builder.append( "- per-player totals: " ).append( formatGroupTotals( timelineModel.getGroupOverviewLabelMap() ) ).append( '\n' );
+        builder.append( "- per-player phase tables: " ).append( formatPhaseTableNames( timelineModel.getPlayerPhaseTableMap() ) ).append( '\n' );
     }
 
     /**
@@ -209,6 +211,24 @@ public class LarvaVerificationReportFormatter {
             if ( !first )
                 builder.append( ", " );
             builder.append( safe( entry.getKey() ) ).append( '=' ).append( safe( entry.getValue() ) );
+            first = false;
+        }
+        return builder.toString();
+    }
+
+    /**
+     * Formats per-player phase-table availability.
+     */
+    private String formatPhaseTableNames( final Map< String, LarvaPlayerPhaseTable > playerPhaseTableMap ) {
+        if ( playerPhaseTableMap == null || playerPhaseTableMap.isEmpty() )
+            return "none";
+
+        final StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for ( final String playerName : playerPhaseTableMap.keySet() ) {
+            if ( !first )
+                builder.append( ", " );
+            builder.append( safe( playerName ) );
             first = false;
         }
         return builder.toString();

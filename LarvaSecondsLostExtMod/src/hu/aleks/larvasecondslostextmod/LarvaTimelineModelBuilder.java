@@ -90,7 +90,8 @@ public class LarvaTimelineModelBuilder {
             rowList.add( createFallbackRow( replayLengthMs, fallbackPreviewStartMs, fallbackPreviewEndMs ) );
 
         return new LarvaTimelineModel( TITLE, SUBTITLE, resolveModeLabel( integrationMode ), buildGroupOverviewLabelMap( rowList ),
-            buildGroupColorMap( replaySummary, rowList ), replayLengthMs, replayLengthLabel, EMPTY_MESSAGE, rowList );
+            buildPlayerPhaseTableMap( rowList, larvaAnalysisReport ), buildGroupColorMap( replaySummary, rowList ), replayLengthMs,
+            replayLengthLabel, EMPTY_MESSAGE, rowList );
     }
 
     /**
@@ -930,6 +931,36 @@ public class LarvaTimelineModelBuilder {
         }
 
         return groupOverviewLabelMap;
+    }
+
+    /**
+     * Builds the visible per-player phase-table map.
+     *
+     * @param rowList visible timeline rows
+     * @param larvaAnalysisReport source analysis report
+     * @return per-player phase-table map keyed by player name
+     */
+    private Map< String, LarvaPlayerPhaseTable > buildPlayerPhaseTableMap( final List< LarvaTimelineRow > rowList,
+            final LarvaAnalysisReport larvaAnalysisReport ) {
+        final Map< String, LarvaPlayerPhaseTable > playerPhaseTableMap = new LinkedHashMap<>();
+        if ( larvaAnalysisReport == null || larvaAnalysisReport.getPlayerPhaseTableByPlayerName().isEmpty() )
+            return playerPhaseTableMap;
+
+        for ( final LarvaTimelineRow row : rowList ) {
+            final String playerName = row.getGroupLabel();
+            if ( playerName == null || playerName.length() == 0 || playerPhaseTableMap.containsKey( playerName ) )
+                continue;
+
+            final LarvaPlayerPhaseTable playerPhaseTable = larvaAnalysisReport.getPlayerPhaseTable( playerName );
+            if ( playerPhaseTable != null )
+                playerPhaseTableMap.put( playerName, playerPhaseTable );
+        }
+
+        for ( final Map.Entry< String, LarvaPlayerPhaseTable > entry : larvaAnalysisReport.getPlayerPhaseTableByPlayerName().entrySet() )
+            if ( !playerPhaseTableMap.containsKey( entry.getKey() ) )
+                playerPhaseTableMap.put( entry.getKey(), entry.getValue() );
+
+        return playerPhaseTableMap;
     }
 
     /**

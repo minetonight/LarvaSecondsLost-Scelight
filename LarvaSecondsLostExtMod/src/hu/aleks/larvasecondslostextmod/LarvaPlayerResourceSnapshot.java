@@ -26,6 +26,9 @@ public class LarvaPlayerResourceSnapshot {
     /** Food made at the snapshot, in fixed-point tracker units. */
     private final Integer foodMade;
 
+    /** Workers active count at the snapshot, if known. */
+    private final Integer workersActiveCount;
+
     /**
      * Creates a new player resource snapshot.
      *
@@ -36,7 +39,7 @@ public class LarvaPlayerResourceSnapshot {
      * @param gasCurrent gas available at the snapshot
      */
     public LarvaPlayerResourceSnapshot( final String playerName, final int loop, final String timeLabel, final Integer mineralsCurrent,
-            final Integer gasCurrent, final Integer foodUsed, final Integer foodMade ) {
+            final Integer gasCurrent, final Integer foodUsed, final Integer foodMade, final Integer workersActiveCount ) {
         this.playerName = playerName;
         this.loop = loop;
         this.timeLabel = timeLabel;
@@ -44,6 +47,7 @@ public class LarvaPlayerResourceSnapshot {
         this.gasCurrent = gasCurrent;
         this.foodUsed = foodUsed;
         this.foodMade = foodMade;
+        this.workersActiveCount = workersActiveCount;
     }
 
     public String getPlayerName() {
@@ -72,6 +76,10 @@ public class LarvaPlayerResourceSnapshot {
 
     public Integer getFoodMade() {
         return foodMade;
+    }
+
+    public Integer getWorkersActiveCount() {
+        return workersActiveCount;
     }
 
 }

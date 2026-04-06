@@ -16,6 +16,8 @@ Story 01.07 is now implemented too: during development, the module can write a p
 
 Story 01.08 is now implemented too: lifecycle diagnostics log startup phases, shutdown, and a more useful initialization failure summary so packaging failures can be distinguished from runtime integration failures.
 
+Epic 12 now adds a per-player phase table on the supported `Larva` page. Each Zerg player gets Early / Mid / Late / End columns driven by sustained worker-count promotions, with per-phase rates for missed larva, missed inject value, spawned larva, and inject uptime.
+
 ## SDK-style layout
 
 - `src/` - Java 7 source code and packaged resources.
@@ -118,6 +120,7 @@ When the module is enabled:
 - The page can analyze a replay selected manually or resolve the latest replay from the Replay Folder Monitor plus Scelight's monitored replay folders.
 - The page shows replay diagnostics on a module-owned fallback surface that stays adjacent to the replay workflow.
 - The page renders a first chart-like preview timeline above the diagnostics text.
+- The player header area now includes a full-width per-phase table summarizing missed larva, missed injects, spawned larva, and inject uptime for Early / Mid / Late / End phases.
 - That preview is module-owned, grouped for later per-player/per-hatchery evolution, and fed by a normalized presentation model instead of painting directly from replay parser objects.
 - When enabled by JVM property, the module also writes a predictable dev diagnostic dump file outside the UI.
 

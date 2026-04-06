@@ -48,6 +48,9 @@ Run this checklist after changes that affect analysis, rendering, or packaging.
    - Load a validation replay.
 
 5. **Verify visible output**
+   - Confirm each player header shows the Epic 12 phase table.
+   - Confirm the phase table contains Early / Mid / Late / End columns.
+   - Confirm the four phase metrics render: missed larva rate, missed inject rate, spawned larva rate, and inject uptime.
    - Confirm hatchery rows render.
    - Confirm red `3+ larva` windows render.
    - Confirm missed-larva markers and totals render.
@@ -55,6 +58,7 @@ Run this checklist after changes that affect analysis, rendering, or packaging.
 6. **Verify diagnostic output**
    - Confirm the dump file contains `Deterministic validation snapshot`.
    - Confirm the dump file contains the `[Verification]` section.
+   - Confirm the deterministic snapshot now includes `timeline.phaseTableCount` and per-player phase-table entries.
    - Compare the deterministic snapshot against the expected fixture golden file when applicable.
 
 ## Expected packaging convention

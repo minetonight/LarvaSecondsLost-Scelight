@@ -98,6 +98,9 @@ public class LarvaAnalysisReport {
     /** Player resource snapshots collected from tracker events. */
     private final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName;
 
+    /** Per-player Epic 12 phase tables. */
+    private final Map< String, LarvaPlayerPhaseTable > playerPhaseTableByPlayerName;
+
     /**
      * Creates a new larva analysis report.
      *
@@ -128,7 +131,8 @@ public class LarvaAnalysisReport {
             final int directAssignmentCount, final int injectCorrelatedAssignmentCount, final int heuristicAssignmentCount,
              final int hatcheryMorphCount, final int trackerEventCount, final int gameEventCount, final boolean fullReplayParseUsed,
              final boolean realTime, final long converterGameSpeedRelative, final int replayLengthLoops,
-             final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName ) {
+             final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName,
+             final Map< String, LarvaPlayerPhaseTable > playerPhaseTableByPlayerName ) {
         this.calibration = calibration;
         this.timelineList = Collections.unmodifiableList( new ArrayList<>( timelineList ) );
         this.injectTimelineList = Collections.unmodifiableList( new ArrayList<>( injectTimelineList ) );
@@ -157,6 +161,7 @@ public class LarvaAnalysisReport {
         this.converterGameSpeedRelative = converterGameSpeedRelative;
         this.replayLengthLoops = replayLengthLoops;
         this.resourceSnapshotsByPlayerName = copySnapshotMap( resourceSnapshotsByPlayerName );
+        this.playerPhaseTableByPlayerName = copyPhaseTableMap( playerPhaseTableByPlayerName );
     }
 
     public LarvaHeuristicCalibration getCalibration() {
@@ -324,6 +329,14 @@ public class LarvaAnalysisReport {
         return resourceSnapshotsByPlayerName;
     }
 
+    public Map< String, LarvaPlayerPhaseTable > getPlayerPhaseTableByPlayerName() {
+        return playerPhaseTableByPlayerName;
+    }
+
+    public LarvaPlayerPhaseTable getPlayerPhaseTable( final String playerName ) {
+        return playerName == null ? null : playerPhaseTableByPlayerName.get( playerName );
+    }
+
     /**
      * Resolves the latest player resource snapshot at or before a specified marker loop.
      *
@@ -469,6 +482,7 @@ public class LarvaAnalysisReport {
             .append( '\n' );
         builder.append( "- Assigned larva total: " ).append( assignedLarvaCount ).append( '\n' );
         builder.append( "- Resource snapshot support: " ).append( formatResourceSnapshotCounts() ).append( '\n' );
+        builder.append( "- Epic 12 phase tables: " ).append( formatPhaseTableCounts() ).append( '\n' );
 
         if ( timelineList.isEmpty() ) {
             builder.append( "- No per-hatchery timelines were derived from this replay yet." ).append( '\n' );
@@ -508,8 +522,43 @@ public class LarvaAnalysisReport {
 
         appendInjectDiagnostics( builder );
         appendIdleInjectDiagnostics( builder );
+        appendPhaseTableDiagnostics( builder );
 
         return builder.toString();
+    }
+
+    /**
+     * Appends Epic 12 phase-table diagnostics.
+     *
+     * @param builder target builder
+     */
+    private void appendPhaseTableDiagnostics( final StringBuilder builder ) {
+        builder.append( "Epic 12 per-phase summary:" ).append( '\n' );
+        if ( playerPhaseTableByPlayerName.isEmpty() ) {
+            builder.append( "- No player phase tables were derived yet." ).append( '\n' );
+            return;
+        }
+
+        for ( final Map.Entry< String, LarvaPlayerPhaseTable > entry : playerPhaseTableByPlayerName.entrySet() ) {
+            builder.append( "  * " ).append( entry.getKey() ).append( ": " );
+            boolean first = true;
+            for ( final LarvaGamePhase phase : LarvaGamePhase.values() ) {
+                final LarvaPhaseStats stats = entry.getValue().getPhaseStats( phase );
+                if ( !first )
+                    builder.append( " | " );
+                builder.append( phase.getDisplayLabel() )
+                        .append( "=" )
+                        .append( formatPhaseRate( stats == null ? null : stats.getMissedLarvaPerHatchPerMinute() ) )
+                        .append( "/" )
+                        .append( formatPhaseRate( stats == null ? null : stats.getMissedInjectLarvaPerHatchPerMinute() ) )
+                        .append( "/" )
+                        .append( formatPhaseRate( stats == null ? null : stats.getSpawnedLarvaPerHatchPerMinute() ) )
+                        .append( "/" )
+                        .append( formatPhasePercent( stats == null ? null : stats.getInjectUptimePercentage() ) );
+                first = false;
+            }
+            builder.append( '\n' );
+        }
     }
 
     /**
@@ -770,6 +819,21 @@ public class LarvaAnalysisReport {
     }
 
     /**
+     * Copies the phase-table map into immutable containers.
+     *
+     * @param source source phase-table map
+     * @return immutable copy
+     */
+    private Map< String, LarvaPlayerPhaseTable > copyPhaseTableMap( final Map< String, LarvaPlayerPhaseTable > source ) {
+        final Map< String, LarvaPlayerPhaseTable > copy = new LinkedHashMap<>();
+        if ( source == null || source.isEmpty() )
+            return Collections.unmodifiableMap( copy );
+
+        copy.putAll( source );
+        return Collections.unmodifiableMap( copy );
+    }
+
+    /**
      * Formats how many resource snapshots were captured per player.
      *
      * @return summary text
@@ -788,6 +852,41 @@ public class LarvaAnalysisReport {
         }
 
         return builder.toString();
+    }
+
+    /**
+     * Formats how many phase tables were captured per player.
+     *
+     * @return summary text
+     */
+    private String formatPhaseTableCounts() {
+        if ( playerPhaseTableByPlayerName.isEmpty() )
+            return "no per-player phase tables derived";
+
+        final StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for ( final Map.Entry< String, LarvaPlayerPhaseTable > entry : playerPhaseTableByPlayerName.entrySet() ) {
+            if ( !first )
+                builder.append( ", " );
+            builder.append( entry.getKey() ).append( '=' ).append( entry.getValue().getPhaseStatsMap().size() );
+            first = false;
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Formats a phase rate for diagnostics.
+     */
+    private String formatPhaseRate( final Double value ) {
+        return value == null ? "n/a" : formatDouble( value.doubleValue() );
+    }
+
+    /**
+     * Formats a phase percent for diagnostics.
+     */
+    private String formatPhasePercent( final Double value ) {
+        return value == null ? "n/a" : formatDouble( value.doubleValue() ) + "%";
     }
 
 }

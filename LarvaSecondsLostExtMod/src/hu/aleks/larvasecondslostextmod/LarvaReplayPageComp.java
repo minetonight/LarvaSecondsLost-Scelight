@@ -228,12 +228,13 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         timelinePreviewComp.setTimelineModel( null );
         detailsArea.setText( "Choose a replay to see where Zerg hatcheries floated at 3+ larva.\n\n"
             + "What you are looking at:\n"
+            + "- Under each player name, a phase table breaks the game into Early, Mid, Late, and End based on sustained worker-count promotions.\n"
             + "- Red bars show how long a hatchery stayed at 3 or more larva.\n"
             + "- A green lane shows inject-active windows inferred from replay-derived triple-larva bursts.\n"
             + "- A dark red lane shows conservative missed inject potential windows backed by trustworthy queen evidence.\n"
             + "- Black ticks on the main rail mark every 11 seconds of missed potential larva while a hatchery stayed at 3 or more larva.\n"
             + "- Black ticks on the dark red lane mark every 29 seconds of accumulated missed inject potential, worth 3 potential larva per hatchery.\n"
-            + "- Player totals add up both missed larva and potential injected larva missed across visible hatcheries.\n\n"
+            + "- Player totals add up both missed larva and potential injected larva missed across visible hatcheries, while the phase table normalizes those values per hatch per minute.\n\n"
             + "Use the buttons above to open a replay, analyze the latest replay, or refresh the current one." );
         detailsArea.setCaretPosition( 0 );
     }
@@ -293,8 +294,10 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
 
         builder.append( buildReplayMetadataSection( replaySummary ) ).append( '\n' );
         builder.append( buildPlayerTotalsSection( summary ) ).append( '\n' );
+        builder.append( buildPlayerPhaseSection( summary ) ).append( '\n' );
         builder.append( buildHatcheryBreakdownSection( summary ) ).append( '\n' );
         builder.append( "Legend:\n" );
+        builder.append( "- Phase table: Early, Mid, Late, End columns based on sustained worker-count thresholds.\n" );
         builder.append( "- Red bars: time spent at 3+ larva.\n" );
         builder.append( "- Green lanes: inject-active uptime inferred from replay-derived bursts where 3 larva appear within 8 loops.\n" );
         builder.append( "- Dark red lanes: conservative missed inject potential windows backed by singleton-queen command attribution and the dedicated queen radius.\n" );
@@ -340,6 +343,63 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         for ( final java.util.Map.Entry< String, String > entry : summary.getTimelineModel().getGroupOverviewLabelMap().entrySet() )
             builder.append( "- " ).append( entry.getKey() ).append( ": " ).append( entry.getValue() ).append( '\n' );
         return builder.toString();
+    }
+
+    /**
+     * Builds the per-player phase summary section.
+     *
+     * @param summary page-level replay summary
+     * @return rendered phase section
+     */
+    private String buildPlayerPhaseSection( final LarvaReplayPageSummary summary ) {
+        final StringBuilder builder = new StringBuilder();
+        builder.append( "Player phase table:" ).append( '\n' );
+        if ( summary.getTimelineModel() == null || summary.getTimelineModel().getPlayerPhaseTableMap().isEmpty() ) {
+            builder.append( "- No phase table data is available." ).append( '\n' );
+            return builder.toString();
+        }
+
+        for ( final java.util.Map.Entry< String, LarvaPlayerPhaseTable > entry : summary.getTimelineModel().getPlayerPhaseTableMap().entrySet() ) {
+            builder.append( "- " ).append( entry.getKey() ).append( ": " );
+            boolean first = true;
+            for ( final LarvaGamePhase phase : LarvaGamePhase.values() ) {
+                final LarvaPhaseStats stats = entry.getValue().getPhaseStats( phase );
+                if ( !first )
+                    builder.append( " | " );
+                builder.append( phase.getDisplayLabel() )
+                        .append( ' ' )
+                        .append( formatPhaseValue( stats == null ? null : stats.getMissedLarvaPerHatchPerMinute() ) )
+                        .append( '/' )
+                        .append( formatPhaseValue( stats == null ? null : stats.getMissedInjectLarvaPerHatchPerMinute() ) )
+                        .append( '/' )
+                        .append( formatPhaseValue( stats == null ? null : stats.getSpawnedLarvaPerHatchPerMinute() ) )
+                        .append( '/' )
+                        .append( formatPhasePercent( stats == null ? null : stats.getInjectUptimePercentage() ) );
+                first = false;
+            }
+            builder.append( '\n' );
+        }
+
+        builder.append( "  order = missed larva / missed inject / spawned / inject uptime" ).append( '\n' );
+        return builder.toString();
+    }
+
+    /**
+     * Formats a phase-table rate for the text summary.
+     */
+    private String formatPhaseValue( final Double value ) {
+        if ( value == null )
+            return "n/a";
+
+        final long scaled = Math.round( value.doubleValue() * 10.0d );
+        return ( scaled / 10L ) + "." + Math.abs( scaled % 10L );
+    }
+
+    /**
+     * Formats a phase-table percentage for the text summary.
+     */
+    private String formatPhasePercent( final Double value ) {
+        return value == null ? "n/a" : formatPhaseValue( value ) + "%";
     }
 
     /**
