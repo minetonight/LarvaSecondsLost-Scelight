@@ -171,6 +171,10 @@ public class LarvaTimelineGoldenFormatter {
         builder.append( "analysis.injectTrimmedWindows=" ).append( larvaAnalysisReport.getInjectTrimmedWindowCount() ).append( '\n' );
         builder.append( "analysis.idleInjectSignal=" ).append( safe( larvaAnalysisReport.getIdleInjectConclusion() ) ).append( '\n' );
         builder.append( "analysis.idleInjectRadius=" ).append( larvaAnalysisReport.getIdleInjectRadius() ).append( '\n' );
+        builder.append( "analysis.trackedQueens=" ).append( larvaAnalysisReport.getTrackedQueenCount() ).append( '\n' );
+        builder.append( "analysis.trackerObservedQueens=" ).append( larvaAnalysisReport.getTrackerObservedQueenCount() ).append( '\n' );
+        builder.append( "analysis.commandSeededQueens=" ).append( larvaAnalysisReport.getCommandSeededQueenCount() ).append( '\n' );
+        builder.append( "analysis.queenCommandEvidence=" ).append( larvaAnalysisReport.getQueenCommandEvidenceCount() ).append( '\n' );
         builder.append( "analysis.idleInjectWindows=" ).append( larvaAnalysisReport.getIdleInjectWindowCount() ).append( '\n' );
         builder.append( "analysis.idleInjectUncertaintyDiscarded=" ).append( larvaAnalysisReport.getIdleInjectUncertaintyDiscardCount() ).append( '\n' );
         appendInjectTimelines( builder, larvaAnalysisReport.getInjectTimelineList() );

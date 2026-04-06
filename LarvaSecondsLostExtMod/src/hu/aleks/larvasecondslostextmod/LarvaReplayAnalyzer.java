@@ -369,11 +369,12 @@ public class LarvaReplayAnalyzer {
                                 larvaHatcheryState.removeLarva( event.getLoop(), repProc );
                         }
 
-                        final QueenState queenState = queenByTag.get( tag );
+                        final QueenState queenState = isQueenType( unitType ) ? getOrCreateQueenState( repProc, queenByTag, tag.intValue() ) : queenByTag.get( tag );
                         if ( queenState != null ) {
-                            if ( UNIT_QUEEN.equals( unitType ) ) {
+                            if ( isQueenType( unitType ) ) {
                                 queenState.alive = true;
                                 queenState.completed = true;
+                                queenState.unitType = unitType == null || unitType.length() == 0 ? queenState.unitType : unitType;
                                 queenState.recordCompletion( event.getLoop(), repProc );
                             } else {
                                 queenState.alive = false;
@@ -403,8 +404,9 @@ public class LarvaReplayAnalyzer {
 
                 if ( event instanceof IBaseUnitEvent ) {
                     final IBaseUnitEvent baseUnitEvent = (IBaseUnitEvent) event;
+                    final Integer unitTag = buildCombinedTagOrNull( baseUnitEvent.getUnitTagIndex(), baseUnitEvent.getUnitTagRecycle() );
                     final String unitType = toStringValue( baseUnitEvent.getUnitTypeName() );
-                    if ( UNIT_QUEEN.equals( unitType ) || queenByTag.containsKey( buildCombinedTagOrNull( baseUnitEvent.getUnitTagIndex(), baseUnitEvent.getUnitTagRecycle() ) ) ) {
+                    if ( isQueenType( unitType ) || queenByTag.containsKey( unitTag ) ) {
                         updateQueenState( repProc, queenByTag, event, baseUnitEvent, unitType );
                     }
                 }
@@ -442,9 +444,14 @@ public class LarvaReplayAnalyzer {
         final List< HatcheryIdleInjectTimeline > idleInjectTimelineList = buildIdleInjectTimelines( repProc, hatcheryByTag, queenByTag,
                 injectTimelineList, queenCommandEvidenceByTag,
                 replay.getHeader() == null || replay.getHeader().getElapsedGameLoops() == null ? 0 : replay.getHeader().getElapsedGameLoops().intValue() );
+        final int trackedQueenCount = queenByTag.size();
+        final int trackerObservedQueenCount = countTrackerObservedQueens( queenByTag );
+        final int commandSeededQueenCount = countCommandSeededQueens( queenByTag );
+        final int queenCommandEvidenceCount = countQueenCommandEvidence( queenCommandEvidenceByTag );
 
         return new LarvaAnalysisReport( calibration, timelineList, injectTimelineList, INJECT_SIGNAL_CONCLUSION,
             idleInjectTimelineList, IDLE_INJECT_SIGNAL_CONCLUSION, IDLE_INJECT_RADIUS,
+            trackedQueenCount, trackerObservedQueenCount, commandSeededQueenCount, queenCommandEvidenceCount,
             hatcheryByTag.size(), larvaBirthCount, assignedLarvaCount, unassignedLarvaCount,
             ambiguousLarvaCount, noEligibleHatcheryLarvaCount,
             directAssignmentCount, injectCorrelatedAssignmentCount, heuristicAssignmentCount, hatcheryMorphCount,
@@ -469,6 +476,7 @@ public class LarvaReplayAnalyzer {
         queenState.x = baseUnitEvent.getXCoord();
         queenState.y = baseUnitEvent.getYCoord();
         queenState.lastKnownPositionLoop = event.getLoop();
+        queenState.trackerObserved = true;
         queenState.unitType = unitType == null || unitType.length() == 0 ? queenState.unitType : unitType;
 
         switch ( event.getId() ) {
@@ -531,9 +539,15 @@ public class LarvaReplayAnalyzer {
         if ( queenTag == null )
             return;
 
-        final QueenState queenState = queenByTag.get( queenTag );
-        if ( queenState == null || !queenState.alive || !queenState.completed )
-            return;
+        final QueenState queenState = getOrCreateQueenState( repProc, queenByTag, queenTag.intValue() );
+        if ( queenState.playerId == null )
+            queenState.playerId = resolvePlayerIdForUserId( repProc, cmdEvent.getUserId() );
+        if ( queenState.playerName == null || queenState.playerName.length() == 0 || "Unknown player".equals( queenState.playerName ) )
+            queenState.playerName = resolvePlayerName( repProc, queenState.playerId );
+        queenState.commandSeeded = true;
+        queenState.alive = true;
+        queenState.completed = true;
+        queenState.recordCompletion( cmdEvent.getLoop(), repProc );
 
         final ICommand command = cmdEvent.getCommand();
         final String abilityId = command == null ? null : command.getAbilId();
@@ -573,7 +587,100 @@ public class LarvaReplayAnalyzer {
             return false;
 
         final IUnit unit = repProc.getReplay().getBalanceData().getUnit( unitLink );
-        return unit != null && UNIT_QUEEN.equals( unit.getId() );
+        return unit != null && isQueenType( unit.getId() );
+    }
+
+    /**
+     * Tells if a tracker or balance-data unit id clearly identifies a queen.
+     */
+    private boolean isQueenType( final String unitType ) {
+        final String normalizedUnitType = normalizeUnitTypeToken( unitType );
+        return normalizedUnitType.length() > 0 && normalizedUnitType.indexOf( "queen" ) >= 0;
+    }
+
+    /**
+     * Normalizes unit identifiers for tolerant comparison.
+     */
+    private String normalizeUnitTypeToken( final String value ) {
+        if ( value == null || value.length() == 0 )
+            return "";
+
+        final StringBuilder builder = new StringBuilder( value.length() );
+        for ( int i = 0; i < value.length(); i++ ) {
+            final char character = value.charAt( i );
+            if ( Character.isLetterOrDigit( character ) )
+                builder.append( Character.toLowerCase( character ) );
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Resolves a player id from a command user id when tracker ownership was not available.
+     */
+    private Integer resolvePlayerIdForUserId( final IRepProcessor repProc, final int userId ) {
+        if ( repProc == null || userId < 0 )
+            return null;
+
+        final IUser[] usersByUserId = repProc.getUsersByUserId();
+        if ( usersByUserId == null || userId >= usersByUserId.length )
+            return null;
+
+        final IUser user = usersByUserId[ userId ];
+        if ( user == null )
+            return null;
+
+        final IUser[] usersByPlayerId = repProc.getUsersByPlayerId();
+        if ( usersByPlayerId != null )
+            for ( int playerId = 1; playerId < usersByPlayerId.length; playerId++ )
+                if ( usersByPlayerId[ playerId ] == user )
+                    return Integer.valueOf( playerId );
+
+        return user.getPlayerIdx() < 0 ? null : Integer.valueOf( user.getPlayerIdx() + 1 );
+    }
+
+    /**
+     * Counts queens that were position-observed from tracker events.
+     */
+    private int countTrackerObservedQueens( final Map< Integer, QueenState > queenByTag ) {
+        int count = 0;
+        if ( queenByTag == null )
+            return 0;
+
+        for ( final QueenState queenState : queenByTag.values() )
+            if ( queenState != null && queenState.trackerObserved )
+                count++;
+
+        return count;
+    }
+
+    /**
+     * Counts queens that required command-side seeding.
+     */
+    private int countCommandSeededQueens( final Map< Integer, QueenState > queenByTag ) {
+        int count = 0;
+        if ( queenByTag == null )
+            return 0;
+
+        for ( final QueenState queenState : queenByTag.values() )
+            if ( queenState != null && queenState.commandSeeded )
+                count++;
+
+        return count;
+    }
+
+    /**
+     * Counts recorded singleton queen command evidence rows.
+     */
+    private int countQueenCommandEvidence( final Map< Integer, List< QueenCommandEvidence > > queenCommandEvidenceByTag ) {
+        int count = 0;
+        if ( queenCommandEvidenceByTag == null )
+            return 0;
+
+        for ( final List< QueenCommandEvidence > evidenceList : queenCommandEvidenceByTag.values() )
+            count += evidenceList == null ? 0 : evidenceList.size();
+
+        return count;
     }
 
     /**
@@ -2138,6 +2245,12 @@ public class LarvaReplayAnalyzer {
 
         /** Last loop with a trusted sparse tracker position. */
         private int lastKnownPositionLoop = -1;
+
+        /** Tells if at least one tracker event positively observed this queen. */
+        private boolean trackerObserved;
+
+        /** Tells if this queen had to be seeded from singleton command evidence. */
+        private boolean commandSeeded;
 
         /** Tells if the queen is alive. */
         private boolean alive = true;

@@ -35,6 +35,18 @@ public class LarvaAnalysisReport {
     /** Per-hatchery normalized idle-inject diagnostics. */
     private final List< HatcheryIdleInjectTimeline > idleInjectTimelineList;
 
+    /** Number of unique queens admitted into idle-inject analysis. */
+    private final int trackedQueenCount;
+
+    /** Number of queens that were position-observed from tracker events. */
+    private final int trackerObservedQueenCount;
+
+    /** Number of queens that had to be seeded from singleton command evidence. */
+    private final int commandSeededQueenCount;
+
+    /** Number of singleton queen command evidence records collected. */
+    private final int queenCommandEvidenceCount;
+
     /** Number of hatcheries tracked during replay analysis. */
     private final int trackedHatcheryCount;
 
@@ -109,6 +121,8 @@ public class LarvaAnalysisReport {
         public LarvaAnalysisReport( final LarvaHeuristicCalibration calibration, final List< HatcheryLarvaTimeline > timelineList,
             final List< HatcheryInjectTimeline > injectTimelineList, final String injectSignalConclusion,
             final List< HatcheryIdleInjectTimeline > idleInjectTimelineList, final String idleInjectConclusion, final double idleInjectRadius,
+            final int trackedQueenCount, final int trackerObservedQueenCount, final int commandSeededQueenCount,
+            final int queenCommandEvidenceCount,
             final int trackedHatcheryCount, final int larvaBirthCount, final int assignedLarvaCount, final int unassignedLarvaCount,
             final int ambiguousLarvaCount, final int noEligibleHatcheryLarvaCount,
             final int directAssignmentCount, final int injectCorrelatedAssignmentCount, final int heuristicAssignmentCount,
@@ -122,6 +136,10 @@ public class LarvaAnalysisReport {
         this.idleInjectTimelineList = Collections.unmodifiableList( new ArrayList<>( idleInjectTimelineList ) );
         this.idleInjectConclusion = idleInjectConclusion;
         this.idleInjectRadius = idleInjectRadius;
+        this.trackedQueenCount = trackedQueenCount;
+        this.trackerObservedQueenCount = trackerObservedQueenCount;
+        this.commandSeededQueenCount = commandSeededQueenCount;
+        this.queenCommandEvidenceCount = queenCommandEvidenceCount;
         this.trackedHatcheryCount = trackedHatcheryCount;
         this.larvaBirthCount = larvaBirthCount;
         this.assignedLarvaCount = assignedLarvaCount;
@@ -167,6 +185,22 @@ public class LarvaAnalysisReport {
 
     public List< HatcheryIdleInjectTimeline > getIdleInjectTimelineList() {
         return idleInjectTimelineList;
+    }
+
+    public int getTrackedQueenCount() {
+        return trackedQueenCount;
+    }
+
+    public int getTrackerObservedQueenCount() {
+        return trackerObservedQueenCount;
+    }
+
+    public int getCommandSeededQueenCount() {
+        return commandSeededQueenCount;
+    }
+
+    public int getQueenCommandEvidenceCount() {
+        return queenCommandEvidenceCount;
     }
 
     public int getInjectEvidenceCount() {
@@ -531,6 +565,11 @@ public class LarvaAnalysisReport {
         builder.append( "Epic 11 Story 11.03 idle inject qualification:" ).append( '\n' );
         builder.append( "- Idle inject answer: " ).append( idleInjectConclusion == null ? "n/a" : idleInjectConclusion ).append( '\n' );
         builder.append( "- Dedicated queen radius: " ).append( formatDouble( idleInjectRadius ) ).append( '\n' );
+        builder.append( "- Queen discovery: tracked=" ).append( trackedQueenCount )
+            .append( ", tracker observed=" ).append( trackerObservedQueenCount )
+            .append( ", command seeded=" ).append( commandSeededQueenCount )
+            .append( ", command evidence=" ).append( queenCommandEvidenceCount )
+            .append( '\n' );
         builder.append( "- Idle inject totals: kept windows=" ).append( getIdleInjectWindowCount() )
                 .append( ", uncertainty discarded=" ).append( getIdleInjectUncertaintyDiscardCount() )
                 .append( '\n' );
