@@ -122,7 +122,16 @@ public class LarvaTimelinePreviewComp extends JPanel {
     private static final int STATUS_LABEL_GAP = 8;
 
     /** Height of the per-player phase table. */
-    private static final int PHASE_TABLE_HEIGHT = 110;
+    private static final int PHASE_TABLE_HEADER_HEIGHT = 20;
+
+    /** Height of each phase-table body row. */
+    private static final int PHASE_TABLE_ROW_HEIGHT = 18;
+
+    /** Number of body rows shown in the per-player phase table. */
+    private static final int PHASE_TABLE_BODY_ROW_COUNT = 7;
+
+    /** Height of the per-player phase table. */
+    private static final int PHASE_TABLE_HEIGHT = PHASE_TABLE_HEADER_HEIGHT + PHASE_TABLE_ROW_HEIGHT * PHASE_TABLE_BODY_ROW_COUNT;
 
     /** Gap after the per-player phase table. */
     private static final int PHASE_TABLE_GAP = 8;
@@ -135,6 +144,9 @@ public class LarvaTimelinePreviewComp extends JPanel {
 
     /** Tooltip hotspots rebuilt on every paint pass. */
     private final List< TooltipHotspot > tooltipHotspotList = new ArrayList<>();
+
+    /** Formats compact player-facing benchmark tier strings. */
+    private final LarvaPhaseBenchmarkRatingFormatter phaseBenchmarkRatingFormatter = new LarvaPhaseBenchmarkRatingFormatter();
 
     /**
      * Creates a new timeline preview component.
@@ -239,9 +251,11 @@ public class LarvaTimelinePreviewComp extends JPanel {
             final int top, final int width ) {
         final String[] metricLabels = new String[] {
             "Phase span",
-                "Inject uptime [%]",
+            "Inject uptime [%]",
             "Larva gen [lrv / htch / min]",
+            "larva gen ranking",
             "Larva missed [lrv / htch / min]",
+            "larva missed ranking",
             "Inject-missed larva [lrv / htch / min]"
         };
         final String[] phaseHeaderLabels = new String[ LarvaGamePhase.values().length ];
@@ -253,8 +267,12 @@ public class LarvaTimelinePreviewComp extends JPanel {
             cellTextMatrix[ 0 ][ phaseIndex ] = formatPhaseIntervalText( playerPhaseTable.getPhaseInterval( phase ) );
             cellTextMatrix[ 1 ][ phaseIndex ] = formatPhasePercent( phaseStats == null ? null : phaseStats.getInjectUptimePercentage() );
             cellTextMatrix[ 2 ][ phaseIndex ] = formatPhaseRate( phaseStats == null ? null : phaseStats.getSpawnedLarvaPerHatchPerMinute() );
-            cellTextMatrix[ 3 ][ phaseIndex ] = formatPhaseRate( phaseStats == null ? null : phaseStats.getMissedLarvaPerHatchPerMinute() );
-            cellTextMatrix[ 4 ][ phaseIndex ] = formatPhaseRate( phaseStats == null ? null : phaseStats.getMissedInjectLarvaPerHatchPerMinute() );
+            cellTextMatrix[ 3 ][ phaseIndex ] = phaseBenchmarkRatingFormatter.formatSpawnedLarvaRanking( phase,
+                phaseStats == null ? null : phaseStats.getSpawnedLarvaPerHatchPerMinute() );
+            cellTextMatrix[ 4 ][ phaseIndex ] = formatPhaseRate( phaseStats == null ? null : phaseStats.getMissedLarvaPerHatchPerMinute() );
+            cellTextMatrix[ 5 ][ phaseIndex ] = phaseBenchmarkRatingFormatter.formatMissedLarvaRanking( phase,
+                phaseStats == null ? null : phaseStats.getMissedLarvaPerHatchPerMinute() );
+            cellTextMatrix[ 6 ][ phaseIndex ] = formatPhaseRate( phaseStats == null ? null : phaseStats.getMissedInjectLarvaPerHatchPerMinute() );
         }
 
         final int firstColumnWidth = resolveMetricColumnWidth( fm, metricLabels );
@@ -269,8 +287,8 @@ public class LarvaTimelinePreviewComp extends JPanel {
         columnX[ 1 ] = left + firstColumnWidth;
         for ( int phaseIndex = 0; phaseIndex < phaseColumnWidthArray.length; phaseIndex++ )
             columnX[ phaseIndex + 2 ] = columnX[ phaseIndex + 1 ] + phaseColumnWidthArray[ phaseIndex ];
-        final int rowHeight = 18;
-        final int headerHeight = 20;
+        final int rowHeight = PHASE_TABLE_ROW_HEIGHT;
+        final int headerHeight = PHASE_TABLE_HEADER_HEIGHT;
         final int bodyRowCount = metricLabels.length;
 
         g.setColor( Color.WHITE );

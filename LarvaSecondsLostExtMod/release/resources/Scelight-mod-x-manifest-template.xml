@@ -15,11 +15,11 @@
         </personName>
     </authorList>
     <homePage>https://example.invalid/larva-seconds-lost</homePage>
-    <shortDesc>Baseline Scelight module for larva analysis and visualization.</shortDesc>
+    <shortDesc>Scelight module for Zerg larva analysis, phase metrics, timelines, and benchmark rankings.</shortDesc>
     <description><![CDATA[
         <html><body>
-            <p>This baseline release proves that the Larva Seconds Lost external module can be built, packaged, installed, and enabled inside Scelight.</p>
-            <p>Later epics will replace the placeholder page with replay analysis and the larva timeline chart integration.</p>
+            <p>Larva Seconds Lost analyzes Zerg replays inside Scelight and highlights when hatcheries floated larva, how much inject uptime was maintained, and where missed inject windows likely occurred.</p>
+            <p>The replay page now includes a larva timeline preview, per-phase metrics for Early, Mid, Late, and End game, and benchmark-based larva generation and larva missed rankings.</p>
         </body></html>
     ]]></description>
     <mainClass>hu.aleks.larvasecondslostextmod.LarvaSecondsLostModule</mainClass>

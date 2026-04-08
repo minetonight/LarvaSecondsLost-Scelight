@@ -39,6 +39,9 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
     /** Timeline preview component. */
     private final LarvaTimelinePreviewComp timelinePreviewComp;
 
+    /** Formats compact player-facing benchmark tier strings. */
+    private final LarvaPhaseBenchmarkRatingFormatter phaseBenchmarkRatingFormatter;
+
     /** Last replay file displayed on this page. */
     private Path currentReplayFile;
 
@@ -55,6 +58,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         statusLabel = new JLabel( "Larva timeline ready.", module.getLarvaIcon().get(), SwingConstants.LEADING );
         detailsArea = new JTextArea();
         timelinePreviewComp = new LarvaTimelinePreviewComp();
+        phaseBenchmarkRatingFormatter = new LarvaPhaseBenchmarkRatingFormatter();
 
         buildGui();
         addHierarchyListener( this );
@@ -229,6 +233,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         detailsArea.setText( "Choose a replay to see where Zerg hatcheries floated at 3+ larva.\n\n"
             + "What you are looking at:\n"
             + "- Under each player name, a phase table breaks the game into Early, Mid, Late, and End based on sustained worker-count promotions.\n"
+            + "- The first two phase-table rows benchmark larva generation and larva missed against compact gold / plat / dia / masters reference bands.\n"
             + "- Red bars show how long a hatchery stayed at 3 or more larva.\n"
             + "- A green lane shows inject-active windows inferred from replay-derived triple-larva bursts.\n"
             + "- A dark red lane shows conservative missed inject potential windows backed by trustworthy queen evidence.\n"
@@ -298,6 +303,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         builder.append( buildHatcheryBreakdownSection( summary ) ).append( '\n' );
         builder.append( "Legend:\n" );
         builder.append( "- Phase table: Early, Mid, Late, End columns based on sustained worker-count thresholds.\n" );
+        builder.append( "- Ranking rows: compact percentile-inside-tier estimates using gold / plat / dia / masters benchmark anchors.\n" );
         builder.append( "- Red bars: time spent at 3+ larva.\n" );
         builder.append( "- Green lanes: inject-active uptime inferred from replay-derived bursts where 3 larva appear within 8 loops.\n" );
         builder.append( "- Dark red lanes: conservative missed inject potential windows backed by singleton-queen command attribution and the dedicated queen radius.\n" );
@@ -378,10 +384,35 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
                 first = false;
             }
             builder.append( '\n' );
+            builder.append( "  larva gen ranking: " );
+            appendPhaseRankingLine( builder, entry.getValue(), true );
+            builder.append( '\n' );
+            builder.append( "  larva missed ranking: " );
+            appendPhaseRankingLine( builder, entry.getValue(), false );
+            builder.append( '\n' );
         }
 
         builder.append( "  order = missed larva / missed inject / spawned / inject uptime" ).append( '\n' );
         return builder.toString();
+    }
+
+    /**
+     * Appends one compact per-phase ranking line.
+     */
+    private void appendPhaseRankingLine( final StringBuilder builder, final LarvaPlayerPhaseTable playerPhaseTable, final boolean spawnedLarva ) {
+        boolean first = true;
+        for ( final LarvaGamePhase phase : LarvaGamePhase.values() ) {
+            final LarvaPhaseStats phaseStats = playerPhaseTable == null ? null : playerPhaseTable.getPhaseStats( phase );
+            if ( !first )
+                builder.append( " | " );
+            builder.append( phase.getDisplayLabel() ).append( ' ' )
+                    .append( spawnedLarva
+                            ? phaseBenchmarkRatingFormatter.formatSpawnedLarvaRanking( phase,
+                                    phaseStats == null ? null : phaseStats.getSpawnedLarvaPerHatchPerMinute() )
+                            : phaseBenchmarkRatingFormatter.formatMissedLarvaRanking( phase,
+                                    phaseStats == null ? null : phaseStats.getMissedLarvaPerHatchPerMinute() ) );
+            first = false;
+        }
     }
 
     /**
