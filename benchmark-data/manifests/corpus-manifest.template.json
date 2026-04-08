@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "epic13-phase1-v1",
+  "generatedAt": "2026-04-06T00:00:00Z",
+  "sourceReplayList": [
+    {
+      "replayHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "filePath": "benchmark-data/raw-replays/elite-7000/ZvT/serral-example.SC2Replay",
+      "originalFileName": "serral-example.SC2Replay",
+      "sourceUrlList": [
+        "https://example.invalid/replays/serral-example"
+      ],
+      "sourceLabel": "example-public-archive",
+      "acquiredAt": "2026-04-06T00:00:00Z",
+      "primaryZergPlayer": "Serral",
+      "opponentPlayer": "ExampleTerran",
+      "matchup": "ZvT",
+      "cohortBucket": "elite-7000",
+      "cohortConfidence": "confirmed",
+      "cohortEvidence": "Named elite player from public replay pack",
+      "acceptanceState": "discovered",
+      "qualityFlags": [],
+      "notes": "Template discovered entry"
+    }
+  ],
+  "acceptedReplayList": [
+    {
+      "replayHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "filePath": "benchmark-data/raw-replays/mmr-5000/ZvP/example-accepted.SC2Replay",
+      "originalFileName": "example-accepted.SC2Replay",
+      "sourceUrlList": [
+        "https://example.invalid/replays/example-accepted"
+      ],
+      "sourceLabel": "example-public-archive",
+      "acquiredAt": "2026-04-06T00:00:00Z",
+      "primaryZergPlayer": "ExampleZerg",
+      "opponentPlayer": "ExampleProtoss",
+      "matchup": "ZvP",
+      "cohortBucket": "mmr-5000",
+      "cohortConfidence": "strong-inference",
+      "cohortEvidence": "Archive metadata lists player near the 5k target bucket",
+      "acceptanceState": "accepted",
+      "qualityFlags": [
+        "limited-inject-evidence"
+      ],
+      "notes": "Template accepted entry",
+      "canonicalSourceCount": 1
+    }
+  ],
+  "rejectedReplayList": [
+    {
+      "replayHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "filePath": "benchmark-data/raw-replays/mmr-3000/ZvZ/example-rejected.SC2Replay",
+      "originalFileName": "example-rejected.SC2Replay",
+      "sourceUrlList": [],
+      "sourceLabel": "user-supplied",
+      "acquiredAt": "2026-04-06T00:00:00Z",
+      "primaryZergPlayer": "ExampleZerg",
+      "opponentPlayer": "ExampleZergOpponent",
+      "matchup": "ZvZ",
+      "cohortBucket": "mmr-3000",
+      "cohortConfidence": "weak-inference",
+      "cohortEvidence": "Filename-only claim with no trusted metadata",
+      "acceptanceState": "rejected",
+      "qualityFlags": [
+        "missing-provenance"
+      ],
+      "notes": "Template rejected entry",
+      "rejectionReason": "missing-provenance"
+    }
+  ]
+}

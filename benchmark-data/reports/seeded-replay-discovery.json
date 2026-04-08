@@ -1,0 +1,4267 @@
+{
+  "schemaVersion": "epic13-internet-sources-v1",
+  "generatedAt": "2026-04-07T10:33:56Z",
+  "seedManifestSchemaVersion": "epic13-internet-sources-v1",
+  "sourceReportList": [
+    {
+      "schemaVersion": "epic13-internet-sources-v1",
+      "generatedAt": "2026-04-07T10:33:31Z",
+      "sourceKind": "spawningtool-replay-listing",
+      "listingUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=3",
+      "pageCount": 3,
+      "pageList": [
+        {
+          "pageNumber": 1,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=3",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=644&tag=3&p=1"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 2,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=3&p=2",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=644&tag=3&p=2"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 3,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=3&p=3",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=644&tag=3&p=3"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        }
+      ],
+      "replayList": [
+        {
+          "replayId": "82393",
+          "title": "Clem v Serral: Game 3 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/82393/",
+          "downloadUrl": "https://lotv.spawningtool.com/82393/download/"
+        },
+        {
+          "replayId": "82413",
+          "title": "Maru v Serral: Game 1 - [ESL] Hecate",
+          "detailUrl": "https://lotv.spawningtool.com/82413/",
+          "downloadUrl": "https://lotv.spawningtool.com/82413/download/"
+        },
+        {
+          "replayId": "82414",
+          "title": "Maru v Serral: Game 2 - [ESL] Radhuset Station",
+          "detailUrl": "https://lotv.spawningtool.com/82414/",
+          "downloadUrl": "https://lotv.spawningtool.com/82414/download/"
+        },
+        {
+          "replayId": "82415",
+          "title": "Maru v Serral: Game 3 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/82415/",
+          "downloadUrl": "https://lotv.spawningtool.com/82415/download/"
+        },
+        {
+          "replayId": "82416",
+          "title": "Maru v Serral: Game 4 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/82416/",
+          "downloadUrl": "https://lotv.spawningtool.com/82416/download/"
+        },
+        {
+          "replayId": "83287",
+          "title": "Maru v Serral: Game 1 - [ESL] Post-Youth",
+          "detailUrl": "https://lotv.spawningtool.com/83287/",
+          "downloadUrl": "https://lotv.spawningtool.com/83287/download/"
+        },
+        {
+          "replayId": "83543",
+          "title": "Oliveira v Serral: Game 1 - [ESL] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/83543/",
+          "downloadUrl": "https://lotv.spawningtool.com/83543/download/"
+        },
+        {
+          "replayId": "83544",
+          "title": "Oliveira v Serral: Game 2 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/83544/",
+          "downloadUrl": "https://lotv.spawningtool.com/83544/download/"
+        },
+        {
+          "replayId": "83545",
+          "title": "Oliveira v Serral: Game 3 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/83545/",
+          "downloadUrl": "https://lotv.spawningtool.com/83545/download/"
+        },
+        {
+          "replayId": "83546",
+          "title": "Oliveira v Serral: Game 4 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/83546/",
+          "downloadUrl": "https://lotv.spawningtool.com/83546/download/"
+        },
+        {
+          "replayId": "83547",
+          "title": "Oliveira v Serral: Game 5 - [ESL] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/83547/",
+          "downloadUrl": "https://lotv.spawningtool.com/83547/download/"
+        },
+        {
+          "replayId": "83548",
+          "title": "Maru v Serral: Game 2 - [ESL] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/83548/",
+          "downloadUrl": "https://lotv.spawningtool.com/83548/download/"
+        },
+        {
+          "replayId": "83549",
+          "title": "Maru v Serral: Game 3 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/83549/",
+          "downloadUrl": "https://lotv.spawningtool.com/83549/download/"
+        },
+        {
+          "replayId": "83550",
+          "title": "Maru v Serral: Game 4 - [ESL] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/83550/",
+          "downloadUrl": "https://lotv.spawningtool.com/83550/download/"
+        },
+        {
+          "replayId": "83977",
+          "title": "Clem v Serral: Game 3 - [EWC] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/83977/",
+          "downloadUrl": "https://lotv.spawningtool.com/83977/download/"
+        },
+        {
+          "replayId": "83985",
+          "title": "Clem v Serral: Game 1 - [EWC] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/83985/",
+          "downloadUrl": "https://lotv.spawningtool.com/83985/download/"
+        },
+        {
+          "replayId": "83986",
+          "title": "Clem v Serral: Game 2 - [EWC] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/83986/",
+          "downloadUrl": "https://lotv.spawningtool.com/83986/download/"
+        },
+        {
+          "replayId": "83987",
+          "title": "Clem v Serral: Game 4 - [EWC] Post-Youth",
+          "detailUrl": "https://lotv.spawningtool.com/83987/",
+          "downloadUrl": "https://lotv.spawningtool.com/83987/download/"
+        },
+        {
+          "replayId": "83988",
+          "title": "Clem v Serral: Game 5 - [EWC] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/83988/",
+          "downloadUrl": "https://lotv.spawningtool.com/83988/download/"
+        },
+        {
+          "replayId": "84045",
+          "title": "Coffee v Serral: Game 1 - [EWC] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/84045/",
+          "downloadUrl": "https://lotv.spawningtool.com/84045/download/"
+        },
+        {
+          "replayId": "84046",
+          "title": "Coffee v Serral: Game 2 - [EWC] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/84046/",
+          "downloadUrl": "https://lotv.spawningtool.com/84046/download/"
+        },
+        {
+          "replayId": "84047",
+          "title": "Coffee v Serral: Game 3 - [EWC] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/84047/",
+          "downloadUrl": "https://lotv.spawningtool.com/84047/download/"
+        },
+        {
+          "replayId": "84082",
+          "title": "Clem v Serral: Game 1 - [EWC] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/84082/",
+          "downloadUrl": "https://lotv.spawningtool.com/84082/download/"
+        },
+        {
+          "replayId": "84083",
+          "title": "Clem v Serral: Game 2 - [EWC] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/84083/",
+          "downloadUrl": "https://lotv.spawningtool.com/84083/download/"
+        },
+        {
+          "replayId": "84084",
+          "title": "Clem v Serral: Game 3 - [EWC] Amphion",
+          "detailUrl": "https://lotv.spawningtool.com/84084/",
+          "downloadUrl": "https://lotv.spawningtool.com/84084/download/"
+        },
+        {
+          "replayId": "84093",
+          "title": "Maru v Serral: Game 1 - [EWC] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/84093/",
+          "downloadUrl": "https://lotv.spawningtool.com/84093/download/"
+        },
+        {
+          "replayId": "84094",
+          "title": "Maru v Serral: Game 2 - [EWC] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/84094/",
+          "downloadUrl": "https://lotv.spawningtool.com/84094/download/"
+        },
+        {
+          "replayId": "84095",
+          "title": "Maru v Serral: Game 3 - [EWC] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/84095/",
+          "downloadUrl": "https://lotv.spawningtool.com/84095/download/"
+        },
+        {
+          "replayId": "84096",
+          "title": "Maru v Serral: Game 4 - [EWC] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/84096/",
+          "downloadUrl": "https://lotv.spawningtool.com/84096/download/"
+        },
+        {
+          "replayId": "84381",
+          "title": "LiquidClem v Serral: Game 6 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/84381/",
+          "downloadUrl": "https://lotv.spawningtool.com/84381/download/"
+        },
+        {
+          "replayId": "84382",
+          "title": "LiquidClem v Serral: Game 1 - Whispers of Gold",
+          "detailUrl": "https://lotv.spawningtool.com/84382/",
+          "downloadUrl": "https://lotv.spawningtool.com/84382/download/"
+        },
+        {
+          "replayId": "84383",
+          "title": "LiquidClem v Serral: Game 2 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/84383/",
+          "downloadUrl": "https://lotv.spawningtool.com/84383/download/"
+        },
+        {
+          "replayId": "84384",
+          "title": "LiquidClem v Serral: Game 3 - Abyssal Reef LE",
+          "detailUrl": "https://lotv.spawningtool.com/84384/",
+          "downloadUrl": "https://lotv.spawningtool.com/84384/download/"
+        },
+        {
+          "replayId": "84385",
+          "title": "LiquidClem v Serral: Game 4 - Amygdala",
+          "detailUrl": "https://lotv.spawningtool.com/84385/",
+          "downloadUrl": "https://lotv.spawningtool.com/84385/download/"
+        },
+        {
+          "replayId": "84386",
+          "title": "LiquidClem v Serral: Game 5 - Abyssal Reef LE",
+          "detailUrl": "https://lotv.spawningtool.com/84386/",
+          "downloadUrl": "https://lotv.spawningtool.com/84386/download/"
+        },
+        {
+          "replayId": "84387",
+          "title": "LiquidClem v Serral: Game 7 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/84387/",
+          "downloadUrl": "https://lotv.spawningtool.com/84387/download/"
+        },
+        {
+          "replayId": "84388",
+          "title": "LiquidClem v Serral: Game 8 - Amygdala",
+          "detailUrl": "https://lotv.spawningtool.com/84388/",
+          "downloadUrl": "https://lotv.spawningtool.com/84388/download/"
+        },
+        {
+          "replayId": "84391",
+          "title": "Serral v VITmaru: Game 1 - Whispers of Gold",
+          "detailUrl": "https://lotv.spawningtool.com/84391/",
+          "downloadUrl": "https://lotv.spawningtool.com/84391/download/"
+        },
+        {
+          "replayId": "84600",
+          "title": "BabyMarine v Serral: Game 1 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/84600/",
+          "downloadUrl": "https://lotv.spawningtool.com/84600/download/"
+        },
+        {
+          "replayId": "84601",
+          "title": "BabyMarine v Serral: Game 2 - Amygdala",
+          "detailUrl": "https://lotv.spawningtool.com/84601/",
+          "downloadUrl": "https://lotv.spawningtool.com/84601/download/"
+        },
+        {
+          "replayId": "84602",
+          "title": "Serral v VITRyung: Game 1 - Amygdala",
+          "detailUrl": "https://lotv.spawningtool.com/84602/",
+          "downloadUrl": "https://lotv.spawningtool.com/84602/download/"
+        },
+        {
+          "replayId": "84603",
+          "title": "Serral v VITRyung: Game 2 - Whispers of Gold",
+          "detailUrl": "https://lotv.spawningtool.com/84603/",
+          "downloadUrl": "https://lotv.spawningtool.com/84603/download/"
+        },
+        {
+          "replayId": "84604",
+          "title": "Serral v Spirit: Game 1 - Frostline LE",
+          "detailUrl": "https://lotv.spawningtool.com/84604/",
+          "downloadUrl": "https://lotv.spawningtool.com/84604/download/"
+        },
+        {
+          "replayId": "84605",
+          "title": "Serral v Spirit: Game 2 - King's Cove LE",
+          "detailUrl": "https://lotv.spawningtool.com/84605/",
+          "downloadUrl": "https://lotv.spawningtool.com/84605/download/"
+        },
+        {
+          "replayId": "84606",
+          "title": "Serral v Spirit: Game 3 - Neon Violet Square LE",
+          "detailUrl": "https://lotv.spawningtool.com/84606/",
+          "downloadUrl": "https://lotv.spawningtool.com/84606/download/"
+        },
+        {
+          "replayId": "84754",
+          "title": "Serral v VITmaru: Game 2 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/84754/",
+          "downloadUrl": "https://lotv.spawningtool.com/84754/download/"
+        },
+        {
+          "replayId": "84755",
+          "title": "Serral v VITmaru: Game 3 - Abyssal Reef LE",
+          "detailUrl": "https://lotv.spawningtool.com/84755/",
+          "downloadUrl": "https://lotv.spawningtool.com/84755/download/"
+        },
+        {
+          "replayId": "85039",
+          "title": "[ZvT] - [BASKGG]Serral vs [mlem]LiquidClem - Frostline LE - 2025-01-25 13_21_03",
+          "detailUrl": "https://lotv.spawningtool.com/85039/",
+          "downloadUrl": "https://lotv.spawningtool.com/85039/download/"
+        },
+        {
+          "replayId": "85040",
+          "title": "[TvZ] - [mlem]LiquidClem vs [BASKGG]Serral - Amygdala - 2025-01-25 13_36_08",
+          "detailUrl": "https://lotv.spawningtool.com/85040/",
+          "downloadUrl": "https://lotv.spawningtool.com/85040/download/"
+        },
+        {
+          "replayId": "85461",
+          "title": "pigfest finals serral clem 3",
+          "detailUrl": "https://lotv.spawningtool.com/85461/",
+          "downloadUrl": "https://lotv.spawningtool.com/85461/download/"
+        },
+        {
+          "replayId": "86248",
+          "title": "pigfest finals serral clem 6",
+          "detailUrl": "https://lotv.spawningtool.com/86248/",
+          "downloadUrl": "https://lotv.spawningtool.com/86248/download/"
+        },
+        {
+          "replayId": "87388",
+          "title": "6. Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/87388/",
+          "downloadUrl": "https://lotv.spawningtool.com/87388/download/"
+        },
+        {
+          "replayId": "87389",
+          "title": "4. Magannatha LE",
+          "detailUrl": "https://lotv.spawningtool.com/87389/",
+          "downloadUrl": "https://lotv.spawningtool.com/87389/download/"
+        },
+        {
+          "replayId": "87397",
+          "title": "EWC 2025 - Game1 - Serral vs Cure - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/87397/",
+          "downloadUrl": "https://lotv.spawningtool.com/87397/download/"
+        },
+        {
+          "replayId": "87421",
+          "title": "Cure v Serral: Game 3 - Pylon LE",
+          "detailUrl": "https://lotv.spawningtool.com/87421/",
+          "downloadUrl": "https://lotv.spawningtool.com/87421/download/"
+        },
+        {
+          "replayId": "87422",
+          "title": "Cure v Serral: Game 4 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/87422/",
+          "downloadUrl": "https://lotv.spawningtool.com/87422/download/"
+        },
+        {
+          "replayId": "87423",
+          "title": "Cure v Serral: Game 2 - Incorporeal LE",
+          "detailUrl": "https://lotv.spawningtool.com/87423/",
+          "downloadUrl": "https://lotv.spawningtool.com/87423/download/"
+        },
+        {
+          "replayId": "87510",
+          "title": "HeroMarine v Serral: Game 2 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/87510/",
+          "downloadUrl": "https://lotv.spawningtool.com/87510/download/"
+        },
+        {
+          "replayId": "87511",
+          "title": "HeroMarine v Serral: Game 1 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/87511/",
+          "downloadUrl": "https://lotv.spawningtool.com/87511/download/"
+        },
+        {
+          "replayId": "88187",
+          "title": "Whispers of Gold",
+          "detailUrl": "https://lotv.spawningtool.com/88187/",
+          "downloadUrl": "https://lotv.spawningtool.com/88187/download/"
+        },
+        {
+          "replayId": "88302",
+          "title": "Pylon LE (173)",
+          "detailUrl": "https://lotv.spawningtool.com/88302/",
+          "downloadUrl": "https://lotv.spawningtool.com/88302/download/"
+        },
+        {
+          "replayId": "88303",
+          "title": "Pylon LE (172)",
+          "detailUrl": "https://lotv.spawningtool.com/88303/",
+          "downloadUrl": "https://lotv.spawningtool.com/88303/download/"
+        },
+        {
+          "replayId": "88765",
+          "title": "3. Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/88765/",
+          "downloadUrl": "https://lotv.spawningtool.com/88765/download/"
+        },
+        {
+          "replayId": "89458",
+          "title": "2025-09-08 - (Z)Serral VS (T)Cure",
+          "detailUrl": "https://lotv.spawningtool.com/89458/",
+          "downloadUrl": "https://lotv.spawningtool.com/89458/download/"
+        },
+        {
+          "replayId": "89472",
+          "title": "LiquidClem v Serral: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89472/",
+          "downloadUrl": "https://lotv.spawningtool.com/89472/download/"
+        },
+        {
+          "replayId": "89539",
+          "title": "Serral v VITRyung: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89539/",
+          "downloadUrl": "https://lotv.spawningtool.com/89539/download/"
+        },
+        {
+          "replayId": "89542",
+          "title": "Serral v VITRyung: Game 1 - Taito Citadel LE",
+          "detailUrl": "https://lotv.spawningtool.com/89542/",
+          "downloadUrl": "https://lotv.spawningtool.com/89542/download/"
+        },
+        {
+          "replayId": "89580",
+          "title": "HeroMarine v Serral: Game 5 - Old Republic LE",
+          "detailUrl": "https://lotv.spawningtool.com/89580/",
+          "downloadUrl": "https://lotv.spawningtool.com/89580/download/"
+        },
+        {
+          "replayId": "89584",
+          "title": "HeroMarine v Serral: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89584/",
+          "downloadUrl": "https://lotv.spawningtool.com/89584/download/"
+        },
+        {
+          "replayId": "89588",
+          "title": "HeroMarine v Serral: Game 4 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89588/",
+          "downloadUrl": "https://lotv.spawningtool.com/89588/download/"
+        },
+        {
+          "replayId": "89591",
+          "title": "HeroMarine v Serral: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89591/",
+          "downloadUrl": "https://lotv.spawningtool.com/89591/download/"
+        },
+        {
+          "replayId": "89592",
+          "title": "HeroMarine v Serral: Game 3 - White Rabbit LE",
+          "detailUrl": "https://lotv.spawningtool.com/89592/",
+          "downloadUrl": "https://lotv.spawningtool.com/89592/download/"
+        },
+        {
+          "replayId": "89632",
+          "title": "LiquidClem v Serral: Game 3 - Tourmaline LE",
+          "detailUrl": "https://lotv.spawningtool.com/89632/",
+          "downloadUrl": "https://lotv.spawningtool.com/89632/download/"
+        },
+        {
+          "replayId": "89641",
+          "title": "LiquidClem v Serral: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89641/",
+          "downloadUrl": "https://lotv.spawningtool.com/89641/download/"
+        },
+        {
+          "replayId": "89882",
+          "title": "[EWC] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/89882/",
+          "downloadUrl": "https://lotv.spawningtool.com/89882/download/"
+        }
+      ],
+      "seed": {
+        "sourceId": "elite-serral-zvt",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=3",
+        "pages": 3,
+        "cohortBucket": "elite-7000",
+        "primaryPlayer": "Serral",
+        "matchup": "ZvT",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      }
+    },
+    {
+      "schemaVersion": "epic13-internet-sources-v1",
+      "generatedAt": "2026-04-07T10:33:33Z",
+      "sourceKind": "spawningtool-replay-listing",
+      "listingUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=11",
+      "pageCount": 3,
+      "pageList": [
+        {
+          "pageNumber": 1,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=11",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=644&tag=11&p=1"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 2,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=11&p=2",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=644&tag=11&p=2"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 3,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=11&p=3",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=644&tag=11&p=3"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        }
+      ],
+      "replayList": [
+        {
+          "replayId": "80348",
+          "title": "Creator v Serral: Game 1 - [G8] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/80348/",
+          "downloadUrl": "https://lotv.spawningtool.com/80348/download/"
+        },
+        {
+          "replayId": "80349",
+          "title": "Creator v Serral: Game 2 - [G8] Dragon Scales",
+          "detailUrl": "https://lotv.spawningtool.com/80349/",
+          "downloadUrl": "https://lotv.spawningtool.com/80349/download/"
+        },
+        {
+          "replayId": "80356",
+          "title": "Classic v Serral: Game 2 - [G8] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/80356/",
+          "downloadUrl": "https://lotv.spawningtool.com/80356/download/"
+        },
+        {
+          "replayId": "80357",
+          "title": "Classic v Serral: Game 3 - [G8] Dragon Scales",
+          "detailUrl": "https://lotv.spawningtool.com/80357/",
+          "downloadUrl": "https://lotv.spawningtool.com/80357/download/"
+        },
+        {
+          "replayId": "80358",
+          "title": "Classic v Serral: Game 1 - [G8] Babylon",
+          "detailUrl": "https://lotv.spawningtool.com/80358/",
+          "downloadUrl": "https://lotv.spawningtool.com/80358/download/"
+        },
+        {
+          "replayId": "80359",
+          "title": "herO v Serral: Game 1 - [G8] Royal Blood",
+          "detailUrl": "https://lotv.spawningtool.com/80359/",
+          "downloadUrl": "https://lotv.spawningtool.com/80359/download/"
+        },
+        {
+          "replayId": "80360",
+          "title": "herO v Serral: Game 2 - [G8] NeoHumanity",
+          "detailUrl": "https://lotv.spawningtool.com/80360/",
+          "downloadUrl": "https://lotv.spawningtool.com/80360/download/"
+        },
+        {
+          "replayId": "80361",
+          "title": "herO v Serral: Game 3 - [G8] Babylon",
+          "detailUrl": "https://lotv.spawningtool.com/80361/",
+          "downloadUrl": "https://lotv.spawningtool.com/80361/download/"
+        },
+        {
+          "replayId": "80576",
+          "title": "Hecate_LE_22",
+          "detailUrl": "https://lotv.spawningtool.com/80576/",
+          "downloadUrl": "https://lotv.spawningtool.com/80576/download/"
+        },
+        {
+          "replayId": "80585",
+          "title": "Solaris_LE_19",
+          "detailUrl": "https://lotv.spawningtool.com/80585/",
+          "downloadUrl": "https://lotv.spawningtool.com/80585/download/"
+        },
+        {
+          "replayId": "80595",
+          "title": "Oceanborn_LE_27",
+          "detailUrl": "https://lotv.spawningtool.com/80595/",
+          "downloadUrl": "https://lotv.spawningtool.com/80595/download/"
+        },
+        {
+          "replayId": "80607",
+          "title": "Alcyone_LE_16",
+          "detailUrl": "https://lotv.spawningtool.com/80607/",
+          "downloadUrl": "https://lotv.spawningtool.com/80607/download/"
+        },
+        {
+          "replayId": "80856",
+          "title": "goblin v Serral: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/80856/",
+          "downloadUrl": "https://lotv.spawningtool.com/80856/download/"
+        },
+        {
+          "replayId": "80904",
+          "title": "Reynor v Serral: Game 1 - [ESL] Radhuset Station",
+          "detailUrl": "https://lotv.spawningtool.com/80904/",
+          "downloadUrl": "https://lotv.spawningtool.com/80904/download/"
+        },
+        {
+          "replayId": "80907",
+          "title": "Reynor v Serral: Game 4 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/80907/",
+          "downloadUrl": "https://lotv.spawningtool.com/80907/download/"
+        },
+        {
+          "replayId": "81042",
+          "title": "DnS v Serral: Game 1 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/81042/",
+          "downloadUrl": "https://lotv.spawningtool.com/81042/download/"
+        },
+        {
+          "replayId": "81043",
+          "title": "DnS v Serral: Game 2 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/81043/",
+          "downloadUrl": "https://lotv.spawningtool.com/81043/download/"
+        },
+        {
+          "replayId": "81047",
+          "title": "Harstem v Serral: Game 2 - [ESL] Hecate",
+          "detailUrl": "https://lotv.spawningtool.com/81047/",
+          "downloadUrl": "https://lotv.spawningtool.com/81047/download/"
+        },
+        {
+          "replayId": "81048",
+          "title": "Harstem v Serral: Game 1 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/81048/",
+          "downloadUrl": "https://lotv.spawningtool.com/81048/download/"
+        },
+        {
+          "replayId": "81166",
+          "title": "Cyan v Serral: Game 2 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/81166/",
+          "downloadUrl": "https://lotv.spawningtool.com/81166/download/"
+        },
+        {
+          "replayId": "81167",
+          "title": "Cyan v Serral: Game 1 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/81167/",
+          "downloadUrl": "https://lotv.spawningtool.com/81167/download/"
+        },
+        {
+          "replayId": "81417",
+          "title": "goblin v Serral: Game 2 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/81417/",
+          "downloadUrl": "https://lotv.spawningtool.com/81417/download/"
+        },
+        {
+          "replayId": "81470",
+          "title": "Arrogfire v Serral: Game 2 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/81470/",
+          "downloadUrl": "https://lotv.spawningtool.com/81470/download/"
+        },
+        {
+          "replayId": "81471",
+          "title": "Arrogfire v Serral: Game 1 - [ESL] Hecate",
+          "detailUrl": "https://lotv.spawningtool.com/81471/",
+          "downloadUrl": "https://lotv.spawningtool.com/81471/download/"
+        },
+        {
+          "replayId": "82310",
+          "title": "Firefly v Serral: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/82310/",
+          "downloadUrl": "https://lotv.spawningtool.com/82310/download/"
+        },
+        {
+          "replayId": "82311",
+          "title": "Firefly v Serral: Game 2 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/82311/",
+          "downloadUrl": "https://lotv.spawningtool.com/82311/download/"
+        },
+        {
+          "replayId": "82316",
+          "title": "Serral v SKillous: Game 1 - [ESL] Solaris",
+          "detailUrl": "https://lotv.spawningtool.com/82316/",
+          "downloadUrl": "https://lotv.spawningtool.com/82316/download/"
+        },
+        {
+          "replayId": "82317",
+          "title": "Serral v SKillous: Game 2 - [ESL] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/82317/",
+          "downloadUrl": "https://lotv.spawningtool.com/82317/download/"
+        },
+        {
+          "replayId": "82325",
+          "title": "Astrea v Serral: Game 1 - [ESL] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/82325/",
+          "downloadUrl": "https://lotv.spawningtool.com/82325/download/"
+        },
+        {
+          "replayId": "82326",
+          "title": "Astrea v Serral: Game 2 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/82326/",
+          "downloadUrl": "https://lotv.spawningtool.com/82326/download/"
+        },
+        {
+          "replayId": "83288",
+          "title": "20240531 - Game 1 - Serral vs Nice - ZvP - Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/83288/",
+          "downloadUrl": "https://lotv.spawningtool.com/83288/download/"
+        },
+        {
+          "replayId": "83316",
+          "title": "Nice v Serral: Game 2 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/83316/",
+          "downloadUrl": "https://lotv.spawningtool.com/83316/download/"
+        },
+        {
+          "replayId": "83326",
+          "title": "herO v Serral: Game 1 - [ESL] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/83326/",
+          "downloadUrl": "https://lotv.spawningtool.com/83326/download/"
+        },
+        {
+          "replayId": "83327",
+          "title": "herO v Serral: Game 2 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/83327/",
+          "downloadUrl": "https://lotv.spawningtool.com/83327/download/"
+        },
+        {
+          "replayId": "84058",
+          "title": "herO v Serral: Game 1 - [EWC] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/84058/",
+          "downloadUrl": "https://lotv.spawningtool.com/84058/download/"
+        },
+        {
+          "replayId": "84059",
+          "title": "herO v Serral: Game 2 - [EWC] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/84059/",
+          "downloadUrl": "https://lotv.spawningtool.com/84059/download/"
+        },
+        {
+          "replayId": "84060",
+          "title": "herO v Serral: Game 3 - [EWC] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/84060/",
+          "downloadUrl": "https://lotv.spawningtool.com/84060/download/"
+        },
+        {
+          "replayId": "84061",
+          "title": "herO v Serral: Game 4 - [EWC] Amphion",
+          "detailUrl": "https://lotv.spawningtool.com/84061/",
+          "downloadUrl": "https://lotv.spawningtool.com/84061/download/"
+        },
+        {
+          "replayId": "84062",
+          "title": "herO v Serral: Game 5 - [EWC] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/84062/",
+          "downloadUrl": "https://lotv.spawningtool.com/84062/download/"
+        },
+        {
+          "replayId": "84074",
+          "title": "herO v Serral: Game 1 - [EWC] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/84074/",
+          "downloadUrl": "https://lotv.spawningtool.com/84074/download/"
+        },
+        {
+          "replayId": "84075",
+          "title": "herO v Serral: Game 2 - [EWC] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/84075/",
+          "downloadUrl": "https://lotv.spawningtool.com/84075/download/"
+        },
+        {
+          "replayId": "84076",
+          "title": "herO v Serral: Game 3 - [EWC] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/84076/",
+          "downloadUrl": "https://lotv.spawningtool.com/84076/download/"
+        },
+        {
+          "replayId": "84454",
+          "title": "Jumy v Serral: Game 2 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/84454/",
+          "downloadUrl": "https://lotv.spawningtool.com/84454/download/"
+        },
+        {
+          "replayId": "84728",
+          "title": "Jumy v Serral: Game 1 - Frostline LE",
+          "detailUrl": "https://lotv.spawningtool.com/84728/",
+          "downloadUrl": "https://lotv.spawningtool.com/84728/download/"
+        },
+        {
+          "replayId": "84733",
+          "title": "Harstem v Serral: Game 1 - Abyssal Reef LE",
+          "detailUrl": "https://lotv.spawningtool.com/84733/",
+          "downloadUrl": "https://lotv.spawningtool.com/84733/download/"
+        },
+        {
+          "replayId": "84734",
+          "title": "Harstem v Serral: Game 2 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/84734/",
+          "downloadUrl": "https://lotv.spawningtool.com/84734/download/"
+        },
+        {
+          "replayId": "85028",
+          "title": "[ZvP] - [BASKGG]Serral vs [PSISTM]MaxPax - Amygdala - 2025-01-26 13_16_00",
+          "detailUrl": "https://lotv.spawningtool.com/85028/",
+          "downloadUrl": "https://lotv.spawningtool.com/85028/download/"
+        },
+        {
+          "replayId": "85030",
+          "title": "[PvZ] - [PSISTM]MaxPax vs [BASKGG]Serral - Amygdala - 2025-01-23 15_12_57",
+          "detailUrl": "https://lotv.spawningtool.com/85030/",
+          "downloadUrl": "https://lotv.spawningtool.com/85030/download/"
+        },
+        {
+          "replayId": "86387",
+          "title": "2025-05-24 - (Z)Serral VS (P)Cosmiccow",
+          "detailUrl": "https://lotv.spawningtool.com/86387/",
+          "downloadUrl": "https://lotv.spawningtool.com/86387/download/"
+        },
+        {
+          "replayId": "86486",
+          "title": "Classic v Serral: Game 3 - Incorporeal LE",
+          "detailUrl": "https://lotv.spawningtool.com/86486/",
+          "downloadUrl": "https://lotv.spawningtool.com/86486/download/"
+        },
+        {
+          "replayId": "86487",
+          "title": "Classic v Serral: Game 4 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/86487/",
+          "downloadUrl": "https://lotv.spawningtool.com/86487/download/"
+        },
+        {
+          "replayId": "86488",
+          "title": "Classic v Serral: Game 2 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/86488/",
+          "downloadUrl": "https://lotv.spawningtool.com/86488/download/"
+        },
+        {
+          "replayId": "86489",
+          "title": "Classic v Serral: Game 5 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/86489/",
+          "downloadUrl": "https://lotv.spawningtool.com/86489/download/"
+        },
+        {
+          "replayId": "86490",
+          "title": "Classic v Serral: Game 1 - Magannatha LE",
+          "detailUrl": "https://lotv.spawningtool.com/86490/",
+          "downloadUrl": "https://lotv.spawningtool.com/86490/download/"
+        },
+        {
+          "replayId": "86536",
+          "title": "Oracle into Archon Drop Greedy",
+          "detailUrl": "https://lotv.spawningtool.com/86536/",
+          "downloadUrl": "https://lotv.spawningtool.com/86536/download/"
+        },
+        {
+          "replayId": "87359",
+          "title": "1. Pylon LE",
+          "detailUrl": "https://lotv.spawningtool.com/87359/",
+          "downloadUrl": "https://lotv.spawningtool.com/87359/download/"
+        },
+        {
+          "replayId": "87360",
+          "title": "2. Magannatha LE",
+          "detailUrl": "https://lotv.spawningtool.com/87360/",
+          "downloadUrl": "https://lotv.spawningtool.com/87360/download/"
+        },
+        {
+          "replayId": "87414",
+          "title": "Classic v Serral: Game 1 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/87414/",
+          "downloadUrl": "https://lotv.spawningtool.com/87414/download/"
+        },
+        {
+          "replayId": "87415",
+          "title": "Classic v Serral: Game 2 - Incorporeal LE",
+          "detailUrl": "https://lotv.spawningtool.com/87415/",
+          "downloadUrl": "https://lotv.spawningtool.com/87415/download/"
+        },
+        {
+          "replayId": "87416",
+          "title": "Classic v Serral: Game 3 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/87416/",
+          "downloadUrl": "https://lotv.spawningtool.com/87416/download/"
+        },
+        {
+          "replayId": "87417",
+          "title": "Classic v Serral: Game 4 - Pylon LE",
+          "detailUrl": "https://lotv.spawningtool.com/87417/",
+          "downloadUrl": "https://lotv.spawningtool.com/87417/download/"
+        },
+        {
+          "replayId": "87418",
+          "title": "Classic v Serral: Game 5 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/87418/",
+          "downloadUrl": "https://lotv.spawningtool.com/87418/download/"
+        },
+        {
+          "replayId": "87419",
+          "title": "Classic v Serral: Game 7 - Magannatha LE",
+          "detailUrl": "https://lotv.spawningtool.com/87419/",
+          "downloadUrl": "https://lotv.spawningtool.com/87419/download/"
+        },
+        {
+          "replayId": "87420",
+          "title": "Classic v Serral: Game 6 - Torches LE",
+          "detailUrl": "https://lotv.spawningtool.com/87420/",
+          "downloadUrl": "https://lotv.spawningtool.com/87420/download/"
+        },
+        {
+          "replayId": "87505",
+          "title": "Classic v Serral: Game 3 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/87505/",
+          "downloadUrl": "https://lotv.spawningtool.com/87505/download/"
+        },
+        {
+          "replayId": "87506",
+          "title": "Classic v Serral: Game 2 - Incorporeal LE",
+          "detailUrl": "https://lotv.spawningtool.com/87506/",
+          "downloadUrl": "https://lotv.spawningtool.com/87506/download/"
+        },
+        {
+          "replayId": "87507",
+          "title": "Classic v Serral: Game 1 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/87507/",
+          "downloadUrl": "https://lotv.spawningtool.com/87507/download/"
+        },
+        {
+          "replayId": "89473",
+          "title": "Serral v SZsOs: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89473/",
+          "downloadUrl": "https://lotv.spawningtool.com/89473/download/"
+        },
+        {
+          "replayId": "89489",
+          "title": "Jumy v Serral: Game 1 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89489/",
+          "downloadUrl": "https://lotv.spawningtool.com/89489/download/"
+        },
+        {
+          "replayId": "89494",
+          "title": "Jumy v Serral: Game 2 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89494/",
+          "downloadUrl": "https://lotv.spawningtool.com/89494/download/"
+        },
+        {
+          "replayId": "89508",
+          "title": "LiquidMaNa v Serral: Game 1 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89508/",
+          "downloadUrl": "https://lotv.spawningtool.com/89508/download/"
+        },
+        {
+          "replayId": "89520",
+          "title": "Serral v SZsOs: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89520/",
+          "downloadUrl": "https://lotv.spawningtool.com/89520/download/"
+        },
+        {
+          "replayId": "89523",
+          "title": "LiquidMaNa v Serral: Game 2 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89523/",
+          "downloadUrl": "https://lotv.spawningtool.com/89523/download/"
+        },
+        {
+          "replayId": "89535",
+          "title": "HolyHit v Serral: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89535/",
+          "downloadUrl": "https://lotv.spawningtool.com/89535/download/"
+        },
+        {
+          "replayId": "89538",
+          "title": "HolyHit v Serral: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89538/",
+          "downloadUrl": "https://lotv.spawningtool.com/89538/download/"
+        }
+      ],
+      "seed": {
+        "sourceId": "elite-serral-zvp",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=11",
+        "pages": 3,
+        "cohortBucket": "elite-7000",
+        "primaryPlayer": "Serral",
+        "matchup": "ZvP",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      }
+    },
+    {
+      "schemaVersion": "epic13-internet-sources-v1",
+      "generatedAt": "2026-04-07T10:33:36Z",
+      "sourceKind": "spawningtool-replay-listing",
+      "listingUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=13",
+      "pageCount": 3,
+      "pageList": [
+        {
+          "pageNumber": 1,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=13",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=644&tag=13&p=1"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 2,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=13&p=2",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=644&tag=13&p=2"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 3,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=13&p=3",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=644&tag=13&p=3"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        }
+      ],
+      "replayList": [
+        {
+          "replayId": "77841",
+          "title": "Elazer v Serral: Game 1 - [ESL] Royal Blood",
+          "detailUrl": "https://lotv.spawningtool.com/77841/",
+          "downloadUrl": "https://lotv.spawningtool.com/77841/download/"
+        },
+        {
+          "replayId": "77842",
+          "title": "Elazer v Serral: Game 2 - [ESL] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/77842/",
+          "downloadUrl": "https://lotv.spawningtool.com/77842/download/"
+        },
+        {
+          "replayId": "77903",
+          "title": "RagnaroK v Serral: Game 1 - [ESL] Dragon Scales",
+          "detailUrl": "https://lotv.spawningtool.com/77903/",
+          "downloadUrl": "https://lotv.spawningtool.com/77903/download/"
+        },
+        {
+          "replayId": "77904",
+          "title": "RagnaroK v Serral: Game 2 - [ESL] Royal Blood",
+          "detailUrl": "https://lotv.spawningtool.com/77904/",
+          "downloadUrl": "https://lotv.spawningtool.com/77904/download/"
+        },
+        {
+          "replayId": "77905",
+          "title": "RagnaroK v Serral: Game 3 - [ESL] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/77905/",
+          "downloadUrl": "https://lotv.spawningtool.com/77905/download/"
+        },
+        {
+          "replayId": "77906",
+          "title": "RagnaroK v Serral: Game 4 - [ESL] Ancient Cistern",
+          "detailUrl": "https://lotv.spawningtool.com/77906/",
+          "downloadUrl": "https://lotv.spawningtool.com/77906/download/"
+        },
+        {
+          "replayId": "77907",
+          "title": "RagnaroK v Serral: Game 5 - [ESL] Altitude",
+          "detailUrl": "https://lotv.spawningtool.com/77907/",
+          "downloadUrl": "https://lotv.spawningtool.com/77907/download/"
+        },
+        {
+          "replayId": "79345",
+          "title": "Dark v Serral: Game 1 - [ESL] Royal Blood",
+          "detailUrl": "https://lotv.spawningtool.com/79345/",
+          "downloadUrl": "https://lotv.spawningtool.com/79345/download/"
+        },
+        {
+          "replayId": "79346",
+          "title": "Dark v Serral: Game 2 - [ESL] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/79346/",
+          "downloadUrl": "https://lotv.spawningtool.com/79346/download/"
+        },
+        {
+          "replayId": "79347",
+          "title": "Dark v Serral: Game 3 - [ESL] Ancient Cistern",
+          "detailUrl": "https://lotv.spawningtool.com/79347/",
+          "downloadUrl": "https://lotv.spawningtool.com/79347/download/"
+        },
+        {
+          "replayId": "79550",
+          "title": "Reynor v Serral: Game 1 - [ESL] Babylon",
+          "detailUrl": "https://lotv.spawningtool.com/79550/",
+          "downloadUrl": "https://lotv.spawningtool.com/79550/download/"
+        },
+        {
+          "replayId": "79551",
+          "title": "Reynor v Serral: Game 2 - [ESL] Dragon Scales",
+          "detailUrl": "https://lotv.spawningtool.com/79551/",
+          "downloadUrl": "https://lotv.spawningtool.com/79551/download/"
+        },
+        {
+          "replayId": "79552",
+          "title": "Reynor v Serral: Game 3 - [ESL] Royal Blood",
+          "detailUrl": "https://lotv.spawningtool.com/79552/",
+          "downloadUrl": "https://lotv.spawningtool.com/79552/download/"
+        },
+        {
+          "replayId": "79605",
+          "title": "Reynor v Serral: Game 2 - [ESL] NeoHumanity",
+          "detailUrl": "https://lotv.spawningtool.com/79605/",
+          "downloadUrl": "https://lotv.spawningtool.com/79605/download/"
+        },
+        {
+          "replayId": "79613",
+          "title": "Reynor v Serral: Game 1 - [ESL] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/79613/",
+          "downloadUrl": "https://lotv.spawningtool.com/79613/download/"
+        },
+        {
+          "replayId": "79616",
+          "title": "Reynor v Serral: Game 3 - [ESL] Royal Blood",
+          "detailUrl": "https://lotv.spawningtool.com/79616/",
+          "downloadUrl": "https://lotv.spawningtool.com/79616/download/"
+        },
+        {
+          "replayId": "79676",
+          "title": "Mixu v Serral: Game 2 - [ESL] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/79676/",
+          "downloadUrl": "https://lotv.spawningtool.com/79676/download/"
+        },
+        {
+          "replayId": "79703",
+          "title": "Mixu v Serral: Game 1 - [ESL] Altitude",
+          "detailUrl": "https://lotv.spawningtool.com/79703/",
+          "downloadUrl": "https://lotv.spawningtool.com/79703/download/"
+        },
+        {
+          "replayId": "79898",
+          "title": "Serral v Wayne: Game 1 - [ESL] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/79898/",
+          "downloadUrl": "https://lotv.spawningtool.com/79898/download/"
+        },
+        {
+          "replayId": "79899",
+          "title": "Serral v Wayne: Game 2 - [ESL] Dragon Scales",
+          "detailUrl": "https://lotv.spawningtool.com/79899/",
+          "downloadUrl": "https://lotv.spawningtool.com/79899/download/"
+        },
+        {
+          "replayId": "79900",
+          "title": "Serral v Wayne: Game 3 - [ESL] Royal Blood",
+          "detailUrl": "https://lotv.spawningtool.com/79900/",
+          "downloadUrl": "https://lotv.spawningtool.com/79900/download/"
+        },
+        {
+          "replayId": "80071",
+          "title": "Lambo v Serral: Game 1 - [ESL] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/80071/",
+          "downloadUrl": "https://lotv.spawningtool.com/80071/download/"
+        },
+        {
+          "replayId": "80072",
+          "title": "Lambo v Serral: Game 2 - [ESL] Dragon Scales",
+          "detailUrl": "https://lotv.spawningtool.com/80072/",
+          "downloadUrl": "https://lotv.spawningtool.com/80072/download/"
+        },
+        {
+          "replayId": "80073",
+          "title": "Lambo v Serral: Game 3 - [ESL] Altitude",
+          "detailUrl": "https://lotv.spawningtool.com/80073/",
+          "downloadUrl": "https://lotv.spawningtool.com/80073/download/"
+        },
+        {
+          "replayId": "80408",
+          "title": "Serral v Solar: Game 1 - [G8] Babylon",
+          "detailUrl": "https://lotv.spawningtool.com/80408/",
+          "downloadUrl": "https://lotv.spawningtool.com/80408/download/"
+        },
+        {
+          "replayId": "80409",
+          "title": "Serral v Solar: Game 2 - [G8] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/80409/",
+          "downloadUrl": "https://lotv.spawningtool.com/80409/download/"
+        },
+        {
+          "replayId": "80410",
+          "title": "Serral v Solar: Game 3 - [G8] Dragon Scales",
+          "detailUrl": "https://lotv.spawningtool.com/80410/",
+          "downloadUrl": "https://lotv.spawningtool.com/80410/download/"
+        },
+        {
+          "replayId": "80622",
+          "title": "2023-09-06 - (Z)Serral VS (Z)Lambo",
+          "detailUrl": "https://lotv.spawningtool.com/80622/",
+          "downloadUrl": "https://lotv.spawningtool.com/80622/download/"
+        },
+        {
+          "replayId": "80901",
+          "title": "Lambo v Serral: Game 2 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/80901/",
+          "downloadUrl": "https://lotv.spawningtool.com/80901/download/"
+        },
+        {
+          "replayId": "80902",
+          "title": "Lambo v Serral: Game 3 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/80902/",
+          "downloadUrl": "https://lotv.spawningtool.com/80902/download/"
+        },
+        {
+          "replayId": "80903",
+          "title": "Lambo v Serral: Game 1 - [ESL] Solaris",
+          "detailUrl": "https://lotv.spawningtool.com/80903/",
+          "downloadUrl": "https://lotv.spawningtool.com/80903/download/"
+        },
+        {
+          "replayId": "80905",
+          "title": "Reynor v Serral: Game 2 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/80905/",
+          "downloadUrl": "https://lotv.spawningtool.com/80905/download/"
+        },
+        {
+          "replayId": "80906",
+          "title": "Reynor v Serral: Game 3 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/80906/",
+          "downloadUrl": "https://lotv.spawningtool.com/80906/download/"
+        },
+        {
+          "replayId": "81033",
+          "title": "LiquidElazer v Serral: Game 1 - [ESL] Radhuset Station",
+          "detailUrl": "https://lotv.spawningtool.com/81033/",
+          "downloadUrl": "https://lotv.spawningtool.com/81033/download/"
+        },
+        {
+          "replayId": "81034",
+          "title": "LiquidElazer v Serral: Game 2 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/81034/",
+          "downloadUrl": "https://lotv.spawningtool.com/81034/download/"
+        },
+        {
+          "replayId": "81053",
+          "title": "Fjant v Serral: Game 1 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/81053/",
+          "downloadUrl": "https://lotv.spawningtool.com/81053/download/"
+        },
+        {
+          "replayId": "81054",
+          "title": "Fjant v Serral: Game 2 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/81054/",
+          "downloadUrl": "https://lotv.spawningtool.com/81054/download/"
+        },
+        {
+          "replayId": "81512",
+          "title": "Serral v Wayne: Game 1 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/81512/",
+          "downloadUrl": "https://lotv.spawningtool.com/81512/download/"
+        },
+        {
+          "replayId": "81513",
+          "title": "Serral v Wayne: Game 2 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/81513/",
+          "downloadUrl": "https://lotv.spawningtool.com/81513/download/"
+        },
+        {
+          "replayId": "81514",
+          "title": "Serral v Wayne: Game 3 - [ESL] Hecate",
+          "detailUrl": "https://lotv.spawningtool.com/81514/",
+          "downloadUrl": "https://lotv.spawningtool.com/81514/download/"
+        },
+        {
+          "replayId": "81548",
+          "title": "Reynor v Serral: Game 2 - [ESL] Solaris",
+          "detailUrl": "https://lotv.spawningtool.com/81548/",
+          "downloadUrl": "https://lotv.spawningtool.com/81548/download/"
+        },
+        {
+          "replayId": "81549",
+          "title": "Reynor v Serral: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/81549/",
+          "downloadUrl": "https://lotv.spawningtool.com/81549/download/"
+        },
+        {
+          "replayId": "81550",
+          "title": "Reynor v Serral: Game 3 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/81550/",
+          "downloadUrl": "https://lotv.spawningtool.com/81550/download/"
+        },
+        {
+          "replayId": "81590",
+          "title": "Elazer v Serral: Game 3 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/81590/",
+          "downloadUrl": "https://lotv.spawningtool.com/81590/download/"
+        },
+        {
+          "replayId": "81591",
+          "title": "Elazer v Serral: Game 5 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/81591/",
+          "downloadUrl": "https://lotv.spawningtool.com/81591/download/"
+        },
+        {
+          "replayId": "81592",
+          "title": "Elazer v Serral: Game 4 - [ESL] Solaris",
+          "detailUrl": "https://lotv.spawningtool.com/81592/",
+          "downloadUrl": "https://lotv.spawningtool.com/81592/download/"
+        },
+        {
+          "replayId": "81593",
+          "title": "Elazer v Serral: Game 1 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/81593/",
+          "downloadUrl": "https://lotv.spawningtool.com/81593/download/"
+        },
+        {
+          "replayId": "81594",
+          "title": "Elazer v Serral: Game 2 - [ESL] Hecate",
+          "detailUrl": "https://lotv.spawningtool.com/81594/",
+          "downloadUrl": "https://lotv.spawningtool.com/81594/download/"
+        },
+        {
+          "replayId": "82406",
+          "title": "Dark v Serral: Game 1 - [ESL] Solaris",
+          "detailUrl": "https://lotv.spawningtool.com/82406/",
+          "downloadUrl": "https://lotv.spawningtool.com/82406/download/"
+        },
+        {
+          "replayId": "82407",
+          "title": "Dark v Serral: Game 2 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/82407/",
+          "downloadUrl": "https://lotv.spawningtool.com/82407/download/"
+        },
+        {
+          "replayId": "82408",
+          "title": "Dark v Serral: Game 3 - [ESL] Equilibrium",
+          "detailUrl": "https://lotv.spawningtool.com/82408/",
+          "downloadUrl": "https://lotv.spawningtool.com/82408/download/"
+        },
+        {
+          "replayId": "82409",
+          "title": "Dark v Serral: Game 4 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/82409/",
+          "downloadUrl": "https://lotv.spawningtool.com/82409/download/"
+        },
+        {
+          "replayId": "83536",
+          "title": "Serral v SHIN: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/83536/",
+          "downloadUrl": "https://lotv.spawningtool.com/83536/download/"
+        },
+        {
+          "replayId": "83537",
+          "title": "Serral v SHIN: Game 2 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/83537/",
+          "downloadUrl": "https://lotv.spawningtool.com/83537/download/"
+        },
+        {
+          "replayId": "83538",
+          "title": "Serral v SHIN: Game 3 - [ESL] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/83538/",
+          "downloadUrl": "https://lotv.spawningtool.com/83538/download/"
+        },
+        {
+          "replayId": "84129",
+          "title": "Dark v Serral: Game 1 - [EWC] Dynasty",
+          "detailUrl": "https://lotv.spawningtool.com/84129/",
+          "downloadUrl": "https://lotv.spawningtool.com/84129/download/"
+        },
+        {
+          "replayId": "84130",
+          "title": "Dark v Serral: Game 2 - [EWC] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/84130/",
+          "downloadUrl": "https://lotv.spawningtool.com/84130/download/"
+        },
+        {
+          "replayId": "84131",
+          "title": "Dark v Serral: Game 3 - [EWC] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/84131/",
+          "downloadUrl": "https://lotv.spawningtool.com/84131/download/"
+        },
+        {
+          "replayId": "84132",
+          "title": "Dark v Serral: Game 4 - [EWC] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/84132/",
+          "downloadUrl": "https://lotv.spawningtool.com/84132/download/"
+        },
+        {
+          "replayId": "84716",
+          "title": "LiquidElazer v Serral: Game 1 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/84716/",
+          "downloadUrl": "https://lotv.spawningtool.com/84716/download/"
+        },
+        {
+          "replayId": "84717",
+          "title": "LiquidElazer v Serral: Game 2 - Amygdala",
+          "detailUrl": "https://lotv.spawningtool.com/84717/",
+          "downloadUrl": "https://lotv.spawningtool.com/84717/download/"
+        },
+        {
+          "replayId": "86512",
+          "title": "FalconsSolar v Serral: Game 4 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/86512/",
+          "downloadUrl": "https://lotv.spawningtool.com/86512/download/"
+        },
+        {
+          "replayId": "86513",
+          "title": "FalconsSolar v Serral: Game 5 - Torches LE",
+          "detailUrl": "https://lotv.spawningtool.com/86513/",
+          "downloadUrl": "https://lotv.spawningtool.com/86513/download/"
+        },
+        {
+          "replayId": "86514",
+          "title": "FalconsSolar v Serral: Game 2 - Incorporeal LE",
+          "detailUrl": "https://lotv.spawningtool.com/86514/",
+          "downloadUrl": "https://lotv.spawningtool.com/86514/download/"
+        },
+        {
+          "replayId": "86515",
+          "title": "FalconsSolar v Serral: Game 1 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/86515/",
+          "downloadUrl": "https://lotv.spawningtool.com/86515/download/"
+        },
+        {
+          "replayId": "86516",
+          "title": "FalconsSolar v Serral: Game 3 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/86516/",
+          "downloadUrl": "https://lotv.spawningtool.com/86516/download/"
+        },
+        {
+          "replayId": "87424",
+          "title": "Reynor v Serral: Game 5 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/87424/",
+          "downloadUrl": "https://lotv.spawningtool.com/87424/download/"
+        },
+        {
+          "replayId": "87425",
+          "title": "Reynor v Serral: Game 4 - Torches LE",
+          "detailUrl": "https://lotv.spawningtool.com/87425/",
+          "downloadUrl": "https://lotv.spawningtool.com/87425/download/"
+        },
+        {
+          "replayId": "87426",
+          "title": "Reynor v Serral: Game 3 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/87426/",
+          "downloadUrl": "https://lotv.spawningtool.com/87426/download/"
+        },
+        {
+          "replayId": "87427",
+          "title": "Reynor v Serral: Game 2 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/87427/",
+          "downloadUrl": "https://lotv.spawningtool.com/87427/download/"
+        },
+        {
+          "replayId": "87428",
+          "title": "Reynor v Serral: Game 1 - Pylon LE",
+          "detailUrl": "https://lotv.spawningtool.com/87428/",
+          "downloadUrl": "https://lotv.spawningtool.com/87428/download/"
+        },
+        {
+          "replayId": "89639",
+          "title": "Reynor v Serral: Game 4 - Tourmaline LE",
+          "detailUrl": "https://lotv.spawningtool.com/89639/",
+          "downloadUrl": "https://lotv.spawningtool.com/89639/download/"
+        },
+        {
+          "replayId": "89640",
+          "title": "Reynor v Serral: Game 2 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89640/",
+          "downloadUrl": "https://lotv.spawningtool.com/89640/download/"
+        },
+        {
+          "replayId": "89644",
+          "title": "Reynor v Serral: Game 1 - White Rabbit LE",
+          "detailUrl": "https://lotv.spawningtool.com/89644/",
+          "downloadUrl": "https://lotv.spawningtool.com/89644/download/"
+        },
+        {
+          "replayId": "89653",
+          "title": "Reynor v Serral: Game 3 - Celestial Enclave LE",
+          "detailUrl": "https://lotv.spawningtool.com/89653/",
+          "downloadUrl": "https://lotv.spawningtool.com/89653/download/"
+        }
+      ],
+      "seed": {
+        "sourceId": "elite-serral-zvz",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=13",
+        "pages": 3,
+        "cohortBucket": "elite-7000",
+        "primaryPlayer": "Serral",
+        "matchup": "ZvZ",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      }
+    },
+    {
+      "schemaVersion": "epic13-internet-sources-v1",
+      "generatedAt": "2026-04-07T10:33:38Z",
+      "sourceKind": "spawningtool-replay-listing",
+      "listingUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=3",
+      "pageCount": 3,
+      "pageList": [
+        {
+          "pageNumber": 1,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=3",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=546&tag=3&p=1"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 2,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=3&p=2",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=546&tag=3&p=2"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 3,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=3&p=3",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=546&tag=3&p=3"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        }
+      ],
+      "replayList": [
+        {
+          "replayId": "81165",
+          "title": "ByuN v Reynor: Game 2 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/81165/",
+          "downloadUrl": "https://lotv.spawningtool.com/81165/download/"
+        },
+        {
+          "replayId": "81359",
+          "title": "Reynor v Spirit: Game 1 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/81359/",
+          "downloadUrl": "https://lotv.spawningtool.com/81359/download/"
+        },
+        {
+          "replayId": "81360",
+          "title": "Reynor v Spirit: Game 3 - [ESL] Solaris",
+          "detailUrl": "https://lotv.spawningtool.com/81360/",
+          "downloadUrl": "https://lotv.spawningtool.com/81360/download/"
+        },
+        {
+          "replayId": "81361",
+          "title": "Reynor v Spirit: Game 2 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/81361/",
+          "downloadUrl": "https://lotv.spawningtool.com/81361/download/"
+        },
+        {
+          "replayId": "81525",
+          "title": "Clem v Reynor: Game 2 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/81525/",
+          "downloadUrl": "https://lotv.spawningtool.com/81525/download/"
+        },
+        {
+          "replayId": "81526",
+          "title": "Clem v Reynor: Game 4 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/81526/",
+          "downloadUrl": "https://lotv.spawningtool.com/81526/download/"
+        },
+        {
+          "replayId": "81527",
+          "title": "Clem v Reynor: Game 3 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/81527/",
+          "downloadUrl": "https://lotv.spawningtool.com/81527/download/"
+        },
+        {
+          "replayId": "81528",
+          "title": "Clem v Reynor: Game 1 - [ESL] Radhuset Station",
+          "detailUrl": "https://lotv.spawningtool.com/81528/",
+          "downloadUrl": "https://lotv.spawningtool.com/81528/download/"
+        },
+        {
+          "replayId": "82349",
+          "title": "Maru v Reynor: Game 1 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/82349/",
+          "downloadUrl": "https://lotv.spawningtool.com/82349/download/"
+        },
+        {
+          "replayId": "82350",
+          "title": "Maru v Reynor: Game 2 - [ESL] Solaris",
+          "detailUrl": "https://lotv.spawningtool.com/82350/",
+          "downloadUrl": "https://lotv.spawningtool.com/82350/download/"
+        },
+        {
+          "replayId": "82670",
+          "title": "Set1 - Reynor vs Bunny Alcyone LE (26)",
+          "detailUrl": "https://lotv.spawningtool.com/82670/",
+          "downloadUrl": "https://lotv.spawningtool.com/82670/download/"
+        },
+        {
+          "replayId": "82903",
+          "title": "Clem v Reynor: Game 1 - [ESL] Dynasty",
+          "detailUrl": "https://lotv.spawningtool.com/82903/",
+          "downloadUrl": "https://lotv.spawningtool.com/82903/download/"
+        },
+        {
+          "replayId": "82904",
+          "title": "Clem v Reynor: Game 3 - [ESL] Amphion",
+          "detailUrl": "https://lotv.spawningtool.com/82904/",
+          "downloadUrl": "https://lotv.spawningtool.com/82904/download/"
+        },
+        {
+          "replayId": "82905",
+          "title": "Clem v Reynor: Game 2 - [ESL] Post-Youth",
+          "detailUrl": "https://lotv.spawningtool.com/82905/",
+          "downloadUrl": "https://lotv.spawningtool.com/82905/download/"
+        },
+        {
+          "replayId": "82939",
+          "title": "HeroMarine v Reynor: Game 3 - [ESL] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/82939/",
+          "downloadUrl": "https://lotv.spawningtool.com/82939/download/"
+        },
+        {
+          "replayId": "82940",
+          "title": "HeroMarine v Reynor: Game 2 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/82940/",
+          "downloadUrl": "https://lotv.spawningtool.com/82940/download/"
+        },
+        {
+          "replayId": "82941",
+          "title": "HeroMarine v Reynor: Game 1 - [ESL] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/82941/",
+          "downloadUrl": "https://lotv.spawningtool.com/82941/download/"
+        },
+        {
+          "replayId": "83335",
+          "title": "Cure v Reynor: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/83335/",
+          "downloadUrl": "https://lotv.spawningtool.com/83335/download/"
+        },
+        {
+          "replayId": "83336",
+          "title": "Cure v Reynor: Game 2 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/83336/",
+          "downloadUrl": "https://lotv.spawningtool.com/83336/download/"
+        },
+        {
+          "replayId": "83337",
+          "title": "Cure v Reynor: Game 3 - [ESL] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/83337/",
+          "downloadUrl": "https://lotv.spawningtool.com/83337/download/"
+        },
+        {
+          "replayId": "83480",
+          "title": "Reynor v Spirit: Game 1 - [ESL] Post-Youth",
+          "detailUrl": "https://lotv.spawningtool.com/83480/",
+          "downloadUrl": "https://lotv.spawningtool.com/83480/download/"
+        },
+        {
+          "replayId": "83481",
+          "title": "Reynor v Spirit: Game 2 - [ESL] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/83481/",
+          "downloadUrl": "https://lotv.spawningtool.com/83481/download/"
+        },
+        {
+          "replayId": "83482",
+          "title": "Reynor v Spirit: Game 3 - [ESL] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/83482/",
+          "downloadUrl": "https://lotv.spawningtool.com/83482/download/"
+        },
+        {
+          "replayId": "83532",
+          "title": "Oliveira v Reynor: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/83532/",
+          "downloadUrl": "https://lotv.spawningtool.com/83532/download/"
+        },
+        {
+          "replayId": "83533",
+          "title": "Oliveira v Reynor: Game 2 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/83533/",
+          "downloadUrl": "https://lotv.spawningtool.com/83533/download/"
+        },
+        {
+          "replayId": "83534",
+          "title": "Oliveira v Reynor: Game 3 - [ESL] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/83534/",
+          "downloadUrl": "https://lotv.spawningtool.com/83534/download/"
+        },
+        {
+          "replayId": "83535",
+          "title": "Oliveira v Reynor: Game 4 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/83535/",
+          "downloadUrl": "https://lotv.spawningtool.com/83535/download/"
+        },
+        {
+          "replayId": "83963",
+          "title": "Greenert v Reynor - [ESL] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/83963/",
+          "downloadUrl": "https://lotv.spawningtool.com/83963/download/"
+        },
+        {
+          "replayId": "84066",
+          "title": "Cure v Reynor: Game 1 - [EWC] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/84066/",
+          "downloadUrl": "https://lotv.spawningtool.com/84066/download/"
+        },
+        {
+          "replayId": "84067",
+          "title": "Cure v Reynor: Game 2 - [EWC] Dynasty",
+          "detailUrl": "https://lotv.spawningtool.com/84067/",
+          "downloadUrl": "https://lotv.spawningtool.com/84067/download/"
+        },
+        {
+          "replayId": "84068",
+          "title": "Cure v Reynor: Game 3 - [EWC] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/84068/",
+          "downloadUrl": "https://lotv.spawningtool.com/84068/download/"
+        },
+        {
+          "replayId": "84069",
+          "title": "Cure v Reynor: Game 4 - [EWC] Amphion",
+          "detailUrl": "https://lotv.spawningtool.com/84069/",
+          "downloadUrl": "https://lotv.spawningtool.com/84069/download/"
+        },
+        {
+          "replayId": "84070",
+          "title": "Cure v Reynor: Game 5 - [EWC] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/84070/",
+          "downloadUrl": "https://lotv.spawningtool.com/84070/download/"
+        },
+        {
+          "replayId": "84077",
+          "title": "Clem v Reynor: Game 1 - [EWC] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/84077/",
+          "downloadUrl": "https://lotv.spawningtool.com/84077/download/"
+        },
+        {
+          "replayId": "84078",
+          "title": "Clem v Reynor: Game 2 - [EWC] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/84078/",
+          "downloadUrl": "https://lotv.spawningtool.com/84078/download/"
+        },
+        {
+          "replayId": "84079",
+          "title": "Clem v Reynor: Game 3 - [EWC] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/84079/",
+          "downloadUrl": "https://lotv.spawningtool.com/84079/download/"
+        },
+        {
+          "replayId": "84080",
+          "title": "Clem v Reynor: Game 4 - [EWC] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/84080/",
+          "downloadUrl": "https://lotv.spawningtool.com/84080/download/"
+        },
+        {
+          "replayId": "84081",
+          "title": "Clem v Reynor: Game 5 - [EWC] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/84081/",
+          "downloadUrl": "https://lotv.spawningtool.com/84081/download/"
+        },
+        {
+          "replayId": "84119",
+          "title": "HeroMarine v Reynor: Game 1 - [EWC] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/84119/",
+          "downloadUrl": "https://lotv.spawningtool.com/84119/download/"
+        },
+        {
+          "replayId": "84120",
+          "title": "HeroMarine v Reynor: Game 2 - [EWC] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/84120/",
+          "downloadUrl": "https://lotv.spawningtool.com/84120/download/"
+        },
+        {
+          "replayId": "84683",
+          "title": "HeroMarine v Reynor: Game 1 - Whispers of Gold",
+          "detailUrl": "https://lotv.spawningtool.com/84683/",
+          "downloadUrl": "https://lotv.spawningtool.com/84683/download/"
+        },
+        {
+          "replayId": "84684",
+          "title": "HeroMarine v Reynor: Game 2 - King's Cove LE",
+          "detailUrl": "https://lotv.spawningtool.com/84684/",
+          "downloadUrl": "https://lotv.spawningtool.com/84684/download/"
+        },
+        {
+          "replayId": "84685",
+          "title": "HeroMarine v Reynor: Game 3 - Amygdala",
+          "detailUrl": "https://lotv.spawningtool.com/84685/",
+          "downloadUrl": "https://lotv.spawningtool.com/84685/download/"
+        },
+        {
+          "replayId": "84705",
+          "title": "LiquidClem v Reynor: Game 1 - Whispers of Gold",
+          "detailUrl": "https://lotv.spawningtool.com/84705/",
+          "downloadUrl": "https://lotv.spawningtool.com/84705/download/"
+        },
+        {
+          "replayId": "84706",
+          "title": "LiquidClem v Reynor: Game 2 - El Dorado",
+          "detailUrl": "https://lotv.spawningtool.com/84706/",
+          "downloadUrl": "https://lotv.spawningtool.com/84706/download/"
+        },
+        {
+          "replayId": "85229",
+          "title": "Oliveira v Reynor: Game 1 - [ESL] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/85229/",
+          "downloadUrl": "https://lotv.spawningtool.com/85229/download/"
+        },
+        {
+          "replayId": "85230",
+          "title": "Oliveira v Reynor: Game 2 - Oceanborn LE",
+          "detailUrl": "https://lotv.spawningtool.com/85230/",
+          "downloadUrl": "https://lotv.spawningtool.com/85230/download/"
+        },
+        {
+          "replayId": "85231",
+          "title": "Oliveira v Reynor: Game 3 - Alcyone LE",
+          "detailUrl": "https://lotv.spawningtool.com/85231/",
+          "downloadUrl": "https://lotv.spawningtool.com/85231/download/"
+        },
+        {
+          "replayId": "85255",
+          "title": "LiquidClem v Reynor: Game 5 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/85255/",
+          "downloadUrl": "https://lotv.spawningtool.com/85255/download/"
+        },
+        {
+          "replayId": "85256",
+          "title": "LiquidClem v Reynor: Game 1 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/85256/",
+          "downloadUrl": "https://lotv.spawningtool.com/85256/download/"
+        },
+        {
+          "replayId": "85257",
+          "title": "LiquidClem v Reynor: Game 3 - [ESL] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/85257/",
+          "downloadUrl": "https://lotv.spawningtool.com/85257/download/"
+        },
+        {
+          "replayId": "85258",
+          "title": "LiquidClem v Reynor: Game 2 - [ESL] Amphion",
+          "detailUrl": "https://lotv.spawningtool.com/85258/",
+          "downloadUrl": "https://lotv.spawningtool.com/85258/download/"
+        },
+        {
+          "replayId": "85259",
+          "title": "LiquidClem v Reynor: Game 4 - [ESL] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/85259/",
+          "downloadUrl": "https://lotv.spawningtool.com/85259/download/"
+        },
+        {
+          "replayId": "85288",
+          "title": "msrm v Reynor: Game 3 - [ESL] Amphion",
+          "detailUrl": "https://lotv.spawningtool.com/85288/",
+          "downloadUrl": "https://lotv.spawningtool.com/85288/download/"
+        },
+        {
+          "replayId": "85289",
+          "title": "msrm v Reynor: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/85289/",
+          "downloadUrl": "https://lotv.spawningtool.com/85289/download/"
+        },
+        {
+          "replayId": "85290",
+          "title": "msrm v Reynor: Game 2 - [ESL] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/85290/",
+          "downloadUrl": "https://lotv.spawningtool.com/85290/download/"
+        },
+        {
+          "replayId": "85318",
+          "title": "Lambo v Reynor: Game 1 - [ESL] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/85318/",
+          "downloadUrl": "https://lotv.spawningtool.com/85318/download/"
+        },
+        {
+          "replayId": "87464",
+          "title": "Maru v Reynor: Game 1 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/87464/",
+          "downloadUrl": "https://lotv.spawningtool.com/87464/download/"
+        },
+        {
+          "replayId": "87465",
+          "title": "Maru v Reynor: Game 2 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/87465/",
+          "downloadUrl": "https://lotv.spawningtool.com/87465/download/"
+        },
+        {
+          "replayId": "87466",
+          "title": "Maru v Reynor: Game 4 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/87466/",
+          "downloadUrl": "https://lotv.spawningtool.com/87466/download/"
+        },
+        {
+          "replayId": "87467",
+          "title": "Maru v Reynor: Game 3 - Magannatha LE",
+          "detailUrl": "https://lotv.spawningtool.com/87467/",
+          "downloadUrl": "https://lotv.spawningtool.com/87467/download/"
+        },
+        {
+          "replayId": "87468",
+          "title": "Maru v Reynor: Game 5 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/87468/",
+          "downloadUrl": "https://lotv.spawningtool.com/87468/download/"
+        },
+        {
+          "replayId": "87840",
+          "title": "LiquidClem v Reynor: Game 5 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/87840/",
+          "downloadUrl": "https://lotv.spawningtool.com/87840/download/"
+        },
+        {
+          "replayId": "88971",
+          "title": "nico vs reynor 2port bc",
+          "detailUrl": "https://lotv.spawningtool.com/88971/",
+          "downloadUrl": "https://lotv.spawningtool.com/88971/download/"
+        },
+        {
+          "replayId": "89217",
+          "title": "LiquidClem v Reynor: Game 6 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/89217/",
+          "downloadUrl": "https://lotv.spawningtool.com/89217/download/"
+        },
+        {
+          "replayId": "89218",
+          "title": "LiquidClem v Reynor: Game 8 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/89218/",
+          "downloadUrl": "https://lotv.spawningtool.com/89218/download/"
+        },
+        {
+          "replayId": "89219",
+          "title": "LiquidClem v Reynor: Game 7 - Torches LE",
+          "detailUrl": "https://lotv.spawningtool.com/89219/",
+          "downloadUrl": "https://lotv.spawningtool.com/89219/download/"
+        },
+        {
+          "replayId": "89220",
+          "title": "LiquidClem v Reynor: Game 4 - Incorporeal LE",
+          "detailUrl": "https://lotv.spawningtool.com/89220/",
+          "downloadUrl": "https://lotv.spawningtool.com/89220/download/"
+        },
+        {
+          "replayId": "89221",
+          "title": "LiquidClem v Reynor: Game 10 - Magannatha LE",
+          "detailUrl": "https://lotv.spawningtool.com/89221/",
+          "downloadUrl": "https://lotv.spawningtool.com/89221/download/"
+        },
+        {
+          "replayId": "89222",
+          "title": "LiquidClem v Reynor: Game 9 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/89222/",
+          "downloadUrl": "https://lotv.spawningtool.com/89222/download/"
+        },
+        {
+          "replayId": "89277",
+          "title": "LiquidClem v Reynor: Game 3 - Torches LE",
+          "detailUrl": "https://lotv.spawningtool.com/89277/",
+          "downloadUrl": "https://lotv.spawningtool.com/89277/download/"
+        },
+        {
+          "replayId": "89278",
+          "title": "LiquidClem v Reynor: Game 2 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/89278/",
+          "downloadUrl": "https://lotv.spawningtool.com/89278/download/"
+        },
+        {
+          "replayId": "89279",
+          "title": "LiquidClem v Reynor: Game 1 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/89279/",
+          "downloadUrl": "https://lotv.spawningtool.com/89279/download/"
+        },
+        {
+          "replayId": "89505",
+          "title": "BabyMarine v Reynor: Game 1 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89505/",
+          "downloadUrl": "https://lotv.spawningtool.com/89505/download/"
+        },
+        {
+          "replayId": "89514",
+          "title": "BabyMarine v Reynor: Game 2 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89514/",
+          "downloadUrl": "https://lotv.spawningtool.com/89514/download/"
+        }
+      ],
+      "seed": {
+        "sourceId": "elite-reynor-zvt",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=3",
+        "pages": 3,
+        "cohortBucket": "elite-7000",
+        "primaryPlayer": "Reynor",
+        "matchup": "ZvT",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      }
+    },
+    {
+      "schemaVersion": "epic13-internet-sources-v1",
+      "generatedAt": "2026-04-07T10:33:40Z",
+      "sourceKind": "spawningtool-replay-listing",
+      "listingUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=11",
+      "pageCount": 3,
+      "pageList": [
+        {
+          "pageNumber": 1,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=11",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=546&tag=11&p=1"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 2,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=11&p=2",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=546&tag=11&p=2"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 3,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=11&p=3",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=546&tag=11&p=3"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        }
+      ],
+      "replayList": [
+        {
+          "replayId": "81569",
+          "title": "Reynor v ShoWTimE: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/81569/",
+          "downloadUrl": "https://lotv.spawningtool.com/81569/download/"
+        },
+        {
+          "replayId": "81570",
+          "title": "Reynor v ShoWTimE: Game 2 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/81570/",
+          "downloadUrl": "https://lotv.spawningtool.com/81570/download/"
+        },
+        {
+          "replayId": "81595",
+          "title": "Reynor v SKillous: Game 2 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/81595/",
+          "downloadUrl": "https://lotv.spawningtool.com/81595/download/"
+        },
+        {
+          "replayId": "81596",
+          "title": "Reynor v SKillous: Game 4 - [ESL] Hecate",
+          "detailUrl": "https://lotv.spawningtool.com/81596/",
+          "downloadUrl": "https://lotv.spawningtool.com/81596/download/"
+        },
+        {
+          "replayId": "81597",
+          "title": "Reynor v SKillous: Game 3 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/81597/",
+          "downloadUrl": "https://lotv.spawningtool.com/81597/download/"
+        },
+        {
+          "replayId": "81598",
+          "title": "Reynor v SKillous: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/81598/",
+          "downloadUrl": "https://lotv.spawningtool.com/81598/download/"
+        },
+        {
+          "replayId": "82216",
+          "title": "Classic v Reynor: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/82216/",
+          "downloadUrl": "https://lotv.spawningtool.com/82216/download/"
+        },
+        {
+          "replayId": "82217",
+          "title": "Classic v Reynor: Game 2 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/82217/",
+          "downloadUrl": "https://lotv.spawningtool.com/82217/download/"
+        },
+        {
+          "replayId": "82218",
+          "title": "Classic v Reynor: Game 3 - [ESL] Solaris",
+          "detailUrl": "https://lotv.spawningtool.com/82218/",
+          "downloadUrl": "https://lotv.spawningtool.com/82218/download/"
+        },
+        {
+          "replayId": "82219",
+          "title": "Classic v Reynor: Game 4 - [ESL] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/82219/",
+          "downloadUrl": "https://lotv.spawningtool.com/82219/download/"
+        },
+        {
+          "replayId": "82338",
+          "title": "Reynor v ShoWTimE: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/82338/",
+          "downloadUrl": "https://lotv.spawningtool.com/82338/download/"
+        },
+        {
+          "replayId": "82339",
+          "title": "Reynor v ShoWTimE: Game 2 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/82339/",
+          "downloadUrl": "https://lotv.spawningtool.com/82339/download/"
+        },
+        {
+          "replayId": "82340",
+          "title": "Reynor v ShoWTimE: Game 3 - [ESL] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/82340/",
+          "downloadUrl": "https://lotv.spawningtool.com/82340/download/"
+        },
+        {
+          "replayId": "82355",
+          "title": "herO v Reynor: Game 1 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/82355/",
+          "downloadUrl": "https://lotv.spawningtool.com/82355/download/"
+        },
+        {
+          "replayId": "82356",
+          "title": "herO v Reynor: Game 2 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/82356/",
+          "downloadUrl": "https://lotv.spawningtool.com/82356/download/"
+        },
+        {
+          "replayId": "82368",
+          "title": "Cyan v Reynor: Game 1 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/82368/",
+          "downloadUrl": "https://lotv.spawningtool.com/82368/download/"
+        },
+        {
+          "replayId": "82369",
+          "title": "Cyan v Reynor: Game 2 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/82369/",
+          "downloadUrl": "https://lotv.spawningtool.com/82369/download/"
+        },
+        {
+          "replayId": "82832",
+          "title": "Harstem v Reynor: Game 1 - [ESL] Amphion",
+          "detailUrl": "https://lotv.spawningtool.com/82832/",
+          "downloadUrl": "https://lotv.spawningtool.com/82832/download/"
+        },
+        {
+          "replayId": "82833",
+          "title": "Harstem v Reynor: Game 2 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/82833/",
+          "downloadUrl": "https://lotv.spawningtool.com/82833/download/"
+        },
+        {
+          "replayId": "82834",
+          "title": "Harstem v Reynor: Game 3 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/82834/",
+          "downloadUrl": "https://lotv.spawningtool.com/82834/download/"
+        },
+        {
+          "replayId": "82900",
+          "title": "Reynor v Wayne: Game 1 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/82900/",
+          "downloadUrl": "https://lotv.spawningtool.com/82900/download/"
+        },
+        {
+          "replayId": "82906",
+          "title": "goblin v Reynor: Game 1 - [ESL] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/82906/",
+          "downloadUrl": "https://lotv.spawningtool.com/82906/download/"
+        },
+        {
+          "replayId": "82907",
+          "title": "goblin v Reynor: Game 2 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/82907/",
+          "downloadUrl": "https://lotv.spawningtool.com/82907/download/"
+        },
+        {
+          "replayId": "82908",
+          "title": "goblin v Reynor: Game 3 - [ESL] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/82908/",
+          "downloadUrl": "https://lotv.spawningtool.com/82908/download/"
+        },
+        {
+          "replayId": "82949",
+          "title": "MaNa v Reynor: Game 4 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/82949/",
+          "downloadUrl": "https://lotv.spawningtool.com/82949/download/"
+        },
+        {
+          "replayId": "82950",
+          "title": "MaNa v Reynor: Game 1 - [ESL] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/82950/",
+          "downloadUrl": "https://lotv.spawningtool.com/82950/download/"
+        },
+        {
+          "replayId": "82951",
+          "title": "MaNa v Reynor: Game 3 - [ESL] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/82951/",
+          "downloadUrl": "https://lotv.spawningtool.com/82951/download/"
+        },
+        {
+          "replayId": "82952",
+          "title": "MaNa v Reynor: Game 2 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/82952/",
+          "downloadUrl": "https://lotv.spawningtool.com/82952/download/"
+        },
+        {
+          "replayId": "83319",
+          "title": "herO v Reynor: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/83319/",
+          "downloadUrl": "https://lotv.spawningtool.com/83319/download/"
+        },
+        {
+          "replayId": "83320",
+          "title": "herO v Reynor: Game 2 - [ESL] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/83320/",
+          "downloadUrl": "https://lotv.spawningtool.com/83320/download/"
+        },
+        {
+          "replayId": "83321",
+          "title": "herO v Reynor: Game 3 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/83321/",
+          "downloadUrl": "https://lotv.spawningtool.com/83321/download/"
+        },
+        {
+          "replayId": "83331",
+          "title": "Nice v Reynor: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/83331/",
+          "downloadUrl": "https://lotv.spawningtool.com/83331/download/"
+        },
+        {
+          "replayId": "83332",
+          "title": "Nice v Reynor: Game 2 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/83332/",
+          "downloadUrl": "https://lotv.spawningtool.com/83332/download/"
+        },
+        {
+          "replayId": "83596",
+          "title": "Reynor v ShoWTimE - Site Delta LE",
+          "detailUrl": "https://lotv.spawningtool.com/83596/",
+          "downloadUrl": "https://lotv.spawningtool.com/83596/download/"
+        },
+        {
+          "replayId": "83597",
+          "title": "Reynor v ShoWTimE - Hard Lead LE",
+          "detailUrl": "https://lotv.spawningtool.com/83597/",
+          "downloadUrl": "https://lotv.spawningtool.com/83597/download/"
+        },
+        {
+          "replayId": "83598",
+          "title": "Reynor v ShoWTimE - Oceanborn LE",
+          "detailUrl": "https://lotv.spawningtool.com/83598/",
+          "downloadUrl": "https://lotv.spawningtool.com/83598/download/"
+        },
+        {
+          "replayId": "84055",
+          "title": "herO v Reynor: Game 1 - [EWC] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/84055/",
+          "downloadUrl": "https://lotv.spawningtool.com/84055/download/"
+        },
+        {
+          "replayId": "84056",
+          "title": "herO v Reynor: Game 2 - [EWC] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/84056/",
+          "downloadUrl": "https://lotv.spawningtool.com/84056/download/"
+        },
+        {
+          "replayId": "84057",
+          "title": "herO v Reynor: Game 3 - [EWC] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/84057/",
+          "downloadUrl": "https://lotv.spawningtool.com/84057/download/"
+        },
+        {
+          "replayId": "84099",
+          "title": "Classic v Reynor: Game 1 - [EWC] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/84099/",
+          "downloadUrl": "https://lotv.spawningtool.com/84099/download/"
+        },
+        {
+          "replayId": "84100",
+          "title": "Classic v Reynor: Game 2 - [EWC] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/84100/",
+          "downloadUrl": "https://lotv.spawningtool.com/84100/download/"
+        },
+        {
+          "replayId": "84105",
+          "title": "herO v Reynor: Game 1 - [EWC] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/84105/",
+          "downloadUrl": "https://lotv.spawningtool.com/84105/download/"
+        },
+        {
+          "replayId": "84106",
+          "title": "herO v Reynor: Game 2 - [EWC] Amphion",
+          "detailUrl": "https://lotv.spawningtool.com/84106/",
+          "downloadUrl": "https://lotv.spawningtool.com/84106/download/"
+        },
+        {
+          "replayId": "84690",
+          "title": "DnS v Reynor: Game 1 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/84690/",
+          "downloadUrl": "https://lotv.spawningtool.com/84690/download/"
+        },
+        {
+          "replayId": "84691",
+          "title": "DnS v Reynor: Game 2 - Amygdala",
+          "detailUrl": "https://lotv.spawningtool.com/84691/",
+          "downloadUrl": "https://lotv.spawningtool.com/84691/download/"
+        },
+        {
+          "replayId": "84696",
+          "title": "LiquidMaNa v Reynor: Game 1 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/84696/",
+          "downloadUrl": "https://lotv.spawningtool.com/84696/download/"
+        },
+        {
+          "replayId": "84697",
+          "title": "LiquidMaNa v Reynor: Game 2 - Amygdala",
+          "detailUrl": "https://lotv.spawningtool.com/84697/",
+          "downloadUrl": "https://lotv.spawningtool.com/84697/download/"
+        },
+        {
+          "replayId": "84698",
+          "title": "LiquidMaNa v Reynor: Game 3 - Abyssal Reef LE",
+          "detailUrl": "https://lotv.spawningtool.com/84698/",
+          "downloadUrl": "https://lotv.spawningtool.com/84698/download/"
+        },
+        {
+          "replayId": "84703",
+          "title": "Mixu v Reynor: Game 1 - Neon Violet Square LE",
+          "detailUrl": "https://lotv.spawningtool.com/84703/",
+          "downloadUrl": "https://lotv.spawningtool.com/84703/download/"
+        },
+        {
+          "replayId": "84704",
+          "title": "Mixu v Reynor: Game 2 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/84704/",
+          "downloadUrl": "https://lotv.spawningtool.com/84704/download/"
+        },
+        {
+          "replayId": "85029",
+          "title": "[ZvP] - [BASKGG]Reynor vs DKZherO - Abyssal Reef LE - 2025-01-24 12_59_41",
+          "detailUrl": "https://lotv.spawningtool.com/85029/",
+          "downloadUrl": "https://lotv.spawningtool.com/85029/download/"
+        },
+        {
+          "replayId": "85235",
+          "title": "DieMauer v Reynor: Game 3 - [ESL] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/85235/",
+          "downloadUrl": "https://lotv.spawningtool.com/85235/download/"
+        },
+        {
+          "replayId": "85236",
+          "title": "DieMauer v Reynor: Game 1 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/85236/",
+          "downloadUrl": "https://lotv.spawningtool.com/85236/download/"
+        },
+        {
+          "replayId": "85237",
+          "title": "DieMauer v Reynor: Game 2 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/85237/",
+          "downloadUrl": "https://lotv.spawningtool.com/85237/download/"
+        },
+        {
+          "replayId": "86509",
+          "title": "herO v Reynor: Game 3 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/86509/",
+          "downloadUrl": "https://lotv.spawningtool.com/86509/download/"
+        },
+        {
+          "replayId": "86510",
+          "title": "herO v Reynor: Game 2 - Last Fantasy LE",
+          "detailUrl": "https://lotv.spawningtool.com/86510/",
+          "downloadUrl": "https://lotv.spawningtool.com/86510/download/"
+        },
+        {
+          "replayId": "86511",
+          "title": "herO v Reynor: Game 1 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/86511/",
+          "downloadUrl": "https://lotv.spawningtool.com/86511/download/"
+        },
+        {
+          "replayId": "87500",
+          "title": "Reynor v Zoun: Game 1 - Incorporeal LE",
+          "detailUrl": "https://lotv.spawningtool.com/87500/",
+          "downloadUrl": "https://lotv.spawningtool.com/87500/download/"
+        },
+        {
+          "replayId": "87501",
+          "title": "Reynor v Zoun: Game 4 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/87501/",
+          "downloadUrl": "https://lotv.spawningtool.com/87501/download/"
+        },
+        {
+          "replayId": "87502",
+          "title": "Reynor v Zoun: Game 5 - Last Fantasy LE",
+          "detailUrl": "https://lotv.spawningtool.com/87502/",
+          "downloadUrl": "https://lotv.spawningtool.com/87502/download/"
+        },
+        {
+          "replayId": "87503",
+          "title": "Reynor v Zoun: Game 2 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/87503/",
+          "downloadUrl": "https://lotv.spawningtool.com/87503/download/"
+        },
+        {
+          "replayId": "87504",
+          "title": "Reynor v Zoun: Game 3 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/87504/",
+          "downloadUrl": "https://lotv.spawningtool.com/87504/download/"
+        },
+        {
+          "replayId": "89266",
+          "title": "LiquidMaNa v Reynor: Game 3 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/89266/",
+          "downloadUrl": "https://lotv.spawningtool.com/89266/download/"
+        },
+        {
+          "replayId": "89267",
+          "title": "LiquidMaNa v Reynor: Game 2 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/89267/",
+          "downloadUrl": "https://lotv.spawningtool.com/89267/download/"
+        },
+        {
+          "replayId": "89268",
+          "title": "LiquidMaNa v Reynor: Game 1 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/89268/",
+          "downloadUrl": "https://lotv.spawningtool.com/89268/download/"
+        },
+        {
+          "replayId": "89491",
+          "title": "Reynor v ShoWTimE: Game 1 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89491/",
+          "downloadUrl": "https://lotv.spawningtool.com/89491/download/"
+        },
+        {
+          "replayId": "89499",
+          "title": "Reynor v ShoWTimE: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89499/",
+          "downloadUrl": "https://lotv.spawningtool.com/89499/download/"
+        },
+        {
+          "replayId": "89501",
+          "title": "Reynor v SKillous: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89501/",
+          "downloadUrl": "https://lotv.spawningtool.com/89501/download/"
+        },
+        {
+          "replayId": "89503",
+          "title": "Reynor v SKillous: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89503/",
+          "downloadUrl": "https://lotv.spawningtool.com/89503/download/"
+        },
+        {
+          "replayId": "89531",
+          "title": "LetaleX v Reynor: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89531/",
+          "downloadUrl": "https://lotv.spawningtool.com/89531/download/"
+        },
+        {
+          "replayId": "89532",
+          "title": "LetaleX v Reynor: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89532/",
+          "downloadUrl": "https://lotv.spawningtool.com/89532/download/"
+        },
+        {
+          "replayId": "89536",
+          "title": "Reynor v trigger: Game 2 - Tourmaline LE",
+          "detailUrl": "https://lotv.spawningtool.com/89536/",
+          "downloadUrl": "https://lotv.spawningtool.com/89536/download/"
+        },
+        {
+          "replayId": "89537",
+          "title": "Reynor v trigger: Game 1 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89537/",
+          "downloadUrl": "https://lotv.spawningtool.com/89537/download/"
+        },
+        {
+          "replayId": "89624",
+          "title": "Reynor v trigger: Game 3 - Tourmaline LE",
+          "detailUrl": "https://lotv.spawningtool.com/89624/",
+          "downloadUrl": "https://lotv.spawningtool.com/89624/download/"
+        },
+        {
+          "replayId": "89627",
+          "title": "Reynor v SKillous: Game 3 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89627/",
+          "downloadUrl": "https://lotv.spawningtool.com/89627/download/"
+        }
+      ],
+      "seed": {
+        "sourceId": "elite-reynor-zvp",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=11",
+        "pages": 3,
+        "cohortBucket": "elite-7000",
+        "primaryPlayer": "Reynor",
+        "matchup": "ZvP",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      }
+    },
+    {
+      "schemaVersion": "epic13-internet-sources-v1",
+      "generatedAt": "2026-04-07T10:33:43Z",
+      "sourceKind": "spawningtool-replay-listing",
+      "listingUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=13",
+      "pageCount": 3,
+      "pageList": [
+        {
+          "pageNumber": 1,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=13",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=546&tag=13&p=1"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 2,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=13&p=2",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=546&tag=13&p=2"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 3,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=13&p=3",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=546&tag=13&p=3"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        }
+      ],
+      "replayList": [
+        {
+          "replayId": "76577",
+          "title": "Reynor v Serral: Game 2 - [ESL] Inside and Out",
+          "detailUrl": "https://lotv.spawningtool.com/76577/",
+          "downloadUrl": "https://lotv.spawningtool.com/76577/download/"
+        },
+        {
+          "replayId": "76578",
+          "title": "Reynor v Serral: Game 3 - [ESL] Data-C",
+          "detailUrl": "https://lotv.spawningtool.com/76578/",
+          "downloadUrl": "https://lotv.spawningtool.com/76578/download/"
+        },
+        {
+          "replayId": "76579",
+          "title": "Reynor v Serral: Game 4 - [ESL] Tropical Sacrifice",
+          "detailUrl": "https://lotv.spawningtool.com/76579/",
+          "downloadUrl": "https://lotv.spawningtool.com/76579/download/"
+        },
+        {
+          "replayId": "76580",
+          "title": "Reynor v Serral: Game 5 - [ESL] Stargazers",
+          "detailUrl": "https://lotv.spawningtool.com/76580/",
+          "downloadUrl": "https://lotv.spawningtool.com/76580/download/"
+        },
+        {
+          "replayId": "77346",
+          "title": "Reynor v soO: Game 2 - Inside and Out",
+          "detailUrl": "https://lotv.spawningtool.com/77346/",
+          "downloadUrl": "https://lotv.spawningtool.com/77346/download/"
+        },
+        {
+          "replayId": "77347",
+          "title": "Reynor v soO: Game 1 - Data-C",
+          "detailUrl": "https://lotv.spawningtool.com/77347/",
+          "downloadUrl": "https://lotv.spawningtool.com/77347/download/"
+        },
+        {
+          "replayId": "77356",
+          "title": "LiquidElazer v Reynor: Game 2 - Inside and Out",
+          "detailUrl": "https://lotv.spawningtool.com/77356/",
+          "downloadUrl": "https://lotv.spawningtool.com/77356/download/"
+        },
+        {
+          "replayId": "77357",
+          "title": "LiquidElazer v Reynor: Game 1 - Data-C",
+          "detailUrl": "https://lotv.spawningtool.com/77357/",
+          "downloadUrl": "https://lotv.spawningtool.com/77357/download/"
+        },
+        {
+          "replayId": "77374",
+          "title": "Reynor v Scarlett: Game 1 - Cosmic Sapphire",
+          "detailUrl": "https://lotv.spawningtool.com/77374/",
+          "downloadUrl": "https://lotv.spawningtool.com/77374/download/"
+        },
+        {
+          "replayId": "77375",
+          "title": "Reynor v Scarlett: Game 2 - Tropical Sacrifice",
+          "detailUrl": "https://lotv.spawningtool.com/77375/",
+          "downloadUrl": "https://lotv.spawningtool.com/77375/download/"
+        },
+        {
+          "replayId": "79550",
+          "title": "Reynor v Serral: Game 1 - [ESL] Babylon",
+          "detailUrl": "https://lotv.spawningtool.com/79550/",
+          "downloadUrl": "https://lotv.spawningtool.com/79550/download/"
+        },
+        {
+          "replayId": "79551",
+          "title": "Reynor v Serral: Game 2 - [ESL] Dragon Scales",
+          "detailUrl": "https://lotv.spawningtool.com/79551/",
+          "downloadUrl": "https://lotv.spawningtool.com/79551/download/"
+        },
+        {
+          "replayId": "79552",
+          "title": "Reynor v Serral: Game 3 - [ESL] Royal Blood",
+          "detailUrl": "https://lotv.spawningtool.com/79552/",
+          "downloadUrl": "https://lotv.spawningtool.com/79552/download/"
+        },
+        {
+          "replayId": "79590",
+          "title": "Reynor v Solar: Game 3 - [ESL] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/79590/",
+          "downloadUrl": "https://lotv.spawningtool.com/79590/download/"
+        },
+        {
+          "replayId": "79593",
+          "title": "Reynor v Solar: Game 7 - [ESL] Altitude",
+          "detailUrl": "https://lotv.spawningtool.com/79593/",
+          "downloadUrl": "https://lotv.spawningtool.com/79593/download/"
+        },
+        {
+          "replayId": "79594",
+          "title": "Reynor v Solar: Game 2 - [ESL] Babylon",
+          "detailUrl": "https://lotv.spawningtool.com/79594/",
+          "downloadUrl": "https://lotv.spawningtool.com/79594/download/"
+        },
+        {
+          "replayId": "79595",
+          "title": "Reynor v Solar: Game 5 - [ESL] NeoHumanity",
+          "detailUrl": "https://lotv.spawningtool.com/79595/",
+          "downloadUrl": "https://lotv.spawningtool.com/79595/download/"
+        },
+        {
+          "replayId": "79598",
+          "title": "Reynor v Solar: Game 6 - [ESL] Dragon Scales",
+          "detailUrl": "https://lotv.spawningtool.com/79598/",
+          "downloadUrl": "https://lotv.spawningtool.com/79598/download/"
+        },
+        {
+          "replayId": "79605",
+          "title": "Reynor v Serral: Game 2 - [ESL] NeoHumanity",
+          "detailUrl": "https://lotv.spawningtool.com/79605/",
+          "downloadUrl": "https://lotv.spawningtool.com/79605/download/"
+        },
+        {
+          "replayId": "79612",
+          "title": "Reynor v Solar: Game 4 - [ESL] Ancient Cistern",
+          "detailUrl": "https://lotv.spawningtool.com/79612/",
+          "downloadUrl": "https://lotv.spawningtool.com/79612/download/"
+        },
+        {
+          "replayId": "79613",
+          "title": "Reynor v Serral: Game 1 - [ESL] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/79613/",
+          "downloadUrl": "https://lotv.spawningtool.com/79613/download/"
+        },
+        {
+          "replayId": "79616",
+          "title": "Reynor v Serral: Game 3 - [ESL] Royal Blood",
+          "detailUrl": "https://lotv.spawningtool.com/79616/",
+          "downloadUrl": "https://lotv.spawningtool.com/79616/download/"
+        },
+        {
+          "replayId": "79628",
+          "title": "Reynor v Solar: Game 1 - [ESL] Royal Blood",
+          "detailUrl": "https://lotv.spawningtool.com/79628/",
+          "downloadUrl": "https://lotv.spawningtool.com/79628/download/"
+        },
+        {
+          "replayId": "79680",
+          "title": "Lambo v Reynor: Game 1 - [ESL] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/79680/",
+          "downloadUrl": "https://lotv.spawningtool.com/79680/download/"
+        },
+        {
+          "replayId": "79691",
+          "title": "Lambo v Reynor: Game 3 - [ESL] Ancient Cistern",
+          "detailUrl": "https://lotv.spawningtool.com/79691/",
+          "downloadUrl": "https://lotv.spawningtool.com/79691/download/"
+        },
+        {
+          "replayId": "79700",
+          "title": "Lambo v Reynor: Game 2 - [ESL] Royal Blood",
+          "detailUrl": "https://lotv.spawningtool.com/79700/",
+          "downloadUrl": "https://lotv.spawningtool.com/79700/download/"
+        },
+        {
+          "replayId": "79936",
+          "title": "Reynor v YoungYakov: Game 1 - [ESL] Royal Blood",
+          "detailUrl": "https://lotv.spawningtool.com/79936/",
+          "downloadUrl": "https://lotv.spawningtool.com/79936/download/"
+        },
+        {
+          "replayId": "79937",
+          "title": "Reynor v YoungYakov: Game 2 - [ESL] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/79937/",
+          "downloadUrl": "https://lotv.spawningtool.com/79937/download/"
+        },
+        {
+          "replayId": "80080",
+          "title": "Lambo v Reynor: Game 1 - [ESL] Babylon",
+          "detailUrl": "https://lotv.spawningtool.com/80080/",
+          "downloadUrl": "https://lotv.spawningtool.com/80080/download/"
+        },
+        {
+          "replayId": "80081",
+          "title": "Lambo v Reynor: Game 2 - [ESL] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/80081/",
+          "downloadUrl": "https://lotv.spawningtool.com/80081/download/"
+        },
+        {
+          "replayId": "80082",
+          "title": "Lambo v Reynor: Game 3 - [ESL] Dragon Scales",
+          "detailUrl": "https://lotv.spawningtool.com/80082/",
+          "downloadUrl": "https://lotv.spawningtool.com/80082/download/"
+        },
+        {
+          "replayId": "80083",
+          "title": "Lambo v Reynor: Game 4 - [ESL] Royal Blood",
+          "detailUrl": "https://lotv.spawningtool.com/80083/",
+          "downloadUrl": "https://lotv.spawningtool.com/80083/download/"
+        },
+        {
+          "replayId": "80373",
+          "title": "Reynor v Solar: Game 1 - [G8] Royal Blood",
+          "detailUrl": "https://lotv.spawningtool.com/80373/",
+          "downloadUrl": "https://lotv.spawningtool.com/80373/download/"
+        },
+        {
+          "replayId": "80374",
+          "title": "Reynor v Solar: Game 2 - [G8] Gresvan",
+          "detailUrl": "https://lotv.spawningtool.com/80374/",
+          "downloadUrl": "https://lotv.spawningtool.com/80374/download/"
+        },
+        {
+          "replayId": "80375",
+          "title": "Reynor v Solar: Game 3 - [G8] Babylon",
+          "detailUrl": "https://lotv.spawningtool.com/80375/",
+          "downloadUrl": "https://lotv.spawningtool.com/80375/download/"
+        },
+        {
+          "replayId": "80905",
+          "title": "Reynor v Serral: Game 2 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/80905/",
+          "downloadUrl": "https://lotv.spawningtool.com/80905/download/"
+        },
+        {
+          "replayId": "80906",
+          "title": "Reynor v Serral: Game 3 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/80906/",
+          "downloadUrl": "https://lotv.spawningtool.com/80906/download/"
+        },
+        {
+          "replayId": "81548",
+          "title": "Reynor v Serral: Game 2 - [ESL] Solaris",
+          "detailUrl": "https://lotv.spawningtool.com/81548/",
+          "downloadUrl": "https://lotv.spawningtool.com/81548/download/"
+        },
+        {
+          "replayId": "81549",
+          "title": "Reynor v Serral: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/81549/",
+          "downloadUrl": "https://lotv.spawningtool.com/81549/download/"
+        },
+        {
+          "replayId": "81550",
+          "title": "Reynor v Serral: Game 3 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/81550/",
+          "downloadUrl": "https://lotv.spawningtool.com/81550/download/"
+        },
+        {
+          "replayId": "82214",
+          "title": "Reynor v YoungYakov: Game 1 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/82214/",
+          "downloadUrl": "https://lotv.spawningtool.com/82214/download/"
+        },
+        {
+          "replayId": "82215",
+          "title": "Reynor v YoungYakov: Game 2 - Hard Lead LE",
+          "detailUrl": "https://lotv.spawningtool.com/82215/",
+          "downloadUrl": "https://lotv.spawningtool.com/82215/download/"
+        },
+        {
+          "replayId": "82357",
+          "title": "Dark v Reynor: Game 1 - [ESL] Hard Lead",
+          "detailUrl": "https://lotv.spawningtool.com/82357/",
+          "downloadUrl": "https://lotv.spawningtool.com/82357/download/"
+        },
+        {
+          "replayId": "82358",
+          "title": "Dark v Reynor: Game 2 - [ESL] Site Delta",
+          "detailUrl": "https://lotv.spawningtool.com/82358/",
+          "downloadUrl": "https://lotv.spawningtool.com/82358/download/"
+        },
+        {
+          "replayId": "82359",
+          "title": "Dark v Reynor: Game 3 - [ESL] Hecate",
+          "detailUrl": "https://lotv.spawningtool.com/82359/",
+          "downloadUrl": "https://lotv.spawningtool.com/82359/download/"
+        },
+        {
+          "replayId": "82703",
+          "title": "Reynor v YoungYakov - [ESL] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/82703/",
+          "downloadUrl": "https://lotv.spawningtool.com/82703/download/"
+        },
+        {
+          "replayId": "82704",
+          "title": "Reynor v YoungYakov - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/82704/",
+          "downloadUrl": "https://lotv.spawningtool.com/82704/download/"
+        },
+        {
+          "replayId": "82838",
+          "title": "Aristori v Reynor: Game 2 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/82838/",
+          "downloadUrl": "https://lotv.spawningtool.com/82838/download/"
+        },
+        {
+          "replayId": "82839",
+          "title": "Aristori v Reynor: Game 1 - [ESL] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/82839/",
+          "downloadUrl": "https://lotv.spawningtool.com/82839/download/"
+        },
+        {
+          "replayId": "82862",
+          "title": "Reynor v YoungYakov: Game 3 - [ESL] Ghost River",
+          "detailUrl": "https://lotv.spawningtool.com/82862/",
+          "downloadUrl": "https://lotv.spawningtool.com/82862/download/"
+        },
+        {
+          "replayId": "82901",
+          "title": "Reynor v Wayne: Game 3 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/82901/",
+          "downloadUrl": "https://lotv.spawningtool.com/82901/download/"
+        },
+        {
+          "replayId": "82902",
+          "title": "Reynor v Wayne: Game 2 - [ESL] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/82902/",
+          "downloadUrl": "https://lotv.spawningtool.com/82902/download/"
+        },
+        {
+          "replayId": "83599",
+          "title": "Reynor v Wayne - Hecate LE",
+          "detailUrl": "https://lotv.spawningtool.com/83599/",
+          "downloadUrl": "https://lotv.spawningtool.com/83599/download/"
+        },
+        {
+          "replayId": "83600",
+          "title": "Reynor v Wayne - Site Delta LE",
+          "detailUrl": "https://lotv.spawningtool.com/83600/",
+          "downloadUrl": "https://lotv.spawningtool.com/83600/download/"
+        },
+        {
+          "replayId": "84048",
+          "title": "Reynor v Solar: Game 1 - [EWC] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/84048/",
+          "downloadUrl": "https://lotv.spawningtool.com/84048/download/"
+        },
+        {
+          "replayId": "84049",
+          "title": "Reynor v Solar: Game 2 - [EWC] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/84049/",
+          "downloadUrl": "https://lotv.spawningtool.com/84049/download/"
+        },
+        {
+          "replayId": "84050",
+          "title": "Reynor v Solar: Game 3 - [EWC] Amphion",
+          "detailUrl": "https://lotv.spawningtool.com/84050/",
+          "downloadUrl": "https://lotv.spawningtool.com/84050/download/"
+        },
+        {
+          "replayId": "85317",
+          "title": "Lambo v Reynor: Game 2 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/85317/",
+          "downloadUrl": "https://lotv.spawningtool.com/85317/download/"
+        },
+        {
+          "replayId": "85319",
+          "title": "Lambo v Reynor: Game 3 - [ESL] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/85319/",
+          "downloadUrl": "https://lotv.spawningtool.com/85319/download/"
+        },
+        {
+          "replayId": "86451",
+          "title": "FalconsSolar v Reynor: Game 5 - Magannatha LE",
+          "detailUrl": "https://lotv.spawningtool.com/86451/",
+          "downloadUrl": "https://lotv.spawningtool.com/86451/download/"
+        },
+        {
+          "replayId": "86473",
+          "title": "FalconsSolar v Reynor: Game 1 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/86473/",
+          "downloadUrl": "https://lotv.spawningtool.com/86473/download/"
+        },
+        {
+          "replayId": "86474",
+          "title": "FalconsSolar v Reynor: Game 4 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/86474/",
+          "downloadUrl": "https://lotv.spawningtool.com/86474/download/"
+        },
+        {
+          "replayId": "86475",
+          "title": "FalconsSolar v Reynor: Game 2 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/86475/",
+          "downloadUrl": "https://lotv.spawningtool.com/86475/download/"
+        },
+        {
+          "replayId": "86476",
+          "title": "FalconsSolar v Reynor: Game 3 - Incorporeal LE",
+          "detailUrl": "https://lotv.spawningtool.com/86476/",
+          "downloadUrl": "https://lotv.spawningtool.com/86476/download/"
+        },
+        {
+          "replayId": "87424",
+          "title": "Reynor v Serral: Game 5 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/87424/",
+          "downloadUrl": "https://lotv.spawningtool.com/87424/download/"
+        },
+        {
+          "replayId": "87425",
+          "title": "Reynor v Serral: Game 4 - Torches LE",
+          "detailUrl": "https://lotv.spawningtool.com/87425/",
+          "downloadUrl": "https://lotv.spawningtool.com/87425/download/"
+        },
+        {
+          "replayId": "87426",
+          "title": "Reynor v Serral: Game 3 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/87426/",
+          "downloadUrl": "https://lotv.spawningtool.com/87426/download/"
+        },
+        {
+          "replayId": "87427",
+          "title": "Reynor v Serral: Game 2 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/87427/",
+          "downloadUrl": "https://lotv.spawningtool.com/87427/download/"
+        },
+        {
+          "replayId": "87428",
+          "title": "Reynor v Serral: Game 1 - Pylon LE",
+          "detailUrl": "https://lotv.spawningtool.com/87428/",
+          "downloadUrl": "https://lotv.spawningtool.com/87428/download/"
+        },
+        {
+          "replayId": "87512",
+          "title": "Reynor v SHIN: Game 2 - Magannatha LE",
+          "detailUrl": "https://lotv.spawningtool.com/87512/",
+          "downloadUrl": "https://lotv.spawningtool.com/87512/download/"
+        },
+        {
+          "replayId": "87513",
+          "title": "Reynor v SHIN: Game 1 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/87513/",
+          "downloadUrl": "https://lotv.spawningtool.com/87513/download/"
+        },
+        {
+          "replayId": "89639",
+          "title": "Reynor v Serral: Game 4 - Tourmaline LE",
+          "detailUrl": "https://lotv.spawningtool.com/89639/",
+          "downloadUrl": "https://lotv.spawningtool.com/89639/download/"
+        },
+        {
+          "replayId": "89640",
+          "title": "Reynor v Serral: Game 2 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89640/",
+          "downloadUrl": "https://lotv.spawningtool.com/89640/download/"
+        },
+        {
+          "replayId": "89644",
+          "title": "Reynor v Serral: Game 1 - White Rabbit LE",
+          "detailUrl": "https://lotv.spawningtool.com/89644/",
+          "downloadUrl": "https://lotv.spawningtool.com/89644/download/"
+        },
+        {
+          "replayId": "89653",
+          "title": "Reynor v Serral: Game 3 - Celestial Enclave LE",
+          "detailUrl": "https://lotv.spawningtool.com/89653/",
+          "downloadUrl": "https://lotv.spawningtool.com/89653/download/"
+        }
+      ],
+      "seed": {
+        "sourceId": "elite-reynor-zvz",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=13",
+        "pages": 3,
+        "cohortBucket": "elite-7000",
+        "primaryPlayer": "Reynor",
+        "matchup": "ZvZ",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      }
+    },
+    {
+      "schemaVersion": "epic13-internet-sources-v1",
+      "generatedAt": "2026-04-07T10:33:46Z",
+      "sourceKind": "spawningtool-replay-listing",
+      "listingUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=3",
+      "pageCount": 2,
+      "pageList": [
+        {
+          "pageNumber": 1,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=3",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=3&p=1"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 2,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=3&p=2",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=3&p=2"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        }
+      ],
+      "replayList": [
+        {
+          "replayId": "89221",
+          "title": "LiquidClem v Reynor: Game 10 - Magannatha LE",
+          "detailUrl": "https://lotv.spawningtool.com/89221/",
+          "downloadUrl": "https://lotv.spawningtool.com/89221/download/"
+        },
+        {
+          "replayId": "89222",
+          "title": "LiquidClem v Reynor: Game 9 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/89222/",
+          "downloadUrl": "https://lotv.spawningtool.com/89222/download/"
+        },
+        {
+          "replayId": "89223",
+          "title": "Lambo v LiquidClem: Game 3 - Magannatha LE",
+          "detailUrl": "https://lotv.spawningtool.com/89223/",
+          "downloadUrl": "https://lotv.spawningtool.com/89223/download/"
+        },
+        {
+          "replayId": "89224",
+          "title": "Lambo v LiquidClem: Game 2 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/89224/",
+          "downloadUrl": "https://lotv.spawningtool.com/89224/download/"
+        },
+        {
+          "replayId": "89225",
+          "title": "Lambo v LiquidClem: Game 1 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/89225/",
+          "downloadUrl": "https://lotv.spawningtool.com/89225/download/"
+        },
+        {
+          "replayId": "89237",
+          "title": "LiquidElazer v Remarcable: Game 3 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/89237/",
+          "downloadUrl": "https://lotv.spawningtool.com/89237/download/"
+        },
+        {
+          "replayId": "89238",
+          "title": "LiquidElazer v Remarcable: Game 2 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/89238/",
+          "downloadUrl": "https://lotv.spawningtool.com/89238/download/"
+        },
+        {
+          "replayId": "89239",
+          "title": "LiquidElazer v Remarcable: Game 1 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/89239/",
+          "downloadUrl": "https://lotv.spawningtool.com/89239/download/"
+        },
+        {
+          "replayId": "89277",
+          "title": "LiquidClem v Reynor: Game 3 - Torches LE",
+          "detailUrl": "https://lotv.spawningtool.com/89277/",
+          "downloadUrl": "https://lotv.spawningtool.com/89277/download/"
+        },
+        {
+          "replayId": "89278",
+          "title": "LiquidClem v Reynor: Game 2 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/89278/",
+          "downloadUrl": "https://lotv.spawningtool.com/89278/download/"
+        },
+        {
+          "replayId": "89279",
+          "title": "LiquidClem v Reynor: Game 1 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/89279/",
+          "downloadUrl": "https://lotv.spawningtool.com/89279/download/"
+        },
+        {
+          "replayId": "89458",
+          "title": "2025-09-08 - (Z)Serral VS (T)Cure",
+          "detailUrl": "https://lotv.spawningtool.com/89458/",
+          "downloadUrl": "https://lotv.spawningtool.com/89458/download/"
+        },
+        {
+          "replayId": "89472",
+          "title": "LiquidClem v Serral: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89472/",
+          "downloadUrl": "https://lotv.spawningtool.com/89472/download/"
+        },
+        {
+          "replayId": "89477",
+          "title": "Special Training - TvZ - 3CC - Medivac Timing Priority",
+          "detailUrl": "https://lotv.spawningtool.com/89477/",
+          "downloadUrl": "https://lotv.spawningtool.com/89477/download/"
+        },
+        {
+          "replayId": "89505",
+          "title": "BabyMarine v Reynor: Game 1 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89505/",
+          "downloadUrl": "https://lotv.spawningtool.com/89505/download/"
+        },
+        {
+          "replayId": "89514",
+          "title": "BabyMarine v Reynor: Game 2 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89514/",
+          "downloadUrl": "https://lotv.spawningtool.com/89514/download/"
+        },
+        {
+          "replayId": "89539",
+          "title": "Serral v VITRyung: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89539/",
+          "downloadUrl": "https://lotv.spawningtool.com/89539/download/"
+        },
+        {
+          "replayId": "89542",
+          "title": "Serral v VITRyung: Game 1 - Taito Citadel LE",
+          "detailUrl": "https://lotv.spawningtool.com/89542/",
+          "downloadUrl": "https://lotv.spawningtool.com/89542/download/"
+        },
+        {
+          "replayId": "89544",
+          "title": "Kelazhur v Lambo: Game 2 - Mothership LE",
+          "detailUrl": "https://lotv.spawningtool.com/89544/",
+          "downloadUrl": "https://lotv.spawningtool.com/89544/download/"
+        },
+        {
+          "replayId": "89566",
+          "title": "Lambo v ratgameplay: Game 2 - Old Republic LE",
+          "detailUrl": "https://lotv.spawningtool.com/89566/",
+          "downloadUrl": "https://lotv.spawningtool.com/89566/download/"
+        },
+        {
+          "replayId": "89572",
+          "title": "Lambo v ratgameplay: Game 1 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89572/",
+          "downloadUrl": "https://lotv.spawningtool.com/89572/download/"
+        },
+        {
+          "replayId": "89574",
+          "title": "Kelazhur v Lambo: Game 1 - Tourmaline LE",
+          "detailUrl": "https://lotv.spawningtool.com/89574/",
+          "downloadUrl": "https://lotv.spawningtool.com/89574/download/"
+        },
+        {
+          "replayId": "89577",
+          "title": "Kelazhur v Lambo: Game 3 - Mothership LE",
+          "detailUrl": "https://lotv.spawningtool.com/89577/",
+          "downloadUrl": "https://lotv.spawningtool.com/89577/download/"
+        },
+        {
+          "replayId": "89580",
+          "title": "HeroMarine v Serral: Game 5 - Old Republic LE",
+          "detailUrl": "https://lotv.spawningtool.com/89580/",
+          "downloadUrl": "https://lotv.spawningtool.com/89580/download/"
+        },
+        {
+          "replayId": "89584",
+          "title": "HeroMarine v Serral: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89584/",
+          "downloadUrl": "https://lotv.spawningtool.com/89584/download/"
+        },
+        {
+          "replayId": "89588",
+          "title": "HeroMarine v Serral: Game 4 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89588/",
+          "downloadUrl": "https://lotv.spawningtool.com/89588/download/"
+        },
+        {
+          "replayId": "89591",
+          "title": "HeroMarine v Serral: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89591/",
+          "downloadUrl": "https://lotv.spawningtool.com/89591/download/"
+        },
+        {
+          "replayId": "89592",
+          "title": "HeroMarine v Serral: Game 3 - White Rabbit LE",
+          "detailUrl": "https://lotv.spawningtool.com/89592/",
+          "downloadUrl": "https://lotv.spawningtool.com/89592/download/"
+        },
+        {
+          "replayId": "89607",
+          "title": "Elazer v LiquidClem: Game 2 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89607/",
+          "downloadUrl": "https://lotv.spawningtool.com/89607/download/"
+        },
+        {
+          "replayId": "89612",
+          "title": "Elazer v LiquidClem: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89612/",
+          "downloadUrl": "https://lotv.spawningtool.com/89612/download/"
+        },
+        {
+          "replayId": "89616",
+          "title": "Fjant v HeroMarine: Game 3 - Old Republic LE",
+          "detailUrl": "https://lotv.spawningtool.com/89616/",
+          "downloadUrl": "https://lotv.spawningtool.com/89616/download/"
+        },
+        {
+          "replayId": "89620",
+          "title": "Elazer v HeroMarine: Game 3 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89620/",
+          "downloadUrl": "https://lotv.spawningtool.com/89620/download/"
+        },
+        {
+          "replayId": "89621",
+          "title": "Elazer v HeroMarine: Game 1 - White Rabbit LE",
+          "detailUrl": "https://lotv.spawningtool.com/89621/",
+          "downloadUrl": "https://lotv.spawningtool.com/89621/download/"
+        },
+        {
+          "replayId": "89625",
+          "title": "Elazer v HeroMarine: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89625/",
+          "downloadUrl": "https://lotv.spawningtool.com/89625/download/"
+        },
+        {
+          "replayId": "89630",
+          "title": "Fjant v HeroMarine: Game 2 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89630/",
+          "downloadUrl": "https://lotv.spawningtool.com/89630/download/"
+        },
+        {
+          "replayId": "89631",
+          "title": "Lambo v LiquidClem: Game 2 - Tourmaline LE",
+          "detailUrl": "https://lotv.spawningtool.com/89631/",
+          "downloadUrl": "https://lotv.spawningtool.com/89631/download/"
+        },
+        {
+          "replayId": "89632",
+          "title": "LiquidClem v Serral: Game 3 - Tourmaline LE",
+          "detailUrl": "https://lotv.spawningtool.com/89632/",
+          "downloadUrl": "https://lotv.spawningtool.com/89632/download/"
+        },
+        {
+          "replayId": "89634",
+          "title": "Fjant v HeroMarine: Game 1 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89634/",
+          "downloadUrl": "https://lotv.spawningtool.com/89634/download/"
+        },
+        {
+          "replayId": "89635",
+          "title": "Fjant v LiquidClem: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89635/",
+          "downloadUrl": "https://lotv.spawningtool.com/89635/download/"
+        },
+        {
+          "replayId": "89637",
+          "title": "Lambo v LiquidClem: Game 3 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89637/",
+          "downloadUrl": "https://lotv.spawningtool.com/89637/download/"
+        },
+        {
+          "replayId": "89641",
+          "title": "LiquidClem v Serral: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89641/",
+          "downloadUrl": "https://lotv.spawningtool.com/89641/download/"
+        },
+        {
+          "replayId": "89642",
+          "title": "Lambo v LiquidClem: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89642/",
+          "downloadUrl": "https://lotv.spawningtool.com/89642/download/"
+        },
+        {
+          "replayId": "89650",
+          "title": "Fjant v LiquidClem: Game 2 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89650/",
+          "downloadUrl": "https://lotv.spawningtool.com/89650/download/"
+        },
+        {
+          "replayId": "89854",
+          "title": "TvZ 1 base ghost hellbat",
+          "detailUrl": "https://lotv.spawningtool.com/89854/",
+          "downloadUrl": "https://lotv.spawningtool.com/89854/download/"
+        },
+        {
+          "replayId": "89855",
+          "title": "tvz proper timing 3cc 4hellion 1 banshee",
+          "detailUrl": "https://lotv.spawningtool.com/89855/",
+          "downloadUrl": "https://lotv.spawningtool.com/89855/download/"
+        },
+        {
+          "replayId": "89856",
+          "title": "ter154",
+          "detailUrl": "https://lotv.spawningtool.com/89856/",
+          "downloadUrl": "https://lotv.spawningtool.com/89856/download/"
+        },
+        {
+          "replayId": "89862",
+          "title": "Winter Madness LE (85)",
+          "detailUrl": "https://lotv.spawningtool.com/89862/",
+          "downloadUrl": "https://lotv.spawningtool.com/89862/download/"
+        },
+        {
+          "replayId": "89882",
+          "title": "[EWC] Alcyone",
+          "detailUrl": "https://lotv.spawningtool.com/89882/",
+          "downloadUrl": "https://lotv.spawningtool.com/89882/download/"
+        },
+        {
+          "replayId": "89887",
+          "title": "zzz",
+          "detailUrl": "https://lotv.spawningtool.com/89887/",
+          "downloadUrl": "https://lotv.spawningtool.com/89887/download/"
+        },
+        {
+          "replayId": "89974",
+          "title": "2026-04-03 - (Z)SortOf,(T)A.I. 1 (Very Easy)",
+          "detailUrl": "https://lotv.spawningtool.com/89974/",
+          "downloadUrl": "https://lotv.spawningtool.com/89974/download/"
+        }
+      ],
+      "seed": {
+        "sourceId": "public-pro-zvt",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=3",
+        "pages": 2,
+        "cohortBucket": "unassigned",
+        "matchup": "ZvT",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      }
+    },
+    {
+      "schemaVersion": "epic13-internet-sources-v1",
+      "generatedAt": "2026-04-07T10:33:50Z",
+      "sourceKind": "spawningtool-replay-listing",
+      "listingUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=11",
+      "pageCount": 2,
+      "pageList": [
+        {
+          "pageNumber": 1,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=11",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=11&p=1"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 2,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=11&p=2",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=11&p=2"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        }
+      ],
+      "replayList": [
+        {
+          "replayId": "89258",
+          "title": "Krystianer v Lambo: Game 1 - Last Fantasy LE",
+          "detailUrl": "https://lotv.spawningtool.com/89258/",
+          "downloadUrl": "https://lotv.spawningtool.com/89258/download/"
+        },
+        {
+          "replayId": "89261",
+          "title": "Geralt v Lambo: Game 3 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/89261/",
+          "downloadUrl": "https://lotv.spawningtool.com/89261/download/"
+        },
+        {
+          "replayId": "89262",
+          "title": "Geralt v Lambo: Game 2 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/89262/",
+          "downloadUrl": "https://lotv.spawningtool.com/89262/download/"
+        },
+        {
+          "replayId": "89263",
+          "title": "Geralt v Lambo: Game 1 - Incorporeal LE",
+          "detailUrl": "https://lotv.spawningtool.com/89263/",
+          "downloadUrl": "https://lotv.spawningtool.com/89263/download/"
+        },
+        {
+          "replayId": "89266",
+          "title": "LiquidMaNa v Reynor: Game 3 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/89266/",
+          "downloadUrl": "https://lotv.spawningtool.com/89266/download/"
+        },
+        {
+          "replayId": "89267",
+          "title": "LiquidMaNa v Reynor: Game 2 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/89267/",
+          "downloadUrl": "https://lotv.spawningtool.com/89267/download/"
+        },
+        {
+          "replayId": "89268",
+          "title": "LiquidMaNa v Reynor: Game 1 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/89268/",
+          "downloadUrl": "https://lotv.spawningtool.com/89268/download/"
+        },
+        {
+          "replayId": "89280",
+          "title": "LiquidElazer v LiquidMaNa: Game 2 - Incorporeal LE",
+          "detailUrl": "https://lotv.spawningtool.com/89280/",
+          "downloadUrl": "https://lotv.spawningtool.com/89280/download/"
+        },
+        {
+          "replayId": "89281",
+          "title": "LiquidElazer v LiquidMaNa: Game 1 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/89281/",
+          "downloadUrl": "https://lotv.spawningtool.com/89281/download/"
+        },
+        {
+          "replayId": "89455",
+          "title": "Tempest build",
+          "detailUrl": "https://lotv.spawningtool.com/89455/",
+          "downloadUrl": "https://lotv.spawningtool.com/89455/download/"
+        },
+        {
+          "replayId": "89473",
+          "title": "Serral v SZsOs: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89473/",
+          "downloadUrl": "https://lotv.spawningtool.com/89473/download/"
+        },
+        {
+          "replayId": "89485",
+          "title": "Starglaives Showcase",
+          "detailUrl": "https://lotv.spawningtool.com/89485/",
+          "downloadUrl": "https://lotv.spawningtool.com/89485/download/"
+        },
+        {
+          "replayId": "89486",
+          "title": "Stargate into Blink - The standard PvZ",
+          "detailUrl": "https://lotv.spawningtool.com/89486/",
+          "downloadUrl": "https://lotv.spawningtool.com/89486/download/"
+        },
+        {
+          "replayId": "89489",
+          "title": "Jumy v Serral: Game 1 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89489/",
+          "downloadUrl": "https://lotv.spawningtool.com/89489/download/"
+        },
+        {
+          "replayId": "89491",
+          "title": "Reynor v ShoWTimE: Game 1 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89491/",
+          "downloadUrl": "https://lotv.spawningtool.com/89491/download/"
+        },
+        {
+          "replayId": "89494",
+          "title": "Jumy v Serral: Game 2 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89494/",
+          "downloadUrl": "https://lotv.spawningtool.com/89494/download/"
+        },
+        {
+          "replayId": "89499",
+          "title": "Reynor v ShoWTimE: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89499/",
+          "downloadUrl": "https://lotv.spawningtool.com/89499/download/"
+        },
+        {
+          "replayId": "89501",
+          "title": "Reynor v SKillous: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89501/",
+          "downloadUrl": "https://lotv.spawningtool.com/89501/download/"
+        },
+        {
+          "replayId": "89503",
+          "title": "Reynor v SKillous: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89503/",
+          "downloadUrl": "https://lotv.spawningtool.com/89503/download/"
+        },
+        {
+          "replayId": "89508",
+          "title": "LiquidMaNa v Serral: Game 1 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89508/",
+          "downloadUrl": "https://lotv.spawningtool.com/89508/download/"
+        },
+        {
+          "replayId": "89520",
+          "title": "Serral v SZsOs: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89520/",
+          "downloadUrl": "https://lotv.spawningtool.com/89520/download/"
+        },
+        {
+          "replayId": "89523",
+          "title": "LiquidMaNa v Serral: Game 2 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89523/",
+          "downloadUrl": "https://lotv.spawningtool.com/89523/download/"
+        },
+        {
+          "replayId": "89531",
+          "title": "LetaleX v Reynor: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89531/",
+          "downloadUrl": "https://lotv.spawningtool.com/89531/download/"
+        },
+        {
+          "replayId": "89532",
+          "title": "LetaleX v Reynor: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89532/",
+          "downloadUrl": "https://lotv.spawningtool.com/89532/download/"
+        },
+        {
+          "replayId": "89535",
+          "title": "HolyHit v Serral: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89535/",
+          "downloadUrl": "https://lotv.spawningtool.com/89535/download/"
+        },
+        {
+          "replayId": "89536",
+          "title": "Reynor v trigger: Game 2 - Tourmaline LE",
+          "detailUrl": "https://lotv.spawningtool.com/89536/",
+          "downloadUrl": "https://lotv.spawningtool.com/89536/download/"
+        },
+        {
+          "replayId": "89537",
+          "title": "Reynor v trigger: Game 1 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89537/",
+          "downloadUrl": "https://lotv.spawningtool.com/89537/download/"
+        },
+        {
+          "replayId": "89538",
+          "title": "HolyHit v Serral: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89538/",
+          "downloadUrl": "https://lotv.spawningtool.com/89538/download/"
+        },
+        {
+          "replayId": "89549",
+          "title": "Geralt v Lambo: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89549/",
+          "downloadUrl": "https://lotv.spawningtool.com/89549/download/"
+        },
+        {
+          "replayId": "89553",
+          "title": "Geralt v Lambo: Game 1 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89553/",
+          "downloadUrl": "https://lotv.spawningtool.com/89553/download/"
+        },
+        {
+          "replayId": "89555",
+          "title": "Lambo v SZNightMare: Game 2 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89555/",
+          "downloadUrl": "https://lotv.spawningtool.com/89555/download/"
+        },
+        {
+          "replayId": "89559",
+          "title": "Geralt v ratgameplay: Game 2 - White Rabbit LE",
+          "detailUrl": "https://lotv.spawningtool.com/89559/",
+          "downloadUrl": "https://lotv.spawningtool.com/89559/download/"
+        },
+        {
+          "replayId": "89567",
+          "title": "Lambo v Zoun: Game 2 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89567/",
+          "downloadUrl": "https://lotv.spawningtool.com/89567/download/"
+        },
+        {
+          "replayId": "89571",
+          "title": "ratgameplay v SZNightMare: Game 1 - Tourmaline LE",
+          "detailUrl": "https://lotv.spawningtool.com/89571/",
+          "downloadUrl": "https://lotv.spawningtool.com/89571/download/"
+        },
+        {
+          "replayId": "89573",
+          "title": "Lambo v Zoun: Game 1 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89573/",
+          "downloadUrl": "https://lotv.spawningtool.com/89573/download/"
+        },
+        {
+          "replayId": "89590",
+          "title": "Lambo v SZNightMare: Game 1 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89590/",
+          "downloadUrl": "https://lotv.spawningtool.com/89590/download/"
+        },
+        {
+          "replayId": "89593",
+          "title": "Fjant v Harstem: Game 3 - Old Republic LE",
+          "detailUrl": "https://lotv.spawningtool.com/89593/",
+          "downloadUrl": "https://lotv.spawningtool.com/89593/download/"
+        },
+        {
+          "replayId": "89595",
+          "title": "Fjant v Harstem: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89595/",
+          "downloadUrl": "https://lotv.spawningtool.com/89595/download/"
+        },
+        {
+          "replayId": "89598",
+          "title": "Fjant v Krystianer: Game 2 - White Rabbit LE",
+          "detailUrl": "https://lotv.spawningtool.com/89598/",
+          "downloadUrl": "https://lotv.spawningtool.com/89598/download/"
+        },
+        {
+          "replayId": "89599",
+          "title": "Elazer v Krystianer: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89599/",
+          "downloadUrl": "https://lotv.spawningtool.com/89599/download/"
+        },
+        {
+          "replayId": "89600",
+          "title": "Elazer v Krystianer: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89600/",
+          "downloadUrl": "https://lotv.spawningtool.com/89600/download/"
+        },
+        {
+          "replayId": "89603",
+          "title": "Fjant v Krystianer: Game 1 - Tourmaline LE",
+          "detailUrl": "https://lotv.spawningtool.com/89603/",
+          "downloadUrl": "https://lotv.spawningtool.com/89603/download/"
+        },
+        {
+          "replayId": "89605",
+          "title": "Fjant v Harstem: Game 1 - Tourmaline LE",
+          "detailUrl": "https://lotv.spawningtool.com/89605/",
+          "downloadUrl": "https://lotv.spawningtool.com/89605/download/"
+        },
+        {
+          "replayId": "89624",
+          "title": "Reynor v trigger: Game 3 - Tourmaline LE",
+          "detailUrl": "https://lotv.spawningtool.com/89624/",
+          "downloadUrl": "https://lotv.spawningtool.com/89624/download/"
+        },
+        {
+          "replayId": "89627",
+          "title": "Reynor v SKillous: Game 3 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89627/",
+          "downloadUrl": "https://lotv.spawningtool.com/89627/download/"
+        },
+        {
+          "replayId": "89628",
+          "title": "Elazer v Harstem: Game 1 - White Rabbit LE",
+          "detailUrl": "https://lotv.spawningtool.com/89628/",
+          "downloadUrl": "https://lotv.spawningtool.com/89628/download/"
+        },
+        {
+          "replayId": "89629",
+          "title": "Elazer v Harstem: Game 3 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89629/",
+          "downloadUrl": "https://lotv.spawningtool.com/89629/download/"
+        },
+        {
+          "replayId": "89636",
+          "title": "Elazer v Harstem: Game 2 - Winter Madness LE",
+          "detailUrl": "https://lotv.spawningtool.com/89636/",
+          "downloadUrl": "https://lotv.spawningtool.com/89636/download/"
+        },
+        {
+          "replayId": "89658",
+          "title": "PvZ - Stargate into Archon Drop",
+          "detailUrl": "https://lotv.spawningtool.com/89658/",
+          "downloadUrl": "https://lotv.spawningtool.com/89658/download/"
+        },
+        {
+          "replayId": "89978",
+          "title": "SortOf New Standard ZvP",
+          "detailUrl": "https://lotv.spawningtool.com/89978/",
+          "downloadUrl": "https://lotv.spawningtool.com/89978/download/"
+        }
+      ],
+      "seed": {
+        "sourceId": "public-pro-zvp",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=11",
+        "pages": 2,
+        "cohortBucket": "unassigned",
+        "matchup": "ZvP",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      }
+    },
+    {
+      "schemaVersion": "epic13-internet-sources-v1",
+      "generatedAt": "2026-04-07T10:33:56Z",
+      "sourceKind": "spawningtool-replay-listing",
+      "listingUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=13",
+      "pageCount": 2,
+      "pageList": [
+        {
+          "pageNumber": 1,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=13",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=13&p=1"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "pageNumber": 2,
+          "pageUrl": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=13&p=2",
+          "zipUrlList": [
+            "https://lotv.spawningtool.com/zip/?pro_only=on&tag=13&p=2"
+          ],
+          "contentType": "text/html; charset=utf-8"
+        }
+      ],
+      "replayList": [
+        {
+          "replayId": "85280",
+          "title": "Nitix v VITSolar: Game 2 - Goldenaura LE",
+          "detailUrl": "https://lotv.spawningtool.com/85280/",
+          "downloadUrl": "https://lotv.spawningtool.com/85280/download/"
+        },
+        {
+          "replayId": "85281",
+          "title": "Nitix v VITSolar: Game 1 - Oceanborn LE",
+          "detailUrl": "https://lotv.spawningtool.com/85281/",
+          "downloadUrl": "https://lotv.spawningtool.com/85281/download/"
+        },
+        {
+          "replayId": "85309",
+          "title": "Fjant v Lambo: Game 2 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/85309/",
+          "downloadUrl": "https://lotv.spawningtool.com/85309/download/"
+        },
+        {
+          "replayId": "85310",
+          "title": "Fjant v Lambo: Game 1 - [ESL] Goldenaura",
+          "detailUrl": "https://lotv.spawningtool.com/85310/",
+          "downloadUrl": "https://lotv.spawningtool.com/85310/download/"
+        },
+        {
+          "replayId": "85311",
+          "title": "Fjant v Lambo: Game 3 - Ghost River LE",
+          "detailUrl": "https://lotv.spawningtool.com/85311/",
+          "downloadUrl": "https://lotv.spawningtool.com/85311/download/"
+        },
+        {
+          "replayId": "85317",
+          "title": "Lambo v Reynor: Game 2 - [ESL] Oceanborn",
+          "detailUrl": "https://lotv.spawningtool.com/85317/",
+          "downloadUrl": "https://lotv.spawningtool.com/85317/download/"
+        },
+        {
+          "replayId": "85319",
+          "title": "Lambo v Reynor: Game 3 - [ESL] Crimson Court",
+          "detailUrl": "https://lotv.spawningtool.com/85319/",
+          "downloadUrl": "https://lotv.spawningtool.com/85319/download/"
+        },
+        {
+          "replayId": "86289",
+          "title": "Rogue v WBGSHIN - Amygdala",
+          "detailUrl": "https://lotv.spawningtool.com/86289/",
+          "downloadUrl": "https://lotv.spawningtool.com/86289/download/"
+        },
+        {
+          "replayId": "86451",
+          "title": "FalconsSolar v Reynor: Game 5 - Magannatha LE",
+          "detailUrl": "https://lotv.spawningtool.com/86451/",
+          "downloadUrl": "https://lotv.spawningtool.com/86451/download/"
+        },
+        {
+          "replayId": "86473",
+          "title": "FalconsSolar v Reynor: Game 1 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/86473/",
+          "downloadUrl": "https://lotv.spawningtool.com/86473/download/"
+        },
+        {
+          "replayId": "86474",
+          "title": "FalconsSolar v Reynor: Game 4 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/86474/",
+          "downloadUrl": "https://lotv.spawningtool.com/86474/download/"
+        },
+        {
+          "replayId": "86475",
+          "title": "FalconsSolar v Reynor: Game 2 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/86475/",
+          "downloadUrl": "https://lotv.spawningtool.com/86475/download/"
+        },
+        {
+          "replayId": "86476",
+          "title": "FalconsSolar v Reynor: Game 3 - Incorporeal LE",
+          "detailUrl": "https://lotv.spawningtool.com/86476/",
+          "downloadUrl": "https://lotv.spawningtool.com/86476/download/"
+        },
+        {
+          "replayId": "86481",
+          "title": "FalconsSolar v SHIN: Game 4 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/86481/",
+          "downloadUrl": "https://lotv.spawningtool.com/86481/download/"
+        },
+        {
+          "replayId": "86482",
+          "title": "FalconsSolar v SHIN: Game 2 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/86482/",
+          "downloadUrl": "https://lotv.spawningtool.com/86482/download/"
+        },
+        {
+          "replayId": "86483",
+          "title": "FalconsSolar v SHIN: Game 5 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/86483/",
+          "downloadUrl": "https://lotv.spawningtool.com/86483/download/"
+        },
+        {
+          "replayId": "86484",
+          "title": "FalconsSolar v SHIN: Game 3 - Incorporeal LE",
+          "detailUrl": "https://lotv.spawningtool.com/86484/",
+          "downloadUrl": "https://lotv.spawningtool.com/86484/download/"
+        },
+        {
+          "replayId": "86485",
+          "title": "FalconsSolar v SHIN: Game 1 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/86485/",
+          "downloadUrl": "https://lotv.spawningtool.com/86485/download/"
+        },
+        {
+          "replayId": "86512",
+          "title": "FalconsSolar v Serral: Game 4 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/86512/",
+          "downloadUrl": "https://lotv.spawningtool.com/86512/download/"
+        },
+        {
+          "replayId": "86513",
+          "title": "FalconsSolar v Serral: Game 5 - Torches LE",
+          "detailUrl": "https://lotv.spawningtool.com/86513/",
+          "downloadUrl": "https://lotv.spawningtool.com/86513/download/"
+        },
+        {
+          "replayId": "86514",
+          "title": "FalconsSolar v Serral: Game 2 - Incorporeal LE",
+          "detailUrl": "https://lotv.spawningtool.com/86514/",
+          "downloadUrl": "https://lotv.spawningtool.com/86514/download/"
+        },
+        {
+          "replayId": "86515",
+          "title": "FalconsSolar v Serral: Game 1 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/86515/",
+          "downloadUrl": "https://lotv.spawningtool.com/86515/download/"
+        },
+        {
+          "replayId": "86516",
+          "title": "FalconsSolar v Serral: Game 3 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/86516/",
+          "downloadUrl": "https://lotv.spawningtool.com/86516/download/"
+        },
+        {
+          "replayId": "86793",
+          "title": "Fjant v Lambo: Game 2 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/86793/",
+          "downloadUrl": "https://lotv.spawningtool.com/86793/download/"
+        },
+        {
+          "replayId": "86794",
+          "title": "Fjant v Lambo: Game 1 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/86794/",
+          "downloadUrl": "https://lotv.spawningtool.com/86794/download/"
+        },
+        {
+          "replayId": "87381",
+          "title": "Erik v llIIlIIllIII - Pylon LE",
+          "detailUrl": "https://lotv.spawningtool.com/87381/",
+          "downloadUrl": "https://lotv.spawningtool.com/87381/download/"
+        },
+        {
+          "replayId": "87424",
+          "title": "Reynor v Serral: Game 5 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/87424/",
+          "downloadUrl": "https://lotv.spawningtool.com/87424/download/"
+        },
+        {
+          "replayId": "87425",
+          "title": "Reynor v Serral: Game 4 - Torches LE",
+          "detailUrl": "https://lotv.spawningtool.com/87425/",
+          "downloadUrl": "https://lotv.spawningtool.com/87425/download/"
+        },
+        {
+          "replayId": "87426",
+          "title": "Reynor v Serral: Game 3 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/87426/",
+          "downloadUrl": "https://lotv.spawningtool.com/87426/download/"
+        },
+        {
+          "replayId": "87427",
+          "title": "Reynor v Serral: Game 2 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/87427/",
+          "downloadUrl": "https://lotv.spawningtool.com/87427/download/"
+        },
+        {
+          "replayId": "87428",
+          "title": "Reynor v Serral: Game 1 - Pylon LE",
+          "detailUrl": "https://lotv.spawningtool.com/87428/",
+          "downloadUrl": "https://lotv.spawningtool.com/87428/download/"
+        },
+        {
+          "replayId": "87486",
+          "title": "SHIN v Solar: Game 3 - Incorporeal LE",
+          "detailUrl": "https://lotv.spawningtool.com/87486/",
+          "downloadUrl": "https://lotv.spawningtool.com/87486/download/"
+        },
+        {
+          "replayId": "87487",
+          "title": "SHIN v Solar: Game 1 - Tokamak LE",
+          "detailUrl": "https://lotv.spawningtool.com/87487/",
+          "downloadUrl": "https://lotv.spawningtool.com/87487/download/"
+        },
+        {
+          "replayId": "87488",
+          "title": "SHIN v Solar: Game 4 - Magannatha LE",
+          "detailUrl": "https://lotv.spawningtool.com/87488/",
+          "downloadUrl": "https://lotv.spawningtool.com/87488/download/"
+        },
+        {
+          "replayId": "87489",
+          "title": "SHIN v Solar: Game 2 - Ley Lines",
+          "detailUrl": "https://lotv.spawningtool.com/87489/",
+          "downloadUrl": "https://lotv.spawningtool.com/87489/download/"
+        },
+        {
+          "replayId": "87490",
+          "title": "SHIN v Solar: Game 5 - Ultralove",
+          "detailUrl": "https://lotv.spawningtool.com/87490/",
+          "downloadUrl": "https://lotv.spawningtool.com/87490/download/"
+        },
+        {
+          "replayId": "87512",
+          "title": "Reynor v SHIN: Game 2 - Magannatha LE",
+          "detailUrl": "https://lotv.spawningtool.com/87512/",
+          "downloadUrl": "https://lotv.spawningtool.com/87512/download/"
+        },
+        {
+          "replayId": "87513",
+          "title": "Reynor v SHIN: Game 1 - Persephone LE",
+          "detailUrl": "https://lotv.spawningtool.com/87513/",
+          "downloadUrl": "https://lotv.spawningtool.com/87513/download/"
+        },
+        {
+          "replayId": "88898",
+          "title": "2025-11-06 - (Z)SHIN VS (Z)SortOf (1)",
+          "detailUrl": "https://lotv.spawningtool.com/88898/",
+          "downloadUrl": "https://lotv.spawningtool.com/88898/download/"
+        },
+        {
+          "replayId": "88997",
+          "title": "2025-10-08 - (Z)Lambo VS (Z)Jay",
+          "detailUrl": "https://lotv.spawningtool.com/88997/",
+          "downloadUrl": "https://lotv.spawningtool.com/88997/download/"
+        },
+        {
+          "replayId": "89118",
+          "title": "2025-10-25 - (Z)j\u0430ed\u043engstyle VS (Z)Railgan",
+          "detailUrl": "https://lotv.spawningtool.com/89118/",
+          "downloadUrl": "https://lotv.spawningtool.com/89118/download/"
+        },
+        {
+          "replayId": "89153",
+          "title": "2025-08-15 - (Z)Lambo VS (Z)A.I. 1 (Very Easy)",
+          "detailUrl": "https://lotv.spawningtool.com/89153/",
+          "downloadUrl": "https://lotv.spawningtool.com/89153/download/"
+        },
+        {
+          "replayId": "89475",
+          "title": "ZZZ",
+          "detailUrl": "https://lotv.spawningtool.com/89475/",
+          "downloadUrl": "https://lotv.spawningtool.com/89475/download/"
+        },
+        {
+          "replayId": "89618",
+          "title": "Elazer v Fjant: Game 1 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89618/",
+          "downloadUrl": "https://lotv.spawningtool.com/89618/download/"
+        },
+        {
+          "replayId": "89619",
+          "title": "Elazer v Fjant: Game 2 - 10000 Feet LE",
+          "detailUrl": "https://lotv.spawningtool.com/89619/",
+          "downloadUrl": "https://lotv.spawningtool.com/89619/download/"
+        },
+        {
+          "replayId": "89639",
+          "title": "Reynor v Serral: Game 4 - Tourmaline LE",
+          "detailUrl": "https://lotv.spawningtool.com/89639/",
+          "downloadUrl": "https://lotv.spawningtool.com/89639/download/"
+        },
+        {
+          "replayId": "89640",
+          "title": "Reynor v Serral: Game 2 - Ruby Rock LE",
+          "detailUrl": "https://lotv.spawningtool.com/89640/",
+          "downloadUrl": "https://lotv.spawningtool.com/89640/download/"
+        },
+        {
+          "replayId": "89644",
+          "title": "Reynor v Serral: Game 1 - White Rabbit LE",
+          "detailUrl": "https://lotv.spawningtool.com/89644/",
+          "downloadUrl": "https://lotv.spawningtool.com/89644/download/"
+        },
+        {
+          "replayId": "89653",
+          "title": "Reynor v Serral: Game 3 - Celestial Enclave LE",
+          "detailUrl": "https://lotv.spawningtool.com/89653/",
+          "downloadUrl": "https://lotv.spawningtool.com/89653/download/"
+        },
+        {
+          "replayId": "89979",
+          "title": "SortOf New Standard ZvZ",
+          "detailUrl": "https://lotv.spawningtool.com/89979/",
+          "downloadUrl": "https://lotv.spawningtool.com/89979/download/"
+        }
+      ],
+      "seed": {
+        "sourceId": "public-pro-zvz",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=13",
+        "pages": 2,
+        "cohortBucket": "unassigned",
+        "matchup": "ZvZ",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      }
+    },
+    {
+      "schemaVersion": "epic13-internet-sources-v1",
+      "generatedAt": "2026-04-07T10:33:56Z",
+      "sourceKind": "spawningtool-replaypacks",
+      "pageUrl": "https://lotv.spawningtool.com/replaypacks/",
+      "contentType": "text/html; charset=utf-8",
+      "packList": [
+        {
+          "label": "HomeStory Cup XXVIII",
+          "sourceUrl": "https://drive.google.com/drive/folders/1FjGpYfSrMAwFnAQStWFYF6QQUyQyPwtX",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-folder",
+          "folderId": "1FjGpYfSrMAwFnAQStWFYF6QQUyQyPwtX",
+          "directDownloadUrl": null,
+          "note": "Folder links usually need manual review or external Drive tooling."
+        },
+        {
+          "label": "FEL Cracow 2025",
+          "sourceUrl": "https://drive.google.com/file/d/1Bu5OwUjiPvAXYZuVmkOrq7d_A2WxwNrr/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1Bu5OwUjiPvAXYZuVmkOrq7d_A2WxwNrr",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1Bu5OwUjiPvAXYZuVmkOrq7d_A2WxwNrr"
+        },
+        {
+          "label": "Esports World Cup 2025",
+          "sourceUrl": "https://drive.google.com/file/d/1UhMpPlTQDB78j_afLoCTATkFDWjq7SoQ/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1UhMpPlTQDB78j_afLoCTATkFDWjq7SoQ",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1UhMpPlTQDB78j_afLoCTATkFDWjq7SoQ"
+        },
+        {
+          "label": "HomeStory Cup XXVII",
+          "sourceUrl": "https://drive.google.com/drive/folders/1kDCbcPtj7NGB0M8oGvgHGgT0n_vXaLsa",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-folder",
+          "folderId": "1kDCbcPtj7NGB0M8oGvgHGgT0n_vXaLsa",
+          "directDownloadUrl": null,
+          "note": "Folder links usually need manual review or external Drive tooling."
+        },
+        {
+          "label": "DreamHack Dallas 2025",
+          "sourceUrl": "https://drive.google.com/file/d/1am1m7Ny5pdVjnet-JbHc4MBybAtBckpE/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1am1m7Ny5pdVjnet-JbHc4MBybAtBckpE",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1am1m7Ny5pdVjnet-JbHc4MBybAtBckpE"
+        },
+        {
+          "label": "HomeStory Cup XXVI",
+          "sourceUrl": "https://drive.google.com/drive/folders/1ZQc4HWu645aGU0RjLYGfqqrr6FkKNFtG",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-folder",
+          "folderId": "1ZQc4HWu645aGU0RjLYGfqqrr6FkKNFtG",
+          "directDownloadUrl": null,
+          "note": "Folder links usually need manual review or external Drive tooling."
+        },
+        {
+          "label": "Bellum Gens Elite Stara Zagora 2024",
+          "sourceUrl": "https://drive.google.com/file/d/1IMuw9fx_ddOU56_p334b5t9e7j_o92fI/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1IMuw9fx_ddOU56_p334b5t9e7j_o92fI",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1IMuw9fx_ddOU56_p334b5t9e7j_o92fI"
+        },
+        {
+          "label": "Esports World Cup 2024",
+          "sourceUrl": "https://drive.google.com/file/d/1LTDzV7UyFFERmySD9nqFT21cg-gIrZUx/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1LTDzV7UyFFERmySD9nqFT21cg-gIrZUx",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1LTDzV7UyFFERmySD9nqFT21cg-gIrZUx"
+        },
+        {
+          "label": "ESL SC2 Masters 2024 Spring (Finals)",
+          "sourceUrl": "https://drive.google.com/file/d/17_gw4BvZIHei_Ok0n0J-2fjM_mkvofBZ/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "17_gw4BvZIHei_Ok0n0J-2fjM_mkvofBZ",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=17_gw4BvZIHei_Ok0n0J-2fjM_mkvofBZ"
+        },
+        {
+          "label": "ESL SC2 Masters 2024 Spring (Regionals)",
+          "sourceUrl": "https://drive.google.com/file/d/1Ai2_3sLDpp2M6fLcMLJICgyGUP0XomJt/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1Ai2_3sLDpp2M6fLcMLJICgyGUP0XomJt",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1Ai2_3sLDpp2M6fLcMLJICgyGUP0XomJt"
+        },
+        {
+          "label": "IEM Katowice 2024",
+          "sourceUrl": "https://drive.google.com/file/d/1_Mopn1sGftCJpGf8GM6Uaab-BWuIX6-I/view?usp=sharing",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1_Mopn1sGftCJpGf8GM6Uaab-BWuIX6-I",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1_Mopn1sGftCJpGf8GM6Uaab-BWuIX6-I"
+        },
+        {
+          "label": "ESL SC2 Masters 2023 Winter (Finals)",
+          "sourceUrl": "https://drive.google.com/file/d/1lYVp7pyhmHe7PALwztDX6xB6BmWgUuss/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1lYVp7pyhmHe7PALwztDX6xB6BmWgUuss",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1lYVp7pyhmHe7PALwztDX6xB6BmWgUuss"
+        },
+        {
+          "label": "ESL SC2 Masters 2023 Winter (Regionals)",
+          "sourceUrl": "https://drive.google.com/file/d/1JBtd3jR1xke7PvWk1b-RdjgyImBUFMXe/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1JBtd3jR1xke7PvWk1b-RdjgyImBUFMXe",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1JBtd3jR1xke7PvWk1b-RdjgyImBUFMXe"
+        },
+        {
+          "label": "HomeStory Cups XXIV",
+          "sourceUrl": "https://drive.google.com/drive/folders/11XfqNVF3XlGbCvOVeffK5kiB91512GwZ",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-folder",
+          "folderId": "11XfqNVF3XlGbCvOVeffK5kiB91512GwZ",
+          "directDownloadUrl": null,
+          "note": "Folder links usually need manual review or external Drive tooling."
+        },
+        {
+          "label": "ESL SC2 Masters 2023 Summer (Finals)",
+          "sourceUrl": "https://drive.google.com/file/d/1o-1c8VnU4Yk5qyNIfq9oRFfux-p8BDY8/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1o-1c8VnU4Yk5qyNIfq9oRFfux-p8BDY8",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1o-1c8VnU4Yk5qyNIfq9oRFfux-p8BDY8"
+        },
+        {
+          "label": "ESL SC2 Masters 2023 Summer (Regionals)",
+          "sourceUrl": "https://drive.google.com/file/d/1-BN8dlH6qlEC1KP5X67hlWgfSYjN8K0P/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1-BN8dlH6qlEC1KP5X67hlWgfSYjN8K0P",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1-BN8dlH6qlEC1KP5X67hlWgfSYjN8K0P"
+        },
+        {
+          "label": "HomeStory Cup XXIII",
+          "sourceUrl": "https://drive.google.com/drive/folders/1Gzvc28qliSrZ5xvA0r0EwEJTbA8FqJe-",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-folder",
+          "folderId": "1Gzvc28qliSrZ5xvA0r0EwEJTbA8FqJe-",
+          "directDownloadUrl": null,
+          "note": "Folder links usually need manual review or external Drive tooling."
+        },
+        {
+          "label": "IEM Katowice 2023",
+          "sourceUrl": "https://drive.google.com/file/d/1qSZ550OtA4xH-J4co0oyDS_876AO7zEW/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1qSZ550OtA4xH-J4co0oyDS_876AO7zEW",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1qSZ550OtA4xH-J4co0oyDS_876AO7zEW"
+        },
+        {
+          "label": "HomeStory Cup XXII",
+          "sourceUrl": "https://drive.google.com/drive/folders/1MWNX1ntzJxDA-4R-u7RCE1il4blS8Z_S",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-folder",
+          "folderId": "1MWNX1ntzJxDA-4R-u7RCE1il4blS8Z_S",
+          "directDownloadUrl": null,
+          "note": "Folder links usually need manual review or external Drive tooling."
+        },
+        {
+          "label": "DreamHack SC2 Masters 2022 Atlanta",
+          "sourceUrl": "https://drive.google.com/file/d/1o6BWaBry8ip53TZL17GmOYfej_nrZGmj/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1o6BWaBry8ip53TZL17GmOYfej_nrZGmj",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1o6BWaBry8ip53TZL17GmOYfej_nrZGmj"
+        },
+        {
+          "label": "HomeStory Cup XXI",
+          "sourceUrl": "https://drive.google.com/drive/folders/13zGQz6Ln-8yfSuBsBqSt9ukmP3JrjJ6_?usp=sharing",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-folder",
+          "folderId": "13zGQz6Ln-8yfSuBsBqSt9ukmP3JrjJ6_",
+          "directDownloadUrl": null,
+          "note": "Folder links usually need manual review or external Drive tooling."
+        },
+        {
+          "label": "Stay At Home Story Cup #4",
+          "sourceUrl": "https://drive.google.com/drive/folders/1nKCZOagxHMgUpV7BefmjRVN0Ib-qoOs3",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-folder",
+          "folderId": "1nKCZOagxHMgUpV7BefmjRVN0Ib-qoOs3",
+          "directDownloadUrl": null,
+          "note": "Folder links usually need manual review or external Drive tooling."
+        },
+        {
+          "label": "DreamHack SC2 Masters 2021 Fall",
+          "sourceUrl": "https://drive.google.com/file/d/12oEtS0tzMhSFZ3GYKV53z9v57jmF0Fay/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "12oEtS0tzMhSFZ3GYKV53z9v57jmF0Fay",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=12oEtS0tzMhSFZ3GYKV53z9v57jmF0Fay"
+        },
+        {
+          "label": "DreamHack SC2 Masters 2021 Summer",
+          "sourceUrl": "https://drive.google.com/file/d/1_D55iqElg2dViUR1vuG7zT0J5J0W1Uzm/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1_D55iqElg2dViUR1vuG7zT0J5J0W1Uzm",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1_D55iqElg2dViUR1vuG7zT0J5J0W1Uzm"
+        },
+        {
+          "label": "Cheeseadelphia Winter Championship 2021",
+          "sourceUrl": "https://drive.google.com/file/d/161ec2R2ypcw-xw-XFFP_CMmY-SKAPJks/view?usp=sharing",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "161ec2R2ypcw-xw-XFFP_CMmY-SKAPJks",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=161ec2R2ypcw-xw-XFFP_CMmY-SKAPJks"
+        },
+        {
+          "label": "DreamHack SC2 Masters 2020 Winter",
+          "sourceUrl": "https://drive.google.com/file/d/1Kogx044qTreWG0ET50I0CjVD_0B7b3HC/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1Kogx044qTreWG0ET50I0CjVD_0B7b3HC",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1Kogx044qTreWG0ET50I0CjVD_0B7b3HC"
+        },
+        {
+          "label": "SEA Games 2019",
+          "sourceUrl": "https://drive.google.com/drive/folders/1ACHHQnK0l0wFffxyxMP23M5TJTrysvTX?usp=sharing",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-folder",
+          "folderId": "1ACHHQnK0l0wFffxyxMP23M5TJTrysvTX",
+          "directDownloadUrl": null,
+          "note": "Folder links usually need manual review or external Drive tooling."
+        },
+        {
+          "label": "DSCL National Finals",
+          "sourceUrl": "https://drive.google.com/drive/folders/1a6XiM9zoRQ21yQIe5D2GA8kNsNpPbU17?usp=sharing",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-folder",
+          "folderId": "1a6XiM9zoRQ21yQIe5D2GA8kNsNpPbU17",
+          "directDownloadUrl": null,
+          "note": "Folder links usually need manual review or external Drive tooling."
+        },
+        {
+          "label": "Memes and Dreams Invitational",
+          "sourceUrl": "https://drive.google.com/file/d/1YNqJrzd3rdx3B9MdiRMzLv_G_oO8Tj2r/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "1YNqJrzd3rdx3B9MdiRMzLv_G_oO8Tj2r",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1YNqJrzd3rdx3B9MdiRMzLv_G_oO8Tj2r"
+        },
+        {
+          "label": "WESG 2017 Haikou",
+          "sourceUrl": "https://drive.google.com/drive/folders/11hNvIkZKrjbWs8eN1Hu9EqkFsZHfDbmg?usp=sharing",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-folder",
+          "folderId": "11hNvIkZKrjbWs8eN1Hu9EqkFsZHfDbmg",
+          "directDownloadUrl": null,
+          "note": "Folder links usually need manual review or external Drive tooling."
+        },
+        {
+          "label": "Copa America 2016 Grand Finals",
+          "sourceUrl": "https://drive.google.com/file/d/0Bw8c192hLbETWWNDaUlnYWpCbzg/view",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "0Bw8c192hLbETWWNDaUlnYWpCbzg",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=0Bw8c192hLbETWWNDaUlnYWpCbzg"
+        },
+        {
+          "label": "GnomeJon Archon Mode Cup",
+          "sourceUrl": "https://drive.google.com/file/d/0B8mDYEC2bMYgNGxyWDhob0VvZjQ/view?usp=sharing",
+          "sourceLabel": "SpawningTool replay packs",
+          "kind": "google-drive-file",
+          "fileId": "0B8mDYEC2bMYgNGxyWDhob0VvZjQ",
+          "directDownloadUrl": "https://drive.google.com/uc?export=download&id=0B8mDYEC2bMYgNGxyWDhob0VvZjQ"
+        }
+      ],
+      "seed": {
+        "sourceId": "spawningtool-replaypacks-index",
+        "sourceKind": "spawningtool-replaypacks",
+        "url": "https://lotv.spawningtool.com/replaypacks/",
+        "sourceLabel": "SpawningTool replay packs"
+      }
+    }
+  ]
+}

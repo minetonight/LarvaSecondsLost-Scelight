@@ -35,9 +35,20 @@ Measurements:
  UI - use the row just under the player name and use the full len of the screen, 
  there make a table with 4 rows + header and four columns
 
-3) epic 13 - player stats window
- - use main id from scelight settings if set
+3) epic 13 define benchmarks - analyse many replays and find what is a good measurement for a player. 
+ - research how spending quotient metric was created and see if any of that can be used for our case. 
+Statistical analysis phase, ai agent must find and download:
+ - bunch of replays of Serral and Raynor (7000 mmr) (100 ZvT, 100 ZvP, 100 ZvZ)
+ - replays on 5000mmr (100 ZvT, 100 ZvP, 100 ZvZ)
+ - replays on 4000mmr (100 ZvT, 100 ZvP, 100 ZvZ)
+ - replays on 3000mmr (100 ZvT, 100 ZvP, 100 ZvZ)
+ - replays on 2000mmr (100 ZvT, 100 ZvP, 100 ZvZ)
+Batch process the replays and find averages per phase. Look for correlations between metrics and skill levels. Define ranges per skill for the metric/s.
+
+
+4) epic 1x? - player stats window
+ - use "toon of favored player" from scelight settings if set
  - table with N replays, 6 columns for the phases
  - chart over time
 
-4) opening a replay opens it in a new window in the tree, like the matches in the main program
+5) opening a replay opens it in a new window in the tree, like the matches in the main program

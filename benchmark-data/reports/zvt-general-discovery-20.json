@@ -1,0 +1,3171 @@
+{
+  "schemaVersion": "epic13-internet-sources-v1",
+  "generatedAt": "2026-04-08T01:23:18Z",
+  "sourceKind": "spawningtool-replay-listing",
+  "listingUrl": "https://lotv.spawningtool.com/replays/?tag=3",
+  "pageCount": 20,
+  "pageList": [
+    {
+      "pageNumber": 1,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=1"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 2,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=2",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=2"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 3,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=3",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=3"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 4,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=4",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=4"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 5,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=5",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=5"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 6,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=6",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=6"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 7,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=7",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=7"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 8,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=8",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=8"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 9,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=9",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=9"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 10,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=10",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=10"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 11,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=11",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=11"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 12,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=12",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=12"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 13,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=13",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=13"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 14,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=14",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=14"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 15,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=15",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=15"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 16,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=16",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=16"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 17,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=17",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=17"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 18,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=18",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=18"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 19,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=19",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=19"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "pageNumber": 20,
+      "pageUrl": "https://lotv.spawningtool.com/replays/?tag=3&p=20",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?tag=3&p=20"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    }
+  ],
+  "replayList": [
+    {
+      "replayId": "87676",
+      "title": "MrQuackers v SubN - Ultralove",
+      "detailUrl": "https://lotv.spawningtool.com/87676/",
+      "downloadUrl": "https://lotv.spawningtool.com/87676/download/"
+    },
+    {
+      "replayId": "87678",
+      "title": "Incorporeal LE (51)",
+      "detailUrl": "https://lotv.spawningtool.com/87678/",
+      "downloadUrl": "https://lotv.spawningtool.com/87678/download/"
+    },
+    {
+      "replayId": "87679",
+      "title": "Ley Lines (144)",
+      "detailUrl": "https://lotv.spawningtool.com/87679/",
+      "downloadUrl": "https://lotv.spawningtool.com/87679/download/"
+    },
+    {
+      "replayId": "87683",
+      "title": "Ley Lines (29)",
+      "detailUrl": "https://lotv.spawningtool.com/87683/",
+      "downloadUrl": "https://lotv.spawningtool.com/87683/download/"
+    },
+    {
+      "replayId": "87686",
+      "title": "\u3066\u3089\u3093\u3078\u308a\u304a\u3093\u3070\u3044\u304a\u308f\u3093\u308f\u3093\u308f\u3093",
+      "detailUrl": "https://lotv.spawningtool.com/87686/",
+      "downloadUrl": "https://lotv.spawningtool.com/87686/download/"
+    },
+    {
+      "replayId": "87689",
+      "title": "Ley Lines (106)",
+      "detailUrl": "https://lotv.spawningtool.com/87689/",
+      "downloadUrl": "https://lotv.spawningtool.com/87689/download/"
+    },
+    {
+      "replayId": "87704",
+      "title": "Torches LE (14)",
+      "detailUrl": "https://lotv.spawningtool.com/87704/",
+      "downloadUrl": "https://lotv.spawningtool.com/87704/download/"
+    },
+    {
+      "replayId": "87707",
+      "title": "Persephone LE (11)",
+      "detailUrl": "https://lotv.spawningtool.com/87707/",
+      "downloadUrl": "https://lotv.spawningtool.com/87707/download/"
+    },
+    {
+      "replayId": "87713",
+      "title": "phantom v SubN - Incorporeal LE",
+      "detailUrl": "https://lotv.spawningtool.com/87713/",
+      "downloadUrl": "https://lotv.spawningtool.com/87713/download/"
+    },
+    {
+      "replayId": "87715",
+      "title": "LearnedHand v SubN - Pylon LE",
+      "detailUrl": "https://lotv.spawningtool.com/87715/",
+      "downloadUrl": "https://lotv.spawningtool.com/87715/download/"
+    },
+    {
+      "replayId": "87724",
+      "title": "Ley Lines (342)",
+      "detailUrl": "https://lotv.spawningtool.com/87724/",
+      "downloadUrl": "https://lotv.spawningtool.com/87724/download/"
+    },
+    {
+      "replayId": "87725",
+      "title": "7\u5973\u738b\u523a\u86c7\u72d7\u6bd2\u7206",
+      "detailUrl": "https://lotv.spawningtool.com/87725/",
+      "downloadUrl": "https://lotv.spawningtool.com/87725/download/"
+    },
+    {
+      "replayId": "87735",
+      "title": "Ley Lines (30)",
+      "detailUrl": "https://lotv.spawningtool.com/87735/",
+      "downloadUrl": "https://lotv.spawningtool.com/87735/download/"
+    },
+    {
+      "replayId": "87740",
+      "title": "Pylon LE (6)",
+      "detailUrl": "https://lotv.spawningtool.com/87740/",
+      "downloadUrl": "https://lotv.spawningtool.com/87740/download/"
+    },
+    {
+      "replayId": "87757",
+      "title": "Persephone LE (8)",
+      "detailUrl": "https://lotv.spawningtool.com/87757/",
+      "downloadUrl": "https://lotv.spawningtool.com/87757/download/"
+    },
+    {
+      "replayId": "87758",
+      "title": "Persephone LE (9)",
+      "detailUrl": "https://lotv.spawningtool.com/87758/",
+      "downloadUrl": "https://lotv.spawningtool.com/87758/download/"
+    },
+    {
+      "replayId": "87759",
+      "title": "Persephone LE (10)",
+      "detailUrl": "https://lotv.spawningtool.com/87759/",
+      "downloadUrl": "https://lotv.spawningtool.com/87759/download/"
+    },
+    {
+      "replayId": "87760",
+      "title": "Persephone LE (11)",
+      "detailUrl": "https://lotv.spawningtool.com/87760/",
+      "downloadUrl": "https://lotv.spawningtool.com/87760/download/"
+    },
+    {
+      "replayId": "87761",
+      "title": "Persephone LE (12)",
+      "detailUrl": "https://lotv.spawningtool.com/87761/",
+      "downloadUrl": "https://lotv.spawningtool.com/87761/download/"
+    },
+    {
+      "replayId": "87775",
+      "title": "TVZ",
+      "detailUrl": "https://lotv.spawningtool.com/87775/",
+      "downloadUrl": "https://lotv.spawningtool.com/87775/download/"
+    },
+    {
+      "replayId": "87789",
+      "title": "IIIIIII",
+      "detailUrl": "https://lotv.spawningtool.com/87789/",
+      "downloadUrl": "https://lotv.spawningtool.com/87789/download/"
+    },
+    {
+      "replayId": "87805",
+      "title": "\u3070\u3044\u304a\u3064\u30fc\u3081\u3067\u3043",
+      "detailUrl": "https://lotv.spawningtool.com/87805/",
+      "downloadUrl": "https://lotv.spawningtool.com/87805/download/"
+    },
+    {
+      "replayId": "87815",
+      "title": "Byun marinetankpush",
+      "detailUrl": "https://lotv.spawningtool.com/87815/",
+      "downloadUrl": "https://lotv.spawningtool.com/87815/download/"
+    },
+    {
+      "replayId": "87820",
+      "title": "Persephone LE (3)",
+      "detailUrl": "https://lotv.spawningtool.com/87820/",
+      "downloadUrl": "https://lotv.spawningtool.com/87820/download/"
+    },
+    {
+      "replayId": "87824",
+      "title": "Pylon LE (9)",
+      "detailUrl": "https://lotv.spawningtool.com/87824/",
+      "downloadUrl": "https://lotv.spawningtool.com/87824/download/"
+    },
+    {
+      "replayId": "87825",
+      "title": "Persephone LE (4)",
+      "detailUrl": "https://lotv.spawningtool.com/87825/",
+      "downloadUrl": "https://lotv.spawningtool.com/87825/download/"
+    },
+    {
+      "replayId": "87840",
+      "title": "LiquidClem v Reynor: Game 5 - Ultralove",
+      "detailUrl": "https://lotv.spawningtool.com/87840/",
+      "downloadUrl": "https://lotv.spawningtool.com/87840/download/"
+    },
+    {
+      "replayId": "87850",
+      "title": "Result(5)",
+      "detailUrl": "https://lotv.spawningtool.com/87850/",
+      "downloadUrl": "https://lotv.spawningtool.com/87850/download/"
+    },
+    {
+      "replayId": "87864",
+      "title": "Tokamak LE (8)",
+      "detailUrl": "https://lotv.spawningtool.com/87864/",
+      "downloadUrl": "https://lotv.spawningtool.com/87864/download/"
+    },
+    {
+      "replayId": "87871",
+      "title": "day18 1st",
+      "detailUrl": "https://lotv.spawningtool.com/87871/",
+      "downloadUrl": "https://lotv.spawningtool.com/87871/download/"
+    },
+    {
+      "replayId": "87872",
+      "title": "day18 2nd",
+      "detailUrl": "https://lotv.spawningtool.com/87872/",
+      "downloadUrl": "https://lotv.spawningtool.com/87872/download/"
+    },
+    {
+      "replayId": "87881",
+      "title": "Torches LE (11)",
+      "detailUrl": "https://lotv.spawningtool.com/87881/",
+      "downloadUrl": "https://lotv.spawningtool.com/87881/download/"
+    },
+    {
+      "replayId": "87882",
+      "title": "Ley Lines (345)_Moja TvZ_8 racks",
+      "detailUrl": "https://lotv.spawningtool.com/87882/",
+      "downloadUrl": "https://lotv.spawningtool.com/87882/download/"
+    },
+    {
+      "replayId": "87883",
+      "title": "\u0130Y\u0130D\u0130",
+      "detailUrl": "https://lotv.spawningtool.com/87883/",
+      "downloadUrl": "https://lotv.spawningtool.com/87883/download/"
+    },
+    {
+      "replayId": "87884",
+      "title": "day20 1st",
+      "detailUrl": "https://lotv.spawningtool.com/87884/",
+      "downloadUrl": "https://lotv.spawningtool.com/87884/download/"
+    },
+    {
+      "replayId": "87885",
+      "title": "day20 2nd",
+      "detailUrl": "https://lotv.spawningtool.com/87885/",
+      "downloadUrl": "https://lotv.spawningtool.com/87885/download/"
+    },
+    {
+      "replayId": "87886",
+      "title": "DAY20 3RD",
+      "detailUrl": "https://lotv.spawningtool.com/87886/",
+      "downloadUrl": "https://lotv.spawningtool.com/87886/download/"
+    },
+    {
+      "replayId": "87890",
+      "title": "EnemyBimbo vs JimBob",
+      "detailUrl": "https://lotv.spawningtool.com/87890/",
+      "downloadUrl": "https://lotv.spawningtool.com/87890/download/"
+    },
+    {
+      "replayId": "87894",
+      "title": "Ultralove (158)",
+      "detailUrl": "https://lotv.spawningtool.com/87894/",
+      "downloadUrl": "https://lotv.spawningtool.com/87894/download/"
+    },
+    {
+      "replayId": "87896",
+      "title": "SPINNENMANN v zettick - Magannatha LE",
+      "detailUrl": "https://lotv.spawningtool.com/87896/",
+      "downloadUrl": "https://lotv.spawningtool.com/87896/download/"
+    },
+    {
+      "replayId": "87898",
+      "title": "day21 2nd",
+      "detailUrl": "https://lotv.spawningtool.com/87898/",
+      "downloadUrl": "https://lotv.spawningtool.com/87898/download/"
+    },
+    {
+      "replayId": "87899",
+      "title": "DAY21 3RD",
+      "detailUrl": "https://lotv.spawningtool.com/87899/",
+      "downloadUrl": "https://lotv.spawningtool.com/87899/download/"
+    },
+    {
+      "replayId": "87907",
+      "title": "day22 diamond tournament 1st",
+      "detailUrl": "https://lotv.spawningtool.com/87907/",
+      "downloadUrl": "https://lotv.spawningtool.com/87907/download/"
+    },
+    {
+      "replayId": "87913",
+      "title": "STC103_TvZ_ByuN vs Solar_Magannatha LE",
+      "detailUrl": "https://lotv.spawningtool.com/87913/",
+      "downloadUrl": "https://lotv.spawningtool.com/87913/download/"
+    },
+    {
+      "replayId": "87921",
+      "title": "IIIIIIIIII",
+      "detailUrl": "https://lotv.spawningtool.com/87921/",
+      "downloadUrl": "https://lotv.spawningtool.com/87921/download/"
+    },
+    {
+      "replayId": "87922",
+      "title": "STC103_TvZ_ByuN vs Solar_Torches LE",
+      "detailUrl": "https://lotv.spawningtool.com/87922/",
+      "downloadUrl": "https://lotv.spawningtool.com/87922/download/"
+    },
+    {
+      "replayId": "87933",
+      "title": "day22 master tournament 1st table",
+      "detailUrl": "https://lotv.spawningtool.com/87933/",
+      "downloadUrl": "https://lotv.spawningtool.com/87933/download/"
+    },
+    {
+      "replayId": "87935",
+      "title": "day22 2nd",
+      "detailUrl": "https://lotv.spawningtool.com/87935/",
+      "downloadUrl": "https://lotv.spawningtool.com/87935/download/"
+    },
+    {
+      "replayId": "87936",
+      "title": "day22 3rd",
+      "detailUrl": "https://lotv.spawningtool.com/87936/",
+      "downloadUrl": "https://lotv.spawningtool.com/87936/download/"
+    },
+    {
+      "replayId": "87937",
+      "title": "2-1-1 nico",
+      "detailUrl": "https://lotv.spawningtool.com/87937/",
+      "downloadUrl": "https://lotv.spawningtool.com/87937/download/"
+    },
+    {
+      "replayId": "87960",
+      "title": "\u3064\u30fc\u3089\u3063\u304f\u3059",
+      "detailUrl": "https://lotv.spawningtool.com/87960/",
+      "downloadUrl": "https://lotv.spawningtool.com/87960/download/"
+    },
+    {
+      "replayId": "87961",
+      "title": "IIIIIIIIIIIII",
+      "detailUrl": "https://lotv.spawningtool.com/87961/",
+      "downloadUrl": "https://lotv.spawningtool.com/87961/download/"
+    },
+    {
+      "replayId": "87964",
+      "title": "Ley Lines (168)",
+      "detailUrl": "https://lotv.spawningtool.com/87964/",
+      "downloadUrl": "https://lotv.spawningtool.com/87964/download/"
+    },
+    {
+      "replayId": "87965",
+      "title": "Ley Lines (169)",
+      "detailUrl": "https://lotv.spawningtool.com/87965/",
+      "downloadUrl": "https://lotv.spawningtool.com/87965/download/"
+    },
+    {
+      "replayId": "87966",
+      "title": "Pylon LE (24)",
+      "detailUrl": "https://lotv.spawningtool.com/87966/",
+      "downloadUrl": "https://lotv.spawningtool.com/87966/download/"
+    },
+    {
+      "replayId": "87967",
+      "title": "\u3084\u3070\u3044\u3064\u30fc\u3089\u3063\u304f\u3059",
+      "detailUrl": "https://lotv.spawningtool.com/87967/",
+      "downloadUrl": "https://lotv.spawningtool.com/87967/download/"
+    },
+    {
+      "replayId": "87970",
+      "title": "\u3058\u3076\u3093\u306e\u3064\uff3e\u3089\u3063\u304f\u3059",
+      "detailUrl": "https://lotv.spawningtool.com/87970/",
+      "downloadUrl": "https://lotv.spawningtool.com/87970/download/"
+    },
+    {
+      "replayId": "87973",
+      "title": "\u3042\u3064\u30fc\u3089\u3063\u304f\u3059",
+      "detailUrl": "https://lotv.spawningtool.com/87973/",
+      "downloadUrl": "https://lotv.spawningtool.com/87973/download/"
+    },
+    {
+      "replayId": "87976",
+      "title": "Pylon LE (28)",
+      "detailUrl": "https://lotv.spawningtool.com/87976/",
+      "downloadUrl": "https://lotv.spawningtool.com/87976/download/"
+    },
+    {
+      "replayId": "87977",
+      "title": "Ley Lines (172)",
+      "detailUrl": "https://lotv.spawningtool.com/87977/",
+      "downloadUrl": "https://lotv.spawningtool.com/87977/download/"
+    },
+    {
+      "replayId": "87978",
+      "title": "Pylon LE (29)",
+      "detailUrl": "https://lotv.spawningtool.com/87978/",
+      "downloadUrl": "https://lotv.spawningtool.com/87978/download/"
+    },
+    {
+      "replayId": "87982",
+      "title": "Ultralove (102)",
+      "detailUrl": "https://lotv.spawningtool.com/87982/",
+      "downloadUrl": "https://lotv.spawningtool.com/87982/download/"
+    },
+    {
+      "replayId": "87983",
+      "title": "Ultralove (103)",
+      "detailUrl": "https://lotv.spawningtool.com/87983/",
+      "downloadUrl": "https://lotv.spawningtool.com/87983/download/"
+    },
+    {
+      "replayId": "87984",
+      "title": "Torches LE (18)",
+      "detailUrl": "https://lotv.spawningtool.com/87984/",
+      "downloadUrl": "https://lotv.spawningtool.com/87984/download/"
+    },
+    {
+      "replayId": "87985",
+      "title": "IIIIIIIIIIIII",
+      "detailUrl": "https://lotv.spawningtool.com/87985/",
+      "downloadUrl": "https://lotv.spawningtool.com/87985/download/"
+    },
+    {
+      "replayId": "87986",
+      "title": "2024-06-09 - (T)Vindicta VS (Z)eGGz",
+      "detailUrl": "https://lotv.spawningtool.com/87986/",
+      "downloadUrl": "https://lotv.spawningtool.com/87986/download/"
+    },
+    {
+      "replayId": "87991",
+      "title": "Brad v Reven - Ley Lines",
+      "detailUrl": "https://lotv.spawningtool.com/87991/",
+      "downloadUrl": "https://lotv.spawningtool.com/87991/download/"
+    },
+    {
+      "replayId": "87992",
+      "title": "Torches LE (23)",
+      "detailUrl": "https://lotv.spawningtool.com/87992/",
+      "downloadUrl": "https://lotv.spawningtool.com/87992/download/"
+    },
+    {
+      "replayId": "87995",
+      "title": "Pylon LE (8)",
+      "detailUrl": "https://lotv.spawningtool.com/87995/",
+      "downloadUrl": "https://lotv.spawningtool.com/87995/download/"
+    },
+    {
+      "replayId": "87998",
+      "title": "Torches LE (24)",
+      "detailUrl": "https://lotv.spawningtool.com/87998/",
+      "downloadUrl": "https://lotv.spawningtool.com/87998/download/"
+    },
+    {
+      "replayId": "87999",
+      "title": "5\uc8fc\ucc28 2nd \ub798\ub354\uc5f0\uc2b5",
+      "detailUrl": "https://lotv.spawningtool.com/87999/",
+      "downloadUrl": "https://lotv.spawningtool.com/87999/download/"
+    },
+    {
+      "replayId": "88001",
+      "title": "Incorporeal LE (5)",
+      "detailUrl": "https://lotv.spawningtool.com/88001/",
+      "downloadUrl": "https://lotv.spawningtool.com/88001/download/"
+    },
+    {
+      "replayId": "88002",
+      "title": "Incorporeal LE (6)",
+      "detailUrl": "https://lotv.spawningtool.com/88002/",
+      "downloadUrl": "https://lotv.spawningtool.com/88002/download/"
+    },
+    {
+      "replayId": "88005",
+      "title": "Ultralove (4)",
+      "detailUrl": "https://lotv.spawningtool.com/88005/",
+      "downloadUrl": "https://lotv.spawningtool.com/88005/download/"
+    },
+    {
+      "replayId": "88008",
+      "title": "Magannatha LE (6)",
+      "detailUrl": "https://lotv.spawningtool.com/88008/",
+      "downloadUrl": "https://lotv.spawningtool.com/88008/download/"
+    },
+    {
+      "replayId": "88016",
+      "title": "Ley Lines (7)",
+      "detailUrl": "https://lotv.spawningtool.com/88016/",
+      "downloadUrl": "https://lotv.spawningtool.com/88016/download/"
+    },
+    {
+      "replayId": "88020",
+      "title": "Tokamak LE (14)",
+      "detailUrl": "https://lotv.spawningtool.com/88020/",
+      "downloadUrl": "https://lotv.spawningtool.com/88020/download/"
+    },
+    {
+      "replayId": "88021",
+      "title": "Torches LE (8)",
+      "detailUrl": "https://lotv.spawningtool.com/88021/",
+      "downloadUrl": "https://lotv.spawningtool.com/88021/download/"
+    },
+    {
+      "replayId": "88023",
+      "title": "Torches LE (12)",
+      "detailUrl": "https://lotv.spawningtool.com/88023/",
+      "downloadUrl": "https://lotv.spawningtool.com/88023/download/"
+    },
+    {
+      "replayId": "88025",
+      "title": "tvz bc (2)",
+      "detailUrl": "https://lotv.spawningtool.com/88025/",
+      "downloadUrl": "https://lotv.spawningtool.com/88025/download/"
+    },
+    {
+      "replayId": "88041",
+      "title": "6\uc8fc\ucc28 \uc800\uadf8\ub7911",
+      "detailUrl": "https://lotv.spawningtool.com/88041/",
+      "downloadUrl": "https://lotv.spawningtool.com/88041/download/"
+    },
+    {
+      "replayId": "88042",
+      "title": "6\uc8fc\ucc28 \uc800\uadf8\ub7912",
+      "detailUrl": "https://lotv.spawningtool.com/88042/",
+      "downloadUrl": "https://lotv.spawningtool.com/88042/download/"
+    },
+    {
+      "replayId": "88045",
+      "title": "EightNovem v tatka - Ley Lines",
+      "detailUrl": "https://lotv.spawningtool.com/88045/",
+      "downloadUrl": "https://lotv.spawningtool.com/88045/download/"
+    },
+    {
+      "replayId": "88050",
+      "title": "Cham v Vindicta - [TLMC20] Magannatha",
+      "detailUrl": "https://lotv.spawningtool.com/88050/",
+      "downloadUrl": "https://lotv.spawningtool.com/88050/download/"
+    },
+    {
+      "replayId": "88051",
+      "title": "Cham v Vindicta - [TLMC20] Tokamak",
+      "detailUrl": "https://lotv.spawningtool.com/88051/",
+      "downloadUrl": "https://lotv.spawningtool.com/88051/download/"
+    },
+    {
+      "replayId": "88075",
+      "title": "unranked ladder game 3",
+      "detailUrl": "https://lotv.spawningtool.com/88075/",
+      "downloadUrl": "https://lotv.spawningtool.com/88075/download/"
+    },
+    {
+      "replayId": "88101",
+      "title": "ZvT bo padrao",
+      "detailUrl": "https://lotv.spawningtool.com/88101/",
+      "downloadUrl": "https://lotv.spawningtool.com/88101/download/"
+    },
+    {
+      "replayId": "88131",
+      "title": "Incorporeal LE (8)",
+      "detailUrl": "https://lotv.spawningtool.com/88131/",
+      "downloadUrl": "https://lotv.spawningtool.com/88131/download/"
+    },
+    {
+      "replayId": "88134",
+      "title": "Incorporeal LE (9)",
+      "detailUrl": "https://lotv.spawningtool.com/88134/",
+      "downloadUrl": "https://lotv.spawningtool.com/88134/download/"
+    },
+    {
+      "replayId": "88137",
+      "title": "Ley Lines (8)",
+      "detailUrl": "https://lotv.spawningtool.com/88137/",
+      "downloadUrl": "https://lotv.spawningtool.com/88137/download/"
+    },
+    {
+      "replayId": "88138",
+      "title": "Tokamak LE (13)",
+      "detailUrl": "https://lotv.spawningtool.com/88138/",
+      "downloadUrl": "https://lotv.spawningtool.com/88138/download/"
+    },
+    {
+      "replayId": "88141",
+      "title": "Torches LE (8)",
+      "detailUrl": "https://lotv.spawningtool.com/88141/",
+      "downloadUrl": "https://lotv.spawningtool.com/88141/download/"
+    },
+    {
+      "replayId": "88142",
+      "title": "Torches LE (9)",
+      "detailUrl": "https://lotv.spawningtool.com/88142/",
+      "downloadUrl": "https://lotv.spawningtool.com/88142/download/"
+    },
+    {
+      "replayId": "88157",
+      "title": "Torches LE (10)",
+      "detailUrl": "https://lotv.spawningtool.com/88157/",
+      "downloadUrl": "https://lotv.spawningtool.com/88157/download/"
+    },
+    {
+      "replayId": "88160",
+      "title": "Ultralove (14)",
+      "detailUrl": "https://lotv.spawningtool.com/88160/",
+      "downloadUrl": "https://lotv.spawningtool.com/88160/download/"
+    },
+    {
+      "replayId": "88162",
+      "title": "Last Fantasy LE (10)",
+      "detailUrl": "https://lotv.spawningtool.com/88162/",
+      "downloadUrl": "https://lotv.spawningtool.com/88162/download/"
+    },
+    {
+      "replayId": "88163",
+      "title": "Magannatha LE (9)",
+      "detailUrl": "https://lotv.spawningtool.com/88163/",
+      "downloadUrl": "https://lotv.spawningtool.com/88163/download/"
+    },
+    {
+      "replayId": "88165",
+      "title": "Magannatha LE (11)",
+      "detailUrl": "https://lotv.spawningtool.com/88165/",
+      "downloadUrl": "https://lotv.spawningtool.com/88165/download/"
+    },
+    {
+      "replayId": "88169",
+      "title": "Incorporeal LE (14)",
+      "detailUrl": "https://lotv.spawningtool.com/88169/",
+      "downloadUrl": "https://lotv.spawningtool.com/88169/download/"
+    },
+    {
+      "replayId": "88171",
+      "title": "Ultralove (15)",
+      "detailUrl": "https://lotv.spawningtool.com/88171/",
+      "downloadUrl": "https://lotv.spawningtool.com/88171/download/"
+    },
+    {
+      "replayId": "88175",
+      "title": "Magannatha LE (13)",
+      "detailUrl": "https://lotv.spawningtool.com/88175/",
+      "downloadUrl": "https://lotv.spawningtool.com/88175/download/"
+    },
+    {
+      "replayId": "88179",
+      "title": "Magannatha LE (14)",
+      "detailUrl": "https://lotv.spawningtool.com/88179/",
+      "downloadUrl": "https://lotv.spawningtool.com/88179/download/"
+    },
+    {
+      "replayId": "88181",
+      "title": "Incorporeal LE (17)",
+      "detailUrl": "https://lotv.spawningtool.com/88181/",
+      "downloadUrl": "https://lotv.spawningtool.com/88181/download/"
+    },
+    {
+      "replayId": "88185",
+      "title": "Incorporeal LE (18)",
+      "detailUrl": "https://lotv.spawningtool.com/88185/",
+      "downloadUrl": "https://lotv.spawningtool.com/88185/download/"
+    },
+    {
+      "replayId": "88187",
+      "title": "Whispers of Gold",
+      "detailUrl": "https://lotv.spawningtool.com/88187/",
+      "downloadUrl": "https://lotv.spawningtool.com/88187/download/"
+    },
+    {
+      "replayId": "88208",
+      "title": "Ley Lines (16)",
+      "detailUrl": "https://lotv.spawningtool.com/88208/",
+      "downloadUrl": "https://lotv.spawningtool.com/88208/download/"
+    },
+    {
+      "replayId": "88244",
+      "title": "Magannatha LE (31)",
+      "detailUrl": "https://lotv.spawningtool.com/88244/",
+      "downloadUrl": "https://lotv.spawningtool.com/88244/download/"
+    },
+    {
+      "replayId": "88250",
+      "title": "Pylon LE (75)",
+      "detailUrl": "https://lotv.spawningtool.com/88250/",
+      "downloadUrl": "https://lotv.spawningtool.com/88250/download/"
+    },
+    {
+      "replayId": "88252",
+      "title": "Tokamak LE (23)",
+      "detailUrl": "https://lotv.spawningtool.com/88252/",
+      "downloadUrl": "https://lotv.spawningtool.com/88252/download/"
+    },
+    {
+      "replayId": "88257",
+      "title": "Ultralove (34)",
+      "detailUrl": "https://lotv.spawningtool.com/88257/",
+      "downloadUrl": "https://lotv.spawningtool.com/88257/download/"
+    },
+    {
+      "replayId": "88260",
+      "title": "Pylon LE (117)",
+      "detailUrl": "https://lotv.spawningtool.com/88260/",
+      "downloadUrl": "https://lotv.spawningtool.com/88260/download/"
+    },
+    {
+      "replayId": "88274",
+      "title": "Pylon LE (87)",
+      "detailUrl": "https://lotv.spawningtool.com/88274/",
+      "downloadUrl": "https://lotv.spawningtool.com/88274/download/"
+    },
+    {
+      "replayId": "88282",
+      "title": "Pylon LE (89)",
+      "detailUrl": "https://lotv.spawningtool.com/88282/",
+      "downloadUrl": "https://lotv.spawningtool.com/88282/download/"
+    },
+    {
+      "replayId": "88284",
+      "title": "Incorporeal LE (38)",
+      "detailUrl": "https://lotv.spawningtool.com/88284/",
+      "downloadUrl": "https://lotv.spawningtool.com/88284/download/"
+    },
+    {
+      "replayId": "88290",
+      "title": "Ley Lines (44)",
+      "detailUrl": "https://lotv.spawningtool.com/88290/",
+      "downloadUrl": "https://lotv.spawningtool.com/88290/download/"
+    },
+    {
+      "replayId": "88294",
+      "title": "Pylon LE (99)",
+      "detailUrl": "https://lotv.spawningtool.com/88294/",
+      "downloadUrl": "https://lotv.spawningtool.com/88294/download/"
+    },
+    {
+      "replayId": "88295",
+      "title": "Incorporeal LE (64)",
+      "detailUrl": "https://lotv.spawningtool.com/88295/",
+      "downloadUrl": "https://lotv.spawningtool.com/88295/download/"
+    },
+    {
+      "replayId": "88301",
+      "title": "Ultralove (144)",
+      "detailUrl": "https://lotv.spawningtool.com/88301/",
+      "downloadUrl": "https://lotv.spawningtool.com/88301/download/"
+    },
+    {
+      "replayId": "88302",
+      "title": "Pylon LE (173)",
+      "detailUrl": "https://lotv.spawningtool.com/88302/",
+      "downloadUrl": "https://lotv.spawningtool.com/88302/download/"
+    },
+    {
+      "replayId": "88303",
+      "title": "Pylon LE (172)",
+      "detailUrl": "https://lotv.spawningtool.com/88303/",
+      "downloadUrl": "https://lotv.spawningtool.com/88303/download/"
+    },
+    {
+      "replayId": "88306",
+      "title": "Incorporeal LE (99)",
+      "detailUrl": "https://lotv.spawningtool.com/88306/",
+      "downloadUrl": "https://lotv.spawningtool.com/88306/download/"
+    },
+    {
+      "replayId": "88308",
+      "title": "Tokamak LE (138)",
+      "detailUrl": "https://lotv.spawningtool.com/88308/",
+      "downloadUrl": "https://lotv.spawningtool.com/88308/download/"
+    },
+    {
+      "replayId": "88311",
+      "title": "Incorporeal LE (39)",
+      "detailUrl": "https://lotv.spawningtool.com/88311/",
+      "downloadUrl": "https://lotv.spawningtool.com/88311/download/"
+    },
+    {
+      "replayId": "88318",
+      "title": "Incorporeal LE (46)",
+      "detailUrl": "https://lotv.spawningtool.com/88318/",
+      "downloadUrl": "https://lotv.spawningtool.com/88318/download/"
+    },
+    {
+      "replayId": "88322",
+      "title": "Incorporeal LE (51)",
+      "detailUrl": "https://lotv.spawningtool.com/88322/",
+      "downloadUrl": "https://lotv.spawningtool.com/88322/download/"
+    },
+    {
+      "replayId": "88326",
+      "title": "Incorporeal LE (55)",
+      "detailUrl": "https://lotv.spawningtool.com/88326/",
+      "downloadUrl": "https://lotv.spawningtool.com/88326/download/"
+    },
+    {
+      "replayId": "88334",
+      "title": "Incorporeal LE (65)",
+      "detailUrl": "https://lotv.spawningtool.com/88334/",
+      "downloadUrl": "https://lotv.spawningtool.com/88334/download/"
+    },
+    {
+      "replayId": "88336",
+      "title": "Incorporeal LE (67)",
+      "detailUrl": "https://lotv.spawningtool.com/88336/",
+      "downloadUrl": "https://lotv.spawningtool.com/88336/download/"
+    },
+    {
+      "replayId": "88340",
+      "title": "Incorporeal LE (71)",
+      "detailUrl": "https://lotv.spawningtool.com/88340/",
+      "downloadUrl": "https://lotv.spawningtool.com/88340/download/"
+    },
+    {
+      "replayId": "88346",
+      "title": "Incorporeal LE (78)",
+      "detailUrl": "https://lotv.spawningtool.com/88346/",
+      "downloadUrl": "https://lotv.spawningtool.com/88346/download/"
+    },
+    {
+      "replayId": "88349",
+      "title": "Incorporeal LE (81)",
+      "detailUrl": "https://lotv.spawningtool.com/88349/",
+      "downloadUrl": "https://lotv.spawningtool.com/88349/download/"
+    },
+    {
+      "replayId": "88353",
+      "title": "Incorporeal LE (85)",
+      "detailUrl": "https://lotv.spawningtool.com/88353/",
+      "downloadUrl": "https://lotv.spawningtool.com/88353/download/"
+    },
+    {
+      "replayId": "88354",
+      "title": "Incorporeal LE (86)",
+      "detailUrl": "https://lotv.spawningtool.com/88354/",
+      "downloadUrl": "https://lotv.spawningtool.com/88354/download/"
+    },
+    {
+      "replayId": "88356",
+      "title": "Incorporeal LE (88)",
+      "detailUrl": "https://lotv.spawningtool.com/88356/",
+      "downloadUrl": "https://lotv.spawningtool.com/88356/download/"
+    },
+    {
+      "replayId": "88367",
+      "title": "Ley Lines (22)",
+      "detailUrl": "https://lotv.spawningtool.com/88367/",
+      "downloadUrl": "https://lotv.spawningtool.com/88367/download/"
+    },
+    {
+      "replayId": "88370",
+      "title": "Ley Lines (25)",
+      "detailUrl": "https://lotv.spawningtool.com/88370/",
+      "downloadUrl": "https://lotv.spawningtool.com/88370/download/"
+    },
+    {
+      "replayId": "88377",
+      "title": "Ley Lines (33)",
+      "detailUrl": "https://lotv.spawningtool.com/88377/",
+      "downloadUrl": "https://lotv.spawningtool.com/88377/download/"
+    },
+    {
+      "replayId": "88379",
+      "title": "Ley Lines (35)",
+      "detailUrl": "https://lotv.spawningtool.com/88379/",
+      "downloadUrl": "https://lotv.spawningtool.com/88379/download/"
+    },
+    {
+      "replayId": "88387",
+      "title": "Ley Lines (45)",
+      "detailUrl": "https://lotv.spawningtool.com/88387/",
+      "downloadUrl": "https://lotv.spawningtool.com/88387/download/"
+    },
+    {
+      "replayId": "88396",
+      "title": "Ley Lines (54)",
+      "detailUrl": "https://lotv.spawningtool.com/88396/",
+      "downloadUrl": "https://lotv.spawningtool.com/88396/download/"
+    },
+    {
+      "replayId": "88398",
+      "title": "Ley Lines (56)",
+      "detailUrl": "https://lotv.spawningtool.com/88398/",
+      "downloadUrl": "https://lotv.spawningtool.com/88398/download/"
+    },
+    {
+      "replayId": "88399",
+      "title": "Ley Lines (57)",
+      "detailUrl": "https://lotv.spawningtool.com/88399/",
+      "downloadUrl": "https://lotv.spawningtool.com/88399/download/"
+    },
+    {
+      "replayId": "88401",
+      "title": "Ley Lines (59)",
+      "detailUrl": "https://lotv.spawningtool.com/88401/",
+      "downloadUrl": "https://lotv.spawningtool.com/88401/download/"
+    },
+    {
+      "replayId": "88403",
+      "title": "Ley Lines (61)",
+      "detailUrl": "https://lotv.spawningtool.com/88403/",
+      "downloadUrl": "https://lotv.spawningtool.com/88403/download/"
+    },
+    {
+      "replayId": "88407",
+      "title": "Ley Lines (65)",
+      "detailUrl": "https://lotv.spawningtool.com/88407/",
+      "downloadUrl": "https://lotv.spawningtool.com/88407/download/"
+    },
+    {
+      "replayId": "88409",
+      "title": "Ley Lines (67)",
+      "detailUrl": "https://lotv.spawningtool.com/88409/",
+      "downloadUrl": "https://lotv.spawningtool.com/88409/download/"
+    },
+    {
+      "replayId": "88410",
+      "title": "Ley Lines (68)",
+      "detailUrl": "https://lotv.spawningtool.com/88410/",
+      "downloadUrl": "https://lotv.spawningtool.com/88410/download/"
+    },
+    {
+      "replayId": "88411",
+      "title": "Ley Lines (69)",
+      "detailUrl": "https://lotv.spawningtool.com/88411/",
+      "downloadUrl": "https://lotv.spawningtool.com/88411/download/"
+    },
+    {
+      "replayId": "88412",
+      "title": "Ley Lines (70)",
+      "detailUrl": "https://lotv.spawningtool.com/88412/",
+      "downloadUrl": "https://lotv.spawningtool.com/88412/download/"
+    },
+    {
+      "replayId": "88424",
+      "title": "Ley Lines (82)",
+      "detailUrl": "https://lotv.spawningtool.com/88424/",
+      "downloadUrl": "https://lotv.spawningtool.com/88424/download/"
+    },
+    {
+      "replayId": "88425",
+      "title": "Ley Lines (83)",
+      "detailUrl": "https://lotv.spawningtool.com/88425/",
+      "downloadUrl": "https://lotv.spawningtool.com/88425/download/"
+    },
+    {
+      "replayId": "88427",
+      "title": "Magannatha LE (100)",
+      "detailUrl": "https://lotv.spawningtool.com/88427/",
+      "downloadUrl": "https://lotv.spawningtool.com/88427/download/"
+    },
+    {
+      "replayId": "88430",
+      "title": "Magannatha LE (35)",
+      "detailUrl": "https://lotv.spawningtool.com/88430/",
+      "downloadUrl": "https://lotv.spawningtool.com/88430/download/"
+    },
+    {
+      "replayId": "88431",
+      "title": "Magannatha LE (36)",
+      "detailUrl": "https://lotv.spawningtool.com/88431/",
+      "downloadUrl": "https://lotv.spawningtool.com/88431/download/"
+    },
+    {
+      "replayId": "88432",
+      "title": "Magannatha LE (37)",
+      "detailUrl": "https://lotv.spawningtool.com/88432/",
+      "downloadUrl": "https://lotv.spawningtool.com/88432/download/"
+    },
+    {
+      "replayId": "88439",
+      "title": "Magannatha LE (47)",
+      "detailUrl": "https://lotv.spawningtool.com/88439/",
+      "downloadUrl": "https://lotv.spawningtool.com/88439/download/"
+    },
+    {
+      "replayId": "88440",
+      "title": "Magannatha LE (48)",
+      "detailUrl": "https://lotv.spawningtool.com/88440/",
+      "downloadUrl": "https://lotv.spawningtool.com/88440/download/"
+    },
+    {
+      "replayId": "88441",
+      "title": "Magannatha LE (49)",
+      "detailUrl": "https://lotv.spawningtool.com/88441/",
+      "downloadUrl": "https://lotv.spawningtool.com/88441/download/"
+    },
+    {
+      "replayId": "88443",
+      "title": "Magannatha LE (51)",
+      "detailUrl": "https://lotv.spawningtool.com/88443/",
+      "downloadUrl": "https://lotv.spawningtool.com/88443/download/"
+    },
+    {
+      "replayId": "88445",
+      "title": "Magannatha LE (53)",
+      "detailUrl": "https://lotv.spawningtool.com/88445/",
+      "downloadUrl": "https://lotv.spawningtool.com/88445/download/"
+    },
+    {
+      "replayId": "88448",
+      "title": "Magannatha LE (56)",
+      "detailUrl": "https://lotv.spawningtool.com/88448/",
+      "downloadUrl": "https://lotv.spawningtool.com/88448/download/"
+    },
+    {
+      "replayId": "88450",
+      "title": "Magannatha LE (58)",
+      "detailUrl": "https://lotv.spawningtool.com/88450/",
+      "downloadUrl": "https://lotv.spawningtool.com/88450/download/"
+    },
+    {
+      "replayId": "88451",
+      "title": "Magannatha LE (59)",
+      "detailUrl": "https://lotv.spawningtool.com/88451/",
+      "downloadUrl": "https://lotv.spawningtool.com/88451/download/"
+    },
+    {
+      "replayId": "88456",
+      "title": "Magannatha LE (64)",
+      "detailUrl": "https://lotv.spawningtool.com/88456/",
+      "downloadUrl": "https://lotv.spawningtool.com/88456/download/"
+    },
+    {
+      "replayId": "88457",
+      "title": "Magannatha LE (65)",
+      "detailUrl": "https://lotv.spawningtool.com/88457/",
+      "downloadUrl": "https://lotv.spawningtool.com/88457/download/"
+    },
+    {
+      "replayId": "88460",
+      "title": "Magannatha LE (68)",
+      "detailUrl": "https://lotv.spawningtool.com/88460/",
+      "downloadUrl": "https://lotv.spawningtool.com/88460/download/"
+    },
+    {
+      "replayId": "88468",
+      "title": "Magannatha LE (76)",
+      "detailUrl": "https://lotv.spawningtool.com/88468/",
+      "downloadUrl": "https://lotv.spawningtool.com/88468/download/"
+    },
+    {
+      "replayId": "88475",
+      "title": "Magannatha LE (84)",
+      "detailUrl": "https://lotv.spawningtool.com/88475/",
+      "downloadUrl": "https://lotv.spawningtool.com/88475/download/"
+    },
+    {
+      "replayId": "88479",
+      "title": "Magannatha LE (88)",
+      "detailUrl": "https://lotv.spawningtool.com/88479/",
+      "downloadUrl": "https://lotv.spawningtool.com/88479/download/"
+    },
+    {
+      "replayId": "88480",
+      "title": "Magannatha LE (89)",
+      "detailUrl": "https://lotv.spawningtool.com/88480/",
+      "downloadUrl": "https://lotv.spawningtool.com/88480/download/"
+    },
+    {
+      "replayId": "88483",
+      "title": "Magannatha LE (92)",
+      "detailUrl": "https://lotv.spawningtool.com/88483/",
+      "downloadUrl": "https://lotv.spawningtool.com/88483/download/"
+    },
+    {
+      "replayId": "88489",
+      "title": "Magannatha LE (98)",
+      "detailUrl": "https://lotv.spawningtool.com/88489/",
+      "downloadUrl": "https://lotv.spawningtool.com/88489/download/"
+    },
+    {
+      "replayId": "88490",
+      "title": "Magannatha LE (99)",
+      "detailUrl": "https://lotv.spawningtool.com/88490/",
+      "downloadUrl": "https://lotv.spawningtool.com/88490/download/"
+    },
+    {
+      "replayId": "88497",
+      "title": "Pylon LE (100)",
+      "detailUrl": "https://lotv.spawningtool.com/88497/",
+      "downloadUrl": "https://lotv.spawningtool.com/88497/download/"
+    },
+    {
+      "replayId": "88500",
+      "title": "Pylon LE (103)",
+      "detailUrl": "https://lotv.spawningtool.com/88500/",
+      "downloadUrl": "https://lotv.spawningtool.com/88500/download/"
+    },
+    {
+      "replayId": "88501",
+      "title": "Pylon LE (104)",
+      "detailUrl": "https://lotv.spawningtool.com/88501/",
+      "downloadUrl": "https://lotv.spawningtool.com/88501/download/"
+    },
+    {
+      "replayId": "88504",
+      "title": "Pylon LE (107)",
+      "detailUrl": "https://lotv.spawningtool.com/88504/",
+      "downloadUrl": "https://lotv.spawningtool.com/88504/download/"
+    },
+    {
+      "replayId": "88505",
+      "title": "Pylon LE (108)",
+      "detailUrl": "https://lotv.spawningtool.com/88505/",
+      "downloadUrl": "https://lotv.spawningtool.com/88505/download/"
+    },
+    {
+      "replayId": "88512",
+      "title": "Pylon LE (115)",
+      "detailUrl": "https://lotv.spawningtool.com/88512/",
+      "downloadUrl": "https://lotv.spawningtool.com/88512/download/"
+    },
+    {
+      "replayId": "88513",
+      "title": "Pylon LE (116)",
+      "detailUrl": "https://lotv.spawningtool.com/88513/",
+      "downloadUrl": "https://lotv.spawningtool.com/88513/download/"
+    },
+    {
+      "replayId": "88515",
+      "title": "Pylon LE (119)",
+      "detailUrl": "https://lotv.spawningtool.com/88515/",
+      "downloadUrl": "https://lotv.spawningtool.com/88515/download/"
+    },
+    {
+      "replayId": "88516",
+      "title": "Pylon LE (120)",
+      "detailUrl": "https://lotv.spawningtool.com/88516/",
+      "downloadUrl": "https://lotv.spawningtool.com/88516/download/"
+    },
+    {
+      "replayId": "88518",
+      "title": "Pylon LE (122)",
+      "detailUrl": "https://lotv.spawningtool.com/88518/",
+      "downloadUrl": "https://lotv.spawningtool.com/88518/download/"
+    },
+    {
+      "replayId": "88523",
+      "title": "Pylon LE (127)",
+      "detailUrl": "https://lotv.spawningtool.com/88523/",
+      "downloadUrl": "https://lotv.spawningtool.com/88523/download/"
+    },
+    {
+      "replayId": "88524",
+      "title": "Pylon LE (128)",
+      "detailUrl": "https://lotv.spawningtool.com/88524/",
+      "downloadUrl": "https://lotv.spawningtool.com/88524/download/"
+    },
+    {
+      "replayId": "88526",
+      "title": "Pylon LE (130)",
+      "detailUrl": "https://lotv.spawningtool.com/88526/",
+      "downloadUrl": "https://lotv.spawningtool.com/88526/download/"
+    },
+    {
+      "replayId": "88529",
+      "title": "Pylon LE (133)",
+      "detailUrl": "https://lotv.spawningtool.com/88529/",
+      "downloadUrl": "https://lotv.spawningtool.com/88529/download/"
+    },
+    {
+      "replayId": "88531",
+      "title": "Pylon LE (135)",
+      "detailUrl": "https://lotv.spawningtool.com/88531/",
+      "downloadUrl": "https://lotv.spawningtool.com/88531/download/"
+    },
+    {
+      "replayId": "88532",
+      "title": "Pylon LE (136)",
+      "detailUrl": "https://lotv.spawningtool.com/88532/",
+      "downloadUrl": "https://lotv.spawningtool.com/88532/download/"
+    },
+    {
+      "replayId": "88536",
+      "title": "Pylon LE (140)",
+      "detailUrl": "https://lotv.spawningtool.com/88536/",
+      "downloadUrl": "https://lotv.spawningtool.com/88536/download/"
+    },
+    {
+      "replayId": "88543",
+      "title": "Pylon LE (81)",
+      "detailUrl": "https://lotv.spawningtool.com/88543/",
+      "downloadUrl": "https://lotv.spawningtool.com/88543/download/"
+    },
+    {
+      "replayId": "88544",
+      "title": "Pylon LE (82)",
+      "detailUrl": "https://lotv.spawningtool.com/88544/",
+      "downloadUrl": "https://lotv.spawningtool.com/88544/download/"
+    },
+    {
+      "replayId": "88545",
+      "title": "Pylon LE (83)",
+      "detailUrl": "https://lotv.spawningtool.com/88545/",
+      "downloadUrl": "https://lotv.spawningtool.com/88545/download/"
+    },
+    {
+      "replayId": "88552",
+      "title": "Pylon LE (93)",
+      "detailUrl": "https://lotv.spawningtool.com/88552/",
+      "downloadUrl": "https://lotv.spawningtool.com/88552/download/"
+    },
+    {
+      "replayId": "88558",
+      "title": "Tokamak LE (27)",
+      "detailUrl": "https://lotv.spawningtool.com/88558/",
+      "downloadUrl": "https://lotv.spawningtool.com/88558/download/"
+    },
+    {
+      "replayId": "88560",
+      "title": "Tokamak LE (30)",
+      "detailUrl": "https://lotv.spawningtool.com/88560/",
+      "downloadUrl": "https://lotv.spawningtool.com/88560/download/"
+    },
+    {
+      "replayId": "88562",
+      "title": "Tokamak LE (32)",
+      "detailUrl": "https://lotv.spawningtool.com/88562/",
+      "downloadUrl": "https://lotv.spawningtool.com/88562/download/"
+    },
+    {
+      "replayId": "88569",
+      "title": "Tokamak LE (42)",
+      "detailUrl": "https://lotv.spawningtool.com/88569/",
+      "downloadUrl": "https://lotv.spawningtool.com/88569/download/"
+    },
+    {
+      "replayId": "88570",
+      "title": "Tokamak LE (43)",
+      "detailUrl": "https://lotv.spawningtool.com/88570/",
+      "downloadUrl": "https://lotv.spawningtool.com/88570/download/"
+    },
+    {
+      "replayId": "88571",
+      "title": "Tokamak LE (44)",
+      "detailUrl": "https://lotv.spawningtool.com/88571/",
+      "downloadUrl": "https://lotv.spawningtool.com/88571/download/"
+    },
+    {
+      "replayId": "88579",
+      "title": "Tokamak LE (53)",
+      "detailUrl": "https://lotv.spawningtool.com/88579/",
+      "downloadUrl": "https://lotv.spawningtool.com/88579/download/"
+    },
+    {
+      "replayId": "88587",
+      "title": "Tokamak LE (61)",
+      "detailUrl": "https://lotv.spawningtool.com/88587/",
+      "downloadUrl": "https://lotv.spawningtool.com/88587/download/"
+    },
+    {
+      "replayId": "88589",
+      "title": "Tokamak LE (63)",
+      "detailUrl": "https://lotv.spawningtool.com/88589/",
+      "downloadUrl": "https://lotv.spawningtool.com/88589/download/"
+    },
+    {
+      "replayId": "88590",
+      "title": "Tokamak LE (64)",
+      "detailUrl": "https://lotv.spawningtool.com/88590/",
+      "downloadUrl": "https://lotv.spawningtool.com/88590/download/"
+    },
+    {
+      "replayId": "88592",
+      "title": "Tokamak LE (66)",
+      "detailUrl": "https://lotv.spawningtool.com/88592/",
+      "downloadUrl": "https://lotv.spawningtool.com/88592/download/"
+    },
+    {
+      "replayId": "88594",
+      "title": "Tokamak LE (68)",
+      "detailUrl": "https://lotv.spawningtool.com/88594/",
+      "downloadUrl": "https://lotv.spawningtool.com/88594/download/"
+    },
+    {
+      "replayId": "88595",
+      "title": "Tokamak LE (69)",
+      "detailUrl": "https://lotv.spawningtool.com/88595/",
+      "downloadUrl": "https://lotv.spawningtool.com/88595/download/"
+    },
+    {
+      "replayId": "88599",
+      "title": "Tokamak LE (73)",
+      "detailUrl": "https://lotv.spawningtool.com/88599/",
+      "downloadUrl": "https://lotv.spawningtool.com/88599/download/"
+    },
+    {
+      "replayId": "88602",
+      "title": "Tokamak LE (76)",
+      "detailUrl": "https://lotv.spawningtool.com/88602/",
+      "downloadUrl": "https://lotv.spawningtool.com/88602/download/"
+    },
+    {
+      "replayId": "88603",
+      "title": "Tokamak LE (77)",
+      "detailUrl": "https://lotv.spawningtool.com/88603/",
+      "downloadUrl": "https://lotv.spawningtool.com/88603/download/"
+    },
+    {
+      "replayId": "88607",
+      "title": "Tokamak LE (81)",
+      "detailUrl": "https://lotv.spawningtool.com/88607/",
+      "downloadUrl": "https://lotv.spawningtool.com/88607/download/"
+    },
+    {
+      "replayId": "88610",
+      "title": "Tokamak LE (84)",
+      "detailUrl": "https://lotv.spawningtool.com/88610/",
+      "downloadUrl": "https://lotv.spawningtool.com/88610/download/"
+    },
+    {
+      "replayId": "88611",
+      "title": "Tokamak LE (85)",
+      "detailUrl": "https://lotv.spawningtool.com/88611/",
+      "downloadUrl": "https://lotv.spawningtool.com/88611/download/"
+    },
+    {
+      "replayId": "88612",
+      "title": "Tokamak LE (86)",
+      "detailUrl": "https://lotv.spawningtool.com/88612/",
+      "downloadUrl": "https://lotv.spawningtool.com/88612/download/"
+    },
+    {
+      "replayId": "88614",
+      "title": "Tokamak LE (88)",
+      "detailUrl": "https://lotv.spawningtool.com/88614/",
+      "downloadUrl": "https://lotv.spawningtool.com/88614/download/"
+    },
+    {
+      "replayId": "88626",
+      "title": "Ultralove (40)",
+      "detailUrl": "https://lotv.spawningtool.com/88626/",
+      "downloadUrl": "https://lotv.spawningtool.com/88626/download/"
+    },
+    {
+      "replayId": "88627",
+      "title": "Ultralove (41)",
+      "detailUrl": "https://lotv.spawningtool.com/88627/",
+      "downloadUrl": "https://lotv.spawningtool.com/88627/download/"
+    },
+    {
+      "replayId": "88628",
+      "title": "Ultralove (42)",
+      "detailUrl": "https://lotv.spawningtool.com/88628/",
+      "downloadUrl": "https://lotv.spawningtool.com/88628/download/"
+    },
+    {
+      "replayId": "88644",
+      "title": "Ultralove (61)",
+      "detailUrl": "https://lotv.spawningtool.com/88644/",
+      "downloadUrl": "https://lotv.spawningtool.com/88644/download/"
+    },
+    {
+      "replayId": "88649",
+      "title": "Ultralove (66)",
+      "detailUrl": "https://lotv.spawningtool.com/88649/",
+      "downloadUrl": "https://lotv.spawningtool.com/88649/download/"
+    },
+    {
+      "replayId": "88650",
+      "title": "Ultralove (67)",
+      "detailUrl": "https://lotv.spawningtool.com/88650/",
+      "downloadUrl": "https://lotv.spawningtool.com/88650/download/"
+    },
+    {
+      "replayId": "88671",
+      "title": "Ultralove (88)",
+      "detailUrl": "https://lotv.spawningtool.com/88671/",
+      "downloadUrl": "https://lotv.spawningtool.com/88671/download/"
+    },
+    {
+      "replayId": "88674",
+      "title": "Ultralove (91)",
+      "detailUrl": "https://lotv.spawningtool.com/88674/",
+      "downloadUrl": "https://lotv.spawningtool.com/88674/download/"
+    },
+    {
+      "replayId": "88678",
+      "title": "Ultralove (95)",
+      "detailUrl": "https://lotv.spawningtool.com/88678/",
+      "downloadUrl": "https://lotv.spawningtool.com/88678/download/"
+    },
+    {
+      "replayId": "88683",
+      "title": "TvZ Loss",
+      "detailUrl": "https://lotv.spawningtool.com/88683/",
+      "downloadUrl": "https://lotv.spawningtool.com/88683/download/"
+    },
+    {
+      "replayId": "88693",
+      "title": "Alcyone LE (5)",
+      "detailUrl": "https://lotv.spawningtool.com/88693/",
+      "downloadUrl": "https://lotv.spawningtool.com/88693/download/"
+    },
+    {
+      "replayId": "88694",
+      "title": "Alcyone LE (6)",
+      "detailUrl": "https://lotv.spawningtool.com/88694/",
+      "downloadUrl": "https://lotv.spawningtool.com/88694/download/"
+    },
+    {
+      "replayId": "88695",
+      "title": "Alcyone LE (8)",
+      "detailUrl": "https://lotv.spawningtool.com/88695/",
+      "downloadUrl": "https://lotv.spawningtool.com/88695/download/"
+    },
+    {
+      "replayId": "88705",
+      "title": "Ghost River LE",
+      "detailUrl": "https://lotv.spawningtool.com/88705/",
+      "downloadUrl": "https://lotv.spawningtool.com/88705/download/"
+    },
+    {
+      "replayId": "88718",
+      "title": "Magannatha LE (4)",
+      "detailUrl": "https://lotv.spawningtool.com/88718/",
+      "downloadUrl": "https://lotv.spawningtool.com/88718/download/"
+    },
+    {
+      "replayId": "88720",
+      "title": "Magannatha LE (7)",
+      "detailUrl": "https://lotv.spawningtool.com/88720/",
+      "downloadUrl": "https://lotv.spawningtool.com/88720/download/"
+    },
+    {
+      "replayId": "88722",
+      "title": "Magannatha LE (9)",
+      "detailUrl": "https://lotv.spawningtool.com/88722/",
+      "downloadUrl": "https://lotv.spawningtool.com/88722/download/"
+    },
+    {
+      "replayId": "88729",
+      "title": "Persephone LE (5)",
+      "detailUrl": "https://lotv.spawningtool.com/88729/",
+      "downloadUrl": "https://lotv.spawningtool.com/88729/download/"
+    },
+    {
+      "replayId": "88743",
+      "title": "Tokamak LE (8)",
+      "detailUrl": "https://lotv.spawningtool.com/88743/",
+      "downloadUrl": "https://lotv.spawningtool.com/88743/download/"
+    },
+    {
+      "replayId": "88754",
+      "title": "Magannatha LE (61)",
+      "detailUrl": "https://lotv.spawningtool.com/88754/",
+      "downloadUrl": "https://lotv.spawningtool.com/88754/download/"
+    },
+    {
+      "replayId": "88765",
+      "title": "3. Ultralove",
+      "detailUrl": "https://lotv.spawningtool.com/88765/",
+      "downloadUrl": "https://lotv.spawningtool.com/88765/download/"
+    },
+    {
+      "replayId": "88776",
+      "title": "DvorakNZ v IIIIIIIIIII - Persephone LE",
+      "detailUrl": "https://lotv.spawningtool.com/88776/",
+      "downloadUrl": "https://lotv.spawningtool.com/88776/download/"
+    },
+    {
+      "replayId": "88777",
+      "title": "TvZ Two Base Build",
+      "detailUrl": "https://lotv.spawningtool.com/88777/",
+      "downloadUrl": "https://lotv.spawningtool.com/88777/download/"
+    },
+    {
+      "replayId": "88778",
+      "title": "terran",
+      "detailUrl": "https://lotv.spawningtool.com/88778/",
+      "downloadUrl": "https://lotv.spawningtool.com/88778/download/"
+    },
+    {
+      "replayId": "88786",
+      "title": "ZvT",
+      "detailUrl": "https://lotv.spawningtool.com/88786/",
+      "downloadUrl": "https://lotv.spawningtool.com/88786/download/"
+    },
+    {
+      "replayId": "88807",
+      "title": "A.I. 1 (Very Easy) v Calyx - Ley Lines",
+      "detailUrl": "https://lotv.spawningtool.com/88807/",
+      "downloadUrl": "https://lotv.spawningtool.com/88807/download/"
+    },
+    {
+      "replayId": "88809",
+      "title": "Ultralove (15)",
+      "detailUrl": "https://lotv.spawningtool.com/88809/",
+      "downloadUrl": "https://lotv.spawningtool.com/88809/download/"
+    },
+    {
+      "replayId": "88810",
+      "title": "TvZ 2-1-1 basic guide",
+      "detailUrl": "https://lotv.spawningtool.com/88810/",
+      "downloadUrl": "https://lotv.spawningtool.com/88810/download/"
+    },
+    {
+      "replayId": "88823",
+      "title": "Ultralove (17)",
+      "detailUrl": "https://lotv.spawningtool.com/88823/",
+      "downloadUrl": "https://lotv.spawningtool.com/88823/download/"
+    },
+    {
+      "replayId": "88828",
+      "title": "ZergAcademyBeginnerfriendlyPoolFirstGuide",
+      "detailUrl": "https://lotv.spawningtool.com/88828/",
+      "downloadUrl": "https://lotv.spawningtool.com/88828/download/"
+    },
+    {
+      "replayId": "88831",
+      "title": "TvZ Ley Lines (98)",
+      "detailUrl": "https://lotv.spawningtool.com/88831/",
+      "downloadUrl": "https://lotv.spawningtool.com/88831/download/"
+    },
+    {
+      "replayId": "88834",
+      "title": "vs T standard build upgrades (1)",
+      "detailUrl": "https://lotv.spawningtool.com/88834/",
+      "downloadUrl": "https://lotv.spawningtool.com/88834/download/"
+    },
+    {
+      "replayId": "88841",
+      "title": "TVZ Macro Build With Timing Attack",
+      "detailUrl": "https://lotv.spawningtool.com/88841/",
+      "downloadUrl": "https://lotv.spawningtool.com/88841/download/"
+    },
+    {
+      "replayId": "88847",
+      "title": "\uc800\uadf8\uc804 \ub354\ube14 \ubc34\uc2dc \ucd5c\uc801\ud654",
+      "detailUrl": "https://lotv.spawningtool.com/88847/",
+      "downloadUrl": "https://lotv.spawningtool.com/88847/download/"
+    },
+    {
+      "replayId": "88852",
+      "title": "how to win",
+      "detailUrl": "https://lotv.spawningtool.com/88852/",
+      "downloadUrl": "https://lotv.spawningtool.com/88852/download/"
+    },
+    {
+      "replayId": "88853",
+      "title": "Tokamak LE (61)",
+      "detailUrl": "https://lotv.spawningtool.com/88853/",
+      "downloadUrl": "https://lotv.spawningtool.com/88853/download/"
+    },
+    {
+      "replayId": "88854",
+      "title": "Persephone LE (42)",
+      "detailUrl": "https://lotv.spawningtool.com/88854/",
+      "downloadUrl": "https://lotv.spawningtool.com/88854/download/"
+    },
+    {
+      "replayId": "88855",
+      "title": "2025-10-21 - (Z)SortOf VS (T)IlIlIlIlIIII",
+      "detailUrl": "https://lotv.spawningtool.com/88855/",
+      "downloadUrl": "https://lotv.spawningtool.com/88855/download/"
+    },
+    {
+      "replayId": "88857",
+      "title": "Ley Lines (214)",
+      "detailUrl": "https://lotv.spawningtool.com/88857/",
+      "downloadUrl": "https://lotv.spawningtool.com/88857/download/"
+    },
+    {
+      "replayId": "88858",
+      "title": "Tokamak LE (107)",
+      "detailUrl": "https://lotv.spawningtool.com/88858/",
+      "downloadUrl": "https://lotv.spawningtool.com/88858/download/"
+    },
+    {
+      "replayId": "88859",
+      "title": "Ley Lines (243)",
+      "detailUrl": "https://lotv.spawningtool.com/88859/",
+      "downloadUrl": "https://lotv.spawningtool.com/88859/download/"
+    },
+    {
+      "replayId": "88860",
+      "title": "Incorporeal LE (76)",
+      "detailUrl": "https://lotv.spawningtool.com/88860/",
+      "downloadUrl": "https://lotv.spawningtool.com/88860/download/"
+    },
+    {
+      "replayId": "88862",
+      "title": "LA PREMIERE VRAIE VICTOIRE LETS GO",
+      "detailUrl": "https://lotv.spawningtool.com/88862/",
+      "downloadUrl": "https://lotv.spawningtool.com/88862/download/"
+    },
+    {
+      "replayId": "88865",
+      "title": "Incorporeal LE (4)",
+      "detailUrl": "https://lotv.spawningtool.com/88865/",
+      "downloadUrl": "https://lotv.spawningtool.com/88865/download/"
+    },
+    {
+      "replayId": "88867",
+      "title": "MisterFister v PrinceAbubu - Pylon LE",
+      "detailUrl": "https://lotv.spawningtool.com/88867/",
+      "downloadUrl": "https://lotv.spawningtool.com/88867/download/"
+    },
+    {
+      "replayId": "88868",
+      "title": "2025-10-29 - (Z)SortOf VS (T)OldDraGoN",
+      "detailUrl": "https://lotv.spawningtool.com/88868/",
+      "downloadUrl": "https://lotv.spawningtool.com/88868/download/"
+    },
+    {
+      "replayId": "88870",
+      "title": "Ley Lines (9)",
+      "detailUrl": "https://lotv.spawningtool.com/88870/",
+      "downloadUrl": "https://lotv.spawningtool.com/88870/download/"
+    },
+    {
+      "replayId": "88871",
+      "title": "Pylon LE",
+      "detailUrl": "https://lotv.spawningtool.com/88871/",
+      "downloadUrl": "https://lotv.spawningtool.com/88871/download/"
+    },
+    {
+      "replayId": "88872",
+      "title": "Alcyone LE (5)",
+      "detailUrl": "https://lotv.spawningtool.com/88872/",
+      "downloadUrl": "https://lotv.spawningtool.com/88872/download/"
+    },
+    {
+      "replayId": "88873",
+      "title": "Ultralove (4)",
+      "detailUrl": "https://lotv.spawningtool.com/88873/",
+      "downloadUrl": "https://lotv.spawningtool.com/88873/download/"
+    },
+    {
+      "replayId": "88874",
+      "title": "Pylon LE (4)",
+      "detailUrl": "https://lotv.spawningtool.com/88874/",
+      "downloadUrl": "https://lotv.spawningtool.com/88874/download/"
+    },
+    {
+      "replayId": "88879",
+      "title": "Magannatha LE (4)",
+      "detailUrl": "https://lotv.spawningtool.com/88879/",
+      "downloadUrl": "https://lotv.spawningtool.com/88879/download/"
+    },
+    {
+      "replayId": "88880",
+      "title": "Pylon LE (59)",
+      "detailUrl": "https://lotv.spawningtool.com/88880/",
+      "downloadUrl": "https://lotv.spawningtool.com/88880/download/"
+    },
+    {
+      "replayId": "88881",
+      "title": "Ley Lines (193)",
+      "detailUrl": "https://lotv.spawningtool.com/88881/",
+      "downloadUrl": "https://lotv.spawningtool.com/88881/download/"
+    },
+    {
+      "replayId": "88883",
+      "title": "Tokamak LE (109)",
+      "detailUrl": "https://lotv.spawningtool.com/88883/",
+      "downloadUrl": "https://lotv.spawningtool.com/88883/download/"
+    },
+    {
+      "replayId": "88884",
+      "title": "Ultralove (191)",
+      "detailUrl": "https://lotv.spawningtool.com/88884/",
+      "downloadUrl": "https://lotv.spawningtool.com/88884/download/"
+    },
+    {
+      "replayId": "88888",
+      "title": "Asimov v VEGA - Last Fantasy LE",
+      "detailUrl": "https://lotv.spawningtool.com/88888/",
+      "downloadUrl": "https://lotv.spawningtool.com/88888/download/"
+    },
+    {
+      "replayId": "88890",
+      "title": "Pylon LE (67)",
+      "detailUrl": "https://lotv.spawningtool.com/88890/",
+      "downloadUrl": "https://lotv.spawningtool.com/88890/download/"
+    },
+    {
+      "replayId": "88893",
+      "title": "Pylon LE",
+      "detailUrl": "https://lotv.spawningtool.com/88893/",
+      "downloadUrl": "https://lotv.spawningtool.com/88893/download/"
+    },
+    {
+      "replayId": "88899",
+      "title": "MonstR v SilentFate - Ultralove",
+      "detailUrl": "https://lotv.spawningtool.com/88899/",
+      "downloadUrl": "https://lotv.spawningtool.com/88899/download/"
+    },
+    {
+      "replayId": "88900",
+      "title": "A.I. 1 (Very Easy) v SpeCial - Incorporeal LE",
+      "detailUrl": "https://lotv.spawningtool.com/88900/",
+      "downloadUrl": "https://lotv.spawningtool.com/88900/download/"
+    },
+    {
+      "replayId": "88901",
+      "title": "Ley Lines (253)",
+      "detailUrl": "https://lotv.spawningtool.com/88901/",
+      "downloadUrl": "https://lotv.spawningtool.com/88901/download/"
+    },
+    {
+      "replayId": "88909",
+      "title": "Taito Citadel LE",
+      "detailUrl": "https://lotv.spawningtool.com/88909/",
+      "downloadUrl": "https://lotv.spawningtool.com/88909/download/"
+    },
+    {
+      "replayId": "88910",
+      "title": "Road to Gold 3",
+      "detailUrl": "https://lotv.spawningtool.com/88910/",
+      "downloadUrl": "https://lotv.spawningtool.com/88910/download/"
+    },
+    {
+      "replayId": "88925",
+      "title": "1) TvZ riper geliony banshi",
+      "detailUrl": "https://lotv.spawningtool.com/88925/",
+      "downloadUrl": "https://lotv.spawningtool.com/88925/download/"
+    },
+    {
+      "replayId": "88938",
+      "title": "\u901f\u4e09\u6d41\u7a0b\u5b8c\u7f8e\u7248",
+      "detailUrl": "https://lotv.spawningtool.com/88938/",
+      "downloadUrl": "https://lotv.spawningtool.com/88938/download/"
+    },
+    {
+      "replayId": "88945",
+      "title": "Alcyone LE (108)",
+      "detailUrl": "https://lotv.spawningtool.com/88945/",
+      "downloadUrl": "https://lotv.spawningtool.com/88945/download/"
+    },
+    {
+      "replayId": "88947",
+      "title": "10000 Feet LE (26)",
+      "detailUrl": "https://lotv.spawningtool.com/88947/",
+      "downloadUrl": "https://lotv.spawningtool.com/88947/download/"
+    },
+    {
+      "replayId": "88948",
+      "title": "10000 Feet LE (17)",
+      "detailUrl": "https://lotv.spawningtool.com/88948/",
+      "downloadUrl": "https://lotv.spawningtool.com/88948/download/"
+    },
+    {
+      "replayId": "88949",
+      "title": "White Rabbit LE (15)",
+      "detailUrl": "https://lotv.spawningtool.com/88949/",
+      "downloadUrl": "https://lotv.spawningtool.com/88949/download/"
+    },
+    {
+      "replayId": "88950",
+      "title": "Ruby Rock LE (16)",
+      "detailUrl": "https://lotv.spawningtool.com/88950/",
+      "downloadUrl": "https://lotv.spawningtool.com/88950/download/"
+    },
+    {
+      "replayId": "88954",
+      "title": "0vsfreddy",
+      "detailUrl": "https://lotv.spawningtool.com/88954/",
+      "downloadUrl": "https://lotv.spawningtool.com/88954/download/"
+    },
+    {
+      "replayId": "88955",
+      "title": "0vsRoy",
+      "detailUrl": "https://lotv.spawningtool.com/88955/",
+      "downloadUrl": "https://lotv.spawningtool.com/88955/download/"
+    },
+    {
+      "replayId": "88956",
+      "title": "Tourmaline LE (14)",
+      "detailUrl": "https://lotv.spawningtool.com/88956/",
+      "downloadUrl": "https://lotv.spawningtool.com/88956/download/"
+    },
+    {
+      "replayId": "88958",
+      "title": "White Rabbit LE (19)",
+      "detailUrl": "https://lotv.spawningtool.com/88958/",
+      "downloadUrl": "https://lotv.spawningtool.com/88958/download/"
+    },
+    {
+      "replayId": "88961",
+      "title": "Pear Guy primary T",
+      "detailUrl": "https://lotv.spawningtool.com/88961/",
+      "downloadUrl": "https://lotv.spawningtool.com/88961/download/"
+    },
+    {
+      "replayId": "88962",
+      "title": "2025-11-29 - (Z)SortOf VS (T)donk",
+      "detailUrl": "https://lotv.spawningtool.com/88962/",
+      "downloadUrl": "https://lotv.spawningtool.com/88962/download/"
+    },
+    {
+      "replayId": "88971",
+      "title": "nico vs reynor 2port bc",
+      "detailUrl": "https://lotv.spawningtool.com/88971/",
+      "downloadUrl": "https://lotv.spawningtool.com/88971/download/"
+    },
+    {
+      "replayId": "88984",
+      "title": "Babylon LE (100)",
+      "detailUrl": "https://lotv.spawningtool.com/88984/",
+      "downloadUrl": "https://lotv.spawningtool.com/88984/download/"
+    },
+    {
+      "replayId": "88985",
+      "title": "Pylon LE (67)",
+      "detailUrl": "https://lotv.spawningtool.com/88985/",
+      "downloadUrl": "https://lotv.spawningtool.com/88985/download/"
+    },
+    {
+      "replayId": "88986",
+      "title": "1",
+      "detailUrl": "https://lotv.spawningtool.com/88986/",
+      "downloadUrl": "https://lotv.spawningtool.com/88986/download/"
+    },
+    {
+      "replayId": "88987",
+      "title": "2",
+      "detailUrl": "https://lotv.spawningtool.com/88987/",
+      "downloadUrl": "https://lotv.spawningtool.com/88987/download/"
+    },
+    {
+      "replayId": "88988",
+      "title": "3",
+      "detailUrl": "https://lotv.spawningtool.com/88988/",
+      "downloadUrl": "https://lotv.spawningtool.com/88988/download/"
+    },
+    {
+      "replayId": "89004",
+      "title": "Master HuShang TVZ Cheese 4Rax Simplified",
+      "detailUrl": "https://lotv.spawningtool.com/89004/",
+      "downloadUrl": "https://lotv.spawningtool.com/89004/download/"
+    },
+    {
+      "replayId": "89008",
+      "title": "tvz 4 hellion 1 banshee textbook (5)",
+      "detailUrl": "https://lotv.spawningtool.com/89008/",
+      "downloadUrl": "https://lotv.spawningtool.com/89008/download/"
+    },
+    {
+      "replayId": "89009",
+      "title": "tvz 4hellion 1 banshee 4medibvac timing",
+      "detailUrl": "https://lotv.spawningtool.com/89009/",
+      "downloadUrl": "https://lotv.spawningtool.com/89009/download/"
+    },
+    {
+      "replayId": "89010",
+      "title": "tvz early pool defence for studnet",
+      "detailUrl": "https://lotv.spawningtool.com/89010/",
+      "downloadUrl": "https://lotv.spawningtool.com/89010/download/"
+    },
+    {
+      "replayId": "89012",
+      "title": "1",
+      "detailUrl": "https://lotv.spawningtool.com/89012/",
+      "downloadUrl": "https://lotv.spawningtool.com/89012/download/"
+    },
+    {
+      "replayId": "89013",
+      "title": "asd",
+      "detailUrl": "https://lotv.spawningtool.com/89013/",
+      "downloadUrl": "https://lotv.spawningtool.com/89013/download/"
+    },
+    {
+      "replayId": "89017",
+      "title": "123456789012345667",
+      "detailUrl": "https://lotv.spawningtool.com/89017/",
+      "downloadUrl": "https://lotv.spawningtool.com/89017/download/"
+    },
+    {
+      "replayId": "89021",
+      "title": "Old Republic LE (7)",
+      "detailUrl": "https://lotv.spawningtool.com/89021/",
+      "downloadUrl": "https://lotv.spawningtool.com/89021/download/"
+    },
+    {
+      "replayId": "89035",
+      "title": "Winter Madness LE (22)",
+      "detailUrl": "https://lotv.spawningtool.com/89035/",
+      "downloadUrl": "https://lotv.spawningtool.com/89035/download/"
+    },
+    {
+      "replayId": "89036",
+      "title": "White Rabbit LE (12)",
+      "detailUrl": "https://lotv.spawningtool.com/89036/",
+      "downloadUrl": "https://lotv.spawningtool.com/89036/download/"
+    },
+    {
+      "replayId": "89046",
+      "title": "KINGnaama v Temper - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89046/",
+      "downloadUrl": "https://lotv.spawningtool.com/89046/download/"
+    },
+    {
+      "replayId": "89047",
+      "title": "BroodlordRush1",
+      "detailUrl": "https://lotv.spawningtool.com/89047/",
+      "downloadUrl": "https://lotv.spawningtool.com/89047/download/"
+    },
+    {
+      "replayId": "89053",
+      "title": "2025-08-19 - (Z)Lambo VS (T)Nicoract",
+      "detailUrl": "https://lotv.spawningtool.com/89053/",
+      "downloadUrl": "https://lotv.spawningtool.com/89053/download/"
+    },
+    {
+      "replayId": "89056",
+      "title": "SC2 zerg build order",
+      "detailUrl": "https://lotv.spawningtool.com/89056/",
+      "downloadUrl": "https://lotv.spawningtool.com/89056/download/"
+    },
+    {
+      "replayId": "89057",
+      "title": "Maru vs SHIN G2",
+      "detailUrl": "https://lotv.spawningtool.com/89057/",
+      "downloadUrl": "https://lotv.spawningtool.com/89057/download/"
+    },
+    {
+      "replayId": "89058",
+      "title": "2025-01-07 - (Z)SortOf VS (T)A.I. 1 (Easy)",
+      "detailUrl": "https://lotv.spawningtool.com/89058/",
+      "downloadUrl": "https://lotv.spawningtool.com/89058/download/"
+    },
+    {
+      "replayId": "89059",
+      "title": "fasttech",
+      "detailUrl": "https://lotv.spawningtool.com/89059/",
+      "downloadUrl": "https://lotv.spawningtool.com/89059/download/"
+    },
+    {
+      "replayId": "89060",
+      "title": "10000 Feet LE (51)",
+      "detailUrl": "https://lotv.spawningtool.com/89060/",
+      "downloadUrl": "https://lotv.spawningtool.com/89060/download/"
+    },
+    {
+      "replayId": "89061",
+      "title": "lategame",
+      "detailUrl": "https://lotv.spawningtool.com/89061/",
+      "downloadUrl": "https://lotv.spawningtool.com/89061/download/"
+    },
+    {
+      "replayId": "89068",
+      "title": "AMCHOLDER v TheCypher - 10000 Feet LE",
+      "detailUrl": "https://lotv.spawningtool.com/89068/",
+      "downloadUrl": "https://lotv.spawningtool.com/89068/download/"
+    },
+    {
+      "replayId": "89070",
+      "title": "10000 Feet LE (13)",
+      "detailUrl": "https://lotv.spawningtool.com/89070/",
+      "downloadUrl": "https://lotv.spawningtool.com/89070/download/"
+    },
+    {
+      "replayId": "89071",
+      "title": "Mothership LE (2)",
+      "detailUrl": "https://lotv.spawningtool.com/89071/",
+      "downloadUrl": "https://lotv.spawningtool.com/89071/download/"
+    },
+    {
+      "replayId": "89073",
+      "title": "Celestial Enclave LE (25)",
+      "detailUrl": "https://lotv.spawningtool.com/89073/",
+      "downloadUrl": "https://lotv.spawningtool.com/89073/download/"
+    },
+    {
+      "replayId": "89082",
+      "title": "ZvT standard",
+      "detailUrl": "https://lotv.spawningtool.com/89082/",
+      "downloadUrl": "https://lotv.spawningtool.com/89082/download/"
+    },
+    {
+      "replayId": "89085",
+      "title": "Maru vs SHIN G4",
+      "detailUrl": "https://lotv.spawningtool.com/89085/",
+      "downloadUrl": "https://lotv.spawningtool.com/89085/download/"
+    },
+    {
+      "replayId": "89094",
+      "title": "TvZ Classic 2-1-1",
+      "detailUrl": "https://lotv.spawningtool.com/89094/",
+      "downloadUrl": "https://lotv.spawningtool.com/89094/download/"
+    },
+    {
+      "replayId": "89095",
+      "title": "TvZ 3CC 2-1-1",
+      "detailUrl": "https://lotv.spawningtool.com/89095/",
+      "downloadUrl": "https://lotv.spawningtool.com/89095/download/"
+    },
+    {
+      "replayId": "89096",
+      "title": "TvZ 3CC Hellion-Banshee",
+      "detailUrl": "https://lotv.spawningtool.com/89096/",
+      "downloadUrl": "https://lotv.spawningtool.com/89096/download/"
+    },
+    {
+      "replayId": "89097",
+      "title": "TvZ Proxy 3 Rax",
+      "detailUrl": "https://lotv.spawningtool.com/89097/",
+      "downloadUrl": "https://lotv.spawningtool.com/89097/download/"
+    },
+    {
+      "replayId": "89127",
+      "title": "Neuro v Ruff",
+      "detailUrl": "https://lotv.spawningtool.com/89127/",
+      "downloadUrl": "https://lotv.spawningtool.com/89127/download/"
+    },
+    {
+      "replayId": "89136",
+      "title": "3\uc0ac\uc2e02\uc5fc\ucc28",
+      "detailUrl": "https://lotv.spawningtool.com/89136/",
+      "downloadUrl": "https://lotv.spawningtool.com/89136/download/"
+    },
+    {
+      "replayId": "89141",
+      "title": "Tourmaline LE (6)",
+      "detailUrl": "https://lotv.spawningtool.com/89141/",
+      "downloadUrl": "https://lotv.spawningtool.com/89141/download/"
+    },
+    {
+      "replayId": "89142",
+      "title": "10000 Feet LE (18)",
+      "detailUrl": "https://lotv.spawningtool.com/89142/",
+      "downloadUrl": "https://lotv.spawningtool.com/89142/download/"
+    },
+    {
+      "replayId": "89157",
+      "title": "Tourmaline LE (9)",
+      "detailUrl": "https://lotv.spawningtool.com/89157/",
+      "downloadUrl": "https://lotv.spawningtool.com/89157/download/"
+    },
+    {
+      "replayId": "89159",
+      "title": "ZvT Ling Bane into Ultra 2",
+      "detailUrl": "https://lotv.spawningtool.com/89159/",
+      "downloadUrl": "https://lotv.spawningtool.com/89159/download/"
+    },
+    {
+      "replayId": "89169",
+      "title": "2026-01-16 - (Z)printf VS (T)dant",
+      "detailUrl": "https://lotv.spawningtool.com/89169/",
+      "downloadUrl": "https://lotv.spawningtool.com/89169/download/"
+    },
+    {
+      "replayId": "89171",
+      "title": "Tourmaline LE (4)",
+      "detailUrl": "https://lotv.spawningtool.com/89171/",
+      "downloadUrl": "https://lotv.spawningtool.com/89171/download/"
+    },
+    {
+      "replayId": "89172",
+      "title": "replay 1",
+      "detailUrl": "https://lotv.spawningtool.com/89172/",
+      "downloadUrl": "https://lotv.spawningtool.com/89172/download/"
+    },
+    {
+      "replayId": "89175",
+      "title": "drg(w) vs mma g1 ruby rock",
+      "detailUrl": "https://lotv.spawningtool.com/89175/",
+      "downloadUrl": "https://lotv.spawningtool.com/89175/download/"
+    },
+    {
+      "replayId": "89176",
+      "title": "drg(w) vs mma g2 winter madness",
+      "detailUrl": "https://lotv.spawningtool.com/89176/",
+      "downloadUrl": "https://lotv.spawningtool.com/89176/download/"
+    },
+    {
+      "replayId": "89177",
+      "title": "inno(w) vs soo g1 ruby rock",
+      "detailUrl": "https://lotv.spawningtool.com/89177/",
+      "downloadUrl": "https://lotv.spawningtool.com/89177/download/"
+    },
+    {
+      "replayId": "89178",
+      "title": "inno(w) vs soo g2 tourmaline",
+      "detailUrl": "https://lotv.spawningtool.com/89178/",
+      "downloadUrl": "https://lotv.spawningtool.com/89178/download/"
+    },
+    {
+      "replayId": "89179",
+      "title": "rogue(w) vs oliveira g1 ruby rock",
+      "detailUrl": "https://lotv.spawningtool.com/89179/",
+      "downloadUrl": "https://lotv.spawningtool.com/89179/download/"
+    },
+    {
+      "replayId": "89180",
+      "title": "rogue(w) vs oliveira g2 celestial enclave",
+      "detailUrl": "https://lotv.spawningtool.com/89180/",
+      "downloadUrl": "https://lotv.spawningtool.com/89180/download/"
+    },
+    {
+      "replayId": "89201",
+      "title": "reynor vs clem(w) g2 old republic",
+      "detailUrl": "https://lotv.spawningtool.com/89201/",
+      "downloadUrl": "https://lotv.spawningtool.com/89201/download/"
+    },
+    {
+      "replayId": "89202",
+      "title": "reynor vs clem(w) g3 10000 feet",
+      "detailUrl": "https://lotv.spawningtool.com/89202/",
+      "downloadUrl": "https://lotv.spawningtool.com/89202/download/"
+    },
+    {
+      "replayId": "89203",
+      "title": "reynor vs maru(w) g1 tourmaline",
+      "detailUrl": "https://lotv.spawningtool.com/89203/",
+      "downloadUrl": "https://lotv.spawningtool.com/89203/download/"
+    },
+    {
+      "replayId": "89204",
+      "title": "reynor(w) vs clem g1 ruby rock",
+      "detailUrl": "https://lotv.spawningtool.com/89204/",
+      "downloadUrl": "https://lotv.spawningtool.com/89204/download/"
+    },
+    {
+      "replayId": "89205",
+      "title": "reynor(w) vs clem g4 winter madness",
+      "detailUrl": "https://lotv.spawningtool.com/89205/",
+      "downloadUrl": "https://lotv.spawningtool.com/89205/download/"
+    },
+    {
+      "replayId": "89206",
+      "title": "reynor(w) vs clem g5 mothership",
+      "detailUrl": "https://lotv.spawningtool.com/89206/",
+      "downloadUrl": "https://lotv.spawningtool.com/89206/download/"
+    },
+    {
+      "replayId": "89207",
+      "title": "reynor(w) vs maru g2 taito citadel",
+      "detailUrl": "https://lotv.spawningtool.com/89207/",
+      "downloadUrl": "https://lotv.spawningtool.com/89207/download/"
+    },
+    {
+      "replayId": "89208",
+      "title": "reynor(w) vs maru g3 white rabbit",
+      "detailUrl": "https://lotv.spawningtool.com/89208/",
+      "downloadUrl": "https://lotv.spawningtool.com/89208/download/"
+    },
+    {
+      "replayId": "89209",
+      "title": "reynor(w) vs maru g5 winter madness",
+      "detailUrl": "https://lotv.spawningtool.com/89209/",
+      "downloadUrl": "https://lotv.spawningtool.com/89209/download/"
+    },
+    {
+      "replayId": "89210",
+      "title": "reynow vs maru(w) g4 ruby rock",
+      "detailUrl": "https://lotv.spawningtool.com/89210/",
+      "downloadUrl": "https://lotv.spawningtool.com/89210/download/"
+    },
+    {
+      "replayId": "89211",
+      "title": "solar(w) vs cure g1 mothership",
+      "detailUrl": "https://lotv.spawningtool.com/89211/",
+      "downloadUrl": "https://lotv.spawningtool.com/89211/download/"
+    },
+    {
+      "replayId": "89212",
+      "title": "solar(w) vs cure g2 old republic",
+      "detailUrl": "https://lotv.spawningtool.com/89212/",
+      "downloadUrl": "https://lotv.spawningtool.com/89212/download/"
+    },
+    {
+      "replayId": "89213",
+      "title": "solar(w) vs cure g3 white rabbit",
+      "detailUrl": "https://lotv.spawningtool.com/89213/",
+      "downloadUrl": "https://lotv.spawningtool.com/89213/download/"
+    },
+    {
+      "replayId": "89217",
+      "title": "LiquidClem v Reynor: Game 6 - Persephone LE",
+      "detailUrl": "https://lotv.spawningtool.com/89217/",
+      "downloadUrl": "https://lotv.spawningtool.com/89217/download/"
+    },
+    {
+      "replayId": "89218",
+      "title": "LiquidClem v Reynor: Game 8 - Tokamak LE",
+      "detailUrl": "https://lotv.spawningtool.com/89218/",
+      "downloadUrl": "https://lotv.spawningtool.com/89218/download/"
+    },
+    {
+      "replayId": "89219",
+      "title": "LiquidClem v Reynor: Game 7 - Torches LE",
+      "detailUrl": "https://lotv.spawningtool.com/89219/",
+      "downloadUrl": "https://lotv.spawningtool.com/89219/download/"
+    },
+    {
+      "replayId": "89220",
+      "title": "LiquidClem v Reynor: Game 4 - Incorporeal LE",
+      "detailUrl": "https://lotv.spawningtool.com/89220/",
+      "downloadUrl": "https://lotv.spawningtool.com/89220/download/"
+    },
+    {
+      "replayId": "89221",
+      "title": "LiquidClem v Reynor: Game 10 - Magannatha LE",
+      "detailUrl": "https://lotv.spawningtool.com/89221/",
+      "downloadUrl": "https://lotv.spawningtool.com/89221/download/"
+    },
+    {
+      "replayId": "89222",
+      "title": "LiquidClem v Reynor: Game 9 - Ley Lines",
+      "detailUrl": "https://lotv.spawningtool.com/89222/",
+      "downloadUrl": "https://lotv.spawningtool.com/89222/download/"
+    },
+    {
+      "replayId": "89223",
+      "title": "Lambo v LiquidClem: Game 3 - Magannatha LE",
+      "detailUrl": "https://lotv.spawningtool.com/89223/",
+      "downloadUrl": "https://lotv.spawningtool.com/89223/download/"
+    },
+    {
+      "replayId": "89224",
+      "title": "Lambo v LiquidClem: Game 2 - Ultralove",
+      "detailUrl": "https://lotv.spawningtool.com/89224/",
+      "downloadUrl": "https://lotv.spawningtool.com/89224/download/"
+    },
+    {
+      "replayId": "89225",
+      "title": "Lambo v LiquidClem: Game 1 - Tokamak LE",
+      "detailUrl": "https://lotv.spawningtool.com/89225/",
+      "downloadUrl": "https://lotv.spawningtool.com/89225/download/"
+    },
+    {
+      "replayId": "89237",
+      "title": "LiquidElazer v Remarcable: Game 3 - Tokamak LE",
+      "detailUrl": "https://lotv.spawningtool.com/89237/",
+      "downloadUrl": "https://lotv.spawningtool.com/89237/download/"
+    },
+    {
+      "replayId": "89238",
+      "title": "LiquidElazer v Remarcable: Game 2 - Ley Lines",
+      "detailUrl": "https://lotv.spawningtool.com/89238/",
+      "downloadUrl": "https://lotv.spawningtool.com/89238/download/"
+    },
+    {
+      "replayId": "89239",
+      "title": "LiquidElazer v Remarcable: Game 1 - Persephone LE",
+      "detailUrl": "https://lotv.spawningtool.com/89239/",
+      "downloadUrl": "https://lotv.spawningtool.com/89239/download/"
+    },
+    {
+      "replayId": "89277",
+      "title": "LiquidClem v Reynor: Game 3 - Torches LE",
+      "detailUrl": "https://lotv.spawningtool.com/89277/",
+      "downloadUrl": "https://lotv.spawningtool.com/89277/download/"
+    },
+    {
+      "replayId": "89278",
+      "title": "LiquidClem v Reynor: Game 2 - Persephone LE",
+      "detailUrl": "https://lotv.spawningtool.com/89278/",
+      "downloadUrl": "https://lotv.spawningtool.com/89278/download/"
+    },
+    {
+      "replayId": "89279",
+      "title": "LiquidClem v Reynor: Game 1 - Ultralove",
+      "detailUrl": "https://lotv.spawningtool.com/89279/",
+      "downloadUrl": "https://lotv.spawningtool.com/89279/download/"
+    },
+    {
+      "replayId": "89290",
+      "title": "Hangover v Sindyr - 10000 Feet LE",
+      "detailUrl": "https://lotv.spawningtool.com/89290/",
+      "downloadUrl": "https://lotv.spawningtool.com/89290/download/"
+    },
+    {
+      "replayId": "89292",
+      "title": "Ritosan v Sindyr - 10000 Feet LE",
+      "detailUrl": "https://lotv.spawningtool.com/89292/",
+      "downloadUrl": "https://lotv.spawningtool.com/89292/download/"
+    },
+    {
+      "replayId": "89295",
+      "title": "bot v Sindyr - 10000 Feet LE",
+      "detailUrl": "https://lotv.spawningtool.com/89295/",
+      "downloadUrl": "https://lotv.spawningtool.com/89295/download/"
+    },
+    {
+      "replayId": "89296",
+      "title": "A.I. 1 (Medium) v Sindyr - 16-Bit LE",
+      "detailUrl": "https://lotv.spawningtool.com/89296/",
+      "downloadUrl": "https://lotv.spawningtool.com/89296/download/"
+    },
+    {
+      "replayId": "89298",
+      "title": "NomaD v Sindyr - Celestial Enclave LE",
+      "detailUrl": "https://lotv.spawningtool.com/89298/",
+      "downloadUrl": "https://lotv.spawningtool.com/89298/download/"
+    },
+    {
+      "replayId": "89310",
+      "title": "aTaN v Sindyr - Incorporeal LE",
+      "detailUrl": "https://lotv.spawningtool.com/89310/",
+      "downloadUrl": "https://lotv.spawningtool.com/89310/download/"
+    },
+    {
+      "replayId": "89315",
+      "title": "RAFFENG v Sindyr - Incorporeal LE",
+      "detailUrl": "https://lotv.spawningtool.com/89315/",
+      "downloadUrl": "https://lotv.spawningtool.com/89315/download/"
+    },
+    {
+      "replayId": "89327",
+      "title": "Sindyr v vrezus - Last Fantasy LE",
+      "detailUrl": "https://lotv.spawningtool.com/89327/",
+      "downloadUrl": "https://lotv.spawningtool.com/89327/download/"
+    },
+    {
+      "replayId": "89328",
+      "title": "MinTrip v Sindyr - Ley Lines",
+      "detailUrl": "https://lotv.spawningtool.com/89328/",
+      "downloadUrl": "https://lotv.spawningtool.com/89328/download/"
+    },
+    {
+      "replayId": "89329",
+      "title": "Battlestar v Sindyr - Ley Lines",
+      "detailUrl": "https://lotv.spawningtool.com/89329/",
+      "downloadUrl": "https://lotv.spawningtool.com/89329/download/"
+    },
+    {
+      "replayId": "89330",
+      "title": "asdffak v Sindyr - Ley Lines",
+      "detailUrl": "https://lotv.spawningtool.com/89330/",
+      "downloadUrl": "https://lotv.spawningtool.com/89330/download/"
+    },
+    {
+      "replayId": "89331",
+      "title": "bill v Sindyr - Ley Lines",
+      "detailUrl": "https://lotv.spawningtool.com/89331/",
+      "downloadUrl": "https://lotv.spawningtool.com/89331/download/"
+    },
+    {
+      "replayId": "89333",
+      "title": "Sindyr v tiotiwi - Ley Lines",
+      "detailUrl": "https://lotv.spawningtool.com/89333/",
+      "downloadUrl": "https://lotv.spawningtool.com/89333/download/"
+    },
+    {
+      "replayId": "89335",
+      "title": "NeverFoldxx v Sindyr - Ley Lines",
+      "detailUrl": "https://lotv.spawningtool.com/89335/",
+      "downloadUrl": "https://lotv.spawningtool.com/89335/download/"
+    },
+    {
+      "replayId": "89336",
+      "title": "Iiililliilli v Sindyr - Ley Lines",
+      "detailUrl": "https://lotv.spawningtool.com/89336/",
+      "downloadUrl": "https://lotv.spawningtool.com/89336/download/"
+    },
+    {
+      "replayId": "89337",
+      "title": "legend v Sindyr - Ley Lines",
+      "detailUrl": "https://lotv.spawningtool.com/89337/",
+      "downloadUrl": "https://lotv.spawningtool.com/89337/download/"
+    },
+    {
+      "replayId": "89338",
+      "title": "Sindyr v spondishy - Ley Lines",
+      "detailUrl": "https://lotv.spawningtool.com/89338/",
+      "downloadUrl": "https://lotv.spawningtool.com/89338/download/"
+    },
+    {
+      "replayId": "89343",
+      "title": "Sindyr v zane - Magannatha LE",
+      "detailUrl": "https://lotv.spawningtool.com/89343/",
+      "downloadUrl": "https://lotv.spawningtool.com/89343/download/"
+    },
+    {
+      "replayId": "89348",
+      "title": "merias v Sindyr - Magannatha LE",
+      "detailUrl": "https://lotv.spawningtool.com/89348/",
+      "downloadUrl": "https://lotv.spawningtool.com/89348/download/"
+    },
+    {
+      "replayId": "89349",
+      "title": "JimVlad v Sindyr - Magannatha LE",
+      "detailUrl": "https://lotv.spawningtool.com/89349/",
+      "downloadUrl": "https://lotv.spawningtool.com/89349/download/"
+    },
+    {
+      "replayId": "89355",
+      "title": "Sindyr v zomeer - Magannatha LE",
+      "detailUrl": "https://lotv.spawningtool.com/89355/",
+      "downloadUrl": "https://lotv.spawningtool.com/89355/download/"
+    },
+    {
+      "replayId": "89359",
+      "title": "lenota v Sindyr - Mothership LE",
+      "detailUrl": "https://lotv.spawningtool.com/89359/",
+      "downloadUrl": "https://lotv.spawningtool.com/89359/download/"
+    },
+    {
+      "replayId": "89360",
+      "title": "romanama v Sindyr - Mothership LE",
+      "detailUrl": "https://lotv.spawningtool.com/89360/",
+      "downloadUrl": "https://lotv.spawningtool.com/89360/download/"
+    },
+    {
+      "replayId": "89367",
+      "title": "Sindyr v Xstar - Persephone LE",
+      "detailUrl": "https://lotv.spawningtool.com/89367/",
+      "downloadUrl": "https://lotv.spawningtool.com/89367/download/"
+    },
+    {
+      "replayId": "89374",
+      "title": "Optimus v Sindyr - Persephone LE",
+      "detailUrl": "https://lotv.spawningtool.com/89374/",
+      "downloadUrl": "https://lotv.spawningtool.com/89374/download/"
+    },
+    {
+      "replayId": "89379",
+      "title": "Myst v Sindyr - Persephone LE",
+      "detailUrl": "https://lotv.spawningtool.com/89379/",
+      "downloadUrl": "https://lotv.spawningtool.com/89379/download/"
+    },
+    {
+      "replayId": "89383",
+      "title": "bleuz v Sindyr - Pylon LE",
+      "detailUrl": "https://lotv.spawningtool.com/89383/",
+      "downloadUrl": "https://lotv.spawningtool.com/89383/download/"
+    },
+    {
+      "replayId": "89387",
+      "title": "Foil v Sindyr - Pylon LE",
+      "detailUrl": "https://lotv.spawningtool.com/89387/",
+      "downloadUrl": "https://lotv.spawningtool.com/89387/download/"
+    },
+    {
+      "replayId": "89393",
+      "title": "ReaSonLEader v Sindyr - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89393/",
+      "downloadUrl": "https://lotv.spawningtool.com/89393/download/"
+    },
+    {
+      "replayId": "89398",
+      "title": "Sindyr v \u041b\u0435\u043e\u043d - Tokamak LE",
+      "detailUrl": "https://lotv.spawningtool.com/89398/",
+      "downloadUrl": "https://lotv.spawningtool.com/89398/download/"
+    },
+    {
+      "replayId": "89401",
+      "title": "Karanox v Sindyr - Tokamak LE",
+      "detailUrl": "https://lotv.spawningtool.com/89401/",
+      "downloadUrl": "https://lotv.spawningtool.com/89401/download/"
+    },
+    {
+      "replayId": "89403",
+      "title": "Sindyr v thespirit - Tokamak LE",
+      "detailUrl": "https://lotv.spawningtool.com/89403/",
+      "downloadUrl": "https://lotv.spawningtool.com/89403/download/"
+    },
+    {
+      "replayId": "89407",
+      "title": "JumpyWizard v Sindyr - Tokamak LE",
+      "detailUrl": "https://lotv.spawningtool.com/89407/",
+      "downloadUrl": "https://lotv.spawningtool.com/89407/download/"
+    },
+    {
+      "replayId": "89412",
+      "title": "Sindyr v tonyvegas - Torches LE",
+      "detailUrl": "https://lotv.spawningtool.com/89412/",
+      "downloadUrl": "https://lotv.spawningtool.com/89412/download/"
+    },
+    {
+      "replayId": "89416",
+      "title": "Sindyr v \u0445\u0430\u043b\u043a - Torches LE",
+      "detailUrl": "https://lotv.spawningtool.com/89416/",
+      "downloadUrl": "https://lotv.spawningtool.com/89416/download/"
+    },
+    {
+      "replayId": "89418",
+      "title": "Alex v Sindyr - Torches LE",
+      "detailUrl": "https://lotv.spawningtool.com/89418/",
+      "downloadUrl": "https://lotv.spawningtool.com/89418/download/"
+    },
+    {
+      "replayId": "89421",
+      "title": "Hof v Sindyr - Torches LE",
+      "detailUrl": "https://lotv.spawningtool.com/89421/",
+      "downloadUrl": "https://lotv.spawningtool.com/89421/download/"
+    },
+    {
+      "replayId": "89424",
+      "title": "herO v Sindyr - Tourmaline LE",
+      "detailUrl": "https://lotv.spawningtool.com/89424/",
+      "downloadUrl": "https://lotv.spawningtool.com/89424/download/"
+    },
+    {
+      "replayId": "89425",
+      "title": "Andrei v Sindyr - Tourmaline LE",
+      "detailUrl": "https://lotv.spawningtool.com/89425/",
+      "downloadUrl": "https://lotv.spawningtool.com/89425/download/"
+    },
+    {
+      "replayId": "89434",
+      "title": "Sindyr v Stegosandro - Ultralove",
+      "detailUrl": "https://lotv.spawningtool.com/89434/",
+      "downloadUrl": "https://lotv.spawningtool.com/89434/download/"
+    },
+    {
+      "replayId": "89435",
+      "title": "lllllllllll v Sindyr - Ultralove",
+      "detailUrl": "https://lotv.spawningtool.com/89435/",
+      "downloadUrl": "https://lotv.spawningtool.com/89435/download/"
+    },
+    {
+      "replayId": "89441",
+      "title": "Player 2 v Sindyr - Void Training Stage 2",
+      "detailUrl": "https://lotv.spawningtool.com/89441/",
+      "downloadUrl": "https://lotv.spawningtool.com/89441/download/"
+    },
+    {
+      "replayId": "89442",
+      "title": "invis v Sindyr - White Rabbit LE",
+      "detailUrl": "https://lotv.spawningtool.com/89442/",
+      "downloadUrl": "https://lotv.spawningtool.com/89442/download/"
+    },
+    {
+      "replayId": "89445",
+      "title": "Sindyr v Tronsey - Winter Madness LE",
+      "detailUrl": "https://lotv.spawningtool.com/89445/",
+      "downloadUrl": "https://lotv.spawningtool.com/89445/download/"
+    },
+    {
+      "replayId": "89453",
+      "title": "HeavenSDevil v llllllllllll - Tourmaline LE",
+      "detailUrl": "https://lotv.spawningtool.com/89453/",
+      "downloadUrl": "https://lotv.spawningtool.com/89453/download/"
+    },
+    {
+      "replayId": "89454",
+      "title": "Ruby Rock LE (15) (1)",
+      "detailUrl": "https://lotv.spawningtool.com/89454/",
+      "downloadUrl": "https://lotv.spawningtool.com/89454/download/"
+    },
+    {
+      "replayId": "89458",
+      "title": "2025-09-08 - (Z)Serral VS (T)Cure",
+      "detailUrl": "https://lotv.spawningtool.com/89458/",
+      "downloadUrl": "https://lotv.spawningtool.com/89458/download/"
+    },
+    {
+      "replayId": "89461",
+      "title": "10000 Feet LE",
+      "detailUrl": "https://lotv.spawningtool.com/89461/",
+      "downloadUrl": "https://lotv.spawningtool.com/89461/download/"
+    },
+    {
+      "replayId": "89472",
+      "title": "LiquidClem v Serral: Game 2 - Winter Madness LE",
+      "detailUrl": "https://lotv.spawningtool.com/89472/",
+      "downloadUrl": "https://lotv.spawningtool.com/89472/download/"
+    },
+    {
+      "replayId": "89477",
+      "title": "Special Training - TvZ - 3CC - Medivac Timing Priority",
+      "detailUrl": "https://lotv.spawningtool.com/89477/",
+      "downloadUrl": "https://lotv.spawningtool.com/89477/download/"
+    },
+    {
+      "replayId": "89505",
+      "title": "BabyMarine v Reynor: Game 1 - Winter Madness LE",
+      "detailUrl": "https://lotv.spawningtool.com/89505/",
+      "downloadUrl": "https://lotv.spawningtool.com/89505/download/"
+    },
+    {
+      "replayId": "89514",
+      "title": "BabyMarine v Reynor: Game 2 - 10000 Feet LE",
+      "detailUrl": "https://lotv.spawningtool.com/89514/",
+      "downloadUrl": "https://lotv.spawningtool.com/89514/download/"
+    },
+    {
+      "replayId": "89539",
+      "title": "Serral v VITRyung: Game 2 - Winter Madness LE",
+      "detailUrl": "https://lotv.spawningtool.com/89539/",
+      "downloadUrl": "https://lotv.spawningtool.com/89539/download/"
+    },
+    {
+      "replayId": "89542",
+      "title": "Serral v VITRyung: Game 1 - Taito Citadel LE",
+      "detailUrl": "https://lotv.spawningtool.com/89542/",
+      "downloadUrl": "https://lotv.spawningtool.com/89542/download/"
+    },
+    {
+      "replayId": "89544",
+      "title": "Kelazhur v Lambo: Game 2 - Mothership LE",
+      "detailUrl": "https://lotv.spawningtool.com/89544/",
+      "downloadUrl": "https://lotv.spawningtool.com/89544/download/"
+    },
+    {
+      "replayId": "89566",
+      "title": "Lambo v ratgameplay: Game 2 - Old Republic LE",
+      "detailUrl": "https://lotv.spawningtool.com/89566/",
+      "downloadUrl": "https://lotv.spawningtool.com/89566/download/"
+    },
+    {
+      "replayId": "89572",
+      "title": "Lambo v ratgameplay: Game 1 - Winter Madness LE",
+      "detailUrl": "https://lotv.spawningtool.com/89572/",
+      "downloadUrl": "https://lotv.spawningtool.com/89572/download/"
+    },
+    {
+      "replayId": "89574",
+      "title": "Kelazhur v Lambo: Game 1 - Tourmaline LE",
+      "detailUrl": "https://lotv.spawningtool.com/89574/",
+      "downloadUrl": "https://lotv.spawningtool.com/89574/download/"
+    },
+    {
+      "replayId": "89577",
+      "title": "Kelazhur v Lambo: Game 3 - Mothership LE",
+      "detailUrl": "https://lotv.spawningtool.com/89577/",
+      "downloadUrl": "https://lotv.spawningtool.com/89577/download/"
+    },
+    {
+      "replayId": "89580",
+      "title": "HeroMarine v Serral: Game 5 - Old Republic LE",
+      "detailUrl": "https://lotv.spawningtool.com/89580/",
+      "downloadUrl": "https://lotv.spawningtool.com/89580/download/"
+    },
+    {
+      "replayId": "89584",
+      "title": "HeroMarine v Serral: Game 2 - Winter Madness LE",
+      "detailUrl": "https://lotv.spawningtool.com/89584/",
+      "downloadUrl": "https://lotv.spawningtool.com/89584/download/"
+    },
+    {
+      "replayId": "89588",
+      "title": "HeroMarine v Serral: Game 4 - 10000 Feet LE",
+      "detailUrl": "https://lotv.spawningtool.com/89588/",
+      "downloadUrl": "https://lotv.spawningtool.com/89588/download/"
+    },
+    {
+      "replayId": "89591",
+      "title": "HeroMarine v Serral: Game 1 - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89591/",
+      "downloadUrl": "https://lotv.spawningtool.com/89591/download/"
+    },
+    {
+      "replayId": "89592",
+      "title": "HeroMarine v Serral: Game 3 - White Rabbit LE",
+      "detailUrl": "https://lotv.spawningtool.com/89592/",
+      "downloadUrl": "https://lotv.spawningtool.com/89592/download/"
+    },
+    {
+      "replayId": "89607",
+      "title": "Elazer v LiquidClem: Game 2 - 10000 Feet LE",
+      "detailUrl": "https://lotv.spawningtool.com/89607/",
+      "downloadUrl": "https://lotv.spawningtool.com/89607/download/"
+    },
+    {
+      "replayId": "89612",
+      "title": "Elazer v LiquidClem: Game 1 - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89612/",
+      "downloadUrl": "https://lotv.spawningtool.com/89612/download/"
+    },
+    {
+      "replayId": "89616",
+      "title": "Fjant v HeroMarine: Game 3 - Old Republic LE",
+      "detailUrl": "https://lotv.spawningtool.com/89616/",
+      "downloadUrl": "https://lotv.spawningtool.com/89616/download/"
+    },
+    {
+      "replayId": "89620",
+      "title": "Elazer v HeroMarine: Game 3 - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89620/",
+      "downloadUrl": "https://lotv.spawningtool.com/89620/download/"
+    },
+    {
+      "replayId": "89621",
+      "title": "Elazer v HeroMarine: Game 1 - White Rabbit LE",
+      "detailUrl": "https://lotv.spawningtool.com/89621/",
+      "downloadUrl": "https://lotv.spawningtool.com/89621/download/"
+    },
+    {
+      "replayId": "89625",
+      "title": "Elazer v HeroMarine: Game 2 - Winter Madness LE",
+      "detailUrl": "https://lotv.spawningtool.com/89625/",
+      "downloadUrl": "https://lotv.spawningtool.com/89625/download/"
+    },
+    {
+      "replayId": "89630",
+      "title": "Fjant v HeroMarine: Game 2 - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89630/",
+      "downloadUrl": "https://lotv.spawningtool.com/89630/download/"
+    },
+    {
+      "replayId": "89631",
+      "title": "Lambo v LiquidClem: Game 2 - Tourmaline LE",
+      "detailUrl": "https://lotv.spawningtool.com/89631/",
+      "downloadUrl": "https://lotv.spawningtool.com/89631/download/"
+    },
+    {
+      "replayId": "89632",
+      "title": "LiquidClem v Serral: Game 3 - Tourmaline LE",
+      "detailUrl": "https://lotv.spawningtool.com/89632/",
+      "downloadUrl": "https://lotv.spawningtool.com/89632/download/"
+    },
+    {
+      "replayId": "89634",
+      "title": "Fjant v HeroMarine: Game 1 - 10000 Feet LE",
+      "detailUrl": "https://lotv.spawningtool.com/89634/",
+      "downloadUrl": "https://lotv.spawningtool.com/89634/download/"
+    },
+    {
+      "replayId": "89635",
+      "title": "Fjant v LiquidClem: Game 1 - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89635/",
+      "downloadUrl": "https://lotv.spawningtool.com/89635/download/"
+    },
+    {
+      "replayId": "89637",
+      "title": "Lambo v LiquidClem: Game 3 - 10000 Feet LE",
+      "detailUrl": "https://lotv.spawningtool.com/89637/",
+      "downloadUrl": "https://lotv.spawningtool.com/89637/download/"
+    },
+    {
+      "replayId": "89641",
+      "title": "LiquidClem v Serral: Game 1 - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89641/",
+      "downloadUrl": "https://lotv.spawningtool.com/89641/download/"
+    },
+    {
+      "replayId": "89642",
+      "title": "Lambo v LiquidClem: Game 1 - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89642/",
+      "downloadUrl": "https://lotv.spawningtool.com/89642/download/"
+    },
+    {
+      "replayId": "89650",
+      "title": "Fjant v LiquidClem: Game 2 - 10000 Feet LE",
+      "detailUrl": "https://lotv.spawningtool.com/89650/",
+      "downloadUrl": "https://lotv.spawningtool.com/89650/download/"
+    },
+    {
+      "replayId": "89660",
+      "title": "Celestial Enclave LE (7)",
+      "detailUrl": "https://lotv.spawningtool.com/89660/",
+      "downloadUrl": "https://lotv.spawningtool.com/89660/download/"
+    },
+    {
+      "replayId": "89661",
+      "title": "Mothership LE (9)",
+      "detailUrl": "https://lotv.spawningtool.com/89661/",
+      "downloadUrl": "https://lotv.spawningtool.com/89661/download/"
+    },
+    {
+      "replayId": "89662",
+      "title": "10000 Feet LE (106)",
+      "detailUrl": "https://lotv.spawningtool.com/89662/",
+      "downloadUrl": "https://lotv.spawningtool.com/89662/download/"
+    },
+    {
+      "replayId": "89663",
+      "title": "22 drone ling bane",
+      "detailUrl": "https://lotv.spawningtool.com/89663/",
+      "downloadUrl": "https://lotv.spawningtool.com/89663/download/"
+    },
+    {
+      "replayId": "89664",
+      "title": "10000 Feet LE (108)",
+      "detailUrl": "https://lotv.spawningtool.com/89664/",
+      "downloadUrl": "https://lotv.spawningtool.com/89664/download/"
+    },
+    {
+      "replayId": "89665",
+      "title": "A.I. 1 (Very Easy) v Cypem - Winter Madness LE",
+      "detailUrl": "https://lotv.spawningtool.com/89665/",
+      "downloadUrl": "https://lotv.spawningtool.com/89665/download/"
+    },
+    {
+      "replayId": "89674",
+      "title": "#5 ZvT 16 Hatch Advanced Macro Pure Ling Bane (for M2 and higher)",
+      "detailUrl": "https://lotv.spawningtool.com/89674/",
+      "downloadUrl": "https://lotv.spawningtool.com/89674/download/"
+    },
+    {
+      "replayId": "89675",
+      "title": "#6 ZvT 16 Hatch Macro Ling Bane 8 Queens Style (for M3 and Lower)",
+      "detailUrl": "https://lotv.spawningtool.com/89675/",
+      "downloadUrl": "https://lotv.spawningtool.com/89675/download/"
+    },
+    {
+      "replayId": "89676",
+      "title": "#8 ZvT 15 Hatch Roach Ravager 8mins Max out Timing Attack",
+      "detailUrl": "https://lotv.spawningtool.com/89676/",
+      "downloadUrl": "https://lotv.spawningtool.com/89676/download/"
+    },
+    {
+      "replayId": "89685",
+      "title": "MOSCOW v SCIInewby - 10000 Feet LE",
+      "detailUrl": "https://lotv.spawningtool.com/89685/",
+      "downloadUrl": "https://lotv.spawningtool.com/89685/download/"
+    },
+    {
+      "replayId": "89694",
+      "title": "LukaDragon v SCIInewby - Celestial Enclave LE",
+      "detailUrl": "https://lotv.spawningtool.com/89694/",
+      "downloadUrl": "https://lotv.spawningtool.com/89694/download/"
+    },
+    {
+      "replayId": "89720",
+      "title": "PeCkAtSwE v SCIInewby - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89720/",
+      "downloadUrl": "https://lotv.spawningtool.com/89720/download/"
+    },
+    {
+      "replayId": "89721",
+      "title": "pershow v SCIInewby - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89721/",
+      "downloadUrl": "https://lotv.spawningtool.com/89721/download/"
+    },
+    {
+      "replayId": "89727",
+      "title": "NaVa v SCIInewby - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89727/",
+      "downloadUrl": "https://lotv.spawningtool.com/89727/download/"
+    },
+    {
+      "replayId": "89730",
+      "title": "Paul v SCIInewby - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89730/",
+      "downloadUrl": "https://lotv.spawningtool.com/89730/download/"
+    },
+    {
+      "replayId": "89739",
+      "title": "Anov v SCIInewby - Taito Citadel LE",
+      "detailUrl": "https://lotv.spawningtool.com/89739/",
+      "downloadUrl": "https://lotv.spawningtool.com/89739/download/"
+    },
+    {
+      "replayId": "89743",
+      "title": "SCIInewby v Sensai - Taito Citadel LE",
+      "detailUrl": "https://lotv.spawningtool.com/89743/",
+      "downloadUrl": "https://lotv.spawningtool.com/89743/download/"
+    },
+    {
+      "replayId": "89752",
+      "title": "LukaDragon v SCIInewby - Tourmaline LE",
+      "detailUrl": "https://lotv.spawningtool.com/89752/",
+      "downloadUrl": "https://lotv.spawningtool.com/89752/download/"
+    },
+    {
+      "replayId": "89763",
+      "title": "BlueYeti v SCIInewby - White Rabbit LE",
+      "detailUrl": "https://lotv.spawningtool.com/89763/",
+      "downloadUrl": "https://lotv.spawningtool.com/89763/download/"
+    },
+    {
+      "replayId": "89778",
+      "title": "Celestial Enclave LE (11)",
+      "detailUrl": "https://lotv.spawningtool.com/89778/",
+      "downloadUrl": "https://lotv.spawningtool.com/89778/download/"
+    },
+    {
+      "replayId": "89783",
+      "title": "Mothership LE (11)",
+      "detailUrl": "https://lotv.spawningtool.com/89783/",
+      "downloadUrl": "https://lotv.spawningtool.com/89783/download/"
+    },
+    {
+      "replayId": "89784",
+      "title": "Mothership LE (12)",
+      "detailUrl": "https://lotv.spawningtool.com/89784/",
+      "downloadUrl": "https://lotv.spawningtool.com/89784/download/"
+    },
+    {
+      "replayId": "89786",
+      "title": "Old Republic LE (13)",
+      "detailUrl": "https://lotv.spawningtool.com/89786/",
+      "downloadUrl": "https://lotv.spawningtool.com/89786/download/"
+    },
+    {
+      "replayId": "89790",
+      "title": "Taito Citadel LE (14)",
+      "detailUrl": "https://lotv.spawningtool.com/89790/",
+      "downloadUrl": "https://lotv.spawningtool.com/89790/download/"
+    },
+    {
+      "replayId": "89800",
+      "title": "Winter Madness LE (16)",
+      "detailUrl": "https://lotv.spawningtool.com/89800/",
+      "downloadUrl": "https://lotv.spawningtool.com/89800/download/"
+    },
+    {
+      "replayId": "89813",
+      "title": "Tourmaline LE (49)",
+      "detailUrl": "https://lotv.spawningtool.com/89813/",
+      "downloadUrl": "https://lotv.spawningtool.com/89813/download/"
+    },
+    {
+      "replayId": "89815",
+      "title": "10000 Feet LE (43)",
+      "detailUrl": "https://lotv.spawningtool.com/89815/",
+      "downloadUrl": "https://lotv.spawningtool.com/89815/download/"
+    },
+    {
+      "replayId": "89816",
+      "title": "10000 Feet LE (44)",
+      "detailUrl": "https://lotv.spawningtool.com/89816/",
+      "downloadUrl": "https://lotv.spawningtool.com/89816/download/"
+    },
+    {
+      "replayId": "89854",
+      "title": "TvZ 1 base ghost hellbat",
+      "detailUrl": "https://lotv.spawningtool.com/89854/",
+      "downloadUrl": "https://lotv.spawningtool.com/89854/download/"
+    },
+    {
+      "replayId": "89855",
+      "title": "tvz proper timing 3cc 4hellion 1 banshee",
+      "detailUrl": "https://lotv.spawningtool.com/89855/",
+      "downloadUrl": "https://lotv.spawningtool.com/89855/download/"
+    },
+    {
+      "replayId": "89856",
+      "title": "ter154",
+      "detailUrl": "https://lotv.spawningtool.com/89856/",
+      "downloadUrl": "https://lotv.spawningtool.com/89856/download/"
+    },
+    {
+      "replayId": "89862",
+      "title": "Winter Madness LE (85)",
+      "detailUrl": "https://lotv.spawningtool.com/89862/",
+      "downloadUrl": "https://lotv.spawningtool.com/89862/download/"
+    },
+    {
+      "replayId": "89865",
+      "title": "Ghost River LE",
+      "detailUrl": "https://lotv.spawningtool.com/89865/",
+      "downloadUrl": "https://lotv.spawningtool.com/89865/download/"
+    },
+    {
+      "replayId": "89867",
+      "title": "Goldenaura LE (3)",
+      "detailUrl": "https://lotv.spawningtool.com/89867/",
+      "downloadUrl": "https://lotv.spawningtool.com/89867/download/"
+    },
+    {
+      "replayId": "89869",
+      "title": "Crimson Court LE (2)",
+      "detailUrl": "https://lotv.spawningtool.com/89869/",
+      "downloadUrl": "https://lotv.spawningtool.com/89869/download/"
+    },
+    {
+      "replayId": "89877",
+      "title": "Dynasty LE",
+      "detailUrl": "https://lotv.spawningtool.com/89877/",
+      "downloadUrl": "https://lotv.spawningtool.com/89877/download/"
+    },
+    {
+      "replayId": "89879",
+      "title": "Goldenaura LE (4)",
+      "detailUrl": "https://lotv.spawningtool.com/89879/",
+      "downloadUrl": "https://lotv.spawningtool.com/89879/download/"
+    },
+    {
+      "replayId": "89882",
+      "title": "[EWC] Alcyone",
+      "detailUrl": "https://lotv.spawningtool.com/89882/",
+      "downloadUrl": "https://lotv.spawningtool.com/89882/download/"
+    },
+    {
+      "replayId": "89883",
+      "title": "Taito Citadel LE (3)",
+      "detailUrl": "https://lotv.spawningtool.com/89883/",
+      "downloadUrl": "https://lotv.spawningtool.com/89883/download/"
+    },
+    {
+      "replayId": "89885",
+      "title": "Tourmaline LE (116)",
+      "detailUrl": "https://lotv.spawningtool.com/89885/",
+      "downloadUrl": "https://lotv.spawningtool.com/89885/download/"
+    },
+    {
+      "replayId": "89887",
+      "title": "zzz",
+      "detailUrl": "https://lotv.spawningtool.com/89887/",
+      "downloadUrl": "https://lotv.spawningtool.com/89887/download/"
+    },
+    {
+      "replayId": "89925",
+      "title": "Battlecruiser rush",
+      "detailUrl": "https://lotv.spawningtool.com/89925/",
+      "downloadUrl": "https://lotv.spawningtool.com/89925/download/"
+    },
+    {
+      "replayId": "89931",
+      "title": "Hellbat Rush",
+      "detailUrl": "https://lotv.spawningtool.com/89931/",
+      "downloadUrl": "https://lotv.spawningtool.com/89931/download/"
+    },
+    {
+      "replayId": "89959",
+      "title": "TvZ Begginer",
+      "detailUrl": "https://lotv.spawningtool.com/89959/",
+      "downloadUrl": "https://lotv.spawningtool.com/89959/download/"
+    },
+    {
+      "replayId": "89960",
+      "title": "10000 Feet LE (2)",
+      "detailUrl": "https://lotv.spawningtool.com/89960/",
+      "downloadUrl": "https://lotv.spawningtool.com/89960/download/"
+    },
+    {
+      "replayId": "89962",
+      "title": "2026-03-31 - (T)CptFluffy VS (Z)DeadDumble",
+      "detailUrl": "https://lotv.spawningtool.com/89962/",
+      "downloadUrl": "https://lotv.spawningtool.com/89962/download/"
+    },
+    {
+      "replayId": "89968",
+      "title": "10000 Feet LE (27)",
+      "detailUrl": "https://lotv.spawningtool.com/89968/",
+      "downloadUrl": "https://lotv.spawningtool.com/89968/download/"
+    },
+    {
+      "replayId": "89974",
+      "title": "2026-04-03 - (Z)SortOf,(T)A.I. 1 (Very Easy)",
+      "detailUrl": "https://lotv.spawningtool.com/89974/",
+      "downloadUrl": "https://lotv.spawningtool.com/89974/download/"
+    },
+    {
+      "replayId": "89975",
+      "title": "IIIIIIII v zzzlife - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89975/",
+      "downloadUrl": "https://lotv.spawningtool.com/89975/download/"
+    },
+    {
+      "replayId": "89980",
+      "title": "Tourmaline LE (567)",
+      "detailUrl": "https://lotv.spawningtool.com/89980/",
+      "downloadUrl": "https://lotv.spawningtool.com/89980/download/"
+    },
+    {
+      "replayId": "89982",
+      "title": "10000 Feet LE (14)",
+      "detailUrl": "https://lotv.spawningtool.com/89982/",
+      "downloadUrl": "https://lotv.spawningtool.com/89982/download/"
+    }
+  ]
+}

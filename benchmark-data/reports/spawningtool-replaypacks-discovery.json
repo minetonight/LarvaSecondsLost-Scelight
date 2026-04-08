@@ -1,0 +1,276 @@
+{
+  "schemaVersion": "epic13-internet-sources-v1",
+  "generatedAt": "2026-04-07T10:25:51Z",
+  "sourceKind": "spawningtool-replaypacks",
+  "pageUrl": "https://lotv.spawningtool.com/replaypacks/",
+  "contentType": "text/html; charset=utf-8",
+  "packList": [
+    {
+      "label": "HomeStory Cup XXVIII",
+      "sourceUrl": "https://drive.google.com/drive/folders/1FjGpYfSrMAwFnAQStWFYF6QQUyQyPwtX",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-folder",
+      "folderId": "1FjGpYfSrMAwFnAQStWFYF6QQUyQyPwtX",
+      "directDownloadUrl": null,
+      "note": "Folder links usually need manual review or external Drive tooling."
+    },
+    {
+      "label": "FEL Cracow 2025",
+      "sourceUrl": "https://drive.google.com/file/d/1Bu5OwUjiPvAXYZuVmkOrq7d_A2WxwNrr/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1Bu5OwUjiPvAXYZuVmkOrq7d_A2WxwNrr",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1Bu5OwUjiPvAXYZuVmkOrq7d_A2WxwNrr"
+    },
+    {
+      "label": "Esports World Cup 2025",
+      "sourceUrl": "https://drive.google.com/file/d/1UhMpPlTQDB78j_afLoCTATkFDWjq7SoQ/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1UhMpPlTQDB78j_afLoCTATkFDWjq7SoQ",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1UhMpPlTQDB78j_afLoCTATkFDWjq7SoQ"
+    },
+    {
+      "label": "HomeStory Cup XXVII",
+      "sourceUrl": "https://drive.google.com/drive/folders/1kDCbcPtj7NGB0M8oGvgHGgT0n_vXaLsa",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-folder",
+      "folderId": "1kDCbcPtj7NGB0M8oGvgHGgT0n_vXaLsa",
+      "directDownloadUrl": null,
+      "note": "Folder links usually need manual review or external Drive tooling."
+    },
+    {
+      "label": "DreamHack Dallas 2025",
+      "sourceUrl": "https://drive.google.com/file/d/1am1m7Ny5pdVjnet-JbHc4MBybAtBckpE/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1am1m7Ny5pdVjnet-JbHc4MBybAtBckpE",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1am1m7Ny5pdVjnet-JbHc4MBybAtBckpE"
+    },
+    {
+      "label": "HomeStory Cup XXVI",
+      "sourceUrl": "https://drive.google.com/drive/folders/1ZQc4HWu645aGU0RjLYGfqqrr6FkKNFtG",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-folder",
+      "folderId": "1ZQc4HWu645aGU0RjLYGfqqrr6FkKNFtG",
+      "directDownloadUrl": null,
+      "note": "Folder links usually need manual review or external Drive tooling."
+    },
+    {
+      "label": "Bellum Gens Elite Stara Zagora 2024",
+      "sourceUrl": "https://drive.google.com/file/d/1IMuw9fx_ddOU56_p334b5t9e7j_o92fI/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1IMuw9fx_ddOU56_p334b5t9e7j_o92fI",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1IMuw9fx_ddOU56_p334b5t9e7j_o92fI"
+    },
+    {
+      "label": "Esports World Cup 2024",
+      "sourceUrl": "https://drive.google.com/file/d/1LTDzV7UyFFERmySD9nqFT21cg-gIrZUx/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1LTDzV7UyFFERmySD9nqFT21cg-gIrZUx",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1LTDzV7UyFFERmySD9nqFT21cg-gIrZUx"
+    },
+    {
+      "label": "ESL SC2 Masters 2024 Spring (Finals)",
+      "sourceUrl": "https://drive.google.com/file/d/17_gw4BvZIHei_Ok0n0J-2fjM_mkvofBZ/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "17_gw4BvZIHei_Ok0n0J-2fjM_mkvofBZ",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=17_gw4BvZIHei_Ok0n0J-2fjM_mkvofBZ"
+    },
+    {
+      "label": "ESL SC2 Masters 2024 Spring (Regionals)",
+      "sourceUrl": "https://drive.google.com/file/d/1Ai2_3sLDpp2M6fLcMLJICgyGUP0XomJt/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1Ai2_3sLDpp2M6fLcMLJICgyGUP0XomJt",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1Ai2_3sLDpp2M6fLcMLJICgyGUP0XomJt"
+    },
+    {
+      "label": "IEM Katowice 2024",
+      "sourceUrl": "https://drive.google.com/file/d/1_Mopn1sGftCJpGf8GM6Uaab-BWuIX6-I/view?usp=sharing",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1_Mopn1sGftCJpGf8GM6Uaab-BWuIX6-I",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1_Mopn1sGftCJpGf8GM6Uaab-BWuIX6-I"
+    },
+    {
+      "label": "ESL SC2 Masters 2023 Winter (Finals)",
+      "sourceUrl": "https://drive.google.com/file/d/1lYVp7pyhmHe7PALwztDX6xB6BmWgUuss/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1lYVp7pyhmHe7PALwztDX6xB6BmWgUuss",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1lYVp7pyhmHe7PALwztDX6xB6BmWgUuss"
+    },
+    {
+      "label": "ESL SC2 Masters 2023 Winter (Regionals)",
+      "sourceUrl": "https://drive.google.com/file/d/1JBtd3jR1xke7PvWk1b-RdjgyImBUFMXe/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1JBtd3jR1xke7PvWk1b-RdjgyImBUFMXe",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1JBtd3jR1xke7PvWk1b-RdjgyImBUFMXe"
+    },
+    {
+      "label": "HomeStory Cups XXIV",
+      "sourceUrl": "https://drive.google.com/drive/folders/11XfqNVF3XlGbCvOVeffK5kiB91512GwZ",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-folder",
+      "folderId": "11XfqNVF3XlGbCvOVeffK5kiB91512GwZ",
+      "directDownloadUrl": null,
+      "note": "Folder links usually need manual review or external Drive tooling."
+    },
+    {
+      "label": "ESL SC2 Masters 2023 Summer (Finals)",
+      "sourceUrl": "https://drive.google.com/file/d/1o-1c8VnU4Yk5qyNIfq9oRFfux-p8BDY8/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1o-1c8VnU4Yk5qyNIfq9oRFfux-p8BDY8",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1o-1c8VnU4Yk5qyNIfq9oRFfux-p8BDY8"
+    },
+    {
+      "label": "ESL SC2 Masters 2023 Summer (Regionals)",
+      "sourceUrl": "https://drive.google.com/file/d/1-BN8dlH6qlEC1KP5X67hlWgfSYjN8K0P/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1-BN8dlH6qlEC1KP5X67hlWgfSYjN8K0P",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1-BN8dlH6qlEC1KP5X67hlWgfSYjN8K0P"
+    },
+    {
+      "label": "HomeStory Cup XXIII",
+      "sourceUrl": "https://drive.google.com/drive/folders/1Gzvc28qliSrZ5xvA0r0EwEJTbA8FqJe-",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-folder",
+      "folderId": "1Gzvc28qliSrZ5xvA0r0EwEJTbA8FqJe-",
+      "directDownloadUrl": null,
+      "note": "Folder links usually need manual review or external Drive tooling."
+    },
+    {
+      "label": "IEM Katowice 2023",
+      "sourceUrl": "https://drive.google.com/file/d/1qSZ550OtA4xH-J4co0oyDS_876AO7zEW/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1qSZ550OtA4xH-J4co0oyDS_876AO7zEW",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1qSZ550OtA4xH-J4co0oyDS_876AO7zEW"
+    },
+    {
+      "label": "HomeStory Cup XXII",
+      "sourceUrl": "https://drive.google.com/drive/folders/1MWNX1ntzJxDA-4R-u7RCE1il4blS8Z_S",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-folder",
+      "folderId": "1MWNX1ntzJxDA-4R-u7RCE1il4blS8Z_S",
+      "directDownloadUrl": null,
+      "note": "Folder links usually need manual review or external Drive tooling."
+    },
+    {
+      "label": "DreamHack SC2 Masters 2022 Atlanta",
+      "sourceUrl": "https://drive.google.com/file/d/1o6BWaBry8ip53TZL17GmOYfej_nrZGmj/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1o6BWaBry8ip53TZL17GmOYfej_nrZGmj",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1o6BWaBry8ip53TZL17GmOYfej_nrZGmj"
+    },
+    {
+      "label": "HomeStory Cup XXI",
+      "sourceUrl": "https://drive.google.com/drive/folders/13zGQz6Ln-8yfSuBsBqSt9ukmP3JrjJ6_?usp=sharing",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-folder",
+      "folderId": "13zGQz6Ln-8yfSuBsBqSt9ukmP3JrjJ6_",
+      "directDownloadUrl": null,
+      "note": "Folder links usually need manual review or external Drive tooling."
+    },
+    {
+      "label": "Stay At Home Story Cup #4",
+      "sourceUrl": "https://drive.google.com/drive/folders/1nKCZOagxHMgUpV7BefmjRVN0Ib-qoOs3",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-folder",
+      "folderId": "1nKCZOagxHMgUpV7BefmjRVN0Ib-qoOs3",
+      "directDownloadUrl": null,
+      "note": "Folder links usually need manual review or external Drive tooling."
+    },
+    {
+      "label": "DreamHack SC2 Masters 2021 Fall",
+      "sourceUrl": "https://drive.google.com/file/d/12oEtS0tzMhSFZ3GYKV53z9v57jmF0Fay/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "12oEtS0tzMhSFZ3GYKV53z9v57jmF0Fay",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=12oEtS0tzMhSFZ3GYKV53z9v57jmF0Fay"
+    },
+    {
+      "label": "DreamHack SC2 Masters 2021 Summer",
+      "sourceUrl": "https://drive.google.com/file/d/1_D55iqElg2dViUR1vuG7zT0J5J0W1Uzm/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1_D55iqElg2dViUR1vuG7zT0J5J0W1Uzm",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1_D55iqElg2dViUR1vuG7zT0J5J0W1Uzm"
+    },
+    {
+      "label": "Cheeseadelphia Winter Championship 2021",
+      "sourceUrl": "https://drive.google.com/file/d/161ec2R2ypcw-xw-XFFP_CMmY-SKAPJks/view?usp=sharing",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "161ec2R2ypcw-xw-XFFP_CMmY-SKAPJks",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=161ec2R2ypcw-xw-XFFP_CMmY-SKAPJks"
+    },
+    {
+      "label": "DreamHack SC2 Masters 2020 Winter",
+      "sourceUrl": "https://drive.google.com/file/d/1Kogx044qTreWG0ET50I0CjVD_0B7b3HC/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1Kogx044qTreWG0ET50I0CjVD_0B7b3HC",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1Kogx044qTreWG0ET50I0CjVD_0B7b3HC"
+    },
+    {
+      "label": "SEA Games 2019",
+      "sourceUrl": "https://drive.google.com/drive/folders/1ACHHQnK0l0wFffxyxMP23M5TJTrysvTX?usp=sharing",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-folder",
+      "folderId": "1ACHHQnK0l0wFffxyxMP23M5TJTrysvTX",
+      "directDownloadUrl": null,
+      "note": "Folder links usually need manual review or external Drive tooling."
+    },
+    {
+      "label": "DSCL National Finals",
+      "sourceUrl": "https://drive.google.com/drive/folders/1a6XiM9zoRQ21yQIe5D2GA8kNsNpPbU17?usp=sharing",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-folder",
+      "folderId": "1a6XiM9zoRQ21yQIe5D2GA8kNsNpPbU17",
+      "directDownloadUrl": null,
+      "note": "Folder links usually need manual review or external Drive tooling."
+    },
+    {
+      "label": "Memes and Dreams Invitational",
+      "sourceUrl": "https://drive.google.com/file/d/1YNqJrzd3rdx3B9MdiRMzLv_G_oO8Tj2r/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "1YNqJrzd3rdx3B9MdiRMzLv_G_oO8Tj2r",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1YNqJrzd3rdx3B9MdiRMzLv_G_oO8Tj2r"
+    },
+    {
+      "label": "WESG 2017 Haikou",
+      "sourceUrl": "https://drive.google.com/drive/folders/11hNvIkZKrjbWs8eN1Hu9EqkFsZHfDbmg?usp=sharing",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-folder",
+      "folderId": "11hNvIkZKrjbWs8eN1Hu9EqkFsZHfDbmg",
+      "directDownloadUrl": null,
+      "note": "Folder links usually need manual review or external Drive tooling."
+    },
+    {
+      "label": "Copa America 2016 Grand Finals",
+      "sourceUrl": "https://drive.google.com/file/d/0Bw8c192hLbETWWNDaUlnYWpCbzg/view",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "0Bw8c192hLbETWWNDaUlnYWpCbzg",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=0Bw8c192hLbETWWNDaUlnYWpCbzg"
+    },
+    {
+      "label": "GnomeJon Archon Mode Cup",
+      "sourceUrl": "https://drive.google.com/file/d/0B8mDYEC2bMYgNGxyWDhob0VvZjQ/view?usp=sharing",
+      "sourceLabel": "SpawningTool replay packs",
+      "kind": "google-drive-file",
+      "fileId": "0B8mDYEC2bMYgNGxyWDhob0VvZjQ",
+      "directDownloadUrl": "https://drive.google.com/uc?export=download&id=0B8mDYEC2bMYgNGxyWDhob0VvZjQ"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "epic13-phase4-v1",
+  "generatedAt": "2026-04-07T13:08:48Z",
+  "startedAt": "2026-04-07T13:08:46Z",
+  "finishedAt": "2026-04-07T13:08:48Z",
+  "manifestPath": "benchmark-data/manifests/replay-corpus.json",
+  "manifestAcceptedReplayCount": 6,
+  "selectedAcceptedReplayCount": 1,
+  "successfulReplayCount": 1,
+  "failedReplayCount": 0,
+  "reusedReplayCount": 0,
+  "newReplayCount": 1,
+  "phaseRowCount": 4,
+  "extractionRunId": "smoke-elite-20260407T1213Z",
+  "extractorCommand": "/home/aleks/Development/Java/LarvaSecondsLost-Scelight/.venv/bin/python benchmark-data/tools/benchmark_java_extractor.py --classpath /home/aleks/Development/Java/LarvaSecondsLost-Scelight/LarvaSecondsLostExtMod/bin:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/snap/build/classes/java/main:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/snap/build/resources/main:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/app-folder/mod/app-libs/0.0/mailapi-1.5.0.jar:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/app-folder/mod/app-libs/0.0/registry.jar:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/app-folder/mod/app-libs/0.0/smtp-1.5.0.jar:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/app-folder/mod/launcher/0.0/jl1.0.1.jar:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/app-folder/mod/launcher/0.0/mp3spi1.9.5.jar:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/app-folder/mod/launcher/0.0/tritonus_share.jar:/home/aleks/.gradle/caches/modules-2/files-2.1/javax.xml.bind/jaxb-api/2.3.1/8531ad5ac454cc2deb9d4d32c40c4d7451939b5d/jaxb-api-2.3.1.jar:/home/aleks/.gradle/caches/modules-2/files-2.1/org.glassfish.jaxb/jaxb-runtime/2.3.1/dd6dda9da676a54c5b36ca2806ff95ee017d8738/jaxb-runtime-2.3.1.jar:/home/aleks/.gradle/caches/modules-2/files-2.1/org.glassfish.jaxb/txw2/2.3.1/a09d2c48d3285f206fafbffe0e50619284e92126/txw2-2.3.1.jar:/home/aleks/.gradle/caches/modules-2/files-2.1/com.sun.istack/istack-commons-runtime/3.0.7/c197c86ceec7318b1284bffb49b54226ca774003/istack-commons-runtime-3.0.7.jar:/home/aleks/.gradle/caches/modules-2/files-2.1/javax.activation/javax.activation-api/1.2.0/85262acf3ca9816f9537ca47d5adeabaead7cb16/javax.activation-api-1.2.0.jar",
+  "resume": true,
+  "force": false,
+  "successMatrix": {
+    "mmr-2000": {
+      "ZvT": 0,
+      "ZvP": 0,
+      "ZvZ": 0
+    },
+    "mmr-3000": {
+      "ZvT": 0,
+      "ZvP": 0,
+      "ZvZ": 0
+    },
+    "mmr-4000": {
+      "ZvT": 0,
+      "ZvP": 0,
+      "ZvZ": 0
+    },
+    "mmr-5000": {
+      "ZvT": 0,
+      "ZvP": 0,
+      "ZvZ": 0
+    },
+    "elite-7000": {
+      "ZvT": 0,
+      "ZvP": 1,
+      "ZvZ": 0
+    }
+  },
+  "outputFiles": {
+    "json": "benchmark-data/exports/phase-metrics-smoke.json",
+    "csv": "benchmark-data/exports/phase-metrics-smoke.csv",
+    "summaryJson": "benchmark-data/reports/batch-run-summary-smoke.json",
+    "summaryMarkdown": "benchmark-data/reports/batch-run-summary-smoke.md",
+    "failureLog": "benchmark-data/reports/failed-replays-smoke.jsonl",
+    "replayJsonDir": "benchmark-data/exports/replays-smoke"
+  },
+  "failureList": [],
+  "status": "success"
+}

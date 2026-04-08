@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "epic13-internet-sources-v1",
+  "generatedAt": "2026-04-07T10:25:53Z",
+  "input": "benchmark-data/reports/spawningtool-replays-discovery.json",
+  "downloadedItemCount": 1,
+  "resultList": [
+    {
+      "kind": "replay",
+      "label": "Mothership LE (8)",
+      "download": {
+        "url": "https://lotv.spawningtool.com/89957/download/",
+        "finalUrl": "https://spawningtool-lotv.s3.amazonaws.com/replays/41c500401b1c3040b6db77a508665632.SC2Replay?AWSAccessKeyId=AKIAINNZE6JTRWVFONUQ&Signature=YOezRJ7INvRjKQDGYMYEH58EVyU%3D&Expires=1775561152",
+        "filePath": "benchmark-data/raw-replays/internet-sample/41c500401b1c3040b6db77a508665632.SC2Replay",
+        "fileName": "41c500401b1c3040b6db77a508665632.SC2Replay",
+        "sizeBytes": 127545,
+        "sha256": "cb45878bd4287cb5b9a18e8f8b55d33cdb2eb2ee93c3c6bbc3ec3726ad8c8644",
+        "contentType": "application/octet-stream"
+      },
+      "metadata": {
+        "replayId": "89957",
+        "title": "Mothership LE (8)",
+        "detailUrl": "https://lotv.spawningtool.com/89957/",
+        "downloadUrl": "https://lotv.spawningtool.com/89957/download/"
+      }
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "epic13-phase4-v1",
+  "generatedAt": "2026-04-08T18:55:56Z",
+  "startedAt": "2026-04-08T18:21:54Z",
+  "finishedAt": "2026-04-08T18:55:56Z",
+  "manifestPath": "benchmark-data/manifests/replay-corpus-mmr-buckets-canonical.json",
+  "manifestAcceptedReplayCount": 1200,
+  "selectedAcceptedReplayCount": 1200,
+  "successfulReplayCount": 1190,
+  "failedReplayCount": 10,
+  "reusedReplayCount": 0,
+  "newReplayCount": 1200,
+  "phaseRowCount": 4760,
+  "extractionRunId": "mmr-buckets-20260408T1552Z",
+  "extractorCommand": "/home/aleks/Development/Java/LarvaSecondsLost-Scelight/.venv/bin/python benchmark-data/tools/benchmark_java_extractor.py --classpath /home/aleks/Development/Java/LarvaSecondsLost-Scelight/LarvaSecondsLostExtMod/bin:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/snap/build/classes/java/main:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/snap/build/resources/main:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/app-folder/mod/app-libs/0.0/mailapi-1.5.0.jar:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/app-folder/mod/app-libs/0.0/registry.jar:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/app-folder/mod/app-libs/0.0/smtp-1.5.0.jar:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/app-folder/mod/launcher/0.0/jl1.0.1.jar:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/app-folder/mod/launcher/0.0/mp3spi1.9.5.jar:/home/aleks/Development/Java/LarvaSecondsLost-Scelight/scelight/app-folder/mod/launcher/0.0/tritonus_share.jar:/home/aleks/.gradle/caches/modules-2/files-2.1/javax.xml.bind/jaxb-api/2.3.1/8531ad5ac454cc2deb9d4d32c40c4d7451939b5d/jaxb-api-2.3.1.jar:/home/aleks/.gradle/caches/modules-2/files-2.1/org.glassfish.jaxb/jaxb-runtime/2.3.1/dd6dda9da676a54c5b36ca2806ff95ee017d8738/jaxb-runtime-2.3.1.jar:/home/aleks/.gradle/caches/modules-2/files-2.1/org.glassfish.jaxb/txw2/2.3.1/a09d2c48d3285f206fafbffe0e50619284e92126/txw2-2.3.1.jar:/home/aleks/.gradle/caches/modules-2/files-2.1/com.sun.istack/istack-commons-runtime/3.0.7/c197c86ceec7318b1284bffb49b54226ca774003/istack-commons-runtime-3.0.7.jar:/home/aleks/.gradle/caches/modules-2/files-2.1/javax.activation/javax.activation-api/1.2.0/85262acf3ca9816f9537ca47d5adeabaead7cb16/javax.activation-api-1.2.0.jar",
+  "resume": true,
+  "force": false,
+  "successMatrix": {
+    "mmr-2000": {
+      "ZvT": 100,
+      "ZvP": 100,
+      "ZvZ": 100
+    },
+    "mmr-3000": {
+      "ZvT": 100,
+      "ZvP": 100,
+      "ZvZ": 100
+    },
+    "mmr-4000": {
+      "ZvT": 100,
+      "ZvP": 100,
+      "ZvZ": 100
+    },
+    "mmr-5000": {
+      "ZvT": 100,
+      "ZvP": 100,
+      "ZvZ": 100
+    },
+    "elite-7000": {
+      "ZvT": 0,
+      "ZvP": 0,
+      "ZvZ": 0
+    }
+  },
+  "outputFiles": {
+    "json": "benchmark-data/exports/phase-metrics-mmr.json",
+    "csv": "benchmark-data/exports/phase-metrics-mmr.csv",
+    "summaryJson": "benchmark-data/reports/batch-run-summary-mmr.json",
+    "summaryMarkdown": "benchmark-data/reports/batch-run-summary-mmr.md",
+    "failureLog": "benchmark-data/reports/failed-replays-mmr.jsonl",
+    "replayJsonDir": "benchmark-data/exports/replays-mmr"
+  },
+  "failureList": [
+    {
+      "replayHash": "c646e911ea39966b1b29b358a4777e1856d2dad9049e357ceccdebcdb1acfd6d",
+      "filePath": "benchmark-data/raw-replays/bucketed-mmr/mmr-2000/ZvZ/c646e911ea39966b1b29b358a4777e1856d2dad9049e357ceccdebcdb1acfd6d.SC2Replay",
+      "stage": "aggregate",
+      "errorType": "BatchRunnerError",
+      "message": "Could not resolve manifest primaryZergPlayer against analysis.playerRecordList for replay c646e911ea39966b1b29b358a4777e1856d2dad9049e357ceccdebcdb1acfd6d."
+    },
+    {
+      "replayHash": "d1829effa20c642867528480807ffe035c015e13c22018b8af66db13d83adc38",
+      "filePath": "benchmark-data/raw-replays/bucketed-mmr/mmr-2000/ZvZ/d1829effa20c642867528480807ffe035c015e13c22018b8af66db13d83adc38.SC2Replay",
+      "stage": "aggregate",
+      "errorType": "BatchRunnerError",
+      "message": "Could not resolve manifest primaryZergPlayer against analysis.playerRecordList for replay d1829effa20c642867528480807ffe035c015e13c22018b8af66db13d83adc38."
+    },
+    {
+      "replayHash": "e92cf2ba8821e84f4cb8c6401472d8c1ddd9dfd78502b027050d311955659a23",
+      "filePath": "benchmark-data/raw-replays/bucketed-mmr/mmr-2000/ZvZ/e92cf2ba8821e84f4cb8c6401472d8c1ddd9dfd78502b027050d311955659a23.SC2Replay",
+      "stage": "aggregate",
+      "errorType": "BatchRunnerError",
+      "message": "Could not resolve manifest primaryZergPlayer against analysis.playerRecordList for replay e92cf2ba8821e84f4cb8c6401472d8c1ddd9dfd78502b027050d311955659a23."
+    },
+    {
+      "replayHash": "c0b8b036f41f0e74df9461a5acb50beb9f76d26383616bd624a4df0e6c91eab0",
+      "filePath": "benchmark-data/raw-replays/bucketed-mmr/mmr-2000/ZvZ/c0b8b036f41f0e74df9461a5acb50beb9f76d26383616bd624a4df0e6c91eab0.SC2Replay",
+      "stage": "aggregate",
+      "errorType": "BatchRunnerError",
+      "message": "Could not resolve manifest primaryZergPlayer against analysis.playerRecordList for replay c0b8b036f41f0e74df9461a5acb50beb9f76d26383616bd624a4df0e6c91eab0."
+    },
+    {
+      "replayHash": "9245c32f1f1817f03cf8156e649f49a94a85e843f42fcf687b803f9016366e84",
+      "filePath": "benchmark-data/raw-replays/bucketed-mmr/mmr-2000/ZvZ/9245c32f1f1817f03cf8156e649f49a94a85e843f42fcf687b803f9016366e84.SC2Replay",
+      "stage": "aggregate",
+      "errorType": "BatchRunnerError",
+      "message": "Could not resolve manifest primaryZergPlayer against analysis.playerRecordList for replay 9245c32f1f1817f03cf8156e649f49a94a85e843f42fcf687b803f9016366e84."
+    },
+    {
+      "replayHash": "f94125cec8d0687a8f98a28e07747a6bafe5e8578e705d3bf1976800503af5dd",
+      "filePath": "benchmark-data/raw-replays/bucketed-mmr/mmr-3000/ZvZ/f94125cec8d0687a8f98a28e07747a6bafe5e8578e705d3bf1976800503af5dd.SC2Replay",
+      "stage": "aggregate",
+      "errorType": "BatchRunnerError",
+      "message": "Could not resolve manifest primaryZergPlayer against analysis.playerRecordList for replay f94125cec8d0687a8f98a28e07747a6bafe5e8578e705d3bf1976800503af5dd."
+    },
+    {
+      "replayHash": "ac7b4da445295653a9b31da2179bba879f633aa1463d34c354e559c19c2b9816",
+      "filePath": "benchmark-data/raw-replays/bucketed-mmr/mmr-3000/ZvZ/ac7b4da445295653a9b31da2179bba879f633aa1463d34c354e559c19c2b9816.SC2Replay",
+      "stage": "aggregate",
+      "errorType": "BatchRunnerError",
+      "message": "Could not resolve manifest primaryZergPlayer against analysis.playerRecordList for replay ac7b4da445295653a9b31da2179bba879f633aa1463d34c354e559c19c2b9816."
+    },
+    {
+      "replayHash": "ebfa987de95a57de6d2e75e8c47d8d47f04d508dbbdbf225acb1e6118d032a9d",
+      "filePath": "benchmark-data/raw-replays/bucketed-mmr/mmr-3000/ZvZ/ebfa987de95a57de6d2e75e8c47d8d47f04d508dbbdbf225acb1e6118d032a9d.SC2Replay",
+      "stage": "aggregate",
+      "errorType": "BatchRunnerError",
+      "message": "Could not resolve manifest primaryZergPlayer against analysis.playerRecordList for replay ebfa987de95a57de6d2e75e8c47d8d47f04d508dbbdbf225acb1e6118d032a9d."
+    },
+    {
+      "replayHash": "ce6555b1e893cedc001164150f666bda4f8061d810899c8fa0bdc638ec5da994",
+      "filePath": "benchmark-data/raw-replays/bucketed-mmr/mmr-5000/ZvP/ce6555b1e893cedc001164150f666bda4f8061d810899c8fa0bdc638ec5da994.SC2Replay",
+      "stage": "aggregate",
+      "errorType": "BatchRunnerError",
+      "message": "Could not resolve manifest primaryZergPlayer against analysis.playerRecordList for replay ce6555b1e893cedc001164150f666bda4f8061d810899c8fa0bdc638ec5da994."
+    },
+    {
+      "replayHash": "f91e4219f5069a8492685d796ef68c50f1c6bc7886643755741739f13161d531",
+      "filePath": "benchmark-data/raw-replays/bucketed-mmr/mmr-5000/ZvT/f91e4219f5069a8492685d796ef68c50f1c6bc7886643755741739f13161d531.SC2Replay",
+      "stage": "aggregate",
+      "errorType": "BatchRunnerError",
+      "message": "Could not resolve manifest primaryZergPlayer against analysis.playerRecordList for replay f91e4219f5069a8492685d796ef68c50f1c6bc7886643755741739f13161d531."
+    }
+  ],
+  "status": "partial-failure"
+}

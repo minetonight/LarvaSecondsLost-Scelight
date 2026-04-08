@@ -1,0 +1,249 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/larva-seconds-lost/replay-corpus.schema.json",
+  "title": "Larva Seconds Lost Replay Corpus Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "sourceReplayList",
+    "acceptedReplayList",
+    "rejectedReplayList"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "epic13-phase1-v1"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sourceReplayList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sourceReplay"
+      }
+    },
+    "acceptedReplayList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/acceptedReplay"
+      }
+    },
+    "rejectedReplayList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/rejectedReplay"
+      }
+    }
+  },
+  "$defs": {
+    "matchup": {
+      "type": "string",
+      "enum": [
+        "ZvT",
+        "ZvP",
+        "ZvZ"
+      ]
+    },
+    "cohortBucket": {
+      "type": "string",
+      "enum": [
+        "mmr-2000",
+        "mmr-3000",
+        "mmr-4000",
+        "mmr-5000",
+        "elite-7000"
+      ]
+    },
+    "cohortConfidence": {
+      "type": "string",
+      "enum": [
+        "confirmed",
+        "strong-inference",
+        "weak-inference"
+      ]
+    },
+    "acceptanceState": {
+      "type": "string",
+      "enum": [
+        "discovered",
+        "accepted",
+        "rejected"
+      ]
+    },
+    "rejectionReason": {
+      "type": "string",
+      "enum": [
+        "duplicate-replay",
+        "corrupt-replay",
+        "unsupported-matchup",
+        "missing-zerg-target",
+        "missing-provenance",
+        "analysis-failed",
+        "insufficient-skill-evidence",
+        "out-of-cohort-scope",
+        "manual-review-rejected"
+      ]
+    },
+    "qualityFlag": {
+      "type": "string",
+      "enum": [
+        "sparse-resource-snapshots",
+        "partial-tooltip-context",
+        "ambiguous-larva-pressure",
+        "limited-inject-evidence",
+        "elite-cohort-balance-pressure",
+        "analysis-failed",
+        "corrupt-replay",
+        "unsupported-matchup",
+        "missing-zerg-target",
+        "missing-provenance",
+        "duplicate-replay"
+      ]
+    },
+    "baseReplay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "replayHash",
+        "filePath",
+        "originalFileName",
+        "sourceLabel",
+        "acquiredAt",
+        "primaryZergPlayer",
+        "matchup",
+        "cohortBucket",
+        "cohortConfidence",
+        "cohortEvidence",
+        "acceptanceState",
+        "qualityFlags",
+        "notes"
+      ],
+      "properties": {
+        "replayHash": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        },
+        "filePath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "originalFileName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceUrlList": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "default": []
+        },
+        "sourceLabel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "acquiredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "primaryZergPlayer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "opponentPlayer": {
+          "type": "string"
+        },
+        "matchup": {
+          "$ref": "#/$defs/matchup"
+        },
+        "cohortBucket": {
+          "$ref": "#/$defs/cohortBucket"
+        },
+        "cohortConfidence": {
+          "$ref": "#/$defs/cohortConfidence"
+        },
+        "cohortEvidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "acceptanceState": {
+          "$ref": "#/$defs/acceptanceState"
+        },
+        "qualityFlags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/qualityFlag"
+          },
+          "uniqueItems": true
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "sourceReplay": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseReplay"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "acceptanceState": {
+              "const": "discovered"
+            }
+          }
+        }
+      ]
+    },
+    "acceptedReplay": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseReplay"
+        },
+        {
+          "type": "object",
+          "required": [
+            "canonicalSourceCount"
+          ],
+          "properties": {
+            "acceptanceState": {
+              "const": "accepted"
+            },
+            "canonicalSourceCount": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "rejectionReason": false
+          }
+        }
+      ]
+    },
+    "rejectedReplay": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseReplay"
+        },
+        {
+          "type": "object",
+          "required": [
+            "rejectionReason"
+          ],
+          "properties": {
+            "acceptanceState": {
+              "const": "rejected"
+            },
+            "rejectionReason": {
+              "$ref": "#/$defs/rejectionReason"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

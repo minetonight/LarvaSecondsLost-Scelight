@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "epic13-internet-sources-v1",
+  "generatedAt": "2026-04-07T00:00:00Z",
+  "sourceList": [
+    {
+      "sourceId": "spawningtool-replay-browser",
+      "label": "SpawningTool replay browser",
+      "baseUrl": "https://lotv.spawningtool.com/replays/",
+      "access": "public",
+      "automationStatus": "supported",
+      "downloadSupport": {
+        "directReplayDownload": true,
+        "bulkZipDownload": true,
+        "notes": "Direct replay URLs follow /<id>/download/ and listing pages expose /zip/ endpoints."
+      },
+      "recommendedUse": [
+        "broad public replay collection",
+        "repeatable filtered download URLs",
+        "matchup-specific sourcing"
+      ],
+      "limitations": [
+        "cohort labels still need manual or secondary metadata review",
+        "listing pages alone do not provide reliable MMR buckets"
+      ]
+    },
+    {
+      "sourceId": "spawningtool-replaypacks",
+      "label": "SpawningTool replay packs",
+      "baseUrl": "https://lotv.spawningtool.com/replaypacks/",
+      "access": "public",
+      "automationStatus": "partially-supported",
+      "downloadSupport": {
+        "googleDriveFileLinks": true,
+        "googleDriveFolderLinks": "manual-review",
+        "notes": "File links can be converted to direct Google Drive downloads; folder links remain discovery-oriented in the first implementation."
+      },
+      "recommendedUse": [
+        "tournament replay packs",
+        "elite player collections",
+        "validation subsets"
+      ],
+      "limitations": [
+        "folder links are not fully automated in the first implementation",
+        "packs require post-download filtering by matchup and player"
+      ]
+    },
+    {
+      "sourceId": "sc2replaystats-public-site",
+      "label": "SC2ReplayStats public site",
+      "baseUrl": "https://sc2replaystats.com/",
+      "access": "public-site-partial",
+      "automationStatus": "research-only",
+      "downloadSupport": {
+        "directReplayDownload": false,
+        "notes": "A stable public download endpoint was not verified in this research pass."
+      },
+      "recommendedUse": [
+        "secondary metadata research",
+        "future automation candidate after manual verification"
+      ],
+      "limitations": [
+        "direct public replay download path not confirmed",
+        "do not rely on this source for batch downloading yet"
+      ]
+    }
+  ]
+}

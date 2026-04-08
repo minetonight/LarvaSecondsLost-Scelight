@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "epic13-phase1-v1",
+  "generatedAt": "2026-04-07T10:49:26Z",
+  "sourceReplayList": [],
+  "acceptedReplayList": [
+    {
+      "replayHash": "8b83038a95564f3dda84e0e5a94637a86f1e41f147b3080450097b5eabb3685c",
+      "filePath": "benchmark-data/raw-replays/seeded-sample/637083f8f95f7389f370cf3c68ef9506.SC2Replay",
+      "originalFileName": "637083f8f95f7389f370cf3c68ef9506.SC2Replay",
+      "sourceLabel": "SpawningTool filtered replay browser",
+      "acquiredAt": "2026-04-07T10:34:29Z",
+      "primaryZergPlayer": "Reynor",
+      "matchup": "ZvP",
+      "cohortBucket": "elite-7000",
+      "cohortConfidence": "confirmed",
+      "cohortEvidence": "Named-player elite seed elite-reynor-zvp targeting Reynor ZvP on the public SpawningTool replay browser.",
+      "acceptanceState": "accepted",
+      "qualityFlags": [],
+      "notes": "Imported from seeded download summary via elite-reynor-zvp; title=Reynor v ShoWTimE: Game 1 - [ESL] Oceanborn.",
+      "sourceUrlList": [
+        "https://lotv.spawningtool.com/81569/",
+        "https://lotv.spawningtool.com/81569/download/",
+        "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=11"
+      ],
+      "opponentPlayer": "ShoWTimE",
+      "canonicalSourceCount": 1
+    },
+    {
+      "replayHash": "06e07f5fe802267fc73fe8e0cd41bd70090b260887d6e39be8769d5b61f0c9ae",
+      "filePath": "benchmark-data/raw-replays/seeded-sample/44d54e134d68cbe152919f55e69b3fb8.SC2Replay",
+      "originalFileName": "44d54e134d68cbe152919f55e69b3fb8.SC2Replay",
+      "sourceLabel": "SpawningTool filtered replay browser",
+      "acquiredAt": "2026-04-07T10:34:29Z",
+      "primaryZergPlayer": "Serral",
+      "matchup": "ZvP",
+      "cohortBucket": "elite-7000",
+      "cohortConfidence": "confirmed",
+      "cohortEvidence": "Named-player elite seed elite-serral-zvp targeting Serral ZvP on the public SpawningTool replay browser.",
+      "acceptanceState": "accepted",
+      "qualityFlags": [],
+      "notes": "Imported from seeded download summary via elite-serral-zvp; title=Creator v Serral: Game 1 - [G8] Gresvan.",
+      "sourceUrlList": [
+        "https://lotv.spawningtool.com/80348/",
+        "https://lotv.spawningtool.com/80348/download/",
+        "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=11"
+      ],
+      "opponentPlayer": "Creator",
+      "canonicalSourceCount": 1
+    },
+    {
+      "replayHash": "67d16be96cb1210fc2544eee080f542d61dbd8127b0327559ba32cc3aa7de55c",
+      "filePath": "benchmark-data/raw-replays/seeded-sample/d00aac0f5af70416f7003e6d5672f3af.SC2Replay",
+      "originalFileName": "d00aac0f5af70416f7003e6d5672f3af.SC2Replay",
+      "sourceLabel": "SpawningTool filtered replay browser",
+      "acquiredAt": "2026-04-07T10:34:29Z",
+      "primaryZergPlayer": "Reynor",
+      "matchup": "ZvT",
+      "cohortBucket": "elite-7000",
+      "cohortConfidence": "confirmed",
+      "cohortEvidence": "Named-player elite seed elite-reynor-zvt targeting Reynor ZvT on the public SpawningTool replay browser.",
+      "acceptanceState": "accepted",
+      "qualityFlags": [],
+      "notes": "Imported from seeded download summary via elite-reynor-zvt; title=ByuN v Reynor: Game 2 - [ESL] Oceanborn.",
+      "sourceUrlList": [
+        "https://lotv.spawningtool.com/81165/",
+        "https://lotv.spawningtool.com/81165/download/",
+        "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=3"
+      ],
+      "opponentPlayer": "ByuN",
+      "canonicalSourceCount": 1
+    },
+    {
+      "replayHash": "341ee50d115c0acb9dbeb45bfad2eeebdaee4fd7d50a552beae5b8b71ae1c45a",
+      "filePath": "benchmark-data/raw-replays/seeded-sample/18317a88bc5a4a3736300449ef751938.SC2Replay",
+      "originalFileName": "18317a88bc5a4a3736300449ef751938.SC2Replay",
+      "sourceLabel": "SpawningTool filtered replay browser",
+      "acquiredAt": "2026-04-07T10:34:29Z",
+      "primaryZergPlayer": "Serral",
+      "matchup": "ZvT",
+      "cohortBucket": "elite-7000",
+      "cohortConfidence": "confirmed",
+      "cohortEvidence": "Named-player elite seed elite-serral-zvt targeting Serral ZvT on the public SpawningTool replay browser.",
+      "acceptanceState": "accepted",
+      "qualityFlags": [],
+      "notes": "Imported from seeded download summary via elite-serral-zvt; title=Clem v Serral: Game 3 - [ESL] Alcyone.",
+      "sourceUrlList": [
+        "https://lotv.spawningtool.com/82393/",
+        "https://lotv.spawningtool.com/82393/download/",
+        "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=3"
+      ],
+      "opponentPlayer": "Clem",
+      "canonicalSourceCount": 1
+    },
+    {
+      "replayHash": "8b976f8188ed667d6576e938bcd5e440bb52b2d43c502b42c83372282bff6f65",
+      "filePath": "benchmark-data/raw-replays/seeded-sample/a5504081a45ef4fdc3f1e41e892878d0.SC2Replay",
+      "originalFileName": "a5504081a45ef4fdc3f1e41e892878d0.SC2Replay",
+      "sourceLabel": "SpawningTool filtered replay browser",
+      "acquiredAt": "2026-04-07T10:34:29Z",
+      "primaryZergPlayer": "Reynor",
+      "matchup": "ZvZ",
+      "cohortBucket": "elite-7000",
+      "cohortConfidence": "confirmed",
+      "cohortEvidence": "Named-player elite seed elite-reynor-zvz targeting Reynor ZvZ on the public SpawningTool replay browser.",
+      "acceptanceState": "accepted",
+      "qualityFlags": [],
+      "notes": "Imported from seeded download summary via elite-reynor-zvz; title=Reynor v Serral: Game 2 - [ESL] Inside and Out.",
+      "sourceUrlList": [
+        "https://lotv.spawningtool.com/76577/",
+        "https://lotv.spawningtool.com/76577/download/",
+        "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=13"
+      ],
+      "opponentPlayer": "Serral",
+      "canonicalSourceCount": 1
+    },
+    {
+      "replayHash": "6019a085802c1fcee38723bf1c9552c8e1d2fc5ec11f34771b8aaa62cbab7d04",
+      "filePath": "benchmark-data/raw-replays/seeded-sample/5132f6879e7718c9f6d7a9f43d8fcf00.SC2Replay",
+      "originalFileName": "5132f6879e7718c9f6d7a9f43d8fcf00.SC2Replay",
+      "sourceLabel": "SpawningTool filtered replay browser",
+      "acquiredAt": "2026-04-07T10:34:29Z",
+      "primaryZergPlayer": "Serral",
+      "matchup": "ZvZ",
+      "cohortBucket": "elite-7000",
+      "cohortConfidence": "confirmed",
+      "cohortEvidence": "Named-player elite seed elite-serral-zvz targeting Serral ZvZ on the public SpawningTool replay browser.",
+      "acceptanceState": "accepted",
+      "qualityFlags": [],
+      "notes": "Imported from seeded download summary via elite-serral-zvz; title=Elazer v Serral: Game 1 - [ESL] Royal Blood.",
+      "sourceUrlList": [
+        "https://lotv.spawningtool.com/77841/",
+        "https://lotv.spawningtool.com/77841/download/",
+        "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=13"
+      ],
+      "opponentPlayer": "Elazer",
+      "canonicalSourceCount": 1
+    }
+  ],
+  "rejectedReplayList": []
+}

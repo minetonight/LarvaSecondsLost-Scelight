@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "epic13-phase4-v1",
+  "generatedAt": "2026-04-07T13:08:48Z",
+  "extractionRunId": "smoke-elite-20260407T1213Z",
+  "replayCount": 1,
+  "phaseRowCount": 4,
+  "replayRecords": [
+    {
+      "manifestEntry": {
+        "replayHash": "8b83038a95564f3dda84e0e5a94637a86f1e41f147b3080450097b5eabb3685c",
+        "filePath": "benchmark-data/raw-replays/seeded-sample/637083f8f95f7389f370cf3c68ef9506.SC2Replay",
+        "originalFileName": "637083f8f95f7389f370cf3c68ef9506.SC2Replay",
+        "sourceLabel": "SpawningTool filtered replay browser",
+        "acquiredAt": "2026-04-07T10:34:29Z",
+        "primaryZergPlayer": "Reynor",
+        "matchup": "ZvP",
+        "cohortBucket": "elite-7000",
+        "cohortConfidence": "confirmed",
+        "cohortEvidence": "Named-player elite seed elite-reynor-zvp targeting Reynor ZvP on the public SpawningTool replay browser.",
+        "acceptanceState": "accepted",
+        "qualityFlags": [],
+        "notes": "Imported from seeded download summary via elite-reynor-zvp; title=Reynor v ShoWTimE: Game 1 - [ESL] Oceanborn.",
+        "sourceUrlList": [
+          "https://lotv.spawningtool.com/81569/",
+          "https://lotv.spawningtool.com/81569/download/",
+          "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=11"
+        ],
+        "opponentPlayer": "ShoWTimE",
+        "canonicalSourceCount": 1
+      },
+      "analysis": {
+        "replayFilePath": "/home/aleks/Development/Java/LarvaSecondsLost-Scelight/benchmark-data/raw-replays/seeded-sample/637083f8f95f7389f370cf3c68ef9506.SC2Replay",
+        "replaySha256": "8b83038a95564f3dda84e0e5a94637a86f1e41f147b3080450097b5eabb3685c",
+        "sourceDescription": "benchmark-corpus:8b83038a95564f3dda84e0e5a94637a86f1e41f147b3080450097b5eabb3685c:SpawningTool filtered replay browser",
+        "mapTitle": "[ESL] Oceanborn",
+        "players": "Reynor vs ShoWTimE",
+        "winners": "Reynor",
+        "replayLengthMs": 631312,
+        "replayLengthLoops": 13986,
+        "replayEndTime": "2023-11-17 20:12:39",
+        "replayVersion": "5.0.12.91115",
+        "baseBuild": "91115",
+        "fullReplayParseUsed": false,
+        "trackedHatcheryCount": 6,
+        "assignedLarvaCount": 266,
+        "unassignedLarvaCount": 0,
+        "injectWindowCount": 25,
+        "idleInjectWindowCount": 25,
+        "diagnosticFlagList": [],
+        "playerRecordList": [
+          {
+            "playerName": "Reynor",
+            "playerRace": "Zerg",
+            "opponentRace": "Protoss",
+            "opponentPlayerName": "ShoWTimE",
+            "matchup": "ZvP",
+            "result": "Victory",
+            "diagnosticFlagList": [],
+            "phaseRecordList": [
+              {
+                "phase": "EARLY",
+                "startLoop": 0,
+                "endLoop": 6265,
+                "durationLoops": 6265,
+                "missedLarvaCount": 1,
+                "missedInjectLarvaCount": 9,
+                "totalSpawnedLarvaCount": 62,
+                "hatchEligibleLoops": 11195,
+                "injectEligibleLoops": 6477,
+                "injectActiveLoops": 3264,
+                "missedLarvaPerHatchPerMinute": 0.0857525681,
+                "missedInjectLarvaPerHatchPerMinute": 0.771773113,
+                "spawnedLarvaPerHatchPerMinute": 5.3166592229,
+                "injectUptimePercentage": 50.3937007874
+              },
+              {
+                "phase": "MID",
+                "startLoop": 6265,
+                "endLoop": 8665,
+                "durationLoops": 2400,
+                "missedLarvaCount": 4,
+                "missedInjectLarvaCount": 15,
+                "totalSpawnedLarvaCount": 56,
+                "hatchEligibleLoops": 7200,
+                "injectEligibleLoops": 7200,
+                "injectActiveLoops": 3379,
+                "missedLarvaPerHatchPerMinute": 0.5333333333,
+                "missedInjectLarvaPerHatchPerMinute": 2,
+                "spawnedLarvaPerHatchPerMinute": 7.4666666667,
+                "injectUptimePercentage": 46.9305555556
+              },
+              {
+                "phase": "LATE",
+                "startLoop": 8665,
+                "endLoop": 13986,
+                "durationLoops": 5321,
+                "missedLarvaCount": 27,
+                "missedInjectLarvaCount": 36,
+                "totalSpawnedLarvaCount": 147,
+                "hatchEligibleLoops": 21679,
+                "injectEligibleLoops": 21679,
+                "injectActiveLoops": 9407,
+                "missedLarvaPerHatchPerMinute": 1.1956271046,
+                "missedInjectLarvaPerHatchPerMinute": 1.5941694728,
+                "spawnedLarvaPerHatchPerMinute": 6.5095253471,
+                "injectUptimePercentage": 43.3922228885
+              },
+              {
+                "phase": "END",
+                "startLoop": 13986,
+                "endLoop": 13986,
+                "durationLoops": 0,
+                "missedLarvaCount": 0,
+                "missedInjectLarvaCount": 0,
+                "totalSpawnedLarvaCount": 0,
+                "hatchEligibleLoops": 0,
+                "injectEligibleLoops": 0,
+                "injectActiveLoops": 0,
+                "missedLarvaPerHatchPerMinute": null,
+                "missedInjectLarvaPerHatchPerMinute": null,
+                "spawnedLarvaPerHatchPerMinute": null,
+                "injectUptimePercentage": null
+              }
+            ]
+          }
+        ]
+      },
+      "extractionRunId": "smoke-elite-20260407T1213Z",
+      "generatedAt": "2026-04-07T13:08:48Z"
+    }
+  ]
+}

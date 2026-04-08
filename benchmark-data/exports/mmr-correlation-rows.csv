@@ -1,0 +1,65 @@
+scope,matchup,phase,metricName,metricLabel,sampleSize,pearsonWithExactMmr,absPearsonWithExactMmr,expectedDirection,directionMatchesExpectation
+matchup-specific,ZvT,MID,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,336,0.7372333618622323,0.7372333618622323,positive-expected,True
+matchup-specific,ZvT,MID,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,336,-0.686351862085347,0.686351862085347,negative-expected,True
+all-matchups,ALL,MID,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,834,0.6207805376271572,0.6207805376271572,positive-expected,True
+matchup-specific,ZvP,MID,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,299,0.6086199061931822,0.6086199061931822,positive-expected,True
+all-matchups,ALL,MID,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,834,-0.574239937403027,0.574239937403027,negative-expected,True
+matchup-specific,ZvP,MID,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,299,-0.5695993207836074,0.5695993207836074,negative-expected,True
+matchup-specific,ZvT,LATE,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,179,-0.5447687875732811,0.5447687875732811,negative-expected,True
+matchup-specific,ZvT,LATE,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,179,0.5252883923793913,0.5252883923793913,positive-expected,True
+matchup-specific,ZvP,EARLY,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,399,-0.4950489473442685,0.4950489473442685,negative-expected,True
+matchup-specific,ZvZ,MID,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,199,0.4762893967335854,0.4762893967335854,positive-expected,True
+matchup-specific,ZvT,EARLY,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,399,-0.47201765366100745,0.47201765366100745,negative-expected,True
+matchup-specific,ZvT,MID,injectUptimePct,Inject uptime %,336,0.4476823080511396,0.4476823080511396,positive-expected,True
+matchup-specific,ZvT,END,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,25,-0.4366506426969595,0.4366506426969595,negative-expected,True
+matchup-specific,ZvP,END,injectUptimePct,Inject uptime %,13,-0.4292817689843575,0.4292817689843575,positive-expected,False
+all-matchups,ALL,EARLY,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,1190,-0.42516962651813145,0.42516962651813145,negative-expected,True
+matchup-specific,ZvT,END,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,25,0.41015262568988303,0.41015262568988303,positive-expected,True
+all-matchups,ALL,LATE,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,329,-0.40904379762734056,0.40904379762734056,negative-expected,True
+matchup-specific,ZvZ,MID,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,199,-0.3928476888871017,0.3928476888871017,negative-expected,True
+matchup-specific,ZvP,MID,injectUptimePct,Inject uptime %,299,0.39189544103008356,0.39189544103008356,positive-expected,True
+all-matchups,ALL,LATE,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,329,0.3835662193688835,0.3835662193688835,positive-expected,True
+all-matchups,ALL,MID,injectUptimePct,Inject uptime %,834,0.37983409578947536,0.37983409578947536,positive-expected,True
+matchup-specific,ZvP,LATE,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,124,-0.3592950102661348,0.3592950102661348,negative-expected,True
+all-matchups,ALL,END,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,38,-0.3475600141901094,0.3475600141901094,negative-expected,True
+matchup-specific,ZvZ,MID,injectUptimePct,Inject uptime %,199,0.3474647885051752,0.3474647885051752,positive-expected,True
+matchup-specific,ZvZ,LATE,injectUptimePct,Inject uptime %,26,0.329093990655025,0.329093990655025,positive-expected,True
+matchup-specific,ZvZ,EARLY,injectUptimePct,Inject uptime %,355,0.3186876465066419,0.3186876465066419,positive-expected,True
+matchup-specific,ZvZ,EARLY,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,392,-0.30877351815814585,0.30877351815814585,negative-expected,True
+matchup-specific,ZvP,END,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,13,-0.2858436453720454,0.2858436453720454,negative-expected,True
+matchup-specific,ZvP,LATE,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,124,0.2780271731683058,0.2780271731683058,positive-expected,True
+matchup-specific,ZvT,END,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,25,-0.26033767625919113,0.26033767625919113,negative-expected,True
+matchup-specific,ZvP,END,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,13,-0.24293016543628326,0.24293016543628326,negative-expected,True
+all-matchups,ALL,END,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,38,-0.2423368115702723,0.2423368115702723,negative-expected,True
+matchup-specific,ZvP,EARLY,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,399,-0.23544156121947388,0.23544156121947388,negative-expected,True
+matchup-specific,ZvT,LATE,injectUptimePct,Inject uptime %,179,0.22631775596262949,0.22631775596262949,positive-expected,True
+all-matchups,ALL,EARLY,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,1190,-0.20399584755940323,0.20399584755940323,negative-expected,True
+all-matchups,ALL,EARLY,injectUptimePct,Inject uptime %,1127,0.20361581853294378,0.20361581853294378,positive-expected,True
+matchup-specific,ZvT,EARLY,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,399,-0.20005664897966086,0.20005664897966086,negative-expected,True
+all-matchups,ALL,END,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,38,0.19334222823438568,0.19334222823438568,positive-expected,True
+matchup-specific,ZvZ,EARLY,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,392,-0.17379614819701977,0.17379614819701977,negative-expected,True
+all-matchups,ALL,LATE,injectUptimePct,Inject uptime %,329,0.16940602489967685,0.16940602489967685,positive-expected,True
+matchup-specific,ZvT,EARLY,injectUptimePct,Inject uptime %,387,0.16542833930478396,0.16542833930478396,positive-expected,True
+matchup-specific,ZvZ,EARLY,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,392,-0.1536826107382816,0.1536826107382816,positive-expected,False
+matchup-specific,ZvT,LATE,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,179,-0.13983123407705814,0.13983123407705814,negative-expected,True
+all-matchups,ALL,END,injectUptimePct,Inject uptime %,38,-0.13362715716048337,0.13362715716048337,positive-expected,False
+matchup-specific,ZvZ,LATE,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,26,0.13129830296869252,0.13129830296869252,negative-expected,False
+matchup-specific,ZvP,EARLY,injectUptimePct,Inject uptime %,385,0.1282897688578506,0.1282897688578506,positive-expected,True
+matchup-specific,ZvZ,MID,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,199,-0.12337842747513368,0.12337842747513368,negative-expected,True
+matchup-specific,ZvZ,LATE,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,26,0.10816232031109281,0.10816232031109281,positive-expected,True
+matchup-specific,ZvP,MID,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,299,-0.10662994184205545,0.10662994184205545,negative-expected,True
+all-matchups,ALL,EARLY,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,1190,-0.10517258098273552,0.10517258098273552,positive-expected,False
+matchup-specific,ZvP,LATE,injectUptimePct,Inject uptime %,124,0.09202098153042722,0.09202098153042722,positive-expected,True
+matchup-specific,ZvP,LATE,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,124,-0.08966237250280877,0.08966237250280877,negative-expected,True
+all-matchups,ALL,LATE,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,329,-0.08893287962848836,0.08893287962848836,negative-expected,True
+matchup-specific,ZvP,EARLY,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,399,-0.08707512384137096,0.08707512384137096,positive-expected,False
+matchup-specific,ZvP,END,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,13,-0.08065874867714923,0.08065874867714923,positive-expected,False
+matchup-specific,ZvT,EARLY,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,399,-0.07966886592822314,0.07966886592822314,positive-expected,False
+all-matchups,ALL,MID,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,834,-0.06913432999916845,0.06913432999916845,negative-expected,True
+matchup-specific,ZvZ,LATE,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,26,0.06394423316837251,0.06394423316837251,negative-expected,False
+matchup-specific,ZvT,END,injectUptimePct,Inject uptime %,25,0.04939539883703904,0.04939539883703904,positive-expected,True
+matchup-specific,ZvT,MID,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,336,-0.020224227249288036,0.020224227249288036,negative-expected,True
+matchup-specific,ZvZ,END,injectMissedLarvaPerHatchPerMinute,Inject-missed larva / hatch / minute,0,,,negative-expected,
+matchup-specific,ZvZ,END,injectUptimePct,Inject uptime %,0,,,positive-expected,
+matchup-specific,ZvZ,END,larvaMissedPerHatchPerMinute,Larva missed / hatch / minute,0,,,negative-expected,
+matchup-specific,ZvZ,END,spawnedLarvaPerHatchPerMinute,Spawned larva / hatch / minute,0,,,positive-expected,

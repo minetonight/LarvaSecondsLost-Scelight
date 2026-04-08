@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "epic13-internet-sources-v1",
+  "generatedAt": "2026-04-07T00:00:00Z",
+  "sourceSeedList": [
+    {
+      "sourceId": "elite-serral-zvt",
+      "sourceKind": "spawningtool-replay-listing",
+      "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=3",
+      "pages": 3,
+      "cohortBucket": "elite-7000",
+      "primaryPlayer": "Serral",
+      "matchup": "ZvT",
+      "sourceLabel": "SpawningTool filtered replay browser"
+    },
+    {
+      "sourceId": "elite-serral-zvp",
+      "sourceKind": "spawningtool-replay-listing",
+      "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=11",
+      "pages": 3,
+      "cohortBucket": "elite-7000",
+      "primaryPlayer": "Serral",
+      "matchup": "ZvP",
+      "sourceLabel": "SpawningTool filtered replay browser"
+    },
+    {
+      "sourceId": "elite-serral-zvz",
+      "sourceKind": "spawningtool-replay-listing",
+      "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=13",
+      "pages": 3,
+      "cohortBucket": "elite-7000",
+      "primaryPlayer": "Serral",
+      "matchup": "ZvZ",
+      "sourceLabel": "SpawningTool filtered replay browser"
+    },
+    {
+      "sourceId": "elite-reynor-zvt",
+      "sourceKind": "spawningtool-replay-listing",
+      "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=3",
+      "pages": 3,
+      "cohortBucket": "elite-7000",
+      "primaryPlayer": "Reynor",
+      "matchup": "ZvT",
+      "sourceLabel": "SpawningTool filtered replay browser"
+    },
+    {
+      "sourceId": "elite-reynor-zvp",
+      "sourceKind": "spawningtool-replay-listing",
+      "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=11",
+      "pages": 3,
+      "cohortBucket": "elite-7000",
+      "primaryPlayer": "Reynor",
+      "matchup": "ZvP",
+      "sourceLabel": "SpawningTool filtered replay browser"
+    },
+    {
+      "sourceId": "elite-reynor-zvz",
+      "sourceKind": "spawningtool-replay-listing",
+      "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=13",
+      "pages": 3,
+      "cohortBucket": "elite-7000",
+      "primaryPlayer": "Reynor",
+      "matchup": "ZvZ",
+      "sourceLabel": "SpawningTool filtered replay browser"
+    },
+    {
+      "sourceId": "public-pro-zvt",
+      "sourceKind": "spawningtool-replay-listing",
+      "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=3",
+      "pages": 2,
+      "cohortBucket": "unassigned",
+      "matchup": "ZvT",
+      "sourceLabel": "SpawningTool filtered replay browser"
+    },
+    {
+      "sourceId": "public-pro-zvp",
+      "sourceKind": "spawningtool-replay-listing",
+      "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=11",
+      "pages": 2,
+      "cohortBucket": "unassigned",
+      "matchup": "ZvP",
+      "sourceLabel": "SpawningTool filtered replay browser"
+    },
+    {
+      "sourceId": "public-pro-zvz",
+      "sourceKind": "spawningtool-replay-listing",
+      "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=13",
+      "pages": 2,
+      "cohortBucket": "unassigned",
+      "matchup": "ZvZ",
+      "sourceLabel": "SpawningTool filtered replay browser"
+    },
+    {
+      "sourceId": "spawningtool-replaypacks-index",
+      "sourceKind": "spawningtool-replaypacks",
+      "url": "https://lotv.spawningtool.com/replaypacks/",
+      "sourceLabel": "SpawningTool replay packs"
+    }
+  ]
+}

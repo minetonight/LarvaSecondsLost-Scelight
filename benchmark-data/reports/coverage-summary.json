@@ -1,0 +1,134 @@
+{
+  "generatedAt": "2026-04-07T10:49:26Z",
+  "schemaVersion": "epic13-phase1-v1",
+  "acceptedReplayCount": 6,
+  "discoveredReplayCount": 0,
+  "rejectedReplayCount": 0,
+  "cohortSummary": {
+    "mmr-2000": {
+      "matchups": {
+        "ZvT": {
+          "accepted": 0,
+          "confirmed": 0,
+          "strongInference": 0,
+          "weakInference": 0
+        },
+        "ZvP": {
+          "accepted": 0,
+          "confirmed": 0,
+          "strongInference": 0,
+          "weakInference": 0
+        },
+        "ZvZ": {
+          "accepted": 0,
+          "confirmed": 0,
+          "strongInference": 0,
+          "weakInference": 0
+        }
+      },
+      "acceptedTotal": 0
+    },
+    "mmr-3000": {
+      "matchups": {
+        "ZvT": {
+          "accepted": 0,
+          "confirmed": 0,
+          "strongInference": 0,
+          "weakInference": 0
+        },
+        "ZvP": {
+          "accepted": 0,
+          "confirmed": 0,
+          "strongInference": 0,
+          "weakInference": 0
+        },
+        "ZvZ": {
+          "accepted": 0,
+          "confirmed": 0,
+          "strongInference": 0,
+          "weakInference": 0
+        }
+      },
+      "acceptedTotal": 0
+    },
+    "mmr-4000": {
+      "matchups": {
+        "ZvT": {
+          "accepted": 0,
+          "confirmed": 0,
+          "strongInference": 0,
+          "weakInference": 0
+        },
+        "ZvP": {
+          "accepted": 0,
+          "confirmed": 0,
+          "strongInference": 0,
+          "weakInference": 0
+        },
+        "ZvZ": {
+          "accepted": 0,
+          "confirmed": 0,
+          "strongInference": 0,
+          "weakInference": 0
+        }
+      },
+      "acceptedTotal": 0
+    },
+    "mmr-5000": {
+      "matchups": {
+        "ZvT": {
+          "accepted": 0,
+          "confirmed": 0,
+          "strongInference": 0,
+          "weakInference": 0
+        },
+        "ZvP": {
+          "accepted": 0,
+          "confirmed": 0,
+          "strongInference": 0,
+          "weakInference": 0
+        },
+        "ZvZ": {
+          "accepted": 0,
+          "confirmed": 0,
+          "strongInference": 0,
+          "weakInference": 0
+        }
+      },
+      "acceptedTotal": 0
+    },
+    "elite-7000": {
+      "matchups": {
+        "ZvT": {
+          "accepted": 2,
+          "confirmed": 2,
+          "strongInference": 0,
+          "weakInference": 0
+        },
+        "ZvP": {
+          "accepted": 2,
+          "confirmed": 2,
+          "strongInference": 0,
+          "weakInference": 0
+        },
+        "ZvZ": {
+          "accepted": 2,
+          "confirmed": 2,
+          "strongInference": 0,
+          "weakInference": 0
+        }
+      },
+      "acceptedTotal": 6
+    }
+  },
+  "topPlayers": [
+    {
+      "playerName": "Reynor",
+      "acceptedReplayCount": 3
+    },
+    {
+      "playerName": "Serral",
+      "acceptedReplayCount": 3
+    }
+  ]
+}

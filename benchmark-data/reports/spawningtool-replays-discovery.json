@@ -1,0 +1,169 @@
+{
+  "schemaVersion": "epic13-internet-sources-v1",
+  "generatedAt": "2026-04-07T10:25:50Z",
+  "sourceKind": "spawningtool-replay-listing",
+  "listingUrl": "https://lotv.spawningtool.com/replays/",
+  "pageCount": 1,
+  "pageList": [
+    {
+      "pageNumber": 1,
+      "pageUrl": "https://lotv.spawningtool.com/replays/",
+      "zipUrlList": [
+        "https://lotv.spawningtool.com/zip/?&p=1"
+      ],
+      "contentType": "text/html; charset=utf-8"
+    }
+  ],
+  "replayList": [
+    {
+      "replayId": "89957",
+      "title": "Mothership LE (8)",
+      "detailUrl": "https://lotv.spawningtool.com/89957/",
+      "downloadUrl": "https://lotv.spawningtool.com/89957/download/"
+    },
+    {
+      "replayId": "89959",
+      "title": "TvZ Begginer",
+      "detailUrl": "https://lotv.spawningtool.com/89959/",
+      "downloadUrl": "https://lotv.spawningtool.com/89959/download/"
+    },
+    {
+      "replayId": "89960",
+      "title": "10000 Feet LE (2)",
+      "detailUrl": "https://lotv.spawningtool.com/89960/",
+      "downloadUrl": "https://lotv.spawningtool.com/89960/download/"
+    },
+    {
+      "replayId": "89962",
+      "title": "2026-03-31 - (T)CptFluffy VS (Z)DeadDumble",
+      "detailUrl": "https://lotv.spawningtool.com/89962/",
+      "downloadUrl": "https://lotv.spawningtool.com/89962/download/"
+    },
+    {
+      "replayId": "89964",
+      "title": "sandbox",
+      "detailUrl": "https://lotv.spawningtool.com/89964/",
+      "downloadUrl": "https://lotv.spawningtool.com/89964/download/"
+    },
+    {
+      "replayId": "89965",
+      "title": "Ruby Rock LE (24)",
+      "detailUrl": "https://lotv.spawningtool.com/89965/",
+      "downloadUrl": "https://lotv.spawningtool.com/89965/download/"
+    },
+    {
+      "replayId": "89968",
+      "title": "10000 Feet LE (27)",
+      "detailUrl": "https://lotv.spawningtool.com/89968/",
+      "downloadUrl": "https://lotv.spawningtool.com/89968/download/"
+    },
+    {
+      "replayId": "89969",
+      "title": "Tacit Sanctity LE (10)",
+      "detailUrl": "https://lotv.spawningtool.com/89969/",
+      "downloadUrl": "https://lotv.spawningtool.com/89969/download/"
+    },
+    {
+      "replayId": "89970",
+      "title": "Sentinel CE (38)",
+      "detailUrl": "https://lotv.spawningtool.com/89970/",
+      "downloadUrl": "https://lotv.spawningtool.com/89970/download/"
+    },
+    {
+      "replayId": "89971",
+      "title": "Rosebud LE (45)",
+      "detailUrl": "https://lotv.spawningtool.com/89971/",
+      "downloadUrl": "https://lotv.spawningtool.com/89971/download/"
+    },
+    {
+      "replayId": "89972",
+      "title": "Sandstorm CE (28)",
+      "detailUrl": "https://lotv.spawningtool.com/89972/",
+      "downloadUrl": "https://lotv.spawningtool.com/89972/download/"
+    },
+    {
+      "replayId": "89974",
+      "title": "2026-04-03 - (Z)SortOf,(T)A.I. 1 (Very Easy)",
+      "detailUrl": "https://lotv.spawningtool.com/89974/",
+      "downloadUrl": "https://lotv.spawningtool.com/89974/download/"
+    },
+    {
+      "replayId": "89975",
+      "title": "IIIIIIII v zzzlife - Ruby Rock LE",
+      "detailUrl": "https://lotv.spawningtool.com/89975/",
+      "downloadUrl": "https://lotv.spawningtool.com/89975/download/"
+    },
+    {
+      "replayId": "89976",
+      "title": "Ruby Rock LE (7)",
+      "detailUrl": "https://lotv.spawningtool.com/89976/",
+      "downloadUrl": "https://lotv.spawningtool.com/89976/download/"
+    },
+    {
+      "replayId": "89977",
+      "title": "BansheeToBCs",
+      "detailUrl": "https://lotv.spawningtool.com/89977/",
+      "downloadUrl": "https://lotv.spawningtool.com/89977/download/"
+    },
+    {
+      "replayId": "89978",
+      "title": "SortOf New Standard ZvP",
+      "detailUrl": "https://lotv.spawningtool.com/89978/",
+      "downloadUrl": "https://lotv.spawningtool.com/89978/download/"
+    },
+    {
+      "replayId": "89979",
+      "title": "SortOf New Standard ZvZ",
+      "detailUrl": "https://lotv.spawningtool.com/89979/",
+      "downloadUrl": "https://lotv.spawningtool.com/89979/download/"
+    },
+    {
+      "replayId": "89980",
+      "title": "Tourmaline LE (567)",
+      "detailUrl": "https://lotv.spawningtool.com/89980/",
+      "downloadUrl": "https://lotv.spawningtool.com/89980/download/"
+    },
+    {
+      "replayId": "89982",
+      "title": "10000 Feet LE (14)",
+      "detailUrl": "https://lotv.spawningtool.com/89982/",
+      "downloadUrl": "https://lotv.spawningtool.com/89982/download/"
+    },
+    {
+      "replayId": "89983",
+      "title": "4720910_Deimos_BenBotBC_MagannathaAIE_v2",
+      "detailUrl": "https://lotv.spawningtool.com/89983/",
+      "downloadUrl": "https://lotv.spawningtool.com/89983/download/"
+    },
+    {
+      "replayId": "89984",
+      "title": "build order bota",
+      "detailUrl": "https://lotv.spawningtool.com/89984/",
+      "downloadUrl": "https://lotv.spawningtool.com/89984/download/"
+    },
+    {
+      "replayId": "89985",
+      "title": "White Rabbit LE (125)",
+      "detailUrl": "https://lotv.spawningtool.com/89985/",
+      "downloadUrl": "https://lotv.spawningtool.com/89985/download/"
+    },
+    {
+      "replayId": "89986",
+      "title": "PvZ (vs HL timing killed 3rd, 1max trade vs LBH Lurker, 2max win) 15m bi 2524_(82v128)",
+      "detailUrl": "https://lotv.spawningtool.com/89986/",
+      "downloadUrl": "https://lotv.spawningtool.com/89986/download/"
+    },
+    {
+      "replayId": "89987",
+      "title": "PvZ g1promo (vs ninja gold nat, Ling Ravager Hydra , Lurker Ultra)_16m pal (2677)(76v125)",
+      "detailUrl": "https://lotv.spawningtool.com/89987/",
+      "downloadUrl": "https://lotv.spawningtool.com/89987/download/"
+    },
+    {
+      "replayId": "89988",
+      "title": "PvZ (vs macro RH Lurker)_15m bb (2833v2788)(96v145)",
+      "detailUrl": "https://lotv.spawningtool.com/89988/",
+      "downloadUrl": "https://lotv.spawningtool.com/89988/download/"
+    }
+  ]
+}

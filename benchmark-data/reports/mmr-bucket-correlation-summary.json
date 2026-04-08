@@ -1,0 +1,1103 @@
+{
+  "schemaVersion": "epic13-mmr-bucket-correlation-v1",
+  "generatedAt": "2026-04-08T18:57:43Z",
+  "threshold": 0.85,
+  "rowCount": 44,
+  "strongCorrelationCount": 31,
+  "strongCorrelationRows": [
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvZ",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 36,
+        "mmr-3000": 35,
+        "mmr-4000": 57,
+        "mmr-5000": 71
+      },
+      "pearsonMeanVsBucketMmr": 0.9956513769113738,
+      "pearsonMedianVsBucketMmr": 0.9992082676730805,
+      "absPearsonMeanVsBucketMmr": 0.9956513769113738,
+      "absPearsonMedianVsBucketMmr": 0.9992082676730805,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "LATE",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 33,
+        "mmr-3000": 31,
+        "mmr-4000": 55,
+        "mmr-5000": 60
+      },
+      "pearsonMeanVsBucketMmr": -0.9990305234923449,
+      "pearsonMedianVsBucketMmr": -0.9868490050223527,
+      "absPearsonMeanVsBucketMmr": 0.9990305234923449,
+      "absPearsonMedianVsBucketMmr": 0.9868490050223527,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvZ",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 95,
+        "mmr-3000": 97,
+        "mmr-4000": 100,
+        "mmr-5000": 100
+      },
+      "pearsonMeanVsBucketMmr": -0.9979094995733261,
+      "pearsonMedianVsBucketMmr": 0.9848004282351451,
+      "absPearsonMeanVsBucketMmr": 0.9979094995733261,
+      "absPearsonMedianVsBucketMmr": 0.9848004282351451,
+      "directionMatchesExpectationMean": false,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvZ",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 95,
+        "mmr-3000": 97,
+        "mmr-4000": 100,
+        "mmr-5000": 100
+      },
+      "pearsonMeanVsBucketMmr": -0.9957744157129155,
+      "pearsonMedianVsBucketMmr": -0.993628082338201,
+      "absPearsonMeanVsBucketMmr": 0.9957744157129155,
+      "absPearsonMedianVsBucketMmr": 0.993628082338201,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "LATE",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 22,
+        "mmr-3000": 17,
+        "mmr-4000": 38,
+        "mmr-5000": 47
+      },
+      "pearsonMeanVsBucketMmr": -0.9947269428079791,
+      "pearsonMedianVsBucketMmr": -0.96397945997551,
+      "absPearsonMeanVsBucketMmr": 0.9947269428079791,
+      "absPearsonMedianVsBucketMmr": 0.96397945997551,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 69,
+        "mmr-3000": 77,
+        "mmr-4000": 76,
+        "mmr-5000": 77
+      },
+      "pearsonMeanVsBucketMmr": -0.9876310571662191,
+      "pearsonMedianVsBucketMmr": -0.9904698104654228,
+      "absPearsonMeanVsBucketMmr": 0.9876310571662191,
+      "absPearsonMedianVsBucketMmr": 0.9904698104654228,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 69,
+        "mmr-3000": 77,
+        "mmr-4000": 76,
+        "mmr-5000": 77
+      },
+      "pearsonMeanVsBucketMmr": 0.9889984653747331,
+      "pearsonMedianVsBucketMmr": 0.9707400395580026,
+      "absPearsonMeanVsBucketMmr": 0.9889984653747331,
+      "absPearsonMedianVsBucketMmr": 0.9707400395580026,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvZ",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 76,
+        "mmr-3000": 86,
+        "mmr-4000": 94,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": 0.9877661810918339,
+      "pearsonMedianVsBucketMmr": 0.9263809477673753,
+      "absPearsonMeanVsBucketMmr": 0.9877661810918339,
+      "absPearsonMedianVsBucketMmr": 0.9263809477673753,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvZ",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 36,
+        "mmr-3000": 35,
+        "mmr-4000": 57,
+        "mmr-5000": 71
+      },
+      "pearsonMeanVsBucketMmr": 0.9864264116748209,
+      "pearsonMedianVsBucketMmr": 0.9859932389006137,
+      "absPearsonMeanVsBucketMmr": 0.9864264116748209,
+      "absPearsonMedianVsBucketMmr": 0.9859932389006137,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 100,
+        "mmr-3000": 100,
+        "mmr-4000": 100,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": -0.9859830827368271,
+      "pearsonMedianVsBucketMmr": -0.9845092801966494,
+      "absPearsonMeanVsBucketMmr": 0.9859830827368271,
+      "absPearsonMedianVsBucketMmr": 0.9845092801966494,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectMissedLarvaPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "LATE",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 33,
+        "mmr-3000": 31,
+        "mmr-4000": 55,
+        "mmr-5000": 60
+      },
+      "pearsonMeanVsBucketMmr": -0.9158209308123343,
+      "pearsonMedianVsBucketMmr": -0.9849004410860008,
+      "absPearsonMeanVsBucketMmr": 0.9158209308123343,
+      "absPearsonMedianVsBucketMmr": 0.9849004410860008,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "LATE",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 33,
+        "mmr-3000": 31,
+        "mmr-4000": 55,
+        "mmr-5000": 60
+      },
+      "pearsonMeanVsBucketMmr": 0.981688875527487,
+      "pearsonMedianVsBucketMmr": 0.956114050667471,
+      "absPearsonMeanVsBucketMmr": 0.981688875527487,
+      "absPearsonMedianVsBucketMmr": 0.956114050667471,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 75,
+        "mmr-3000": 87,
+        "mmr-4000": 84,
+        "mmr-5000": 90
+      },
+      "pearsonMeanVsBucketMmr": 0.9729509849413892,
+      "pearsonMedianVsBucketMmr": 0.9809768223130462,
+      "absPearsonMeanVsBucketMmr": 0.9729509849413892,
+      "absPearsonMedianVsBucketMmr": 0.9809768223130462,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvP",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 69,
+        "mmr-3000": 77,
+        "mmr-4000": 76,
+        "mmr-5000": 77
+      },
+      "pearsonMeanVsBucketMmr": 0.9646894519203857,
+      "pearsonMedianVsBucketMmr": 0.9805994797898742,
+      "absPearsonMeanVsBucketMmr": 0.9646894519203857,
+      "absPearsonMedianVsBucketMmr": 0.9805994797898742,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 100,
+        "mmr-3000": 100,
+        "mmr-4000": 100,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": -0.979700026873831,
+      "pearsonMedianVsBucketMmr": -0.9744530208117945,
+      "absPearsonMeanVsBucketMmr": 0.979700026873831,
+      "absPearsonMedianVsBucketMmr": 0.9744530208117945,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvT",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 75,
+        "mmr-3000": 87,
+        "mmr-4000": 84,
+        "mmr-5000": 90
+      },
+      "pearsonMeanVsBucketMmr": 0.9670523181619808,
+      "pearsonMedianVsBucketMmr": 0.9473991301097244,
+      "absPearsonMeanVsBucketMmr": 0.9670523181619808,
+      "absPearsonMedianVsBucketMmr": 0.9473991301097244,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 75,
+        "mmr-3000": 87,
+        "mmr-4000": 84,
+        "mmr-5000": 90
+      },
+      "pearsonMeanVsBucketMmr": -0.9576988894245516,
+      "pearsonMedianVsBucketMmr": -0.9635419084016785,
+      "absPearsonMeanVsBucketMmr": 0.9576988894245516,
+      "absPearsonMedianVsBucketMmr": 0.9635419084016785,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvZ",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 36,
+        "mmr-3000": 35,
+        "mmr-4000": 57,
+        "mmr-5000": 71
+      },
+      "pearsonMeanVsBucketMmr": -0.9505690473659824,
+      "pearsonMedianVsBucketMmr": -0.9195646557240182,
+      "absPearsonMeanVsBucketMmr": 0.9505690473659824,
+      "absPearsonMedianVsBucketMmr": 0.9195646557240182,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvP",
+      "phase": "END",
+      "bucketCount": 3,
+      "sampleSizes": {
+        "mmr-2000": 1,
+        "mmr-4000": 4,
+        "mmr-5000": 8
+      },
+      "pearsonMeanVsBucketMmr": -0.949265212227761,
+      "pearsonMedianVsBucketMmr": -0.91248209675669,
+      "absPearsonMeanVsBucketMmr": 0.949265212227761,
+      "absPearsonMedianVsBucketMmr": 0.91248209675669,
+      "directionMatchesExpectationMean": false,
+      "directionMatchesExpectationMedian": false
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 100,
+        "mmr-3000": 100,
+        "mmr-4000": 100,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": -0.5763093509868507,
+      "pearsonMedianVsBucketMmr": 0.9481396988988446,
+      "absPearsonMeanVsBucketMmr": 0.5763093509868507,
+      "absPearsonMedianVsBucketMmr": 0.9481396988988446,
+      "directionMatchesExpectationMean": false,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 100,
+        "mmr-3000": 100,
+        "mmr-4000": 100,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": -0.9465903000265712,
+      "pearsonMedianVsBucketMmr": 0.9276034630940386,
+      "absPearsonMeanVsBucketMmr": 0.9465903000265712,
+      "absPearsonMedianVsBucketMmr": 0.9276034630940386,
+      "directionMatchesExpectationMean": false,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectMissedLarvaPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 100,
+        "mmr-3000": 100,
+        "mmr-4000": 100,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": -0.9298609178852233,
+      "pearsonMedianVsBucketMmr": -0.9419131672464901,
+      "absPearsonMeanVsBucketMmr": 0.9298609178852233,
+      "absPearsonMedianVsBucketMmr": 0.9419131672464901,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "LATE",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 22,
+        "mmr-3000": 17,
+        "mmr-4000": 38,
+        "mmr-5000": 47
+      },
+      "pearsonMeanVsBucketMmr": 0.9413222528436856,
+      "pearsonMedianVsBucketMmr": 0.933292819126259,
+      "absPearsonMeanVsBucketMmr": 0.9413222528436856,
+      "absPearsonMedianVsBucketMmr": 0.933292819126259,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "END",
+      "bucketCount": 3,
+      "sampleSizes": {
+        "mmr-2000": 1,
+        "mmr-4000": 4,
+        "mmr-5000": 8
+      },
+      "pearsonMeanVsBucketMmr": -0.93977837751544,
+      "pearsonMedianVsBucketMmr": -0.8273765809769806,
+      "absPearsonMeanVsBucketMmr": 0.93977837751544,
+      "absPearsonMedianVsBucketMmr": 0.8273765809769806,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectMissedLarvaPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 100,
+        "mmr-3000": 100,
+        "mmr-4000": 100,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": -0.9182521913652351,
+      "pearsonMedianVsBucketMmr": -0.9286260010218294,
+      "absPearsonMeanVsBucketMmr": 0.9182521913652351,
+      "absPearsonMedianVsBucketMmr": 0.9286260010218294,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvP",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 94,
+        "mmr-3000": 93,
+        "mmr-4000": 99,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": 0.9155859539864107,
+      "pearsonMedianVsBucketMmr": 0.8538427260943572,
+      "absPearsonMeanVsBucketMmr": 0.9155859539864107,
+      "absPearsonMedianVsBucketMmr": 0.8538427260943572,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvT",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 93,
+        "mmr-3000": 98,
+        "mmr-4000": 99,
+        "mmr-5000": 97
+      },
+      "pearsonMeanVsBucketMmr": 0.8192760623243125,
+      "pearsonMedianVsBucketMmr": 0.8895103668840935,
+      "absPearsonMeanVsBucketMmr": 0.8192760623243125,
+      "absPearsonMedianVsBucketMmr": 0.8895103668840935,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvZ",
+      "phase": "LATE",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 3,
+        "mmr-3000": 1,
+        "mmr-4000": 11,
+        "mmr-5000": 11
+      },
+      "pearsonMeanVsBucketMmr": 0.8385067314584845,
+      "pearsonMedianVsBucketMmr": 0.8865959116806148,
+      "absPearsonMeanVsBucketMmr": 0.8385067314584845,
+      "absPearsonMedianVsBucketMmr": 0.8865959116806148,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "END",
+      "bucketCount": 3,
+      "sampleSizes": {
+        "mmr-2000": 1,
+        "mmr-4000": 4,
+        "mmr-5000": 8
+      },
+      "pearsonMeanVsBucketMmr": -0.8732050503276586,
+      "pearsonMedianVsBucketMmr": -0.8845503032933706,
+      "absPearsonMeanVsBucketMmr": 0.8732050503276586,
+      "absPearsonMedianVsBucketMmr": 0.8845503032933706,
+      "directionMatchesExpectationMean": false,
+      "directionMatchesExpectationMedian": false
+    },
+    {
+      "metricName": "injectMissedLarvaPerHatchPerMinute",
+      "matchup": "ZvZ",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 36,
+        "mmr-3000": 35,
+        "mmr-4000": 57,
+        "mmr-5000": 71
+      },
+      "pearsonMeanVsBucketMmr": -0.37087939061829933,
+      "pearsonMedianVsBucketMmr": -0.868956864401131,
+      "absPearsonMeanVsBucketMmr": 0.37087939061829933,
+      "absPearsonMedianVsBucketMmr": 0.868956864401131,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvT",
+      "phase": "LATE",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 33,
+        "mmr-3000": 31,
+        "mmr-4000": 55,
+        "mmr-5000": 60
+      },
+      "pearsonMeanVsBucketMmr": 0.859576124494593,
+      "pearsonMedianVsBucketMmr": 0.6663305228371238,
+      "absPearsonMeanVsBucketMmr": 0.859576124494593,
+      "absPearsonMedianVsBucketMmr": 0.6663305228371238,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    }
+  ],
+  "topCorrelationRows": [
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvZ",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 36,
+        "mmr-3000": 35,
+        "mmr-4000": 57,
+        "mmr-5000": 71
+      },
+      "pearsonMeanVsBucketMmr": 0.9956513769113738,
+      "pearsonMedianVsBucketMmr": 0.9992082676730805,
+      "absPearsonMeanVsBucketMmr": 0.9956513769113738,
+      "absPearsonMedianVsBucketMmr": 0.9992082676730805,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "LATE",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 33,
+        "mmr-3000": 31,
+        "mmr-4000": 55,
+        "mmr-5000": 60
+      },
+      "pearsonMeanVsBucketMmr": -0.9990305234923449,
+      "pearsonMedianVsBucketMmr": -0.9868490050223527,
+      "absPearsonMeanVsBucketMmr": 0.9990305234923449,
+      "absPearsonMedianVsBucketMmr": 0.9868490050223527,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvZ",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 95,
+        "mmr-3000": 97,
+        "mmr-4000": 100,
+        "mmr-5000": 100
+      },
+      "pearsonMeanVsBucketMmr": -0.9979094995733261,
+      "pearsonMedianVsBucketMmr": 0.9848004282351451,
+      "absPearsonMeanVsBucketMmr": 0.9979094995733261,
+      "absPearsonMedianVsBucketMmr": 0.9848004282351451,
+      "directionMatchesExpectationMean": false,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvZ",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 95,
+        "mmr-3000": 97,
+        "mmr-4000": 100,
+        "mmr-5000": 100
+      },
+      "pearsonMeanVsBucketMmr": -0.9957744157129155,
+      "pearsonMedianVsBucketMmr": -0.993628082338201,
+      "absPearsonMeanVsBucketMmr": 0.9957744157129155,
+      "absPearsonMedianVsBucketMmr": 0.993628082338201,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "LATE",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 22,
+        "mmr-3000": 17,
+        "mmr-4000": 38,
+        "mmr-5000": 47
+      },
+      "pearsonMeanVsBucketMmr": -0.9947269428079791,
+      "pearsonMedianVsBucketMmr": -0.96397945997551,
+      "absPearsonMeanVsBucketMmr": 0.9947269428079791,
+      "absPearsonMedianVsBucketMmr": 0.96397945997551,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 69,
+        "mmr-3000": 77,
+        "mmr-4000": 76,
+        "mmr-5000": 77
+      },
+      "pearsonMeanVsBucketMmr": -0.9876310571662191,
+      "pearsonMedianVsBucketMmr": -0.9904698104654228,
+      "absPearsonMeanVsBucketMmr": 0.9876310571662191,
+      "absPearsonMedianVsBucketMmr": 0.9904698104654228,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 69,
+        "mmr-3000": 77,
+        "mmr-4000": 76,
+        "mmr-5000": 77
+      },
+      "pearsonMeanVsBucketMmr": 0.9889984653747331,
+      "pearsonMedianVsBucketMmr": 0.9707400395580026,
+      "absPearsonMeanVsBucketMmr": 0.9889984653747331,
+      "absPearsonMedianVsBucketMmr": 0.9707400395580026,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvZ",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 76,
+        "mmr-3000": 86,
+        "mmr-4000": 94,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": 0.9877661810918339,
+      "pearsonMedianVsBucketMmr": 0.9263809477673753,
+      "absPearsonMeanVsBucketMmr": 0.9877661810918339,
+      "absPearsonMedianVsBucketMmr": 0.9263809477673753,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvZ",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 36,
+        "mmr-3000": 35,
+        "mmr-4000": 57,
+        "mmr-5000": 71
+      },
+      "pearsonMeanVsBucketMmr": 0.9864264116748209,
+      "pearsonMedianVsBucketMmr": 0.9859932389006137,
+      "absPearsonMeanVsBucketMmr": 0.9864264116748209,
+      "absPearsonMedianVsBucketMmr": 0.9859932389006137,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 100,
+        "mmr-3000": 100,
+        "mmr-4000": 100,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": -0.9859830827368271,
+      "pearsonMedianVsBucketMmr": -0.9845092801966494,
+      "absPearsonMeanVsBucketMmr": 0.9859830827368271,
+      "absPearsonMedianVsBucketMmr": 0.9845092801966494,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectMissedLarvaPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "LATE",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 33,
+        "mmr-3000": 31,
+        "mmr-4000": 55,
+        "mmr-5000": 60
+      },
+      "pearsonMeanVsBucketMmr": -0.9158209308123343,
+      "pearsonMedianVsBucketMmr": -0.9849004410860008,
+      "absPearsonMeanVsBucketMmr": 0.9158209308123343,
+      "absPearsonMedianVsBucketMmr": 0.9849004410860008,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "LATE",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 33,
+        "mmr-3000": 31,
+        "mmr-4000": 55,
+        "mmr-5000": 60
+      },
+      "pearsonMeanVsBucketMmr": 0.981688875527487,
+      "pearsonMedianVsBucketMmr": 0.956114050667471,
+      "absPearsonMeanVsBucketMmr": 0.981688875527487,
+      "absPearsonMedianVsBucketMmr": 0.956114050667471,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 75,
+        "mmr-3000": 87,
+        "mmr-4000": 84,
+        "mmr-5000": 90
+      },
+      "pearsonMeanVsBucketMmr": 0.9729509849413892,
+      "pearsonMedianVsBucketMmr": 0.9809768223130462,
+      "absPearsonMeanVsBucketMmr": 0.9729509849413892,
+      "absPearsonMedianVsBucketMmr": 0.9809768223130462,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvP",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 69,
+        "mmr-3000": 77,
+        "mmr-4000": 76,
+        "mmr-5000": 77
+      },
+      "pearsonMeanVsBucketMmr": 0.9646894519203857,
+      "pearsonMedianVsBucketMmr": 0.9805994797898742,
+      "absPearsonMeanVsBucketMmr": 0.9646894519203857,
+      "absPearsonMedianVsBucketMmr": 0.9805994797898742,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 100,
+        "mmr-3000": 100,
+        "mmr-4000": 100,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": -0.979700026873831,
+      "pearsonMedianVsBucketMmr": -0.9744530208117945,
+      "absPearsonMeanVsBucketMmr": 0.979700026873831,
+      "absPearsonMedianVsBucketMmr": 0.9744530208117945,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvT",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 75,
+        "mmr-3000": 87,
+        "mmr-4000": 84,
+        "mmr-5000": 90
+      },
+      "pearsonMeanVsBucketMmr": 0.9670523181619808,
+      "pearsonMedianVsBucketMmr": 0.9473991301097244,
+      "absPearsonMeanVsBucketMmr": 0.9670523181619808,
+      "absPearsonMedianVsBucketMmr": 0.9473991301097244,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 75,
+        "mmr-3000": 87,
+        "mmr-4000": 84,
+        "mmr-5000": 90
+      },
+      "pearsonMeanVsBucketMmr": -0.9576988894245516,
+      "pearsonMedianVsBucketMmr": -0.9635419084016785,
+      "absPearsonMeanVsBucketMmr": 0.9576988894245516,
+      "absPearsonMedianVsBucketMmr": 0.9635419084016785,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvZ",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 36,
+        "mmr-3000": 35,
+        "mmr-4000": 57,
+        "mmr-5000": 71
+      },
+      "pearsonMeanVsBucketMmr": -0.9505690473659824,
+      "pearsonMedianVsBucketMmr": -0.9195646557240182,
+      "absPearsonMeanVsBucketMmr": 0.9505690473659824,
+      "absPearsonMedianVsBucketMmr": 0.9195646557240182,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvP",
+      "phase": "END",
+      "bucketCount": 3,
+      "sampleSizes": {
+        "mmr-2000": 1,
+        "mmr-4000": 4,
+        "mmr-5000": 8
+      },
+      "pearsonMeanVsBucketMmr": -0.949265212227761,
+      "pearsonMedianVsBucketMmr": -0.91248209675669,
+      "absPearsonMeanVsBucketMmr": 0.949265212227761,
+      "absPearsonMedianVsBucketMmr": 0.91248209675669,
+      "directionMatchesExpectationMean": false,
+      "directionMatchesExpectationMedian": false
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 100,
+        "mmr-3000": 100,
+        "mmr-4000": 100,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": -0.5763093509868507,
+      "pearsonMedianVsBucketMmr": 0.9481396988988446,
+      "absPearsonMeanVsBucketMmr": 0.5763093509868507,
+      "absPearsonMedianVsBucketMmr": 0.9481396988988446,
+      "directionMatchesExpectationMean": false,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 100,
+        "mmr-3000": 100,
+        "mmr-4000": 100,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": -0.9465903000265712,
+      "pearsonMedianVsBucketMmr": 0.9276034630940386,
+      "absPearsonMeanVsBucketMmr": 0.9465903000265712,
+      "absPearsonMedianVsBucketMmr": 0.9276034630940386,
+      "directionMatchesExpectationMean": false,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectMissedLarvaPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 100,
+        "mmr-3000": 100,
+        "mmr-4000": 100,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": -0.9298609178852233,
+      "pearsonMedianVsBucketMmr": -0.9419131672464901,
+      "absPearsonMeanVsBucketMmr": 0.9298609178852233,
+      "absPearsonMedianVsBucketMmr": 0.9419131672464901,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "LATE",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 22,
+        "mmr-3000": 17,
+        "mmr-4000": 38,
+        "mmr-5000": 47
+      },
+      "pearsonMeanVsBucketMmr": 0.9413222528436856,
+      "pearsonMedianVsBucketMmr": 0.933292819126259,
+      "absPearsonMeanVsBucketMmr": 0.9413222528436856,
+      "absPearsonMedianVsBucketMmr": 0.933292819126259,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "larvaMissedPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "END",
+      "bucketCount": 3,
+      "sampleSizes": {
+        "mmr-2000": 1,
+        "mmr-4000": 4,
+        "mmr-5000": 8
+      },
+      "pearsonMeanVsBucketMmr": -0.93977837751544,
+      "pearsonMedianVsBucketMmr": -0.8273765809769806,
+      "absPearsonMeanVsBucketMmr": 0.93977837751544,
+      "absPearsonMedianVsBucketMmr": 0.8273765809769806,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectMissedLarvaPerHatchPerMinute",
+      "matchup": "ZvT",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 100,
+        "mmr-3000": 100,
+        "mmr-4000": 100,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": -0.9182521913652351,
+      "pearsonMedianVsBucketMmr": -0.9286260010218294,
+      "absPearsonMeanVsBucketMmr": 0.9182521913652351,
+      "absPearsonMedianVsBucketMmr": 0.9286260010218294,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvP",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 94,
+        "mmr-3000": 93,
+        "mmr-4000": 99,
+        "mmr-5000": 99
+      },
+      "pearsonMeanVsBucketMmr": 0.9155859539864107,
+      "pearsonMedianVsBucketMmr": 0.8538427260943572,
+      "absPearsonMeanVsBucketMmr": 0.9155859539864107,
+      "absPearsonMedianVsBucketMmr": 0.8538427260943572,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvT",
+      "phase": "EARLY",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 93,
+        "mmr-3000": 98,
+        "mmr-4000": 99,
+        "mmr-5000": 97
+      },
+      "pearsonMeanVsBucketMmr": 0.8192760623243125,
+      "pearsonMedianVsBucketMmr": 0.8895103668840935,
+      "absPearsonMeanVsBucketMmr": 0.8192760623243125,
+      "absPearsonMedianVsBucketMmr": 0.8895103668840935,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "injectUptimePct",
+      "matchup": "ZvZ",
+      "phase": "LATE",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 3,
+        "mmr-3000": 1,
+        "mmr-4000": 11,
+        "mmr-5000": 11
+      },
+      "pearsonMeanVsBucketMmr": 0.8385067314584845,
+      "pearsonMedianVsBucketMmr": 0.8865959116806148,
+      "absPearsonMeanVsBucketMmr": 0.8385067314584845,
+      "absPearsonMedianVsBucketMmr": 0.8865959116806148,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    },
+    {
+      "metricName": "spawnedLarvaPerHatchPerMinute",
+      "matchup": "ZvP",
+      "phase": "END",
+      "bucketCount": 3,
+      "sampleSizes": {
+        "mmr-2000": 1,
+        "mmr-4000": 4,
+        "mmr-5000": 8
+      },
+      "pearsonMeanVsBucketMmr": -0.8732050503276586,
+      "pearsonMedianVsBucketMmr": -0.8845503032933706,
+      "absPearsonMeanVsBucketMmr": 0.8732050503276586,
+      "absPearsonMedianVsBucketMmr": 0.8845503032933706,
+      "directionMatchesExpectationMean": false,
+      "directionMatchesExpectationMedian": false
+    },
+    {
+      "metricName": "injectMissedLarvaPerHatchPerMinute",
+      "matchup": "ZvZ",
+      "phase": "MID",
+      "bucketCount": 4,
+      "sampleSizes": {
+        "mmr-2000": 36,
+        "mmr-3000": 35,
+        "mmr-4000": 57,
+        "mmr-5000": 71
+      },
+      "pearsonMeanVsBucketMmr": -0.37087939061829933,
+      "pearsonMedianVsBucketMmr": -0.868956864401131,
+      "absPearsonMeanVsBucketMmr": 0.37087939061829933,
+      "absPearsonMedianVsBucketMmr": 0.868956864401131,
+      "directionMatchesExpectationMean": true,
+      "directionMatchesExpectationMedian": true
+    }
+  ]
+}

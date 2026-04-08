@@ -218,6 +218,10 @@ ScelightExtModSDK/Scelight-ext-mod-api/1.5.2/javadoc/hu/scelightapi/sc2/rep/mode
 ScelightExtModSDK/Scelight-ext-mod-api/1.5.2/javadoc/hu/scelightapi/sc2/rep/model/details/class-use/IRealm.html
 ScelightExtModSDK/Scelight-ext-mod-api/1.5.2/javadoc/hu/scelightapi/sc2/rep/model/details/class-use/IResult.html
 ScelightExtModSDK/Scelight-ext-mod-api/1.5.2/javadoc/hu/scelightapi/sc2/rep/model/details/class-use/IToon.html
+
+# Epic 13 benchmark corpus raw replay storage
+benchmark-data/raw-replays/
+benchmark-data/tmp/
 ScelightExtModSDK/Scelight-ext-mod-api/1.5.2/javadoc/hu/scelightapi/sc2/rep/model/gameevents/IControlGroupUpdateEvent.html
 ScelightExtModSDK/Scelight-ext-mod-api/1.5.2/javadoc/hu/scelightapi/sc2/rep/model/gameevents/IGameEvents.html
 ScelightExtModSDK/Scelight-ext-mod-api/1.5.2/javadoc/hu/scelightapi/sc2/rep/model/gameevents/IGameUserLeaveEvent.html

@@ -1,0 +1,294 @@
+{
+  "schemaVersion": "epic13-internet-sources-v1",
+  "generatedAt": "2026-04-07T10:34:29Z",
+  "input": "benchmark-data/reports/seeded-replay-discovery.json",
+  "perSeedLimit": 1,
+  "downloadedItemCount": 10,
+  "resultList": [
+    {
+      "kind": "replay",
+      "label": "Clem v Serral: Game 3 - [ESL] Alcyone",
+      "seed": {
+        "sourceId": "elite-serral-zvt",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=3",
+        "pages": 3,
+        "cohortBucket": "elite-7000",
+        "primaryPlayer": "Serral",
+        "matchup": "ZvT",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      },
+      "download": {
+        "url": "https://lotv.spawningtool.com/82393/download/",
+        "finalUrl": "https://spawningtool-lotv.s3.amazonaws.com/replays/18317a88bc5a4a3736300449ef751938.SC2Replay?AWSAccessKeyId=AKIAINNZE6JTRWVFONUQ&Signature=qdPyCWfm7vRef3DywQ2W87hoO1U%3D&Expires=1775561637",
+        "filePath": "benchmark-data/raw-replays/seeded-sample/18317a88bc5a4a3736300449ef751938.SC2Replay",
+        "fileName": "18317a88bc5a4a3736300449ef751938.SC2Replay",
+        "sizeBytes": 386165,
+        "sha256": "341ee50d115c0acb9dbeb45bfad2eeebdaee4fd7d50a552beae5b8b71ae1c45a",
+        "contentType": "application/octet-stream"
+      },
+      "metadata": {
+        "replayId": "82393",
+        "title": "Clem v Serral: Game 3 - [ESL] Alcyone",
+        "detailUrl": "https://lotv.spawningtool.com/82393/",
+        "downloadUrl": "https://lotv.spawningtool.com/82393/download/"
+      }
+    },
+    {
+      "kind": "replay",
+      "label": "Creator v Serral: Game 1 - [G8] Gresvan",
+      "seed": {
+        "sourceId": "elite-serral-zvp",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=11",
+        "pages": 3,
+        "cohortBucket": "elite-7000",
+        "primaryPlayer": "Serral",
+        "matchup": "ZvP",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      },
+      "download": {
+        "url": "https://lotv.spawningtool.com/80348/download/",
+        "finalUrl": "https://spawningtool-lotv.s3.amazonaws.com/replays/44d54e134d68cbe152919f55e69b3fb8.SC2Replay?AWSAccessKeyId=AKIAINNZE6JTRWVFONUQ&Signature=t0X8sGs6kgwlMlG7ck1wwRLXLO8%3D&Expires=1775561640",
+        "filePath": "benchmark-data/raw-replays/seeded-sample/44d54e134d68cbe152919f55e69b3fb8.SC2Replay",
+        "fileName": "44d54e134d68cbe152919f55e69b3fb8.SC2Replay",
+        "sizeBytes": 182529,
+        "sha256": "06e07f5fe802267fc73fe8e0cd41bd70090b260887d6e39be8769d5b61f0c9ae",
+        "contentType": "application/octet-stream"
+      },
+      "metadata": {
+        "replayId": "80348",
+        "title": "Creator v Serral: Game 1 - [G8] Gresvan",
+        "detailUrl": "https://lotv.spawningtool.com/80348/",
+        "downloadUrl": "https://lotv.spawningtool.com/80348/download/"
+      }
+    },
+    {
+      "kind": "replay",
+      "label": "Elazer v Serral: Game 1 - [ESL] Royal Blood",
+      "seed": {
+        "sourceId": "elite-serral-zvz",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=644&tag=13",
+        "pages": 3,
+        "cohortBucket": "elite-7000",
+        "primaryPlayer": "Serral",
+        "matchup": "ZvZ",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      },
+      "download": {
+        "url": "https://lotv.spawningtool.com/77841/download/",
+        "finalUrl": "https://spawningtool-lotv.s3.amazonaws.com/replays/5132f6879e7718c9f6d7a9f43d8fcf00.SC2Replay?AWSAccessKeyId=AKIAINNZE6JTRWVFONUQ&Signature=oDgsxKuuj0lehzBHU81syFJG8Ro%3D&Expires=1775561642",
+        "filePath": "benchmark-data/raw-replays/seeded-sample/5132f6879e7718c9f6d7a9f43d8fcf00.SC2Replay",
+        "fileName": "5132f6879e7718c9f6d7a9f43d8fcf00.SC2Replay",
+        "sizeBytes": 97658,
+        "sha256": "6019a085802c1fcee38723bf1c9552c8e1d2fc5ec11f34771b8aaa62cbab7d04",
+        "contentType": "application/octet-stream"
+      },
+      "metadata": {
+        "replayId": "77841",
+        "title": "Elazer v Serral: Game 1 - [ESL] Royal Blood",
+        "detailUrl": "https://lotv.spawningtool.com/77841/",
+        "downloadUrl": "https://lotv.spawningtool.com/77841/download/"
+      }
+    },
+    {
+      "kind": "replay",
+      "label": "ByuN v Reynor: Game 2 - [ESL] Oceanborn",
+      "seed": {
+        "sourceId": "elite-reynor-zvt",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=3",
+        "pages": 3,
+        "cohortBucket": "elite-7000",
+        "primaryPlayer": "Reynor",
+        "matchup": "ZvT",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      },
+      "download": {
+        "url": "https://lotv.spawningtool.com/81165/download/",
+        "finalUrl": "https://spawningtool-lotv.s3.amazonaws.com/replays/d00aac0f5af70416f7003e6d5672f3af.SC2Replay?AWSAccessKeyId=AKIAINNZE6JTRWVFONUQ&Signature=pScmRQmH1FGfPG9s527zSxU%2FkoY%3D&Expires=1775561649",
+        "filePath": "benchmark-data/raw-replays/seeded-sample/d00aac0f5af70416f7003e6d5672f3af.SC2Replay",
+        "fileName": "d00aac0f5af70416f7003e6d5672f3af.SC2Replay",
+        "sizeBytes": 649037,
+        "sha256": "67d16be96cb1210fc2544eee080f542d61dbd8127b0327559ba32cc3aa7de55c",
+        "contentType": "application/octet-stream"
+      },
+      "metadata": {
+        "replayId": "81165",
+        "title": "ByuN v Reynor: Game 2 - [ESL] Oceanborn",
+        "detailUrl": "https://lotv.spawningtool.com/81165/",
+        "downloadUrl": "https://lotv.spawningtool.com/81165/download/"
+      }
+    },
+    {
+      "kind": "replay",
+      "label": "Reynor v ShoWTimE: Game 1 - [ESL] Oceanborn",
+      "seed": {
+        "sourceId": "elite-reynor-zvp",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=11",
+        "pages": 3,
+        "cohortBucket": "elite-7000",
+        "primaryPlayer": "Reynor",
+        "matchup": "ZvP",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      },
+      "download": {
+        "url": "https://lotv.spawningtool.com/81569/download/",
+        "finalUrl": "https://spawningtool-lotv.s3.amazonaws.com/replays/637083f8f95f7389f370cf3c68ef9506.SC2Replay?AWSAccessKeyId=AKIAINNZE6JTRWVFONUQ&Signature=p9RRRoebd8zDQr6HGABaY97cv2Q%3D&Expires=1775561655",
+        "filePath": "benchmark-data/raw-replays/seeded-sample/637083f8f95f7389f370cf3c68ef9506.SC2Replay",
+        "fileName": "637083f8f95f7389f370cf3c68ef9506.SC2Replay",
+        "sizeBytes": 354299,
+        "sha256": "8b83038a95564f3dda84e0e5a94637a86f1e41f147b3080450097b5eabb3685c",
+        "contentType": "application/octet-stream"
+      },
+      "metadata": {
+        "replayId": "81569",
+        "title": "Reynor v ShoWTimE: Game 1 - [ESL] Oceanborn",
+        "detailUrl": "https://lotv.spawningtool.com/81569/",
+        "downloadUrl": "https://lotv.spawningtool.com/81569/download/"
+      }
+    },
+    {
+      "kind": "replay",
+      "label": "Reynor v Serral: Game 2 - [ESL] Inside and Out",
+      "seed": {
+        "sourceId": "elite-reynor-zvz",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=546&tag=13",
+        "pages": 3,
+        "cohortBucket": "elite-7000",
+        "primaryPlayer": "Reynor",
+        "matchup": "ZvZ",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      },
+      "download": {
+        "url": "https://lotv.spawningtool.com/76577/download/",
+        "finalUrl": "https://spawningtool-lotv.s3.amazonaws.com/replays/a5504081a45ef4fdc3f1e41e892878d0.SC2Replay?AWSAccessKeyId=AKIAINNZE6JTRWVFONUQ&Signature=ZGtmXzZSUqP%2F45LeAVvGO78MfH0%3D&Expires=1775561657",
+        "filePath": "benchmark-data/raw-replays/seeded-sample/a5504081a45ef4fdc3f1e41e892878d0.SC2Replay",
+        "fileName": "a5504081a45ef4fdc3f1e41e892878d0.SC2Replay",
+        "sizeBytes": 366822,
+        "sha256": "8b976f8188ed667d6576e938bcd5e440bb52b2d43c502b42c83372282bff6f65",
+        "contentType": "application/octet-stream"
+      },
+      "metadata": {
+        "replayId": "76577",
+        "title": "Reynor v Serral: Game 2 - [ESL] Inside and Out",
+        "detailUrl": "https://lotv.spawningtool.com/76577/",
+        "downloadUrl": "https://lotv.spawningtool.com/76577/download/"
+      }
+    },
+    {
+      "kind": "replay",
+      "label": "LiquidClem v Reynor: Game 10 - Magannatha LE",
+      "seed": {
+        "sourceId": "public-pro-zvt",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=3",
+        "pages": 2,
+        "cohortBucket": "unassigned",
+        "matchup": "ZvT",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      },
+      "download": {
+        "url": "https://lotv.spawningtool.com/89221/download/",
+        "finalUrl": "https://spawningtool-lotv.s3.us-west-2.amazonaws.com/replays/d988f0c9ce51a19b361bf9d1154856e8.SC2Replay?AWSAccessKeyId=AKIAINNZE6JTRWVFONUQ&Signature=iSfc17PMslcSBJD38rxJLlh2lBg%3D&Expires=1775561661",
+        "filePath": "benchmark-data/raw-replays/seeded-sample/d988f0c9ce51a19b361bf9d1154856e8.SC2Replay",
+        "fileName": "d988f0c9ce51a19b361bf9d1154856e8.SC2Replay",
+        "sizeBytes": 162076,
+        "sha256": "fc004168cd4557c4c93e3b996b491305a7744cdf682551125c3291b608c16642",
+        "contentType": "application/octet-stream"
+      },
+      "metadata": {
+        "replayId": "89221",
+        "title": "LiquidClem v Reynor: Game 10 - Magannatha LE",
+        "detailUrl": "https://lotv.spawningtool.com/89221/",
+        "downloadUrl": "https://lotv.spawningtool.com/89221/download/"
+      }
+    },
+    {
+      "kind": "replay",
+      "label": "Krystianer v Lambo: Game 1 - Last Fantasy LE",
+      "seed": {
+        "sourceId": "public-pro-zvp",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=11",
+        "pages": 2,
+        "cohortBucket": "unassigned",
+        "matchup": "ZvP",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      },
+      "download": {
+        "url": "https://lotv.spawningtool.com/89258/download/",
+        "finalUrl": "https://spawningtool-lotv.s3.amazonaws.com/replays/66661f17228cc69dd8ccb284ed9f7e7e.SC2Replay?AWSAccessKeyId=AKIAINNZE6JTRWVFONUQ&Signature=VIANQZPmmdyfaqakkxiFofzzVuc%3D&Expires=1775561663",
+        "filePath": "benchmark-data/raw-replays/seeded-sample/66661f17228cc69dd8ccb284ed9f7e7e.SC2Replay",
+        "fileName": "66661f17228cc69dd8ccb284ed9f7e7e.SC2Replay",
+        "sizeBytes": 151421,
+        "sha256": "8eb00211a366c196f6e4ced85bd30621140ca9fae1a4408cab149c4f0801ebad",
+        "contentType": "application/octet-stream"
+      },
+      "metadata": {
+        "replayId": "89258",
+        "title": "Krystianer v Lambo: Game 1 - Last Fantasy LE",
+        "detailUrl": "https://lotv.spawningtool.com/89258/",
+        "downloadUrl": "https://lotv.spawningtool.com/89258/download/"
+      }
+    },
+    {
+      "kind": "replay",
+      "label": "Nitix v VITSolar: Game 2 - Goldenaura LE",
+      "seed": {
+        "sourceId": "public-pro-zvz",
+        "sourceKind": "spawningtool-replay-listing",
+        "url": "https://lotv.spawningtool.com/replays/?pro_only=on&tag=13",
+        "pages": 2,
+        "cohortBucket": "unassigned",
+        "matchup": "ZvZ",
+        "sourceLabel": "SpawningTool filtered replay browser"
+      },
+      "download": {
+        "url": "https://lotv.spawningtool.com/85280/download/",
+        "finalUrl": "https://spawningtool-lotv.s3.amazonaws.com/replays/961575965300cf4d6a30f60f33a8f44a.SC2Replay?AWSAccessKeyId=AKIAINNZE6JTRWVFONUQ&Signature=wmpmpJauktej8Dm8Bj8ATZXw2fA%3D&Expires=1775561665",
+        "filePath": "benchmark-data/raw-replays/seeded-sample/961575965300cf4d6a30f60f33a8f44a.SC2Replay",
+        "fileName": "961575965300cf4d6a30f60f33a8f44a.SC2Replay",
+        "sizeBytes": 121396,
+        "sha256": "d38f9f5b37bcf901c87794d215484874804861a94af1e0e869ebe1fa7fddfed3",
+        "contentType": "application/octet-stream"
+      },
+      "metadata": {
+        "replayId": "85280",
+        "title": "Nitix v VITSolar: Game 2 - Goldenaura LE",
+        "detailUrl": "https://lotv.spawningtool.com/85280/",
+        "downloadUrl": "https://lotv.spawningtool.com/85280/download/"
+      }
+    },
+    {
+      "kind": "google-drive-file",
+      "label": "FEL Cracow 2025",
+      "seed": {
+        "sourceId": "spawningtool-replaypacks-index",
+        "sourceKind": "spawningtool-replaypacks",
+        "url": "https://lotv.spawningtool.com/replaypacks/",
+        "sourceLabel": "SpawningTool replay packs"
+      },
+      "download": {
+        "url": "https://drive.google.com/uc?export=download&id=1Bu5OwUjiPvAXYZuVmkOrq7d_A2WxwNrr",
+        "finalUrl": "https://drive.usercontent.google.com/download?id=1Bu5OwUjiPvAXYZuVmkOrq7d_A2WxwNrr&export=download",
+        "filePath": "benchmark-data/raw-replays/seeded-sample/FEL_Cracov_2025_Replay_Pack.zip",
+        "fileName": "FEL_Cracov_2025_Replay_Pack.zip",
+        "sizeBytes": 12081868,
+        "sha256": "34b2822fe123b5125b7a28c1bd0f237b0644cc012775f2aca361cd2380ee66d3",
+        "contentType": "application/octet-stream"
+      },
+      "metadata": {
+        "label": "FEL Cracow 2025",
+        "sourceUrl": "https://drive.google.com/file/d/1Bu5OwUjiPvAXYZuVmkOrq7d_A2WxwNrr/view",
+        "sourceLabel": "SpawningTool replay packs",
+        "kind": "google-drive-file",
+        "fileId": "1Bu5OwUjiPvAXYZuVmkOrq7d_A2WxwNrr",
+        "directDownloadUrl": "https://drive.google.com/uc?export=download&id=1Bu5OwUjiPvAXYZuVmkOrq7d_A2WxwNrr"
+      }
+    }
+  ]
+}

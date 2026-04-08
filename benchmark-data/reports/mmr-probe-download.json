@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "epic13-internet-sources-v1",
+  "generatedAt": "2026-04-08T01:27:19Z",
+  "input": "benchmark-data/reports/zvp-general-discovery-20.json",
+  "downloadedItemCount": 3,
+  "failedItemCount": 0,
+  "resultList": [
+    {
+      "kind": "replay",
+      "label": "Incorporeal LE (8)",
+      "download": {
+        "url": "https://lotv.spawningtool.com/87357/download/",
+        "finalUrl": "https://spawningtool-lotv.s3.amazonaws.com/replays/d7b78e68c822e8cbcda7b212d72f7627.SC2Replay?AWSAccessKeyId=AKIAINNZE6JTRWVFONUQ&Signature=tieLkE203Cl%2BMuJwWbA4Ori4MoU%3D&Expires=1775615234",
+        "filePath": "benchmark-data/raw-replays/mmr-probe/d7b78e68c822e8cbcda7b212d72f7627.SC2Replay",
+        "fileName": "d7b78e68c822e8cbcda7b212d72f7627.SC2Replay",
+        "sizeBytes": 64001,
+        "sha256": "7da5fdc696426a28b43de7710644bd414db8176d0849a03477fc84046da886e4",
+        "contentType": "application/octet-stream",
+        "attemptCount": 1
+      },
+      "metadata": {
+        "replayId": "87357",
+        "title": "Incorporeal LE (8)",
+        "detailUrl": "https://lotv.spawningtool.com/87357/",
+        "downloadUrl": "https://lotv.spawningtool.com/87357/download/"
+      }
+    },
+    {
+      "kind": "replay",
+      "label": "1. Pylon LE",
+      "download": {
+        "url": "https://lotv.spawningtool.com/87359/download/",
+        "finalUrl": "https://spawningtool-lotv.s3.amazonaws.com/replays/3fa0c7c976ba9682cccfc58189be21e6.SC2Replay?AWSAccessKeyId=AKIAINNZE6JTRWVFONUQ&Signature=%2BPp3s1am%2BlCbBRtjz8%2FU0tScH2k%3D&Expires=1775615235",
+        "filePath": "benchmark-data/raw-replays/mmr-probe/3fa0c7c976ba9682cccfc58189be21e6.SC2Replay",
+        "fileName": "3fa0c7c976ba9682cccfc58189be21e6.SC2Replay",
+        "sizeBytes": 92556,
+        "sha256": "8b3a2e1200043fca865d8d434373c35156c7ecbee3aa3e893610d070fb597e9b",
+        "contentType": "application/octet-stream",
+        "attemptCount": 1
+      },
+      "metadata": {
+        "replayId": "87359",
+        "title": "1. Pylon LE",
+        "detailUrl": "https://lotv.spawningtool.com/87359/",
+        "downloadUrl": "https://lotv.spawningtool.com/87359/download/"
+      }
+    },
+    {
+      "kind": "replay",
+      "label": "2. Magannatha LE",
+      "download": {
+        "url": "https://lotv.spawningtool.com/87360/download/",
+        "finalUrl": "https://spawningtool-lotv.s3.amazonaws.com/replays/f9a1d023055d47ca1a13c5e207989bc0.SC2Replay?AWSAccessKeyId=AKIAINNZE6JTRWVFONUQ&Signature=6ffS3Lv16lvrN8Net2%2FN20XilKs%3D&Expires=1775615238",
+        "filePath": "benchmark-data/raw-replays/mmr-probe/f9a1d023055d47ca1a13c5e207989bc0.SC2Replay",
+        "fileName": "f9a1d023055d47ca1a13c5e207989bc0.SC2Replay",
+        "sizeBytes": 198136,
+        "sha256": "110a7a9480d6abe8e53bebb2ee8e128ef410279dde54ad3786a127c28aa229f8",
+        "contentType": "application/octet-stream",
+        "attemptCount": 1
+      },
+      "metadata": {
+        "replayId": "87360",
+        "title": "2. Magannatha LE",
+        "detailUrl": "https://lotv.spawningtool.com/87360/",
+        "downloadUrl": "https://lotv.spawningtool.com/87360/download/"
+      }
+    }
+  ],
+  "failureList": []
+}
