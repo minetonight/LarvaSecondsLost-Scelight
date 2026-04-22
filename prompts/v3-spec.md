@@ -45,8 +45,12 @@ Statistical analysis phase, ai agent must find and download:
  - replays on 2000mmr (100 ZvT, 100 ZvP, 100 ZvZ)
 Batch process the replays and find averages per phase. Look for correlations between metrics and skill levels. Define ranges per skill for the metric/s.
 
+3.5) fix the stats ranges, they are wrong
+ - off by 50%
+ - add total larva generated per player in a ZvZ matchup explicitly 
 
-4) epic 1x? - player stats window
+
+4) epic 14 - player stats window
  - use "toon of favored player" from scelight settings if set
  - table with N replays, 6 columns for the phases
  - chart over time

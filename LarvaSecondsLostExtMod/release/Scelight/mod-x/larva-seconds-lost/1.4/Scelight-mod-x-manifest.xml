@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <extModManifestBean v="1">
     <name>Larva Seconds Lost</name>
-    <version major="1" minor="3" revision="0" v="1"/>
+    <version major="1" minor="4" revision="0" v="1"/>
     <buildInfo v="1">
-        <buildNumber>128</buildNumber>
-        <date>2026-04-09T02:05:57.401+03:00</date>
+        <buildNumber>134</buildNumber>
+        <date>2026-04-23T00:27:49.645+03:00</date>
     </buildInfo>
     <apiVersion major="1" minor="5" revision="2" v="1"/>
     <folder>larva-seconds-lost</folder>

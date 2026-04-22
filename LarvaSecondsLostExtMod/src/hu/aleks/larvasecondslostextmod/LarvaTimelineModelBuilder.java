@@ -89,7 +89,7 @@ public class LarvaTimelineModelBuilder {
         if ( rowList.isEmpty() && replaySummary != null && replayLengthMs > 0L )
             rowList.add( createFallbackRow( replayLengthMs, fallbackPreviewStartMs, fallbackPreviewEndMs ) );
 
-        return new LarvaTimelineModel( TITLE, SUBTITLE, resolveModeLabel( integrationMode ), buildGroupOverviewLabelMap( rowList ),
+        return new LarvaTimelineModel( TITLE, SUBTITLE, resolveModeLabel( integrationMode ), buildGroupOverviewLabelMap( rowList, larvaAnalysisReport ),
             buildPlayerPhaseTableMap( rowList, larvaAnalysisReport ), buildGroupColorMap( replaySummary, rowList ), replayLengthMs,
             replayLengthLabel, EMPTY_MESSAGE, rowList );
     }
@@ -901,11 +901,13 @@ public class LarvaTimelineModelBuilder {
      * Builds the per-player overview messages from visible hatchery rows.
      *
      * @param rowList visible timeline rows
+     * @param larvaAnalysisReport larva analysis report
      * @return per-player overview messages keyed by player name
      */
-    private Map< String, String > buildGroupOverviewLabelMap( final List< LarvaTimelineRow > rowList ) {
+    private Map< String, String > buildGroupOverviewLabelMap( final List< LarvaTimelineRow > rowList, final LarvaAnalysisReport larvaAnalysisReport ) {
         final Map< String, Integer > playerTotals = new LinkedHashMap<>();
         final Map< String, Integer > playerInjectedTotals = new LinkedHashMap<>();
+        final Map< String, Integer > playerLarvaGeneratedTotals = new LinkedHashMap<>();
 
         for ( final LarvaTimelineRow row : rowList ) {
             if ( row.getMissedLarvaCount() < 0 )
@@ -918,16 +920,48 @@ public class LarvaTimelineModelBuilder {
             final Integer currentTotal = playerTotals.get( playerName );
             playerTotals.put( playerName, Integer.valueOf( ( currentTotal == null ? 0 : currentTotal.intValue() ) + row.getMissedLarvaCount() ) );
 
-        final Integer currentInjectedTotal = playerInjectedTotals.get( playerName );
-        playerInjectedTotals.put( playerName,
-            Integer.valueOf( ( currentInjectedTotal == null ? 0 : currentInjectedTotal.intValue() ) + row.getPotentialInjectedLarvaMissedCount() ) );
+            final Integer currentInjectedTotal = playerInjectedTotals.get( playerName );
+            playerInjectedTotals.put( playerName,
+                Integer.valueOf( ( currentInjectedTotal == null ? 0 : currentInjectedTotal.intValue() ) + row.getPotentialInjectedLarvaMissedCount() ) );
+        }
+
+        // Calculate total larva generated per player
+        if ( larvaAnalysisReport != null ) {
+            for ( final HatcheryLarvaTimeline timeline : larvaAnalysisReport.getTimelineList() ) {
+                if ( timeline.getCreatedLarvaCount() <= 0 )
+                    continue;
+
+                final String playerName = timeline.getPlayerName();
+                if ( playerName == null || playerName.length() == 0 )
+                    continue;
+
+                final Integer currentGeneratedTotal = playerLarvaGeneratedTotals.get( playerName );
+                playerLarvaGeneratedTotals.put( playerName,
+                    Integer.valueOf( ( currentGeneratedTotal == null ? 0 : currentGeneratedTotal.intValue() ) + timeline.getCreatedLarvaCount() ) );
+            }
         }
 
         final Map< String, String > groupOverviewLabelMap = new LinkedHashMap<>();
         for ( final Map.Entry< String, Integer > entry : playerTotals.entrySet() ) {
-        final Integer injectedTotal = playerInjectedTotals.get( entry.getKey() );
-        groupOverviewLabelMap.put( entry.getKey(), entry.getValue().intValue() + POTENTIAL_LARVA_MISSED_SUFFIX + "; "
-            + ( injectedTotal == null ? 0 : injectedTotal.intValue() ) + POTENTIAL_INJECTED_LARVA_MISSED_SUFFIX );
+            final String playerName = entry.getKey();
+            final Integer injectedTotal = playerInjectedTotals.get( playerName );
+            final Integer generatedTotal = playerLarvaGeneratedTotals.get( playerName );
+            final StringBuilder overview = new StringBuilder();
+            overview.append( entry.getValue().intValue() ).append( POTENTIAL_LARVA_MISSED_SUFFIX ).append( "; " )
+                .append( ( injectedTotal == null ? 0 : injectedTotal.intValue() ) ).append( POTENTIAL_INJECTED_LARVA_MISSED_SUFFIX );
+            groupOverviewLabelMap.put( playerName, overview.toString() );
+        }
+
+        // For ZVZ matchups (exactly 2 Zerg players), prepend total larva generated
+        if ( groupOverviewLabelMap.size() == 2 ) {
+            for ( final Map.Entry< String, String > entry : groupOverviewLabelMap.entrySet() ) {
+                final String playerName = entry.getKey();
+                final Integer generatedTotal = playerLarvaGeneratedTotals.get( playerName );
+                if ( generatedTotal != null && generatedTotal.intValue() > 0 ) {
+                    final String newValue = "" + generatedTotal.intValue() + " larva generated; " + entry.getValue();
+                    groupOverviewLabelMap.put( playerName, newValue );
+                }
+            }
         }
 
         return groupOverviewLabelMap;

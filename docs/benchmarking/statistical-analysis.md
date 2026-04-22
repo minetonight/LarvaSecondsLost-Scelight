@@ -98,6 +98,7 @@ The compact user-facing tiers are:
 - `plat`
 - `diamond`
 - `masters`
+- `pro`
 
 ### Selected benchmark anchors
 
@@ -109,10 +110,10 @@ Only `MID` and `LATE` are productized.
 
 `EARLY` and `END` are intentionally omitted because those phases were less stable and less interpretable for player-facing feedback.
 
-| phase | gold | plat | diamond | masters |
-| --- | ---: | ---: | ---: | ---: |
-| MID | 4.119 | 4.638 | 5.555 | 5.906 |
-| LATE | 3.214 | 3.824 | 4.233 | 4.646 |
+| phase | gold | plat | diamond | masters | pro 
+| ---- | ----: | ----: | ----:  | ----: | ----: |
+| MID  | 4.119 | 4.638 | 5.555  | 5.906 | 6.023
+| LATE | 3.214 | 3.824 | 4.233  | 4.646 | 5.000
 
 #### `larvaMissedPerHatchPerMinute`
 
@@ -120,11 +121,11 @@ Only `EARLY`, `MID`, and `LATE` are productized.
 
 `END` is intentionally omitted because the end-game sample shape was less stable for player-facing benchmarking.
 
-| phase | gold | plat | diamond | masters |
-| --- | ---: | ---: | ---: | ---: |
-| EARLY | 1.094 | 0.819 | 0.598 | 0.452 |
-| MID | 2.267 | 2.028 | 1.420 | 1.109 |
-| LATE | 2.572 | 2.255 | 1.807 | 1.595 |
+| phase | gold | plat | diamond | masters | pro
+| ----- | ----: | ----: | ----: |  ----: | ----: |
+| EARLY | 1.094 | 0.819 | 0.598 |  0.452 | 0.242
+| MID   | 2.267 | 2.028 | 1.420 |  1.109 | 0.608
+| LATE  | 2.572 | 2.255 | 1.807 |  1.595 | 0.891
 
 ## Player-facing rating method
 
@@ -140,6 +141,25 @@ Formatting rules:
 - if no benchmark exists for that metric-phase pair, show `n/a`
 - otherwise show `top X% tier`
 - the UI uses the compact label `dia` for the `diamond` tier to keep the table narrow
+
+
+### Tiers start values:
+
+As the values above represent the averages per tier, the following table represent the the inferred starts of the tiers:
+
+#### `spawnedLarvaPerHatchPerMinute`
+| phase | gold | plat | diamond | masters | pro
+| ----- | ----: | ----: | ----: |  ----: | ----:
+MID		| 3.859 |4.378 | 5.096 | 5.730 | 5.964
+LATE	| 2.909	|3.519 | 4.028 | 4.439 | 4.823	
+
+#### `larvaMissedPerHatchPerMinute`
+| phase | gold | plat | diamond | masters | pro
+| ----- | ----: | ----: | ----: |  ----: | ----:
+EARLY  | 1.2315 | 0.9565 | 0.708 | 0.525 | 0.347
+MID	   | 2.3865 | 2.1475 | 1.724 | 1.266 | 0.859
+LATE   | 2.7305 | 2.4135 | 2.031 | 1.701 | 1.243
+
 
 Interpolation rules:
 

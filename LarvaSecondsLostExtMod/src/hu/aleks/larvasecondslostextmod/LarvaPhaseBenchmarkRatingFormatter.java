@@ -12,7 +12,7 @@ public class LarvaPhaseBenchmarkRatingFormatter {
     private static final String NOT_AVAILABLE = "n/a";
 
     /** Compact tier labels used by the phase table UI. */
-    private static final String[] TIER_LABELS = new String[] { "gold", "plat", "dia", "masters" };
+    private static final String[] TIER_LABELS = new String[] { "gold", "plat", "dia", "masters", "pro" };
 
     /** Spawned-larva benchmark anchors keyed by phase. Higher is better. */
     private static final Map< LarvaGamePhase, double[] > SPAWNED_LARVA_BENCHMARK_MAP = new EnumMap< LarvaGamePhase, double[] >( LarvaGamePhase.class );
@@ -21,12 +21,12 @@ public class LarvaPhaseBenchmarkRatingFormatter {
     private static final Map< LarvaGamePhase, double[] > MISSED_LARVA_BENCHMARK_MAP = new EnumMap< LarvaGamePhase, double[] >( LarvaGamePhase.class );
 
     static {
-        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.MID, new double[] { 4.119d, 4.638d, 5.555d, 5.906d } );
-        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.LATE, new double[] { 3.214d, 3.824d, 4.233d, 4.646d } );
+        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.MID, new double[]  { 3.859d, 4.378d, 5.096d, 5.730d, 5.964d } );
+        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.LATE, new double[] { 2.909d, 3.519d, 4.028d, 4.439d, 4.823d } );
 
-        MISSED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.EARLY, new double[] { 1.094d, 0.819d, 0.598d, 0.452d } );
-        MISSED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.MID, new double[] { 2.267d, 2.028d, 1.420d, 1.109d } );
-        MISSED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.LATE, new double[] { 2.572d, 2.255d, 1.807d, 1.595d } );
+        MISSED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.EARLY, new double[] { 1.2315d, 0.9565d, 0.708d, 0.525d, 0.347d } );
+        MISSED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.MID, new double[]   { 2.3865d, 2.1475d, 1.724d, 1.266d, 0.859d } );
+        MISSED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.LATE, new double[]  { 2.7305d, 2.4135d, 2.031d, 1.701d, 1.243d } );
     }
 
     /**
@@ -101,12 +101,11 @@ public class LarvaPhaseBenchmarkRatingFormatter {
         if ( tierIndex < benchmarkArray.length - 1 ) {
             final double tierEnd = benchmarkArray[ tierIndex + 1 ];
             referenceSpan = Math.abs( tierEnd - tierStart );
-            progress = higherIsBetter ? safeRatio( value - tierStart, referenceSpan ) : safeRatio( tierStart - value, referenceSpan );
         } else {
             final double previousTierStart = benchmarkArray[ tierIndex - 1 ];
             referenceSpan = Math.abs( tierStart - previousTierStart );
-            progress = higherIsBetter ? safeRatio( value - tierStart, referenceSpan ) : safeRatio( tierStart - value, referenceSpan );
         }
+        progress = higherIsBetter ? safeRatio( value - tierStart, referenceSpan ) : safeRatio( tierStart - value, referenceSpan );
 
         final double clampedProgress = Math.max( 0.0d, Math.min( 1.0d, progress ) );
         final double rawPercent = 100.0d - clampedProgress * 95.0d;

@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "epic13-phase4-v1",
+  "generatedAt": "2026-04-22T19:21:07Z",
+  "startedAt": "2026-04-22T19:21:05Z",
+  "finishedAt": "2026-04-22T19:21:07Z",
+  "manifestPath": "benchmark-data/manifests/replay-corpus-elite-7000-full.json",
+  "manifestAcceptedReplayCount": 430,
+  "selectedAcceptedReplayCount": 1,
+  "successfulReplayCount": 1,
+  "failedReplayCount": 0,
+  "reusedReplayCount": 0,
+  "newReplayCount": 1,
+  "phaseRowCount": 4,
+  "extractionRunId": "run-20260422T192105Z",
+  "extractorCommand": "python3 benchmark-data/tools/benchmark_java_extractor.py --java-bin /usr/lib/jvm/java-8-openjdk-amd64/bin/java --classpath '/home/aleks/Documents/StarCraft II/Scelight/mod-x/larva-seconds-lost/1.3/larva-seconds-lost.jar:/home/aleks/Documents/StarCraft II/Scelight/mod/app/6.5.4/scelight.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/mod-x-api/1.5.2/ext-mod-api.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/app-libs/1.5.2/app-libs.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/launcher/3.1.4/scelight-launcher.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/sc2-t/2.0/sc2-t.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/sc2-bd/1.8/sc2-bd.sldat' --scelight-app-dir '/home/aleks/Documents/StarCraft II/Scelight'",
+  "resume": true,
+  "force": true,
+  "successMatrix": {
+    "mmr-2000": {
+      "ZvT": 0,
+      "ZvP": 0,
+      "ZvZ": 0
+    },
+    "mmr-3000": {
+      "ZvT": 0,
+      "ZvP": 0,
+      "ZvZ": 0
+    },
+    "mmr-4000": {
+      "ZvT": 0,
+      "ZvP": 0,
+      "ZvZ": 0
+    },
+    "mmr-5000": {
+      "ZvT": 0,
+      "ZvP": 0,
+      "ZvZ": 0
+    },
+    "elite-7000": {
+      "ZvT": 0,
+      "ZvP": 1,
+      "ZvZ": 0
+    }
+  },
+  "outputFiles": {
+    "json": "benchmark-data/exports/phase-metrics-elite-7000-test.json",
+    "csv": "benchmark-data/exports/phase-metrics-elite-7000-test.csv",
+    "summaryJson": "benchmark-data/reports/batch-run-summary-elite-7000-test.json",
+    "summaryMarkdown": "benchmark-data/reports/batch-run-summary-elite-7000-test.md",
+    "failureLog": "benchmark-data/reports/failed-replays-elite-7000-test.jsonl",
+    "replayJsonDir": "benchmark-data/exports/elite-7000-replays"
+  },
+  "failureList": [],
+  "status": "success"
+}

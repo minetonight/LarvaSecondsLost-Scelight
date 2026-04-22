@@ -233,7 +233,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         detailsArea.setText( "Choose a replay to see where Zerg hatcheries floated at 3+ larva.\n\n"
             + "What you are looking at:\n"
             + "- Under each player name, a phase table breaks the game into Early, Mid, Late, and End based on sustained worker-count promotions.\n"
-            + "- The first two phase-table rows benchmark larva generation and larva missed against compact gold / plat / dia / masters reference bands.\n"
+            + "- The first two phase-table rows benchmark larva generation and larva missed against compact gold / plat / dia / masters / pro reference bands.\n"
             + "- Red bars show how long a hatchery stayed at 3 or more larva.\n"
             + "- A green lane shows inject-active windows inferred from replay-derived triple-larva bursts.\n"
             + "- A dark red lane shows conservative missed inject potential windows backed by trustworthy queen evidence.\n"
@@ -303,7 +303,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         builder.append( buildHatcheryBreakdownSection( summary ) ).append( '\n' );
         builder.append( "Legend:\n" );
         builder.append( "- Phase table: Early, Mid, Late, End columns based on sustained worker-count thresholds.\n" );
-        builder.append( "- Ranking rows: compact percentile-inside-tier estimates using gold / plat / dia / masters benchmark anchors.\n" );
+        builder.append( "- Ranking rows: compact percentile-inside-tier estimates using gold / plat / dia / masters / pro benchmark anchors.\n" );
         builder.append( "- Red bars: time spent at 3+ larva.\n" );
         builder.append( "- Green lanes: inject-active uptime inferred from replay-derived bursts where 3 larva appear within 8 loops.\n" );
         builder.append( "- Dark red lanes: conservative missed inject potential windows backed by singleton-queen command attribution and the dedicated queen radius.\n" );
