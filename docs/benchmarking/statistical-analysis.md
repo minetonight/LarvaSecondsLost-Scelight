@@ -111,9 +111,12 @@ Only `MID` and `LATE` are productized.
 `EARLY` and `END` are intentionally omitted because those phases were less stable and less interpretable for player-facing feedback.
 
 | phase | gold | plat | diamond | masters | pro 
-| ---- | ----: | ----: | ----:  | ----: | ----: |
+| ---- | ----: | ----: | ----:  | ----: | ----:
 | MID  | 4.119 | 4.638 | 5.555  | 5.906 | 6.023
-| LATE | 3.214 | 3.824 | 4.233  | 4.646 | 5.000
+| LATE | 3.214 | 3.824 | 4.233  | 4.646 | (5.000)
+
+NB: late game is normal to drop the larva spending, as the Zerg is not necessary trading all the time. They sit on larva and bank and wait on battle to remax. 
+Reason: waiting for quality trades.
 
 #### `larvaMissedPerHatchPerMinute`
 
@@ -122,7 +125,7 @@ Only `EARLY`, `MID`, and `LATE` are productized.
 `END` is intentionally omitted because the end-game sample shape was less stable for player-facing benchmarking.
 
 | phase | gold | plat | diamond | masters | pro
-| ----- | ----: | ----: | ----: |  ----: | ----: |
+| ----- | ----: | ----: | ----: |  ----: | ----:
 | EARLY | 1.094 | 0.819 | 0.598 |  0.452 | 0.242
 | MID   | 2.267 | 2.028 | 1.420 |  1.109 | 0.608
 | LATE  | 2.572 | 2.255 | 1.807 |  1.595 | 0.891

@@ -49,10 +49,12 @@ Batch process the replays and find averages per phase. Look for correlations bet
  - off by 50%
  - add total larva generated per player in a ZvZ matchup explicitly 
 
+4) make stats about income efficiency inefficency
+ the drones alive and expected mining versus the real mining in the game. that will track drones moving between bases, mis-rallyed, pulled with the army, etc. 
 
-4) epic 14 - player stats window
+5) epic 14 - player stats window
  - use "toon of favored player" from scelight settings if set
  - table with N replays, 6 columns for the phases
  - chart over time
 
-5) opening a replay opens it in a new window in the tree, like the matches in the main program
+6) opening a replay opens it in a new window in the tree, like the matches in the main program

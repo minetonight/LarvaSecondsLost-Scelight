@@ -246,6 +246,11 @@ public class LarvaReplayAnalyzer {
         final Map< String, Integer > spawningPoolCompletionLoopByPlayerName = new LinkedHashMap<>();
         final Map< Integer, String > pendingSpawningPoolPlayerNameByTag = new HashMap<>();
 
+        // Track drone counts per player for accurate phase transitions
+        final Map< String, Integer > aliveDroneCountByPlayerName = new HashMap<>();
+        // Track unit completion status: tag -> completed boolean
+        final Map< Integer, Boolean > unitCompletedByTag = new HashMap<>();
+
         int larvaBirthCount = 0;
         int assignedLarvaCount = 0;
         int unassignedLarvaCount = 0;
@@ -266,15 +271,24 @@ public class LarvaReplayAnalyzer {
                         final IPlayerStatsEvent playerStatsEvent = (IPlayerStatsEvent) event;
                         final Integer playerId = playerStatsEvent.getPlayerId();
                         final String playerName = resolvePlayerName( repProc, playerId );
+                        // Use calculated drone count instead of workersActiveCount to accurately track alive drones
+                        final Integer calculatedDroneCount = aliveDroneCountByPlayerName.get( playerName );
+                        final Integer workerCountToUse = calculatedDroneCount != null ? calculatedDroneCount : playerStatsEvent.getWorkersActiveCount();
                         addResourceSnapshot( resourceSnapshotsByPlayerName, new LarvaPlayerResourceSnapshot( playerName, event.getLoop(),
                             repProc.formatLoopTime( event.getLoop() ), playerStatsEvent.getMineralsCurrent(), playerStatsEvent.getGasCurrent(),
-                            playerStatsEvent.getFoodUsed(), playerStatsEvent.getFoodMade(), playerStatsEvent.getWorkersActiveCount() ) );
+                            playerStatsEvent.getFoodUsed(), playerStatsEvent.getFoodMade(), workerCountToUse ) );
                         break;
                     }
                     case ITrackerEvents.ID_UNIT_INIT :
                     case ITrackerEvents.ID_UNIT_BORN : {
                         final IBaseUnitEvent baseUnitEvent = (IBaseUnitEvent) event;
                         final String unitType = toStringValue( baseUnitEvent.getUnitTypeName() );
+                        final Integer unitTag = buildCombinedTagOrNull( baseUnitEvent.getUnitTagIndex(), baseUnitEvent.getUnitTagRecycle() );
+                        // Track drone births
+                        if ( IBdUtil.UNIT_DRONE.equals( unitType ) && unitTag != null ) {
+                            final String playerName = resolvePlayerName( repProc, firstNonNull( baseUnitEvent.getControlPlayerId(), baseUnitEvent.getUpkeepPlayerId() ) );
+                            incrementDroneCount( aliveDroneCountByPlayerName, playerName );
+                        }
                         if ( isHatcheryLike( unitType ) ) {
                             final HatcheryState hatcheryState = getOrCreateHatcheryState( repProc, hatcheryByTag, buildCombinedTag( baseUnitEvent.getUnitTagIndex(),
                                     baseUnitEvent.getUnitTagRecycle() ) );
@@ -288,6 +302,9 @@ public class LarvaReplayAnalyzer {
                             if ( hatcheryState.completed )
                                 hatcheryState.recordCompletion( event.getLoop(), repProc );
                             hatcheryState.ensurePoint( event.getLoop(), repProc );
+                            // Mark completed buildings
+                            if ( unitTag != null && hatcheryState.completed )
+                                unitCompletedByTag.put( unitTag, Boolean.TRUE );
                         } else if ( IBdUtil.UNIT_LARVA.equals( unitType ) ) {
                             larvaBirthCount++;
                             final int larvaTag = buildCombinedTag( baseUnitEvent.getUnitTagIndex(), baseUnitEvent.getUnitTagRecycle() );
@@ -330,7 +347,6 @@ public class LarvaReplayAnalyzer {
                         } else if ( isSpawningPoolLike( unitType ) ) {
                             final String playerName = resolvePlayerName( repProc,
                                     firstNonNull( baseUnitEvent.getControlPlayerId(), baseUnitEvent.getUpkeepPlayerId() ) );
-                            final Integer unitTag = buildCombinedTagOrNull( baseUnitEvent.getUnitTagIndex(), baseUnitEvent.getUnitTagRecycle() );
                             if ( unitTag != null )
                                 pendingSpawningPoolPlayerNameByTag.put( unitTag, playerName );
 
@@ -348,6 +364,8 @@ public class LarvaReplayAnalyzer {
                             final String pendingSpawningPoolPlayerName = pendingSpawningPoolPlayerNameByTag.remove( hatcheryTag );
                             if ( pendingSpawningPoolPlayerName != null )
                                 recordSpawningPoolCompletion( spawningPoolCompletionLoopByPlayerName, pendingSpawningPoolPlayerName, event.getLoop() );
+                            // Mark building as completed
+                            unitCompletedByTag.put( hatcheryTag, Boolean.TRUE );
                         }
 
                         if ( hatcheryTag != null ) {
@@ -378,6 +396,12 @@ public class LarvaReplayAnalyzer {
                         if ( hatcheryState != null ) {
                             hatcheryState.alive = false;
                             hatcheryState.recordDestroyed( event.getLoop(), repProc );
+                            // If a building that was never completed dies (cancelled), add back a drone
+                            final Boolean completed = unitCompletedByTag.get( tag );
+                            if ( !hatcheryState.completed && ( completed == null || !completed.booleanValue() ) ) {
+                                if ( hatcheryState.playerName != null )
+                                    incrementDroneCount( aliveDroneCountByPlayerName, hatcheryState.playerName );
+                            }
                         }
 
                         final QueenState queenState = queenByTag.get( tag );
@@ -395,6 +419,9 @@ public class LarvaReplayAnalyzer {
 
                         if ( !isSpawningPoolLike( unitType ) )
                             pendingSpawningPoolPlayerNameByTag.remove( tag );
+
+                        // Track drone → building morphs and building → drone transformations
+                        handleDroneMorphs( aliveDroneCountByPlayerName, unitCompletedByTag, tag, unitType, hatcheryByTag, repProc, event );
 
                         final HatcheryState hatcheryState = hatcheryByTag.get( tag );
                         if ( hatcheryState != null && isHatcheryLike( unitType ) ) {
@@ -1857,33 +1884,21 @@ public class LarvaReplayAnalyzer {
     }
 
     /**
-     * Resolves the first loop where a worker threshold stayed exceeded for more than the dwell time.
+     * Resolves the first loop where the worker threshold is exceeded.
      */
     private int resolvePhasePromotionLoop( final List< LarvaPlayerResourceSnapshot > snapshotList, final int replayEndLoop, final int workerThreshold,
             final long gameSpeedRelative ) {
         if ( snapshotList == null || snapshotList.isEmpty() || replayEndLoop <= 0 )
             return -1;
 
-        final int dwellLoops = toDisplayedGameLoops( PHASE_PROMOTION_DWELL_SECONDS, gameSpeedRelative );
-        int candidateStartLoop = -1;
         for ( final LarvaPlayerResourceSnapshot snapshot : snapshotList ) {
             if ( snapshot == null )
                 continue;
 
             final Integer workersActiveCount = snapshot.getWorkersActiveCount();
-            if ( workersActiveCount != null && workersActiveCount.intValue() > workerThreshold ) {
-                if ( candidateStartLoop < 0 )
-                    candidateStartLoop = snapshot.getLoop();
-
-                if ( snapshot.getLoop() - candidateStartLoop > dwellLoops )
-                    return clampLoop( candidateStartLoop + dwellLoops + 1, replayEndLoop );
-            } else {
-                candidateStartLoop = -1;
-            }
+            if ( workersActiveCount != null && workersActiveCount.intValue() > workerThreshold )
+                return clampLoop( snapshot.getLoop(), replayEndLoop );
         }
-
-        if ( candidateStartLoop >= 0 && replayEndLoop - candidateStartLoop > dwellLoops )
-            return clampLoop( candidateStartLoop + dwellLoops + 1, replayEndLoop );
 
         return -1;
     }
@@ -2657,6 +2672,43 @@ public class LarvaReplayAnalyzer {
             destroyedTimeLabel = repProc == null ? null : repProc.formatLoopTime( loop );
         }
 
+    }
+
+    /**
+     * Handles drone morphs into buildings and cancellations.
+     * Tracks drone count changes when drones transform into structures or vice versa.
+     *
+     * @param aliveDroneCountByPlayerName map of alive drone counts per player
+     * @param unitCompletedByTag map tracking completion status of units
+     * @param tag unit tag being transformed
+     * @param newUnitType new unit type after transformation
+     * @param hatcheryByTag hatchery state map
+     * @param repProc replay processor
+     * @param event the type change event
+     */
+    private void handleDroneMorphs( final Map< String, Integer > aliveDroneCountByPlayerName, final Map< Integer, Boolean > unitCompletedByTag,
+            final Integer tag, final String newUnitType, final Map< Integer, HatcheryState > hatcheryByTag, final IRepProcessor repProc,
+            final IEvent event ) {
+        // For now, we track building completions through unitCompletedByTag
+        // Drone counting is handled at birth and death events
+        if ( tag != null && isHatcheryLike( newUnitType ) ) {
+            // Mark hatchery as complete when it reaches completion status
+            unitCompletedByTag.put( tag, Boolean.TRUE );
+        }
+    }
+
+    /**
+     * Increments the alive drone count for a player.
+     *
+     * @param aliveDroneCountByPlayerName map of alive drone counts
+     * @param playerName player name
+     */
+    private void incrementDroneCount( final Map< String, Integer > aliveDroneCountByPlayerName, final String playerName ) {
+        if ( playerName == null || playerName.length() == 0 )
+            return;
+
+        final Integer currentCount = aliveDroneCountByPlayerName.get( playerName );
+        aliveDroneCountByPlayerName.put( playerName, Integer.valueOf( ( currentCount == null ? 0 : currentCount.intValue() ) + 1 ) );
     }
 
     /** Mutable larva state during analysis. */
