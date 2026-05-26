@@ -382,14 +382,14 @@ public class LarvaTimelinePreviewComp extends JPanel {
      * Formats one phase rate for the table.
      */
     private String formatPhaseRate( final Double value ) {
-        return value == null ? "n/a" : formatOneDecimal( value.doubleValue() );
+        return value == null ? "n/a" : formatDouble( value.doubleValue() );
     }
 
     /**
      * Formats one phase percentage for the table.
      */
     private String formatPhasePercent( final Double value ) {
-        return value == null ? "n/a" : formatOneDecimal( value.doubleValue() ) + "%";
+        return value == null ? "n/a" : formatDouble( value.doubleValue() ) + "%";
     }
 
     /**
@@ -415,11 +415,13 @@ public class LarvaTimelinePreviewComp extends JPanel {
     }
 
     /**
-     * Formats a decimal with one visible fractional digit.
+     * Formats a decimal with two visible fractional digits.
      */
-    private String formatOneDecimal( final double value ) {
-        final long scaled = Math.round( value * 10.0d );
-        return String.valueOf( scaled / 10L ) + '.' + Math.abs( scaled % 10L );
+    private String formatDouble( final double value ) {
+        final long scaled = Math.round( value * 100.0d );
+        final long whole = scaled / 100L;
+        final long fraction = Math.abs( scaled % 100L );
+        return String.valueOf( whole ) + '.' + ( fraction < 10L ? "0" : "" ) + fraction;
     }
 
     /**

@@ -673,14 +673,16 @@ public class LarvaAnalysisReport {
     }
 
     /**
-     * Formats one decimal-place number without locale dependence.
+     * Formats a decimal number with two visible fractional digits without locale dependence.
      *
      * @param value value to format
      * @return deterministic text
      */
     private String formatDouble( final double value ) {
-        final long scaled = Math.round( value * 10.0d );
-        return String.valueOf( scaled / 10L ) + '.' + Math.abs( scaled % 10L );
+        final long scaled = Math.round( value * 100.0d );
+        final long whole = scaled / 100L;
+        final long fraction = Math.abs( scaled % 100L );
+        return String.valueOf( whole ) + '.' + ( fraction < 10L ? "0" : "" ) + fraction;
     }
 
     /**

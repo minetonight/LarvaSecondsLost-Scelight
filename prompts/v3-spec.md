@@ -47,9 +47,10 @@ Batch process the replays and find averages per phase. Look for correlations bet
 
 3.5) fix the stats ranges, they are wrong
  - off by 50%
- - add total larva generated per player in a ZvZ matchup explicitly 
- - method: using the median, to filter outliers. then from the means, calculate the lower bound of each bucket. 
- (https://docs.google.com/spreadsheets/d/13k4n-9KL9gbIAAY60-ojG7UEYizIGJgelxqxrZiuazo/edit?gid=0#gid=0)
+ - method: using the median, to filter outliers. then from the mids, calculate the lower bound of each bucket. (https://docs.google.com/spreadsheets/d/13k4n-9KL9gbIAAY60-ojG7UEYizIGJgelxqxrZiuazo/edit?gid=0#gid=0)
+
+3.6) add total larva generated per player in a ZvZ matchup explicitly 
+
 
 4) make stats about income efficiency inefficency
  the drones alive and expected mining versus the real mining in the game. that will track drones moving between bases, mis-rallyed, pulled with the army, etc. 

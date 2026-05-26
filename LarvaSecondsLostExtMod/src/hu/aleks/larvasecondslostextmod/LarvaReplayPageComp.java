@@ -422,8 +422,10 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         if ( value == null )
             return "n/a";
 
-        final long scaled = Math.round( value.doubleValue() * 10.0d );
-        return ( scaled / 10L ) + "." + Math.abs( scaled % 10L );
+        final long scaled = Math.round( value.doubleValue() * 100.0d );
+        final long whole = scaled / 100L;
+        final long fraction = Math.abs( scaled % 100L );
+        return whole + "." + ( fraction < 10L ? "0" : "" ) + fraction;
     }
 
     /**
