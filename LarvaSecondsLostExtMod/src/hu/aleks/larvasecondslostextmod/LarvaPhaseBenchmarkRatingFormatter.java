@@ -21,9 +21,9 @@ public class LarvaPhaseBenchmarkRatingFormatter {
     private static final Map< LarvaGamePhase, double[] > MISSED_LARVA_BENCHMARK_MAP = new EnumMap< LarvaGamePhase, double[] >( LarvaGamePhase.class );
 
     static {
-        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.EARLY, new double[] { 3.859d, 4.378d, 5.096d, 5.730d, 5.964d } );
-        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.MID,   new double[] { 3.859d, 4.378d, 5.096d, 5.730d, 5.964d } );
-        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.LATE,  new double[] { 2.909d, 3.519d, 4.028d, 4.439d, 4.823d } );
+        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.EARLY, new double[] { 4.4875d, 4.8389d, 5.0971d, 5.2347d, 5.3949d } );
+        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.MID,   new double[] { 3.9044d, 4.4228d, 5.1618d, 5.8318d, 6.0226d } );
+        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.LATE,  new double[] { 2.7267d, 3.4972d, 4.0516d, 4.4969d, 4.8866d } );
 
         MISSED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.EARLY, new double[] { 1.3958d, 0.9987d, 0.6519d, 0.5037d, 0.3729d } );
         MISSED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.MID,   new double[] { 2.4316d, 2.1413d, 1.6889d, 1.3816d, 0.9948d } );
