@@ -21,12 +21,14 @@ public class LarvaPhaseBenchmarkRatingFormatter {
     private static final Map< LarvaGamePhase, double[] > MISSED_LARVA_BENCHMARK_MAP = new EnumMap< LarvaGamePhase, double[] >( LarvaGamePhase.class );
 
     static {
-        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.MID, new double[]  { 3.859d, 4.378d, 5.096d, 5.730d, 5.964d } );
-        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.LATE, new double[] { 2.909d, 3.519d, 4.028d, 4.439d, 4.823d } );
+        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.EARLY, new double[] { 3.859d, 4.378d, 5.096d, 5.730d, 5.964d } );
+        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.MID,   new double[] { 3.859d, 4.378d, 5.096d, 5.730d, 5.964d } );
+        SPAWNED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.LATE,  new double[] { 2.909d, 3.519d, 4.028d, 4.439d, 4.823d } );
 
-        MISSED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.EARLY, new double[] { 1.2315d, 0.9565d, 0.708d, 0.525d, 0.347d } );
-        MISSED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.MID, new double[]   { 2.3865d, 2.1475d, 1.724d, 1.266d, 0.859d } );
-        MISSED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.LATE, new double[]  { 2.7305d, 2.4135d, 2.031d, 1.701d, 1.243d } );
+        MISSED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.EARLY, new double[] { 1.3958d, 0.9987d, 0.6519d, 0.5037d, 0.3729d } );
+        MISSED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.MID,   new double[] { 2.4316d, 2.1413d, 1.6889d, 1.3816d, 0.9948d } );
+        MISSED_LARVA_BENCHMARK_MAP.put( LarvaGamePhase.LATE,  new double[] { 2.9656d, 2.4664d, 2.0494d, 1.8820d, 1.3865d } );
+
     }
 
     /**
