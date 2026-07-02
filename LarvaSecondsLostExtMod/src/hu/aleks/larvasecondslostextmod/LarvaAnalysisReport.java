@@ -98,6 +98,9 @@ public class LarvaAnalysisReport {
     /** Player resource snapshots collected from tracker events. */
     private final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName;
 
+    /** Alive drone counts per player at end of analysis. */
+    private final Map< String, Integer > aliveDroneCountByPlayerName;
+
     /** Per-player Epic 12 phase tables. */
     private final Map< String, LarvaPlayerPhaseTable > playerPhaseTableByPlayerName;
 
@@ -132,6 +135,7 @@ public class LarvaAnalysisReport {
              final int hatcheryMorphCount, final int trackerEventCount, final int gameEventCount, final boolean fullReplayParseUsed,
              final boolean realTime, final long converterGameSpeedRelative, final int replayLengthLoops,
              final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName,
+             final Map< String, Integer > aliveDroneCountByPlayerName,
              final Map< String, LarvaPlayerPhaseTable > playerPhaseTableByPlayerName ) {
         this.calibration = calibration;
         this.timelineList = Collections.unmodifiableList( new ArrayList<>( timelineList ) );
@@ -161,6 +165,7 @@ public class LarvaAnalysisReport {
         this.converterGameSpeedRelative = converterGameSpeedRelative;
         this.replayLengthLoops = replayLengthLoops;
         this.resourceSnapshotsByPlayerName = copySnapshotMap( resourceSnapshotsByPlayerName );
+        this.aliveDroneCountByPlayerName = aliveDroneCountByPlayerName == null ? Collections.< String, Integer >emptyMap() : Collections.unmodifiableMap( new LinkedHashMap<>( aliveDroneCountByPlayerName ) );
         this.playerPhaseTableByPlayerName = copyPhaseTableMap( playerPhaseTableByPlayerName );
     }
 
@@ -327,6 +332,20 @@ public class LarvaAnalysisReport {
 
     public Map< String, List< LarvaPlayerResourceSnapshot > > getResourceSnapshotsByPlayerName() {
         return resourceSnapshotsByPlayerName;
+    }
+
+    /**
+     * Returns per-player alive drone counts observed by the analyzer (may be empty).
+     */
+    public Map< String, Integer > getAliveDroneCountByPlayerName() {
+        return aliveDroneCountByPlayerName;
+    }
+
+    /**
+     * Returns alive drone count for a player, or null if unknown.
+     */
+    public Integer getAliveDroneCountForPlayer( final String playerName ) {
+        return playerName == null ? null : aliveDroneCountByPlayerName.get( playerName );
     }
 
     public Map< String, LarvaPlayerPhaseTable > getPlayerPhaseTableByPlayerName() {

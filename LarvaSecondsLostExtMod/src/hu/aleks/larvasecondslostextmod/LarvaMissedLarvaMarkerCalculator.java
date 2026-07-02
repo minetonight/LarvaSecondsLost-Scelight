@@ -14,7 +14,7 @@ public class LarvaMissedLarvaMarkerCalculator {
     private static final int REPLAY_LOOPS_PER_SECOND = 16;
 
     /** Base missed-larva threshold in displayed game-timer seconds. */
-    private static final int MISSED_LARVA_THRESHOLD_SECONDS = 11;
+    private static final double MISSED_LARVA_THRESHOLD_SECONDS = 9.9d;
 
     /** Scelight normal-speed relative value. */
     private static final double NORMAL_GAME_SPEED_RELATIVE = 36.0d;
@@ -84,7 +84,9 @@ public class LarvaMissedLarvaMarkerCalculator {
      */
     private int resolveMissedLarvaThresholdLoops( final long gameSpeedRelative ) {
         final double effectiveGameSpeedRelative = gameSpeedRelative <= 0L ? DEFAULT_GAME_SPEED_RELATIVE : gameSpeedRelative;
-        return (int) ( MISSED_LARVA_THRESHOLD_SECONDS * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / effectiveGameSpeedRelative ) );
+
+        
+        return (int) Math.floor( MISSED_LARVA_THRESHOLD_SECONDS * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / effectiveGameSpeedRelative ) );
     }
 
     /**

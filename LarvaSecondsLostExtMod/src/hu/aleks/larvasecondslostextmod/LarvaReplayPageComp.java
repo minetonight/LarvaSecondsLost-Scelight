@@ -237,7 +237,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
             + "- Red bars show how long a hatchery stayed at 3 or more larva.\n"
             + "- A green lane shows inject-active windows inferred from replay-derived triple-larva bursts.\n"
             + "- A dark red lane shows conservative missed inject potential windows backed by trustworthy queen evidence.\n"
-            + "- Black ticks on the main rail mark every 11 seconds of missed potential larva while a hatchery stayed at 3 or more larva.\n"
+            + "- Black ticks on the main rail mark every LARVA_PERIOD (9.9) seconds of missed potential larva while a hatchery stayed at 3 or more larva.\n"
             + "- Black ticks on the dark red lane mark every 29 seconds of accumulated missed inject potential, worth 3 potential larva per hatchery.\n"
             + "- Player totals add up both missed larva and potential injected larva missed across visible hatcheries, while the phase table normalizes those values per hatch per minute.\n\n"
             + "Use the buttons above to open a replay, analyze the latest replay, or refresh the current one." );

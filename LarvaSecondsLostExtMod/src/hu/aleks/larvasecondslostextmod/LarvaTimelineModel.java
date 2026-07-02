@@ -30,6 +30,9 @@ public class LarvaTimelineModel {
     /** Per-player display colors keyed by player name. */
     private final Map< String, Color > groupColorMap;
 
+    /** Larva analysis report used for time conversion. */
+    private final LarvaAnalysisReport larvaAnalysisReport;
+
     /** Replay length in milliseconds. */
     private final long replayLengthMs;
 
@@ -49,15 +52,17 @@ public class LarvaTimelineModel {
      * @param subtitle short chart subtitle
      * @param modeLabel fallback mode note
      * @param groupOverviewLabelMap overview messages shown with player group headers
-    * @param playerPhaseTableMap per-player Epic 12 phase tables keyed by player name
-    * @param groupColorMap per-player display colors keyed by player name
+     * @param playerPhaseTableMap per-player Epic 12 phase tables keyed by player name
+     * @param groupColorMap per-player display colors keyed by player name
+     * @param larvaAnalysisReport analysis report used for time conversion
      * @param replayLengthMs replay length in milliseconds
      * @param replayLengthLabel formatted replay length
      * @param emptyMessage empty-state message
      * @param rowList timeline rows
      */
     public LarvaTimelineModel( final String title, final String subtitle, final String modeLabel, final Map< String, String > groupOverviewLabelMap,
-            final Map< String, LarvaPlayerPhaseTable > playerPhaseTableMap, final Map< String, Color > groupColorMap, final long replayLengthMs,
+            final Map< String, LarvaPlayerPhaseTable > playerPhaseTableMap, final Map< String, Color > groupColorMap,
+            final LarvaAnalysisReport larvaAnalysisReport, final long replayLengthMs,
             final String replayLengthLabel, final String emptyMessage, final List< LarvaTimelineRow > rowList ) {
         this.title = title;
         this.subtitle = subtitle;
@@ -65,6 +70,7 @@ public class LarvaTimelineModel {
         this.groupOverviewLabelMap = Collections.unmodifiableMap( new LinkedHashMap<>( groupOverviewLabelMap ) );
         this.playerPhaseTableMap = Collections.unmodifiableMap( new LinkedHashMap<>( playerPhaseTableMap ) );
         this.groupColorMap = Collections.unmodifiableMap( new LinkedHashMap<>( groupColorMap ) );
+        this.larvaAnalysisReport = larvaAnalysisReport;
         this.replayLengthMs = replayLengthMs;
         this.replayLengthLabel = replayLengthLabel;
         this.emptyMessage = emptyMessage;
@@ -97,6 +103,10 @@ public class LarvaTimelineModel {
 
     public Map< String, Color > getGroupColorMap() {
         return groupColorMap;
+    }
+
+    public LarvaAnalysisReport getLarvaAnalysisReport() {
+        return larvaAnalysisReport;
     }
 
     public long getReplayLengthMs() {

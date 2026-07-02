@@ -51,6 +51,7 @@ Batch process the replays and find averages per phase. Look for correlations bet
 
 3.6) add total larva generated per player in a ZvZ matchup explicitly 
 
+3.7) d.dd two decimal points for all metrics, for finer comparisons
 
 4) make stats about income efficiency inefficency
  the drones alive and expected mining versus the real mining in the game. that will track drones moving between bases, mis-rallyed, pulled with the army, etc. 

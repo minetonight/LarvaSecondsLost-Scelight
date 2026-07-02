@@ -408,6 +408,9 @@ public class LarvaTimelinePreviewComp extends JPanel {
         if ( loop <= 0 )
             return "0:00";
 
+        if ( timelineModel != null && timelineModel.getLarvaAnalysisReport() != null )
+            return timelineModel.getLarvaAnalysisReport().formatLoopTime( loop );
+
         final long seconds = ( loop * 1000L / 16L ) / 1000L;
         final long minutes = seconds / 60L;
         final long secondsPart = seconds % 60L;

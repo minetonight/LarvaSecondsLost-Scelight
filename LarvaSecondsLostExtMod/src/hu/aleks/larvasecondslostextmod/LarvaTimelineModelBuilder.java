@@ -44,7 +44,7 @@ public class LarvaTimelineModelBuilder {
     private static final String SUBTITLE = "Red bars show 3+ larva windows; a green lane shows injected status windows; a lower dark red lane shows missed inject potential windows with black 29-second threshold ticks.";
 
     /** Timeline legend. */
-    private static final String MODE_LABEL = "Green lanes show injected status windows; lower dark red lanes show conservative missed inject potential windows; black ticks mark 11-second larva-loss thresholds on the main rail and 29-second inject-loss thresholds on the dark red lane.";
+    private static final String MODE_LABEL = "Green lanes show injected status windows; lower dark red lanes show conservative missed inject potential windows; black ticks mark LARVA_PERIOD-second larva-loss thresholds on the main rail and 29-second inject-loss thresholds on the dark red lane.";
 
     /** Empty message used when no rows are available yet. */
     private static final String EMPTY_MESSAGE = "No qualifying Zerg hatcheries were found in this replay.";
@@ -90,7 +90,7 @@ public class LarvaTimelineModelBuilder {
             rowList.add( createFallbackRow( replayLengthMs, fallbackPreviewStartMs, fallbackPreviewEndMs ) );
 
         return new LarvaTimelineModel( TITLE, SUBTITLE, resolveModeLabel( integrationMode ), buildGroupOverviewLabelMap( rowList, larvaAnalysisReport ),
-            buildPlayerPhaseTableMap( rowList, larvaAnalysisReport ), buildGroupColorMap( replaySummary, rowList ), replayLengthMs,
+            buildPlayerPhaseTableMap( rowList, larvaAnalysisReport ), buildGroupColorMap( replaySummary, rowList ), larvaAnalysisReport, replayLengthMs,
             replayLengthLabel, EMPTY_MESSAGE, rowList );
     }
 
