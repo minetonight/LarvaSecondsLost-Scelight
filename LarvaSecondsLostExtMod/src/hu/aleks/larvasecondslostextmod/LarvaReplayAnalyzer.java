@@ -1516,6 +1516,30 @@ public class LarvaReplayAnalyzer {
 
             final InjectWindowDecision decision = buildInjectWindowDecision( repProc, hatcheryState, burstEvidence, injectActiveDurationLoops, replayEndLoop );
             if ( decision.injectWindow != null && previousCandidate != null && decision.injectWindow.getStartLoop() < previousCandidate.endLoop ) {
+                if ( decision.injectWindow.getEndLoop() <= previousCandidate.endLoop ) {
+                    overlapDiscardCount++;
+                    diagnosticLineList.add( "Discarded inferred inject evidence at " + decision.evidenceTimeLabel + " because its retroactive 29-second window is fully contained by the earlier kept inferred window ending at "
+                            + previousCandidate.evidenceTimeLabel + "." );
+                    continue;
+                }
+
+                final int overlap = previousCandidate.endLoop - decision.injectWindow.getStartLoop();
+                if ( overlap == 1 ) {
+                    final int trimmedStartLoop = previousCandidate.endLoop;
+                    final long trimmedStartMs = repProc.loopToTime( trimmedStartLoop );
+                    final String trimmedStartTimeLabel = repProc.formatLoopTime( trimmedStartLoop );
+                    final HatcheryInjectWindow trimmedWindow = new HatcheryInjectWindow(
+                            decision.injectWindow.getEvidenceLoop(), decision.injectWindow.getEvidenceTimeLabel(), decision.injectWindow.getEvidenceKind(),
+                            trimmedStartLoop, decision.injectWindow.getEndLoop(),
+                            trimmedStartMs, decision.injectWindow.getEndMs(), trimmedStartTimeLabel, decision.injectWindow.getEndTimeLabel(),
+                            true, decision.injectWindow.isTrimmedAtEnd(), decision.injectWindow.getDiagnosticNote() + " (trimmed by 1 loop to avoid overlap with the previous window ending at " + previousCandidate.evidenceTimeLabel + ")" );
+                    diagnosticLineList.add( decision.diagnosticLine + " (trimmed by 1 loop to avoid overlap with the previous window ending at " + previousCandidate.evidenceTimeLabel + ")" );
+                    injectWindowList.add( trimmedWindow );
+                    trimmedWindowCount++;
+                    previousCandidate = new InjectWindowCandidate( trimmedWindow.getEndLoop(), decision.evidenceTimeLabel, true );
+                    continue;
+                }
+
                 overlapDiscardCount++;
                 diagnosticLineList.add( "Discarded inferred inject evidence at " + decision.evidenceTimeLabel + " because its retroactive 29-second window overlaps the earlier kept inferred window ending at "
                         + previousCandidate.evidenceTimeLabel + "." );

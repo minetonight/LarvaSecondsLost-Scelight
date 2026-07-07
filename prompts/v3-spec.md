@@ -10,10 +10,27 @@
 see (knowhow.md)[knowhow/knowhow.md]
 
 ### workaround 
- - dont track inject events at all
+ - don't track inject events at all
  - track moments where 3 larva spawn to a hatchery within 8 game loops
- - then retroactively create a 29 second window in the injection charts.
+ - then retroactively create a 29 second window in the past in the injection charts. example: when we detect 3 larva at once next to a hatch at 3:31, add inject event at 3:02.
  - the current implementation for red missed inject windows are correct, keep them.
+
+### bug and fix
+
+Root cause
+
+The bug was in LarvaReplayAnalyzer.buildInjectTimeline().
+It discarded any inferred inject window whose startLoop was less than the previous kept window’s endLoop.
+That was too strict for adjacent windows where the later window overlapped by exactly one loop due to loop-boundary normalization.
+
+Change made
+
+In LarvaReplayAnalyzer.java, the overlap handling now:
+discards windows fully contained by the previous window,
+but trims windows that overlap by exactly one loop to start at the previous window’s end,
+then keeps them.
+
+
 
 bugs:
  - queens missed in exactly one replay Gloria vs Sleepless.
