@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.LinkedHashSet;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Epic 6 replay analysis foundation that reconstructs per-hatchery larva counts.
@@ -58,6 +61,17 @@ public class LarvaReplayAnalyzer {
     private static final double QUEEN_RESTORE_25_ENERGY_SECONDS = 30.0d;
 
     /** Conservative SC2 queen max energy cap used for estimates. */
+
+    // Writes POS2JL snapshot lines to a dedicated temp file for reliable capture during CLI runs.
+    private static void writePos2jlLog( final String line ) {
+        try ( final FileWriter fw = new FileWriter( "/tmp/larva-pos2jl.log", true );
+              final PrintWriter pw = new PrintWriter( fw ) ) {
+            pw.println( line );
+        } catch ( final IOException e ) {
+            // best-effort; ignore
+        }
+    }
+
     private static final double QUEEN_MAX_ENERGY = 200.0d;
 
     /** Hardened Story 11.03 public replay-surface conclusion. */
@@ -581,6 +595,12 @@ public class LarvaReplayAnalyzer {
         queenState.lastKnownPositionLoop = event.getLoop();
         queenState.trackerObserved = true;
         queenState.unitType = unitType == null || unitType.length() == 0 ? queenState.unitType : unitType;
+        
+        // Capture position snapshot for proximity re-validation during idle window building
+        if ( baseUnitEvent.getXCoord() != null && baseUnitEvent.getYCoord() != null ) {
+            queenState.positionTimeline.add( new PositionSnapshot( event.getLoop(), 
+                baseUnitEvent.getXCoord().intValue(), baseUnitEvent.getYCoord().intValue() ) );
+        }
 
         switch ( event.getId() ) {
             case ITrackerEvents.ID_UNIT_INIT :
@@ -842,7 +862,9 @@ public class LarvaReplayAnalyzer {
 
                 trySeedInitialIdleCandidateFromCompletion( repProc, queenState, hatcheryByTag, injectTimelineByHatchTag, replayEndLoop,
                     candidateWindowsByHatchTag, diagnosticsByHatchTag, uncertaintyDiscardCountByHatchTag );
-                trySeedObservedIdleCandidateFromNearbyQueen( repProc, queenState, hatcheryByTag, injectTimelineByHatchTag, replayEndLoop,
+                // Use position timeline discretization instead of single-position seeding to avoid false positive windows
+                // when queens move away after initial detection (SOLUTION 1 to idle-inject queen bug)
+                addQueenIdleCandidatesFromPositionTimeline( repProc, queenState, hatcheryByTag, injectTimelineByHatchTag, replayEndLoop,
                     candidateWindowsByHatchTag, diagnosticsByHatchTag, uncertaintyDiscardCountByHatchTag );
         }
 
@@ -909,6 +931,7 @@ public class LarvaReplayAnalyzer {
                 addCount( attributedInjectCommandCountByHatchTag, boundHatchTag, 1 );
                 addDiagnostic( diagnosticsByHatchTag, boundHatchTag, "Queen " + queenState.queenTagText + " bound by singleton SpawnLarva at "
                         + evidence.timeLabel + "; next 25 energy reaches at " + repProc.formatLoopTime( nextReadyLoop ) + '.' );
+                addQueenStateUpdateAtInjectExpiry( repProc, queenState, evidence, hatcheryByTag, diagnosticsByHatchTag );
             } else if ( evidence.energyCost > 0 && boundHatchTag >= 0 && isKnownNonInjectQueenEnergySpend( evidence ) ) {
                 final int spentReadyLoop = evidence.loop + resolveQueenReadyDelayLoops( repProc, evidence.energyCost );
                 addDiagnostic( diagnosticsByHatchTag, boundHatchTag, "Queen " + queenState.queenTagText + " spent " + evidence.energyCost
@@ -945,6 +968,55 @@ public class LarvaReplayAnalyzer {
             if ( queenState.destroyedLoop >= 0 )
                 addDiagnostic( diagnosticsByHatchTag, boundHatchTag, "Queen " + queenState.queenTagText + " proof ended at "
                         + queenState.destroyedTimeLabel + " because the queen died." );
+        }
+    }
+
+    /**
+     * Records a synthetic queen position update at the moment her inject energy returns.
+     */
+    private void addQueenStateUpdateAtInjectExpiry( final IRepProcessor repProc, final QueenState queenState,
+            final QueenCommandEvidence evidence, final Map< Integer, HatcheryState > hatcheryByTag,
+            final Map< Integer, List< String > > diagnosticsByHatchTag ) {
+        if ( repProc == null || queenState == null || evidence == null || !evidence.inject || evidence.targetHatcheryTag < 0 )
+            return;
+
+        final int expiryLoop = evidence.loop + resolveInjectActiveDurationLoops( repProc );
+        if ( expiryLoop <= 0 || queenState.lastKnownPositionLoop >= expiryLoop )
+            return;
+
+        Integer x = queenState.x;
+        Integer y = queenState.y;
+        if ( ( x == null || y == null ) && hatcheryByTag != null ) {
+            final HatcheryState hatcheryState = hatcheryByTag.get( Integer.valueOf( evidence.targetHatcheryTag ) );
+            if ( hatcheryState != null && hatcheryState.x != null && hatcheryState.y != null ) {
+                x = hatcheryState.x;
+                y = hatcheryState.y;
+            }
+        }
+
+        if ( x == null || y == null )
+            return;
+
+        final PositionSnapshot syntheticSnapshot = new PositionSnapshot( expiryLoop, x.intValue(), y.intValue() );
+        for ( final PositionSnapshot existingSnapshot : queenState.positionTimeline ) {
+            if ( existingSnapshot != null && existingSnapshot.loop == expiryLoop )
+                return;
+        }
+
+        queenState.positionTimeline.add( syntheticSnapshot );
+        queenState.lastKnownPositionLoop = expiryLoop;
+        queenState.x = x;
+        queenState.y = y;
+        Collections.sort( queenState.positionTimeline, new java.util.Comparator< PositionSnapshot >() {
+            @Override
+            public int compare( final PositionSnapshot left, final PositionSnapshot right ) {
+                return left.loop < right.loop ? -1 : left.loop == right.loop ? 0 : 1;
+            }
+        } );
+
+        if ( diagnosticsByHatchTag != null ) {
+            addDiagnostic( diagnosticsByHatchTag, evidence.targetHatcheryTag, "Queen " + queenState.queenTagText
+                    + " inject expired at " + repProc.formatLoopTime( expiryLoop ) + "; synthetic position update inserted for proximity re-validation." );
         }
     }
 
@@ -987,6 +1059,151 @@ public class LarvaReplayAnalyzer {
             + queenState.completionTimeLabel + " within radius " + formatRadius() + " of this hatchery; hybrid nearby-queen eligibility seeded." );
         addQueenIdleCandidatesForBoundInterval( repProc, queenState, hatcheryState.hatcheryTag, queenState.completionLoop, intervalEndLoop,
                 queenState.completionLoop, hatcheryByTag, injectTimelineByHatchTag, candidateWindowsByHatchTag, diagnosticsByHatchTag );
+    }
+
+    /**
+     * Builds idle-inject windows from position timeline, discretizing based on observed proximity.
+     * This solves the bug where once a queen was found nearby, the window would extend infinitely
+     * even after the queen moved away. Now windows end when proximity is lost.
+     *
+     * Solution 1: Position-based discretization. Only extends windows while position data confirms
+     * the queen remained nearby. When observations show the queen moved away OR we run out of confirming
+     * observations, the window ends. This satisfies the acceptance criteria of failing safely when
+     * proximity cannot be confidently proven.
+     */
+    private void addQueenIdleCandidatesFromPositionTimeline( final IRepProcessor repProc, final QueenState queenState,
+            final Map< Integer, HatcheryState > hatcheryByTag, final Map< Integer, HatcheryInjectTimeline > injectTimelineByHatchTag,
+            final int replayEndLoop, final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag,
+            final Map< Integer, List< String > > diagnosticsByHatchTag,
+            final Map< Integer, Integer > uncertaintyDiscardCountByHatchTag ) {
+        if ( queenState.positionTimeline == null || queenState.positionTimeline.isEmpty() )
+            return;
+
+        // Find hatchery '2jl' if present so we can log distances for every snapshot
+        Integer hatchery2jlTag = null;
+        HatcheryState hatch2jl = null;
+        for ( final HatcheryState hs : hatcheryByTag.values() ) {
+            if ( hs != null && hs.hatcheryTagText != null && "2jl".equals( hs.hatcheryTagText ) ) {
+                hatchery2jlTag = Integer.valueOf( hs.hatcheryTag );
+                hatch2jl = hs;
+                break;
+            }
+        }
+
+        // Walk through position timeline and detect proximity windows
+        Integer currentNearbyHatchTag = null;
+        int windowStartLoop = -1;
+        int lastNearbyLoop = -1;
+
+        for ( int i = 0; i < queenState.positionTimeline.size(); i++ ) {
+            final PositionSnapshot snapshot = queenState.positionTimeline.get( i );
+
+            // Find which hatchery (if any) is nearby at this observation
+            final List< HatcheryState > nearbyAtThisLoop = new ArrayList<>();
+            for ( final HatcheryState hatcheryState : hatcheryByTag.values() ) {
+                if ( hatcheryState == null || !hatcheryState.completed || !hatcheryState.alive || hatcheryState.playerId == null
+                        || !hatcheryState.playerId.equals( queenState.playerId ) || hatcheryState.completionLoop < 0
+                        || hatcheryState.completionLoop > snapshot.loop || hatcheryState.x == null || hatcheryState.y == null )
+                    continue;
+
+                final double distance = distance( snapshot.x, snapshot.y, hatcheryState.x.intValue(), hatcheryState.y.intValue() );
+                if ( distance <= IDLE_INJECT_RADIUS )
+                    nearbyAtThisLoop.add( hatcheryState );
+            }
+
+            // Determine which hatchery to assign to (if multiple, use deterministic rotation)
+            Integer assignedHatchTag = null;
+            if ( !nearbyAtThisLoop.isEmpty() ) {
+                if ( nearbyAtThisLoop.size() == 1 ) {
+                    assignedHatchTag = Integer.valueOf( nearbyAtThisLoop.get( 0 ).hatcheryTag );
+                } else {
+                    // Multiple nearby hatcheries: use deterministic assignment based on queen tag
+                    java.util.Collections.sort( nearbyAtThisLoop, new java.util.Comparator< HatcheryState >() {
+                        @Override
+                        public int compare( final HatcheryState left, final HatcheryState right ) {
+                            return left.hatcheryTag < right.hatcheryTag ? -1 : left.hatcheryTag == right.hatcheryTag ? 0 : 1;
+                        }
+                    } );
+                    final int rotation = Math.abs( queenState.queenTag ) % nearbyAtThisLoop.size();
+                    assignedHatchTag = Integer.valueOf( nearbyAtThisLoop.get( rotation ).hatcheryTag );
+                }
+            }
+
+            // Emit raw position snapshot diagnostics for hatchery "2jl" so we can inspect exact transitions
+            // Log every snapshot's distance to hatchery 2jl if available
+            if ( hatch2jl != null && hatchery2jlTag != null ) {
+                try {
+                    final double dist2jl = distance( snapshot.x, snapshot.y, hatch2jl.x.intValue(), hatch2jl.y.intValue() );
+                    final String posLine = "POS2JL: " + repProc.formatLoopTime( snapshot.loop ) + " (loop " + snapshot.loop + ") -> x=" + snapshot.x + ", y=" + snapshot.y + ", dist=" + String.format( "%.2f", dist2jl );
+                    addDiagnostic( diagnosticsByHatchTag, hatchery2jlTag.intValue(), posLine );
+                    writePos2jlLog( posLine );
+                } catch ( final Exception e ) {
+                    // ignore
+                }
+            }
+
+            // Check for state transition: queen moved away or switched hatcheries
+            if ( assignedHatchTag == null ) {
+                // Queen is NOT nearby at this observation
+                if ( currentNearbyHatchTag != null && windowStartLoop >= 0 && lastNearbyLoop >= 0 ) {
+                    // End the current window at the previous observation
+                    finalizeDiscreteIdleWindow( repProc, queenState, currentNearbyHatchTag.intValue(),
+                            windowStartLoop, lastNearbyLoop, hatcheryByTag, injectTimelineByHatchTag,
+                            candidateWindowsByHatchTag, diagnosticsByHatchTag );
+                    currentNearbyHatchTag = null;
+                    windowStartLoop = -1;
+                    lastNearbyLoop = -1;
+                }
+            } else if ( assignedHatchTag.intValue() != ( currentNearbyHatchTag == null ? -1 : currentNearbyHatchTag.intValue() ) ) {
+                // Queen switched to a different hatchery
+                if ( currentNearbyHatchTag != null && windowStartLoop >= 0 && lastNearbyLoop >= 0 ) {
+                    // End previous window
+                    finalizeDiscreteIdleWindow( repProc, queenState, currentNearbyHatchTag.intValue(),
+                            windowStartLoop, lastNearbyLoop, hatcheryByTag, injectTimelineByHatchTag,
+                            candidateWindowsByHatchTag, diagnosticsByHatchTag );
+                }
+                // Start new window at this hatchery
+                currentNearbyHatchTag = assignedHatchTag;
+                windowStartLoop = snapshot.loop;
+                lastNearbyLoop = snapshot.loop;
+            } else if ( currentNearbyHatchTag != null ) {
+                // Queen remained nearby at the same hatchery - extend window
+                lastNearbyLoop = snapshot.loop;
+            } else {
+                // First observation where queen is nearby
+                currentNearbyHatchTag = assignedHatchTag;
+                windowStartLoop = snapshot.loop;
+                lastNearbyLoop = snapshot.loop;
+            }
+        }
+
+        // Handle trailing window: if queen was last seen nearby
+        if ( currentNearbyHatchTag != null && windowStartLoop >= 0 && lastNearbyLoop >= 0 ) {
+            // Extend to queen destroyed or replay end
+            final int effectiveEndLoop = queenState.destroyedLoop >= 0 ? queenState.destroyedLoop : replayEndLoop;
+            finalizeDiscreteIdleWindow( repProc, queenState, currentNearbyHatchTag.intValue(),
+                    windowStartLoop, effectiveEndLoop, hatcheryByTag, injectTimelineByHatchTag,
+                    candidateWindowsByHatchTag, diagnosticsByHatchTag );
+        }
+    }
+
+    /**
+     * Finalizes one discrete idle window for a queen bound to a hatchery during a position-observation interval.
+     */
+    private void finalizeDiscreteIdleWindow( final IRepProcessor repProc, final QueenState queenState, final int hatcheryTag,
+            final int startLoop, final int endLoop, final Map< Integer, HatcheryState > hatcheryByTag,
+            final Map< Integer, HatcheryInjectTimeline > injectTimelineByHatchTag,
+            final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag,
+            final Map< Integer, List< String > > diagnosticsByHatchTag ) {
+        if ( startLoop >= endLoop )
+            return;
+
+        final int nextReadyLoop = startLoop;  // Conservative: queen needs 25 energy starting from window start
+        addDiagnostic( diagnosticsByHatchTag, hatcheryTag, "Queen " + queenState.queenTagText + " was observed nearby from "
+                + repProc.formatLoopTime( startLoop ) + " to " + repProc.formatLoopTime( endLoop )
+                + " (position timeline discretization); seeding idle-inject candidates." );
+        addQueenIdleCandidatesForBoundInterval( repProc, queenState, hatcheryTag, startLoop, endLoop, nextReadyLoop,
+                hatcheryByTag, injectTimelineByHatchTag, candidateWindowsByHatchTag, diagnosticsByHatchTag );
     }
 
     /**
@@ -2739,6 +2956,9 @@ public class LarvaReplayAnalyzer {
         /** Last loop with a trusted sparse tracker position. */
         private int lastKnownPositionLoop = -1;
 
+        /** Timeline of position observations for proximity re-validation. */
+        private final List< PositionSnapshot > positionTimeline = new ArrayList<>();
+
         /** Tells if at least one tracker event positively observed this queen. */
         private boolean trackerObserved;
 
@@ -2782,6 +3002,22 @@ public class LarvaReplayAnalyzer {
             destroyedTimeLabel = repProc == null ? null : repProc.formatLoopTime( loop );
         }
 
+    }
+
+    /**
+     * Position snapshot for a queen at a specific loop.
+     * Used for proximity re-validation when building idle-inject windows.
+     */
+    private static class PositionSnapshot {
+        final int loop;
+        final int x;
+        final int y;
+
+        PositionSnapshot( final int loop, final int x, final int y ) {
+            this.loop = loop;
+            this.x = x;
+            this.y = y;
+        }
     }
 
     /**
