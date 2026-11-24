@@ -245,16 +245,18 @@ Critical path: S01 → S04 → S05 → S14 → S15 → S16, joined by S08 → S0
 5. Given `5 exit`, then Scelight exits normally: the log ends with `Larva Seconds Lost destroy sequence completed.` and `Larva Seconds Lost module stopped.`, and the Java process ends within 15 s.
 6. Lines present in the file before Scelight started are not executed.
 
-**Tests required.** Unit: line parsing (ids, quoted args, comments, blanks) and offset handling with a temp file. Integration: criteria 1–6 in a running Scelight, using the knowhow procedure.
+**Tests required.** (Done in S03: JUnit tests `LarvaDevCommandLineTest` and `LarvaDevCommandFileTailTest` exist in `test/`, run with `ant TEST`.) Unit: line parsing (ids, quoted args, comments, blanks) and offset handling with a temp file. Integration: criteria 1–6 in a running Scelight, using the knowhow procedure.
 
 **Definition of done.**
-- [ ] `LarvaDevCommandChannel` added, off by default.
-- [ ] Knowhow file updated with the final start command and the command table.
-- [ ] Criteria 1–6 checked in Scelight by the agent, log excerpts in the PR.
+- [x] `LarvaDevCommandChannel` added, off by default.
+- [x] Knowhow file updated with the final start command and the command table.
+- [x] Criteria 1–6 checked in Scelight by the agent, log excerpts in the PR.
 
 ---
 
 ### E17-S01 — Spike: module-owned hub `IPage` with closable, renamable children
+
+> **S01 result (2026-11-24): GO for nesting and GO for rename.** All of Q1-Q8 answered in [knowhow/epic17-subpages-spike.md](../knowhow/epic17-subpages-spike.md). S04 builds module-owned `IPage` hub and sub-pages as specified; S14 uses the dated label via `setDisplayName` + `rebuildPageTree(false)` (no `Multi analysis #k` fallback; keep the tree label short, long labels are cut off in the nav tree). Lazy component creation confirmed: S06/S07 keep state in a per-page controller. `rebuildPageTree` re-fires `pageSelected()` on the current page, so it must be idempotent. Sub-pages must be leaves (closing a page with children throws). Spike code (`LarvaSpike*`, `spike-*` commands) lives in the working tree; `LarvaSpikeHubPage` already replaces the `newPage("Larva")` page. X button, real Ctrl+F4 key and mouse history clicks are left as manual checks (list in the knowhow note).
 
 | Maps to | WP-01 · FR-2, FR-7, FR-16 · OQ-6, OQ-7, OQ-10 · R-1, R-2 |
 |---|---|
@@ -299,13 +301,15 @@ Critical path: S01 → S04 → S05 → S14 → S15 → S16, joined by S08 → S0
 **Tests required.** Manual only, in Scelight.
 
 **Definition of done.**
-- [ ] `knowhow/epic17-subpages-spike.md` committed with answers to Q1–Q8 and the go/no-go.
-- [ ] Screenshots committed.
-- [ ] Downstream story impacts noted in this file's §1.2 checkpoint (edit S04/S14 notes if NO-GO).
+- [x] `knowhow/epic17-subpages-spike.md` written with answers to Q1–Q8 and the go/no-go (not committed: no commits requested).
+- [x] Screenshots saved (`knowhow/epic17-spike-*.png`, not committed).
+- [x] Downstream story impacts noted in the S01 result note above; GO, so no S04/S14 acceptance-criteria edits are needed (§1.2 unchanged).
 
 ---
 
 ### E17-S02 — Spike: batch parse cost, cheap metadata, threading model
+
+> **S02 result (2026-11-24): GO. Cheap metadata available, 1 worker, pre-filter yes.** Details, command lines and numbers in [knowhow/epic17-batch-spike.md](../knowhow/epic17-batch-spike.md). Full analysis is about 17 ms per replay (median 10, p90 40, max 190; whole library of 8 352 files: mean 10 ms), roughly 90 times under the 1.5 s budget; parsing is 75 % of it. The cache-only `getRepProc` processor exposes format, game mode, date, player races and toons and header loops, **identical** to the full parse in all 8 712 comparisons (0.2 to 0.9 ms versus 8 to 12 ms), but a cache **miss** makes that call a full parse (about 40 ms) that returns events. The pre-filter saves 51 % of the time on the user's library (43 % of files pass). Parser, analyzer and `RepProcCache` are safe with 2 and 4 threads (byte-identical output), but speed does not need it: **S12 uses 1 worker** (`BATCH_WORKER_COUNT = 1`, one service per worker). **`ESTIMATED_MS_PER_REPLAY = 50`** (S14, OQ-14). Progress posts must be throttled (up to 200 files per second). Gate `writePos2jlLog` and `logSpawnLarvaCommands` anyway (no measurable cost, but unbounded `/tmp` and log growth). Re-baselined S16 target: 100 replays ≤ 15 s, 500 replays ≤ 60 s, heap growth ≤ 200 MB. R-3 and R-4 are closed. Spike code: `LarvaSpikeBatchCommands` (`spike-batch-*` commands) and the harness copy in `knowhow/epic17-batch-spike/`.
 
 | Maps to | WP-02 · FR-10, FR-15, FR-17 · §9 performance · R-3, R-4, R-6 |
 |---|---|
@@ -358,6 +362,12 @@ Scratch code may live in the CLI behind a hidden flag on a spike branch. Do not 
 **Tests required.** Manual or headless measurement runs. Record the command lines.
 
 **Definition of done.**
+- [x] `knowhow/epic17-batch-spike.md` written: measurement table (≥ 50 replays, 460 headless and 8 352 in Scelight), metadata matrix, threading decision, `ESTIMATED_MS_PER_REPLAY`, exact command lines (not committed: no commits requested).
+- [x] Every Q2 field marked available / missing / differs with evidence (all available and identical on a cache hit).
+- [x] One threading decision recorded (1 worker) with rationale.
+- [x] Downstream impacts noted in the S02 result note above. S07, S09, S12, S14, S16 gain concrete numbers; no acceptance criteria had to be changed (S16 target re-baselined in the note).
+
+**Definition of done.**
 - [ ] `knowhow/epic17-batch-spike.md` committed.
 - [ ] S07, S09 and S12 notes amended if the outcome changes their approach.
 
@@ -401,9 +411,9 @@ Scratch code may live in the CLI behind a hidden flag on a spike branch. Do not 
 **Tests required.** The smoke test itself, plus a manual check of the release jar contents.
 
 **Definition of done.**
-- [ ] `test-lib/`, `test/`, `COMPILE_TESTS`, `TEST` added. `CLEAN` updated.
-- [ ] Release jar verified free of test classes and jars.
-- [ ] Short "How to run tests" section added to `knowhow/knowhow.md` (or a new `knowhow/testing.md`).
+- [x] `test-lib/`, `test/`, `COMPILE_TESTS`, `TEST` added. `CLEAN` updated.
+- [x] Release jar verified free of test classes and jars.
+- [x] Short "How to run tests" section added to `knowhow/testing.md`.
 
 ---
 

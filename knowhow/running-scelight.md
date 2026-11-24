@@ -46,7 +46,8 @@ export JAVA_TOOL_OPTIONS='-Dlarva.dev.dump.enabled=true -Dlarva.dev.dump.file=/t
   hu.sllauncher.ScelightLauncher > "/home/aleks/StarCraft II/Scelight/scelight-stdout.log" 2>&1 &
 ```
 
-- `larva.dev.commands.file` enables the dev command channel (E17-S00). Until S00 is implemented the property is simply ignored.
+- `larva.dev.commands.file` enables the dev command channel (E17-S00, implemented). Without it the module starts no channel thread and touches no file. Create the file (empty is fine) before starting: `: > /home/aleks/larva-dev-commands.txt`. If it does not exist, the channel starts at offset 0 and reads it once it appears.
+- `pgrep -f hu.sllauncher.ScelightLauncher` also matches the shell running it. Use `pgrep -f '[h]u.sllauncher.ScelightLauncher'`.
 - `JAVA_TOOL_OPTIONS` is split on spaces, so every path in it must be free of spaces. That is why the commands file is `/home/aleks/larva-dev-commands.txt` and not inside the Scelight folder.
 - Note: `startScelight.sh` redirects stdout to an **unquoted** path with a space, so its output lands in a file named `/home/aleks/StarCraft` and `II/Scelight/...` is passed to Scelight as an argument. Use the command above, or quote the path in the script.
 
@@ -85,7 +86,7 @@ Then open the PNG with the image-reading tool to check the UI. Do not commit age
 
 ## Drive the module: dev command channel (E17-S00)
 
-Available after E17-S00 is implemented and Scelight was started with `-Dlarva.dev.commands.file=<file>`.
+Implemented (E17-S00). Available when Scelight was started with `-Dlarva.dev.commands.file=<file>`.
 
 Append one line per command: `<id> <command> [args…]`. Quote arguments with spaces. Use a new id every time.
 
@@ -96,15 +97,17 @@ sleep 2
 grep '\[larva-dev\] 1 ' "$LOG"
 ```
 
-Each command logs `[larva-dev] <id> OK …` or `[larva-dev] <id> FAIL …`; long output follows as `[larva-dev] <id> | …` lines. Lines already in the file when Scelight starts are skipped.
+Each command logs `[larva-dev] <id> OK …` or `[larva-dev] <id> FAIL …`; long output follows as `[larva-dev] <id> | …` lines. Lines already in the file when Scelight starts are skipped (the log shows `channel started, offset=<bytes>`). Only complete lines (ending in newline) are executed. Commands are polled every 500 ms. A truncated file restarts at offset 0. Blank lines and `#` comments are ignored; a line with an unterminated quote logs `? FAIL ? bad line`. An exception in a command is logged with stack trace and `FAIL`; the channel keeps running.
 
 | Command | From story | Effect |
 |---|---|---|
 | `ping` | S00 | Channel alive check, logs module version |
 | `dump-tree` | S00 / S04 | Larva node and sub-pages: label, type, icon, closable, selected |
 | `select-larva` | S00 | Select the Larva page |
-| `window-info` | S00 | Main frame title and bounds |
-| `exit` | S00 | Clean exit through Scelight's normal close path |
+| `window-info` | S00 | Main frame title, bounds, visible, extended state |
+| `exit` | S00 | Posts `WINDOW_CLOSING` to the main frame (`services.getMainFrame().asFrame()`, fallback: `Frame.getFrames()` title starts with `Scelight`) via `invokeLater`. Logs `OK exit` and the process ends about 1.5 s later |
+| `spike-add-child`, `spike-add-burst`, `spike-rename`, `spike-select`, `spike-click <close/back/forward/prev/next>`, `spike-ctrl-f4`, `spike-veto`, `spike-clear-history`, `spike-resize`, `spike-state` | S01 (spike, throwaway) | Add, rename, select and close child pages through the real host handlers; `spike-state` dumps title bar, tree rows and lifecycle counters. See [epic17-subpages-spike.md](epic17-subpages-spike.md). Delete in S04 |
+| `spike-batch-meta <listFile> <outTsv>`, `spike-batch-full <listFile> <threads> <outJsonl> [prefilter]` | S02 (spike, throwaway) | Cache-only `getRepProc` metadata versus full parse, and full analysis with N workers, over a list of replay paths. Block the channel thread while running. See [epic17-batch-spike.md](epic17-batch-spike.md). Delete after S12 |
 | `select <label>`, `close <label>` | S04 | Select or close a sub-page (same path as the X button) |
 | `hub-state`, `set-ladder-only <true/false>` | S05 | Hub buttons, checkbox, tooltip |
 | `open-replay <path>`, `analyze-latest`, `refresh <label>`, `page-text <label>` | S06 | Single-replay actions without the file chooser; page content as text |
@@ -118,7 +121,7 @@ The channel bypasses only the file chooser and the mouse. Real clicks, dialogs a
 
 ## Stop
 
-- **Preferred (after E17-S00):** `echo '<id> exit' >> "$CMD"`. Scelight runs its exit sequence. The log ends with `Larva Seconds Lost destroy sequence completed.` and `Larva Seconds Lost module stopped.`
+- **Preferred:** `echo '<id> exit' >> "$CMD"`. Scelight runs its exit sequence (observed: no confirm dialog; the process ended within about 2 s). The log ends with `Larva Seconds Lost destroy sequence completed.` and `Larva Seconds Lost module stopped.`
 - **Fallback (before S00, or if Scelight hangs):** `kill -TERM <java pid>` (`pgrep -f hu.sllauncher.ScelightLauncher`). This kills the JVM **without** Scelight's exit sequence: module `destroy()` does not run and Scelight settings changed in that session are not saved. Never use it to test shutdown behaviour.
 - If the user is using Scelight, do not stop it without asking.
 
@@ -138,6 +141,8 @@ Rules:
 - Delete them in the same session, also when the check fails. Before finishing, verify that `ls "$DEST"/zz-larva-test-*` finds nothing.
 - Never move, rename or delete any other file in the Accounts folder.
 - Scelight's replay-processor cache may keep entries for the deleted files. That is harmless.
+
+Close behaviour notes: Scelight's main frame (`XFrame`, `DO_NOTHING_ON_CLOSE`) handles `WINDOW_CLOSING` by `MainFrame.close()`, which runs Exit, or only minimizes to tray if the setting "Minimize to Tray on Close" is on. On this machine the setting is off or the tray is unsupported and exit works. If `exit` logs OK but the process stays alive, that setting is probably on: turn it off in Scelight settings.
 
 ## Agent check loop
 

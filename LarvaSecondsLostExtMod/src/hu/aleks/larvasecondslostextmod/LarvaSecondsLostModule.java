@@ -6,6 +6,7 @@ import hu.scelightapi.IServices;
 import hu.scelightapi.service.repfoldermonitor.INewRepEvent;
 import hu.scelightapi.service.repfoldermonitor.INewRepListener;
 import hu.scelightapibase.bean.IExtModManifestBean;
+import hu.scelightapibase.gui.comp.multipage.IPage;
 import hu.scelightapibase.gui.comp.multipage.IPageCompCreator;
 import hu.scelightapibase.gui.icon.IRIcon;
 import hu.scelightapibase.util.IRHtml;
@@ -53,6 +54,12 @@ public class LarvaSecondsLostModule extends BaseExtModule {
     /** Development-only diagnostic dump writer. */
     private DevDiagnosticDumpWriter devDiagnosticDumpWriter;
 
+    /** Dev command channel; <code>null</code> unless the system property is set. */
+    private LarvaDevCommandChannel devCommandChannel;
+
+    /** The installed Larva page; <code>null</code> before installation. */
+    private volatile IPage< ? > larvaPage;
+
     /** Listener registered at the replay folder monitor. */
     private INewRepListener newRepListener;
 
@@ -92,6 +99,7 @@ public class LarvaSecondsLostModule extends BaseExtModule {
             recordLifecycleUpdate( "initializing", "Larva page installation requested on the EDT." );
             if ( devDiagnosticDumpWriter.isEnabled() )
                 devDiagnosticDumpWriter.recordStartup( manifest );
+            startDevCommandChannel();
             updateInitPhase( "startup complete" );
             logger.debug( manifest.getName() + " module started successfully." );
             if ( devDiagnosticDumpWriter.isEnabled() )
@@ -127,7 +135,8 @@ public class LarvaSecondsLostModule extends BaseExtModule {
         guiUtils.runInEDT( new Runnable() {
             @Override
             public void run() {
-                services.getMainFrame().getMultiPageComp().addPage( guiFactory.newPage( "Larva", larvaIcon, false,
+                // E17-S01 spike: module-owned hub IPage (same content as before), with a mutable child list.
+                larvaPage = new LarvaSpikeHubPage( "Larva", larvaIcon,
                         new IPageCompCreator< JComponent >() {
                             @Override
                             public JComponent createPageComp() {
@@ -136,10 +145,33 @@ public class LarvaSecondsLostModule extends BaseExtModule {
                                     replayPageComp.showSummary( latestReplaySummary );
                                 return replayPageComp;
                             }
-                        } ) );
+                        } );
+                services.getMainFrame().getMultiPageComp().addPage( larvaPage );
                 services.getMainFrame().getMultiPageComp().rebuildPageTree( false );
             }
         } );
+    }
+
+    /**
+     * Starts the dev command channel if (and only if) the system property is set.
+     */
+    private void startDevCommandChannel() {
+        final java.nio.file.Path commandFile = LarvaDevCommandChannel.configuredFile();
+        if ( commandFile == null )
+            return;
+        final LarvaDevCommandRegistry registry = new LarvaDevCommandRegistry();
+        LarvaDevBuiltinCommands.registerAll( registry, this );
+        devCommandChannel = new LarvaDevCommandChannel( logger, commandFile, registry );
+        devCommandChannel.start();
+    }
+
+    /**
+     * Returns the installed Larva page.
+     *
+     * @return the Larva page; may be <code>null</code> before installation
+     */
+    IPage< ? > getLarvaPage() {
+        return larvaPage;
     }
 
     /**
@@ -349,6 +381,9 @@ public class LarvaSecondsLostModule extends BaseExtModule {
 
     @Override
     public void destroy() {
+        if ( devCommandChannel != null )
+            devCommandChannel.stop();
+
         if ( newRepListener != null )
             services.getRepFolderMonitor().removeNewRepListener( newRepListener );
 

@@ -9,6 +9,9 @@
     <property name="srcFolder" value="src" />
     <property name="binFolder" value="bin" />
     <property name="customLibsFolder" value="lib" />
+    <property name="testFolder" value="test" />
+    <property name="testBinFolder" value="bin-test" />
+    <property name="testLibsFolder" value="test-lib" />
     <property name="releaseFolder" value="release" />
     <property name="releaseResourcesFolder" value="${releaseFolder}/resources" />
     <property name="releaseBuildFolder" value="${releaseFolder}/Scelight" />
@@ -30,6 +33,7 @@
 
     <target name="CLEAN" depends="INIT_PROPERTIES" description="Removes generated build outputs.">
         <delete dir="${binFolder}" />
+        <delete dir="${testBinFolder}" />
         <delete dir="${releaseBuildFolder}" />
     </target>
 
@@ -50,6 +54,42 @@
                 <fileset dir="${customLibsFolder}" includes="**/*.jar" />
             </classpath>
         </javac>
+    </target>
+
+    <!-- Test targets. Test jars live in test-lib/ (never lib/): COMPILE and BUILD_RELEASE use lib/**/*.jar.
+         BUILD_RELEASE does not depend on these targets and never packs bin-test/ or test-lib/. -->
+    <path id="testClasspath">
+        <pathelement location="${testBinFolder}" />
+        <pathelement location="${binFolder}" />
+        <pathelement location="${extModApiJar}" />
+        <fileset dir="${customLibsFolder}" includes="**/*.jar" />
+        <fileset dir="${testLibsFolder}" includes="**/*.jar" />
+    </path>
+
+    <target name="COMPILE_TESTS" depends="COMPILE" description="Compiles the unit tests (Java 7 source level) into bin-test.">
+        <delete dir="${testBinFolder}" />
+        <mkdir dir="${testBinFolder}" />
+
+        <javac srcdir="${testFolder}" destdir="${testBinFolder}" source="1.7" target="1.7" encoding="UTF-8" debug="true" includeantruntime="false">
+            <classpath refid="testClasspath" />
+        </javac>
+    </target>
+
+    <target name="TEST" depends="COMPILE_TESTS" description="Compiles and runs all *Test classes with JUnit 4; fails the build on any failure.">
+        <pathconvert property="testClassNames" pathsep=" ">
+            <fileset dir="${testFolder}" includes="**/*Test.java" />
+            <chainedmapper>
+                <regexpmapper from="^\Q${basedir}${file.separator}${testFolder}${file.separator}\E(.*)\.java$$" to="\1" />
+                <packagemapper from="*" to="*" />
+            </chainedmapper>
+        </pathconvert>
+        <fail message="No *Test classes found in ${testFolder}">
+            <condition><equals arg1="${testClassNames}" arg2="" /></condition>
+        </fail>
+
+        <java classname="org.junit.runner.JUnitCore" fork="true" failonerror="true" classpathref="testClasspath">
+            <arg line="${testClassNames}" />
+        </java>
     </target>
 
     <target name="BUILD_RELEASE" depends="COMPILE" description="Creates a release and deployment of the external module.">
