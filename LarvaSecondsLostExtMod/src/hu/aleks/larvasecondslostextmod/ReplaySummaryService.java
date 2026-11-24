@@ -158,6 +158,22 @@ public class ReplaySummaryService {
     }
 
     /**
+     * Headless per-replay aggregation entry point (E17-S09). Runs the shared analysis and keeps only the compact record;
+     * the heavy report is dropped when this method returns. Record building lives in {@link LarvaAggregationRecordBuilder}.
+     *
+     * @param replayFile replay file to analyze
+     * @param sourceDescription short description of how the replay was selected
+     * @return immutable aggregation record
+     */
+    public LarvaAggregationGameRecord analyzeForAggregation( final Path replayFile, final String sourceDescription ) {
+        final ReplayAnalysisContext context = analyzeReplayContext( replayFile, sourceDescription );
+        final IReplay replay = context.repProc.getReplay();
+        return LarvaAggregationRecordBuilder.buildFull( replayFile, context.details,
+            replay.getAttributesEvents() == null ? null : replay.getAttributesEvents().getGameMode(), context.repProc.getFormat(),
+            context.larvaAnalysisReport );
+    }
+
+    /**
      * Builds the shared replay-analysis context used by both page rendering and headless benchmark export.
      *
      * @param replayFile replay file to analyze
@@ -222,7 +238,7 @@ public class ReplaySummaryService {
      * @return benchmark replay record
      */
     private LarvaBenchmarkReplayRecord buildBenchmarkReplayRecord( final ReplayAnalysisContext context ) {
-        final List< String > replayDiagnosticFlagList = buildReplayDiagnosticFlagList( context );
+        final List< String > replayDiagnosticFlagList = buildReplayDiagnosticFlagList( context.larvaAnalysisReport, context.details );
         final List< LarvaBenchmarkPlayerRecord > playerRecordList = new ArrayList<>();
         final Map< String, IPlayer > playerByName = indexPlayersByName( context.details );
         for ( final Map.Entry< String, LarvaPlayerPhaseTable > entry : context.larvaAnalysisReport.getPlayerPhaseTableByPlayerName().entrySet() ) {
@@ -317,22 +333,23 @@ public class ReplaySummaryService {
     /**
      * Builds stable replay-level diagnostic flags for later batch filtering.
      *
-     * @param context shared replay-analysis context
+     * @param report analysis report
+     * @param details replay details (may be <code>null</code>)
      * @return diagnostic flag list
      */
-    private List< String > buildReplayDiagnosticFlagList( final ReplayAnalysisContext context ) {
+    static List< String > buildReplayDiagnosticFlagList( final LarvaAnalysisReport report, final IDetails details ) {
         final List< String > diagnosticFlagList = new ArrayList<>();
-        if ( context.larvaAnalysisReport.isFullReplayParseUsed() )
+        if ( report.isFullReplayParseUsed() )
             diagnosticFlagList.add( "full-replay-reparse" );
-        if ( context.larvaAnalysisReport.getUnassignedLarvaCount() > 0 )
+        if ( report.getUnassignedLarvaCount() > 0 )
             diagnosticFlagList.add( "unassigned-larva-present" );
-        if ( context.larvaAnalysisReport.getAmbiguousLarvaCount() > 0 )
+        if ( report.getAmbiguousLarvaCount() > 0 )
             diagnosticFlagList.add( "ambiguous-larva-present" );
-        if ( context.larvaAnalysisReport.getNoEligibleHatcheryLarvaCount() > 0 )
+        if ( report.getNoEligibleHatcheryLarvaCount() > 0 )
             diagnosticFlagList.add( "no-eligible-hatchery-larva-present" );
-        if ( context.details == null || context.details.getPlayerList() == null )
+        if ( details == null || details.getPlayerList() == null )
             diagnosticFlagList.add( "missing-player-details" );
-        else if ( context.details.getPlayerList().length > 2 )
+        else if ( details.getPlayerList().length > 2 )
             diagnosticFlagList.add( "multi-player-replay" );
         return diagnosticFlagList;
     }

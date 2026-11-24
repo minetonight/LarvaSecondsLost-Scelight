@@ -1,0 +1,163 @@
+package hu.aleks.larvasecondslostextmod;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
+import org.junit.Test;
+
+/** View model content and painter geometry (headless BufferedImage graphics). */
+public class LarvaTablePainterTest {
+
+    private static final int GRID_RGB = new Color( 207, 214, 222 ).getRGB() & 0xFFFFFF;
+
+    private static final int WHITE = 0xFFFFFF;
+
+    private static final int MARGIN = 20;
+
+    @Test
+    public void fromPlayerPhaseTableYieldsTodaysRowsAndCells() {
+        final LarvaTableViewModel model = LarvaPhaseTableViewModels.fromPlayerPhaseTable( LarvaPhaseTableRenderFixture.fullTable( "A" ), null );
+        assertEquals( "Metric", model.getCornerLabel() );
+        assertEquals( false, model.hasTitle() );
+        assertEquals( 4, model.getColumnCount() );
+        assertEquals( "Early game [<37]", model.getColumnHeader( 0 ) );
+        assertEquals( "End game [90+]", model.getColumnHeader( 3 ) );
+        assertArrayEquals( new String[] { "Phase span", "Inject uptime [%]", "Larva gen [lrv / htch / min]", "larva gen ranking",
+            "Larva missed [lrv / htch / min]", "larva missed ranking", "Inject-missed larva [lrv / htch / min]" }, rowLabels( model ) );
+        // Fallback time basis: 4000 loops = 250 s (16 loops/s). Values as rendered by the pre-S13 code.
+        assertEquals( "0:00-4:10", model.getCell( 0, 0 ) );
+        assertEquals( "66.65%", model.getCell( 1, 0 ) );
+        assertEquals( "1.68", model.getCell( 2, 0 ) );
+        assertEquals( "top 100% gold", model.getCell( 3, 0 ) );
+        assertEquals( "0.36", model.getCell( 4, 0 ) );
+        assertEquals( "top 90% pro", model.getCell( 5, 0 ) );
+        assertEquals( "0.24", model.getCell( 6, 0 ) );
+        assertEquals( "0.00", model.getCell( 4, 3 ) );
+    }
+
+    @Test
+    public void missingPhasesGiveNotAvailableCells() {
+        final LarvaTableViewModel model = LarvaPhaseTableViewModels.fromPlayerPhaseTable( LarvaPhaseTableRenderFixture.earlyOnlyTable( "B" ), null );
+        for ( int row = 0; row < model.getRowCount(); row++ )
+            assertEquals( "row " + row, "n/a", model.getCell( row, 3 ) );
+        assertEquals( "0:00-3:13", model.getCell( 0, 0 ) );
+    }
+
+    @Test
+    public void nullCellsReadAsNotAvailableAndModelIsImmutable() {
+        final String[] headers = { "A", "B" };
+        final String[][] cells = { { "1", null } };
+        final LarvaTableViewModel model = new LarvaTableViewModel( "t", null, headers, new String[] { "r" }, cells );
+        headers[ 0 ] = "changed";
+        cells[ 0 ][ 0 ] = "changed";
+        assertEquals( "A", model.getColumnHeader( 0 ) );
+        assertEquals( "1", model.getCell( 0, 0 ) );
+        assertEquals( "n/a", model.getCell( 0, 1 ) );
+        assertEquals( "", model.getCornerLabel() );
+    }
+
+    @Test( expected = IllegalArgumentException.class )
+    public void rejectsRowCountMismatch() {
+        new LarvaTableViewModel( null, "x", new String[] { "A" }, new String[] { "r1", "r2" }, new String[][] { { "1" } } );
+    }
+
+    @Test( expected = IllegalArgumentException.class )
+    public void rejectsNoColumns() {
+        new LarvaTableViewModel( null, "x", new String[0], new String[0], new String[0][] );
+    }
+
+    @Test
+    public void measureGrowsMonotonicallyWithRowCount() {
+        final FontMetrics fm = metrics();
+        int previousHeight = -1;
+        for ( int rows = 0; rows <= 6; rows++ ) {
+            final int height = new LarvaTablePainter().measure( fm, matrixModel( rows ) ).height;
+            assertTrue( "rows=" + rows, height > previousHeight );
+            previousHeight = height;
+        }
+        assertEquals( LarvaTablePainter.ROW_HEIGHT, new LarvaTablePainter().measure( fm, matrixModel( 5 ) ).height
+                - new LarvaTablePainter().measure( fm, matrixModel( 4 ) ).height );
+    }
+
+    @Test
+    public void measureReservesTitleLine() {
+        final FontMetrics fm = metrics();
+        final LarvaTableViewModel untitled = new LarvaTableViewModel( null, "Metric", new String[] { "A" }, new String[] { "r" }, new String[][] { { "1" } } );
+        final LarvaTableViewModel titled = new LarvaTableViewModel( "ZvP - 3 games", "Metric", new String[] { "A" }, new String[] { "r" }, new String[][] { { "1" } } );
+        assertEquals( LarvaTablePainter.TITLE_HEIGHT, new LarvaTablePainter().measure( fm, titled ).height - new LarvaTablePainter().measure( fm, untitled ).height );
+    }
+
+    /** AC-3: Metric + All/ZvP/ZvT/ZvZ and 4 rows with long cells: all ink lies inside the measured size and the last grid lines are inside it. */
+    @Test
+    public void fiveColumnFourRowTableIsNotClippedAtMeasuredSize() {
+        final String[] headers = { "All", "ZvP", "ZvT", "ZvZ" };
+        final String[] rowLabels = { "Early game [<37]", "Mid game [<67]", "Late game [<90]", "End game [90+]" };
+        final String[][] cells = {
+            { "3.12 (10/12)", "n/a", "2.50 (3/4)", "1.00 (1/1)" },
+            { "12.34 (200/200)", "n/a", "n/a", "n/a" },
+            { "0.00", "0.00", "0.00", "0.00" },
+            { "n/a", "n/a", "n/a", "a very very wide cell text" } };
+        final LarvaTableViewModel model = new LarvaTableViewModel( "Player X - 12 games", "Phase", headers, rowLabels, cells );
+
+        final BufferedImage big = new BufferedImage( 900, 300, BufferedImage.TYPE_INT_RGB );
+        final Dimension size = paintOnWhite( big, model, MARGIN, MARGIN );
+
+        // right and bottom grid line are the last inked column / row
+        assertEquals( GRID_RGB, big.getRGB( MARGIN + size.width - 1, MARGIN + size.height - 1 ) & 0xFFFFFF );
+        for ( int y = 0; y < big.getHeight(); y++ ) {
+            for ( int x = 0; x < big.getWidth(); x++ ) {
+                final boolean inside = x >= MARGIN && x < MARGIN + size.width && y >= MARGIN && y < MARGIN + size.height;
+                if ( !inside )
+                    assertEquals( "ink outside measured box at " + x + "," + y, WHITE, big.getRGB( x, y ) & 0xFFFFFF );
+            }
+        }
+    }
+
+    private static Dimension paintOnWhite( final BufferedImage image, final LarvaTableViewModel model, final int left, final int top ) {
+        final Graphics2D g = image.createGraphics();
+        try {
+            g.setColor( Color.WHITE );
+            g.fillRect( 0, 0, image.getWidth(), image.getHeight() );
+            g.setFont( new java.awt.Font( LarvaPhaseTableRenderFixture.FIXTURE_FONT_FAMILY, java.awt.Font.PLAIN, LarvaPhaseTableRenderFixture.FIXTURE_FONT_SIZE ) );
+            final Dimension size = new LarvaTablePainter().measure( g.getFontMetrics(), model );
+            new LarvaTablePainter().paint( g, g.getFontMetrics(), model, left, top, size.width );
+            return size;
+        }
+        finally {
+            g.dispose();
+        }
+    }
+
+    private static LarvaTableViewModel matrixModel( final int rows ) {
+        final String[] labels = new String[ rows ];
+        final String[][] cells = new String[ rows ][ 2 ];
+        for ( int row = 0; row < rows; row++ ) {
+            labels[ row ] = "row " + row;
+            cells[ row ][ 0 ] = "1";
+        }
+        return new LarvaTableViewModel( null, "Metric", new String[] { "A", "B" }, labels, cells );
+    }
+
+    private static String[] rowLabels( final LarvaTableViewModel model ) {
+        final String[] labels = new String[ model.getRowCount() ];
+        for ( int row = 0; row < labels.length; row++ )
+            labels[ row ] = model.getRowLabel( row );
+        return labels;
+    }
+
+    private static FontMetrics metrics() {
+        final BufferedImage image = new BufferedImage( 4, 4, BufferedImage.TYPE_INT_RGB );
+        final Graphics2D g = image.createGraphics();
+        g.setFont( new java.awt.Font( LarvaPhaseTableRenderFixture.FIXTURE_FONT_FAMILY, java.awt.Font.PLAIN, LarvaPhaseTableRenderFixture.FIXTURE_FONT_SIZE ) );
+        final FontMetrics fm = g.getFontMetrics();
+        g.dispose();
+        return fm;
+    }
+}

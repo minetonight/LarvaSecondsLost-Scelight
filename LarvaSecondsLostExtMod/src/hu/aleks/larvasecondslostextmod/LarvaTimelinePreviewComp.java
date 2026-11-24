@@ -55,15 +55,6 @@ public class LarvaTimelinePreviewComp extends JPanel {
     /** Marker color. */
     private static final Color MARKER_COLOR = new Color( 246, 156, 63 );
 
-    /** Phase-table header background. */
-    private static final Color PHASE_TABLE_HEADER_BG = new Color( 235, 241, 248 );
-
-    /** Phase-table body zebra background. */
-    private static final Color PHASE_TABLE_ALT_BG = new Color( 248, 250, 252 );
-
-    /** Phase-table grid color. */
-    private static final Color PHASE_TABLE_GRID_COLOR = new Color( 207, 214, 222 );
-
     /** Supported hatchery lifetime rail color. */
     private static final Color LIFETIME_RAIL_COLOR = new Color( 194, 201, 210 );
 
@@ -121,17 +112,11 @@ public class LarvaTimelinePreviewComp extends JPanel {
     /** Horizontal padding between lane labels and the timeline rail. */
     private static final int STATUS_LABEL_GAP = 8;
 
-    /** Height of the per-player phase table. */
-    private static final int PHASE_TABLE_HEADER_HEIGHT = 20;
-
-    /** Height of each phase-table body row. */
-    private static final int PHASE_TABLE_ROW_HEIGHT = 18;
-
     /** Number of body rows shown in the per-player phase table. */
     private static final int PHASE_TABLE_BODY_ROW_COUNT = 7;
 
     /** Height of the per-player phase table. */
-    private static final int PHASE_TABLE_HEIGHT = PHASE_TABLE_HEADER_HEIGHT + PHASE_TABLE_ROW_HEIGHT * PHASE_TABLE_BODY_ROW_COUNT;
+    static final int PHASE_TABLE_HEIGHT = LarvaTablePainter.HEADER_HEIGHT + LarvaTablePainter.ROW_HEIGHT * PHASE_TABLE_BODY_ROW_COUNT;
 
     /** Gap after the per-player phase table. */
     private static final int PHASE_TABLE_GAP = 8;
@@ -145,8 +130,8 @@ public class LarvaTimelinePreviewComp extends JPanel {
     /** Tooltip hotspots rebuilt on every paint pass. */
     private final List< TooltipHotspot > tooltipHotspotList = new ArrayList<>();
 
-    /** Formats compact player-facing benchmark tier strings. */
-    private final LarvaPhaseBenchmarkRatingFormatter phaseBenchmarkRatingFormatter = new LarvaPhaseBenchmarkRatingFormatter();
+    /** Paints the per-player phase tables. */
+    private final LarvaTablePainter phaseTablePainter = new LarvaTablePainter();
 
     /**
      * Creates a new timeline preview component.
@@ -245,186 +230,13 @@ public class LarvaTimelinePreviewComp extends JPanel {
     }
 
     /**
-     * Draws the per-player Epic 12 phase table.
+     * Draws the per-player Epic 12 phase table with the shared table painter.
      */
     private void drawPhaseTable( final Graphics2D g, final FontMetrics fm, final LarvaPlayerPhaseTable playerPhaseTable, final int left,
             final int top, final int width ) {
-        final String[] metricLabels = new String[] {
-            "Phase span",
-            "Inject uptime [%]",
-            "Larva gen [lrv / htch / min]",
-            "larva gen ranking",
-            "Larva missed [lrv / htch / min]",
-            "larva missed ranking",
-            "Inject-missed larva [lrv / htch / min]"
-        };
-        final String[] phaseHeaderLabels = new String[ LarvaGamePhase.values().length ];
-        final String[][] cellTextMatrix = new String[ metricLabels.length ][ LarvaGamePhase.values().length ];
-        for ( int phaseIndex = 0; phaseIndex < LarvaGamePhase.values().length; phaseIndex++ ) {
-            final LarvaGamePhase phase = LarvaGamePhase.values()[ phaseIndex ];
-            phaseHeaderLabels[ phaseIndex ] = resolvePhaseHeaderLabel( phase );
-            final LarvaPhaseStats phaseStats = playerPhaseTable.getPhaseStats( phase );
-            cellTextMatrix[ 0 ][ phaseIndex ] = formatPhaseIntervalText( playerPhaseTable.getPhaseInterval( phase ) );
-            cellTextMatrix[ 1 ][ phaseIndex ] = formatPhasePercent( phaseStats == null ? null : phaseStats.getInjectUptimePercentage() );
-            cellTextMatrix[ 2 ][ phaseIndex ] = formatPhaseRate( phaseStats == null ? null : phaseStats.getSpawnedLarvaPerHatchPerMinute() );
-            cellTextMatrix[ 3 ][ phaseIndex ] = phaseBenchmarkRatingFormatter.formatSpawnedLarvaRanking( phase,
-                phaseStats == null ? null : phaseStats.getSpawnedLarvaPerHatchPerMinute() );
-            cellTextMatrix[ 4 ][ phaseIndex ] = formatPhaseRate( phaseStats == null ? null : phaseStats.getMissedLarvaPerHatchPerMinute() );
-            cellTextMatrix[ 5 ][ phaseIndex ] = phaseBenchmarkRatingFormatter.formatMissedLarvaRanking( phase,
-                phaseStats == null ? null : phaseStats.getMissedLarvaPerHatchPerMinute() );
-            cellTextMatrix[ 6 ][ phaseIndex ] = formatPhaseRate( phaseStats == null ? null : phaseStats.getMissedInjectLarvaPerHatchPerMinute() );
-        }
-
-        final int firstColumnWidth = resolveMetricColumnWidth( fm, metricLabels );
-        final int[] phaseColumnWidthArray = resolvePhaseColumnWidths( fm, phaseHeaderLabels, cellTextMatrix );
-        int tableWidth = firstColumnWidth + 1;
-        for ( final int phaseColumnWidth : phaseColumnWidthArray )
-            tableWidth += phaseColumnWidth;
-        tableWidth = Math.min( Math.max( 220, tableWidth ), Math.max( 220, width ) );
-        final int tableHeight = PHASE_TABLE_HEIGHT;
-        final int[] columnX = new int[ LarvaGamePhase.values().length + 2 ];
-        columnX[ 0 ] = left;
-        columnX[ 1 ] = left + firstColumnWidth;
-        for ( int phaseIndex = 0; phaseIndex < phaseColumnWidthArray.length; phaseIndex++ )
-            columnX[ phaseIndex + 2 ] = columnX[ phaseIndex + 1 ] + phaseColumnWidthArray[ phaseIndex ];
-        final int rowHeight = PHASE_TABLE_ROW_HEIGHT;
-        final int headerHeight = PHASE_TABLE_HEADER_HEIGHT;
-        final int bodyRowCount = metricLabels.length;
-
-        g.setColor( Color.WHITE );
-        g.fillRect( left, top, tableWidth, tableHeight );
-        g.setColor( PHASE_TABLE_HEADER_BG );
-        g.fillRect( left, top, tableWidth, headerHeight );
-        for ( int rowIndex = 0; rowIndex < bodyRowCount; rowIndex++ ) {
-            if ( rowIndex % 2 == 1 ) {
-                g.setColor( PHASE_TABLE_ALT_BG );
-                g.fillRect( left, top + headerHeight + rowHeight * rowIndex, tableWidth, rowHeight );
-            }
-        }
-        g.setColor( PHASE_TABLE_GRID_COLOR );
-        g.drawRect( left, top, tableWidth, tableHeight );
-
-        for ( int i = 1; i < columnX.length - 1; i++ )
-            g.drawLine( columnX[ i ], top, columnX[ i ], top + tableHeight );
-        for ( int i = 0; i <= bodyRowCount; i++ )
-            g.drawLine( left, top + headerHeight + rowHeight * i, left + tableWidth, top + headerHeight + rowHeight * i );
-
-        g.setColor( OUTLINE_COLOR );
-        g.drawString( "Metric", left + 8, top + 14 );
-        for ( int i = 0; i < LarvaGamePhase.values().length; i++ ) {
-            final int phaseColumnWidth = phaseColumnWidthArray[ i ];
-            final int textX = columnX[ i + 1 ] + phaseColumnWidth / 2 - fm.stringWidth( phaseHeaderLabels[ i ] ) / 2;
-            g.drawString( phaseHeaderLabels[ i ], textX, top + 14 );
-        }
-
-        for ( int rowIndex = 0; rowIndex < metricLabels.length; rowIndex++ ) {
-            final int baselineY = top + headerHeight + rowHeight * rowIndex + 13;
-            g.setColor( OUTLINE_COLOR );
-            g.drawString( metricLabels[ rowIndex ], left + 8, baselineY );
-            for ( int phaseIndex = 0; phaseIndex < LarvaGamePhase.values().length; phaseIndex++ ) {
-                final int phaseColumnWidth = phaseColumnWidthArray[ phaseIndex ];
-                final String text = cellTextMatrix[ rowIndex ][ phaseIndex ];
-                final int textX = columnX[ phaseIndex + 1 ] + phaseColumnWidth / 2 - fm.stringWidth( text ) / 2;
-                g.drawString( text, textX, baselineY );
-            }
-        }
-    }
-
-    /**
-     * Resolves the metric-column width.
-     */
-    private int resolveMetricColumnWidth( final FontMetrics fm, final String[] metricLabels ) {
-        int metricColumnWidth = fm.stringWidth( "Metric" ) + 16;
-        for ( final String metricLabel : metricLabels )
-            if ( metricLabel != null )
-                metricColumnWidth = Math.max( metricColumnWidth, fm.stringWidth( metricLabel ) + 16 );
-        return metricColumnWidth;
-    }
-
-    /**
-     * Resolves per-phase column widths from headers and cell contents.
-     */
-    private int[] resolvePhaseColumnWidths( final FontMetrics fm, final String[] phaseHeaderLabels, final String[][] cellTextMatrix ) {
-        final int[] phaseColumnWidthArray = new int[ phaseHeaderLabels.length ];
-        for ( int phaseIndex = 0; phaseIndex < phaseHeaderLabels.length; phaseIndex++ ) {
-            int phaseColumnWidth = phaseHeaderLabels[ phaseIndex] == null ? 58 : fm.stringWidth( phaseHeaderLabels[ phaseIndex ] ) + 16;
-            for ( int rowIndex = 0; rowIndex < cellTextMatrix.length; rowIndex++ ) {
-                final String cellText = cellTextMatrix[ rowIndex ][ phaseIndex ];
-                if ( cellText != null )
-                    phaseColumnWidth = Math.max( phaseColumnWidth, fm.stringWidth( cellText ) + 16 );
-            }
-            phaseColumnWidthArray[ phaseIndex ] = Math.max( 58, phaseColumnWidth );
-        }
-        return phaseColumnWidthArray;
-    }
-
-    /**
-     * Resolves a more explicit phase header label with the drone-count threshold.
-     */
-    private String resolvePhaseHeaderLabel( final LarvaGamePhase phase ) {
-        if ( phase == null )
-            return "n/a";
-
-        switch ( phase ) {
-            case EARLY :
-                return "Early game [<37]";
-            case MID :
-                return "Mid game [<67]";
-            case LATE :
-                return "Late game [<90]";
-            case END :
-            default :
-                return "End game [90+]";
-        }
-    }
-
-    /**
-     * Formats one phase rate for the table.
-     */
-    private String formatPhaseRate( final Double value ) {
-        return value == null ? "n/a" : formatDouble( value.doubleValue() );
-    }
-
-    /**
-     * Formats one phase percentage for the table.
-     */
-    private String formatPhasePercent( final Double value ) {
-        return value == null ? "n/a" : formatDouble( value.doubleValue() ) + "%";
-    }
-
-    /**
-     * Formats a phase interval range.
-     */
-    private String formatPhaseIntervalText( final LarvaPhaseInterval interval ) {
-        if ( interval == null || interval.getEndLoop() <= interval.getStartLoop() )
-            return "n/a";
-        return formatLoopTime( interval.getStartLoop() ) + "-" + formatLoopTime( interval.getEndLoop() );
-    }
-
-    /**
-     * Formats a replay loop using the preview model timing basis.
-     */
-    private String formatLoopTime( final int loop ) {
-        if ( loop <= 0 )
-            return "0:00";
-
-        if ( timelineModel != null && timelineModel.getLarvaAnalysisReport() != null )
-            return timelineModel.getLarvaAnalysisReport().formatLoopTime( loop );
-
-        final long seconds = ( loop * 1000L / 16L ) / 1000L;
-        final long minutes = seconds / 60L;
-        final long secondsPart = seconds % 60L;
-        return minutes + ":" + ( secondsPart < 10L ? "0" : "" ) + secondsPart;
-    }
-
-    /**
-     * Formats a decimal with two visible fractional digits.
-     */
-    private String formatDouble( final double value ) {
-        final long scaled = Math.round( value * 100.0d );
-        final long whole = scaled / 100L;
-        final long fraction = Math.abs( scaled % 100L );
-        return String.valueOf( whole ) + '.' + ( fraction < 10L ? "0" : "" ) + fraction;
+        final LarvaAnalysisReport report = timelineModel == null ? null : timelineModel.getLarvaAnalysisReport();
+        final LarvaTableViewModel tableModel = LarvaPhaseTableViewModels.fromPlayerPhaseTable( playerPhaseTable, report );
+        phaseTablePainter.paint( g, fm, tableModel, left, top, width );
     }
 
     /**

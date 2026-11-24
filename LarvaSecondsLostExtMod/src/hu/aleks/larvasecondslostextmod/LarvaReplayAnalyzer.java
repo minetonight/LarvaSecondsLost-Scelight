@@ -262,6 +262,8 @@ public class LarvaReplayAnalyzer {
 
         // Track drone counts per player for accurate phase transitions
         final Map< String, Integer > aliveDroneCountByPlayerName = new HashMap<>();
+        // First loop where the alive drone count reached the milestone thresholds (E17-S08, D-4); additive, feeds no existing output
+        final LarvaFirstDroneLoopTracker firstDroneLoopTracker = new LarvaFirstDroneLoopTracker();
         // Track unit completion status: tag -> completed boolean
         final Map< Integer, Boolean > unitCompletedByTag = new HashMap<>();
         // Track buildings started by a drone so we can restore drones on cancellation
@@ -524,6 +526,8 @@ public class LarvaReplayAnalyzer {
                         updateQueenState( repProc, queenByTag, event, baseUnitEvent, unitType );
                     }
                 }
+
+                firstDroneLoopTracker.observe( aliveDroneCountByPlayerName, event.getLoop() );
             }
         }
 
@@ -575,7 +579,8 @@ public class LarvaReplayAnalyzer {
             directAssignmentCount, injectCorrelatedAssignmentCount, heuristicAssignmentCount, hatcheryMorphCount,
             trackerEventArray == null ? 0 : trackerEventArray.length, gameEventArray == null ? 0 : gameEventArray.length, fullReplayParseUsed,
             repProc.isRealTime(), gameSpeedRelative,
-            replayEndLoop, resourceSnapshotsByPlayerName, aliveDroneCountByPlayerName, playerPhaseTableByPlayerName );
+            replayEndLoop, resourceSnapshotsByPlayerName, aliveDroneCountByPlayerName, playerPhaseTableByPlayerName,
+            firstDroneLoopTracker.getFirstLoopByPlayerName() );
     }
 
     /**

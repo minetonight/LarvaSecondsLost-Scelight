@@ -319,13 +319,13 @@ public class LarvaReplayPageComp extends JPanel implements LarvaReplayPageView, 
                     builder.append( " | " );
                 builder.append( phase.getDisplayLabel() )
                         .append( ' ' )
-                        .append( formatPhaseValue( stats == null ? null : stats.getMissedLarvaPerHatchPerMinute() ) )
+                        .append( LarvaStatFormat.formatRate( stats == null ? null : stats.getMissedLarvaPerHatchPerMinute() ) )
                         .append( '/' )
-                        .append( formatPhaseValue( stats == null ? null : stats.getMissedInjectLarvaPerHatchPerMinute() ) )
+                        .append( LarvaStatFormat.formatRate( stats == null ? null : stats.getMissedInjectLarvaPerHatchPerMinute() ) )
                         .append( '/' )
-                        .append( formatPhaseValue( stats == null ? null : stats.getSpawnedLarvaPerHatchPerMinute() ) )
+                        .append( LarvaStatFormat.formatRate( stats == null ? null : stats.getSpawnedLarvaPerHatchPerMinute() ) )
                         .append( '/' )
-                        .append( formatPhasePercent( stats == null ? null : stats.getInjectUptimePercentage() ) );
+                        .append( LarvaStatFormat.formatPercent( stats == null ? null : stats.getInjectUptimePercentage() ) );
                 first = false;
             }
             builder.append( '\n' );
@@ -358,26 +358,6 @@ public class LarvaReplayPageComp extends JPanel implements LarvaReplayPageView, 
                                     phaseStats == null ? null : phaseStats.getMissedLarvaPerHatchPerMinute() ) );
             first = false;
         }
-    }
-
-    /**
-     * Formats a phase-table rate for the text summary.
-     */
-    private String formatPhaseValue( final Double value ) {
-        if ( value == null )
-            return "n/a";
-
-        final long scaled = Math.round( value.doubleValue() * 100.0d );
-        final long whole = scaled / 100L;
-        final long fraction = Math.abs( scaled % 100L );
-        return whole + "." + ( fraction < 10L ? "0" : "" ) + fraction;
-    }
-
-    /**
-     * Formats a phase-table percentage for the text summary.
-     */
-    private String formatPhasePercent( final Double value ) {
-        return value == null ? "n/a" : formatPhaseValue( value ) + "%";
     }
 
     /**

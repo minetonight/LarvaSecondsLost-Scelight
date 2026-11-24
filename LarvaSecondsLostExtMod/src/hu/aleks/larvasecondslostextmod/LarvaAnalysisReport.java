@@ -104,6 +104,9 @@ public class LarvaAnalysisReport {
     /** Per-player Epic 12 phase tables. */
     private final Map< String, LarvaPlayerPhaseTable > playerPhaseTableByPlayerName;
 
+    /** Player name to (drone threshold to first loop where the alive drone count reached it), E17-S08. */
+    private final Map< String, Map< Integer, Integer > > firstDroneCountLoopByPlayerName;
+
     /**
      * Creates a new larva analysis report.
      *
@@ -123,6 +126,7 @@ public class LarvaAnalysisReport {
      * @param converterGameSpeedRelative relative converter game speed used by Scelight
      * @param replayLengthLoops replay length in raw game loops from the replay header
      * @param resourceSnapshotsByPlayerName player resource snapshots collected from tracker events
+     * @param firstDroneCountLoopByPlayerName player name to (drone threshold to first loop reached)
      */
         public LarvaAnalysisReport( final LarvaHeuristicCalibration calibration, final List< HatcheryLarvaTimeline > timelineList,
             final List< HatcheryInjectTimeline > injectTimelineList, final String injectSignalConclusion,
@@ -136,7 +140,8 @@ public class LarvaAnalysisReport {
              final boolean realTime, final long converterGameSpeedRelative, final int replayLengthLoops,
              final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName,
              final Map< String, Integer > aliveDroneCountByPlayerName,
-             final Map< String, LarvaPlayerPhaseTable > playerPhaseTableByPlayerName ) {
+             final Map< String, LarvaPlayerPhaseTable > playerPhaseTableByPlayerName,
+             final Map< String, Map< Integer, Integer > > firstDroneCountLoopByPlayerName ) {
         this.calibration = calibration;
         this.timelineList = Collections.unmodifiableList( new ArrayList<>( timelineList ) );
         this.injectTimelineList = Collections.unmodifiableList( new ArrayList<>( injectTimelineList ) );
@@ -167,6 +172,30 @@ public class LarvaAnalysisReport {
         this.resourceSnapshotsByPlayerName = copySnapshotMap( resourceSnapshotsByPlayerName );
         this.aliveDroneCountByPlayerName = aliveDroneCountByPlayerName == null ? Collections.< String, Integer >emptyMap() : Collections.unmodifiableMap( new LinkedHashMap<>( aliveDroneCountByPlayerName ) );
         this.playerPhaseTableByPlayerName = copyPhaseTableMap( playerPhaseTableByPlayerName );
+        this.firstDroneCountLoopByPlayerName = copyFirstDroneLoopMap( firstDroneCountLoopByPlayerName );
+    }
+
+    private static Map< String, Map< Integer, Integer > > copyFirstDroneLoopMap( final Map< String, Map< Integer, Integer > > source ) {
+        final Map< String, Map< Integer, Integer > > copy = new LinkedHashMap<>();
+        if ( source != null ) {
+            for ( final Map.Entry< String, Map< Integer, Integer > > entry : source.entrySet() )
+                copy.put( entry.getKey(), Collections.unmodifiableMap( new LinkedHashMap<>( entry.getValue() ) ) );
+        }
+        return Collections.unmodifiableMap( copy );
+    }
+
+    /**
+     * Returns the first loop where the player's alive drone count (analyzer calculation) reached the threshold, or null if it never
+     * did or the threshold is not tracked. Only the drone milestone thresholds (66, 80) are tracked. Later dips and re-reaching do
+     * not change the result.
+     *
+     * @param playerName player name
+     * @param threshold alive drone threshold
+     * @return exact loop or null
+     */
+    public Integer getFirstDroneCountLoop( final String playerName, final int threshold ) {
+        final Map< Integer, Integer > loops = playerName == null ? null : firstDroneCountLoopByPlayerName.get( playerName );
+        return loops == null ? null : loops.get( Integer.valueOf( threshold ) );
     }
 
     public LarvaHeuristicCalibration getCalibration() {

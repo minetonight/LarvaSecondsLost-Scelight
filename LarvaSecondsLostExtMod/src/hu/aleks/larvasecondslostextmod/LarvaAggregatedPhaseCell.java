@@ -1,0 +1,93 @@
+package hu.aleks.larvasecondslostextmod;
+
+/**
+ * Immutable pooled result of one phase in one bucket of one tracked player (E17-S11, D-1, D-2, D-3, D-9).
+ *
+ * <p>Every value is <code>null</code> when its denominator is 0 (D-10, OQ-13); the view model turns <code>null</code> into
+ * {@code n/a}. Rates come from {@link LarvaPhaseStats} built over the summed counts, so there is no second formula.</p>
+ */
+public final class LarvaAggregatedPhaseCell {
+
+    private final LarvaGamePhase phase;
+
+    private final Double missedPerHatchPerMinute;
+
+    private final Double missedInjectPerHatchPerMinute;
+
+    private final Double spawnedPerHatchPerMinute;
+
+    private final Double injectUptimePercent;
+
+    private final String spawnedRanking;
+
+    private final String missedRanking;
+
+    private final Long meanLengthMs;
+
+    private final int reachedCount;
+
+    private final int gameCount;
+
+    LarvaAggregatedPhaseCell( final LarvaGamePhase phase, final LarvaPhaseStats pooled, final String spawnedRanking,
+            final String missedRanking, final Long meanLengthMs, final int reachedCount, final int gameCount ) {
+        this.phase = phase;
+        this.missedPerHatchPerMinute = pooled == null ? null : pooled.getMissedLarvaPerHatchPerMinute();
+        this.missedInjectPerHatchPerMinute = pooled == null ? null : pooled.getMissedInjectLarvaPerHatchPerMinute();
+        this.spawnedPerHatchPerMinute = pooled == null ? null : pooled.getSpawnedLarvaPerHatchPerMinute();
+        this.injectUptimePercent = pooled == null ? null : pooled.getInjectUptimePercentage();
+        this.spawnedRanking = spawnedRanking;
+        this.missedRanking = missedRanking;
+        this.meanLengthMs = meanLengthMs;
+        this.reachedCount = reachedCount;
+        this.gameCount = gameCount;
+    }
+
+    public LarvaGamePhase getPhase() {
+        return phase;
+    }
+
+    /** @return pooled missed larva per hatchery per minute, or null */
+    public Double getMissedPerHatchPerMinute() {
+        return missedPerHatchPerMinute;
+    }
+
+    /** @return pooled missed inject larva per hatchery per minute, or null */
+    public Double getMissedInjectPerHatchPerMinute() {
+        return missedInjectPerHatchPerMinute;
+    }
+
+    /** @return pooled spawned larva per hatchery per minute, or null */
+    public Double getSpawnedPerHatchPerMinute() {
+        return spawnedPerHatchPerMinute;
+    }
+
+    /** @return pooled inject uptime in percent, or null */
+    public Double getInjectUptimePercent() {
+        return injectUptimePercent;
+    }
+
+    /** @return ranking text of the pooled spawned rate; {@code n/a} for END (D-3); null if there is no data */
+    public String getSpawnedRanking() {
+        return spawnedRanking;
+    }
+
+    /** @return ranking text of the pooled missed rate; {@code n/a} for END (D-3); null if there is no data */
+    public String getMissedRanking() {
+        return missedRanking;
+    }
+
+    /** @return mean phase length in display ms over the player-games that reached the phase (D-9), or null if none did */
+    public Long getMeanLengthMs() {
+        return meanLengthMs;
+    }
+
+    /** @return k: player-games that reached the phase (duration &gt; 0) */
+    public int getReachedCount() {
+        return reachedCount;
+    }
+
+    /** @return n: player-games in the bucket */
+    public int getGameCount() {
+        return gameCount;
+    }
+}
