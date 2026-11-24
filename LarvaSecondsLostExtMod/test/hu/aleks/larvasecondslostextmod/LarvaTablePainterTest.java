@@ -120,6 +120,48 @@ public class LarvaTablePainterTest {
         }
     }
 
+    /**
+     * CR-1.2: the multi page uses the single look. The metric column fits the widest row label on one line, so the table
+     * is as wide as label + data columns, has the plain 20/18 px rows and paints no ink outside its measured box.
+     */
+    @Test
+    public void longRowLabelsStayOnOneLineAndInsideTheMeasuredBox() {
+        final String[] headers = { "Early game [<37]", "Mid game [<67]", "Late game [<90]", "End game [90+]" };
+        final String[] rowLabels = LarvaMultiAnalysisViewModelBuilder.PHASE_ROW_LABELS;
+        final String[][] cells = new String[ rowLabels.length ][ 4 ];
+        for ( final String[] row : cells )
+            java.util.Arrays.fill( row, "top 100% gold" );
+        cells[ 0 ][ 0 ] = "10:08 (1234/1234)";
+        final LarvaTableViewModel model = new LarvaTableViewModel( "All games", "Metric", headers, rowLabels, cells );
+        final FontMetrics fm = metrics();
+        final Dimension size = new LarvaTablePainter().measure( fm, model );
+        int widestLabel = 0;
+        for ( final String label : rowLabels )
+            widestLabel = Math.max( widestLabel, fm.stringWidth( label ) );
+        assertTrue( "table " + size.width + " must hold the widest label " + widestLabel, size.width > widestLabel + 16 + 4 * 58 );
+        assertEquals( LarvaTablePainter.TITLE_HEIGHT + LarvaTablePainter.HEADER_HEIGHT + rowLabels.length * LarvaTablePainter.ROW_HEIGHT + 1,
+                size.height );
+
+        final BufferedImage image = new BufferedImage( 1400, 400, BufferedImage.TYPE_INT_RGB );
+        final Graphics2D g = image.createGraphics();
+        try {
+            g.setColor( Color.WHITE );
+            g.fillRect( 0, 0, image.getWidth(), image.getHeight() );
+            g.setFont( new java.awt.Font( LarvaPhaseTableRenderFixture.FIXTURE_FONT_FAMILY, java.awt.Font.PLAIN, LarvaPhaseTableRenderFixture.FIXTURE_FONT_SIZE ) );
+            final int painted = new LarvaTablePainter().paint( g, g.getFontMetrics(), model, MARGIN, MARGIN, size.width );
+            assertEquals( size.height - 1, painted );
+        }
+        finally {
+            g.dispose();
+        }
+        for ( int y = 0; y < image.getHeight(); y++ )
+            for ( int x = 0; x < image.getWidth(); x++ ) {
+                final boolean inside = x >= MARGIN && x < MARGIN + size.width && y >= MARGIN && y < MARGIN + size.height;
+                if ( !inside )
+                    assertEquals( "ink outside measured box at " + x + "," + y, WHITE, image.getRGB( x, y ) & 0xFFFFFF );
+            }
+    }
+
     private static Dimension paintOnWhite( final BufferedImage image, final LarvaTableViewModel model, final int left, final int top ) {
         final Graphics2D g = image.createGraphics();
         try {

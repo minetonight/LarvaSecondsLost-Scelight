@@ -12,6 +12,7 @@ import hu.scelightapibase.gui.icon.IRIcon;
 import hu.scelightapibase.util.IRHtml;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 import javax.swing.JComponent;
@@ -131,6 +132,21 @@ public class LarvaSecondsLostModule extends BaseExtModule {
     }
 
     /**
+     * Opens the remembered chooser folders in the module cache folder (CR-1.5). A cache folder problem must not break init:
+     * the memory then lives in RAM only.
+     */
+    private LarvaChooserFolderMemory createChooserFolderMemory( final IModEnv env ) {
+        Path file = null;
+        try {
+            file = env.getCacheFolder().resolve( LarvaChooserFolderMemory.FILE_NAME );
+        } catch ( final RuntimeException e ) {
+            logger.error( "[larva-hub] module cache folder unavailable, chooser folders are not persisted", e );
+        }
+        logger.debug( "[larva-hub] chooser folder memory file: " + file );
+        return new LarvaChooserFolderMemory( file, logger );
+    }
+
+    /**
      * Loads static resources that are packaged inside the module jar.
      */
     private void loadResources() {
@@ -203,8 +219,42 @@ public class LarvaSecondsLostModule extends BaseExtModule {
             public JComponent createReplayPageComp( final LarvaReplayPageController controller ) {
                 return new LarvaReplayPageComp( LarvaSecondsLostModule.this, controller, hubActions );
             }
+        }, new LarvaMultiPageHost() {
+            @Override
+            public IRIcon getMultiIcon() {
+                return multiAnalysisIcon;
+            }
+
+            @Override
+            public LarvaMultiAnalysisPageController.RunFactory getRunFactory() {
+                return new LarvaMultiAnalysisPageController.RunFactory() {
+                    @Override
+                    public LarvaMultiAnalysisPageController.RunHandle create( final List< Path > files, final boolean ladderOnly,
+                            final LarvaMultiAnalysisListener listener ) {
+                        final LarvaMultiAnalysisRunner runner = LarvaMultiAnalysisRunnerFactory.create( LarvaSecondsLostModule.this, files, ladderOnly,
+                                listener );
+                        return new LarvaMultiAnalysisPageController.RunHandle() {
+                            @Override
+                            public void start() {
+                                runner.start();
+                            }
+
+                            @Override
+                            public void cancel() {
+                                runner.cancel();
+                            }
+                        };
+                    }
+                };
+            }
+
+            @Override
+            public JComponent createMultiPageComp( final LarvaMultiAnalysisPageController controller ) {
+                return new LarvaMultiAnalysisPageComp( controller, guiFactory.newProgressBar().asProgressBar() );
+            }
         } );
-        hubActions = new LarvaModuleHubActions( this, pageNavigator, new LarvaReplayFileChooser( guiFactory ) );
+        hubActions = new LarvaModuleHubActions( this, pageNavigator, new LarvaReplayFileChooser( guiFactory,
+                createChooserFolderMemory( modEnv ) ) );
         analysisQueue.setAutoOpenHost( new LarvaAutoOpenHost() {
             @Override
             public LarvaAutoOpenPolicy.Admission admit( final Path replayFile ) {

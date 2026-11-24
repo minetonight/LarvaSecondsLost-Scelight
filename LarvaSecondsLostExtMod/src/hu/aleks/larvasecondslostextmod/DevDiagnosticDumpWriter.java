@@ -89,8 +89,18 @@ public class DevDiagnosticDumpWriter {
      */
     public DevDiagnosticDumpWriter( final ILogger logger ) {
         this.logger = logger;
-        enabled = Boolean.parseBoolean( System.getProperty( PROP_ENABLED, "false" ) ) || hasText( System.getProperty( PROP_FILE ) );
+        enabled = isEnabledBySystemProperties();
         dumpFile = resolveDumpFile();
+    }
+
+    /**
+     * Tells if the development diagnostics flag is set (the dump property or a dump file property). Also gates the per-replay
+     * side effects of the analyzer (R-6: the {@code /tmp/larva-pos2jl.log} writes and the inject command log lines).
+     *
+     * @return true if development diagnostics are enabled by system properties
+     */
+    public static boolean isEnabledBySystemProperties() {
+        return Boolean.parseBoolean( System.getProperty( PROP_ENABLED, "false" ) ) || hasText( System.getProperty( PROP_FILE ) );
     }
 
     /**
@@ -394,7 +404,7 @@ public class DevDiagnosticDumpWriter {
      * @param value value to test
      * @return true if the string has visible content; false otherwise
      */
-    private boolean hasText( final String value ) {
+    private static boolean hasText( final String value ) {
         return value != null && value.trim().length() > 0;
     }
 

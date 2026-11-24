@@ -1,27 +1,35 @@
 <html>
 <body>
+    <table width="700"><tr><td>
     <h2>Larva Seconds Lost</h2>
-    <p>This external module now includes the Epic 2 fallback replay-view surface.</p>
-    <p>What is proven in this build:</p>
+    <p>Larva stats for your Zerg games (larva generated and missed, inject uptime) per game phase: for one replay, or averaged over many replays.</p>
+
+    <h3>Hub and sub-pages</h3>
+    <p>The <b>Larva</b> page is a hub with buttons only; showing it never analyzes anything. Every result opens as a sub-page under <b>Larva</b> in the navigation tree. Close a sub-page with the <b>X</b> in its title bar or with <b>Ctrl+F4</b>; this also stops its background work. The hub cannot be closed.</p>
     <ul>
-        <li>The module compiles against the Scelight external module API.</li>
-        <li>The module can package a manifest, jar, and deployment zip.</li>
-        <li>The module can contribute visible UI inside Scelight once enabled.</li>
-        <li>Lifecycle logging is available for startup and shutdown verification.</li>
-        <li>The module can analyze a replay on its own page, either by manual file selection or from the Replay Folder Monitor event stream.</li>
-        <li>The module now renders a first chart-like timeline preview using a replay-derived placeholder interval.</li>
-        <li>The module now reports that native chart dropdown registration is not exposed by the public external module API.</li>
-        <li>The module now reports that native Base Control chart augmentation is also not exposed by the public external module API.</li>
-        <li>The module now derives per-hatchery larva count timelines using tracker events, Spawn Larva targets, and a calibrated hatchery-to-larva assignment heuristic.</li>
-        <li>The module can optionally write a development-only diagnostic dump file for zero-click verification.</li>
-        <li>Lifecycle diagnostics now log startup phases, shutdown, and more useful initialization failure summaries.</li>
+        <li><b>Open Replay...</b> opens a replay file on a new page named after the file. A replay that is already open is only selected, not opened twice. <b>Refresh Current Replay</b> re-analyzes the page's own replay.</li>
+        <li><b>Analyze Latest Replay</b> opens the most recently detected replay.</li>
+        <li><b>Multi Analysis...</b> opens a multi analysis page (below). <b>Ladder games only</b> is checked on every start and is not remembered.</li>
+        <li>Both file choosers remember the folder of your last confirmed selection, also after a restart. If it is gone they start in the folder of the last detected replay.</li>
     </ul>
-    <p>Direct injection into Scelight's internal replay analyzer page is not exposed by the public external module API, so replay diagnostics currently live on the module-owned Larva page.</p>
-    <p>Real larva windows are still deferred to later epics, but the page layout is now ready to host them.</p>
-    <p>The native chart dropdown is currently treated as unsupported for a pure external module because Scelight builds it from internal chart enums and factories that are not part of the external API.</p>
-    <p>The native Base Control chart is also currently treated as unsupported for augmentation because it is created from those same internal chart classes and no public augmentation callback is exposed.</p>
-    <p>Epic 6 focuses on the replay-analysis foundation: hatchery tracking, larva birth/death tracking, opening calibration for the "below the hatchery" offset, and per-hatchery larva count diagnostics on the Larva page.</p>
-    <p>For Story 01.07 development runs, start Scelight with <b>-Dlarva.dev.dump.enabled=true</b>. Optionally override the path with <b>-Dlarva.dev.dump.file=/absolute/path/to/LarvaSecondsLost-dev-dump.txt</b>. If no path is supplied, the dump is written to the user's home folder as <b>LarvaSecondsLost-dev-dump.txt</b>.</p>
-    <p>For Story 01.08 troubleshooting, check the log for the current initialization phase if startup fails. Common failure points are missing packaged resources, incompatible API/runtime versions, and early replay-page initialization errors.</p>
+
+    <h3>New replays open automatically</h3>
+    <p>When Scelight detects a new replay with at least one Zerg player (any game type and length), it is analyzed in the background and added as a sub-page. It is selected only if you are on the Larva hub or a Larva sub-page; otherwise it just appears in the tree. Other rules: no second page for an open replay; no automatic page while 20 replay pages are open; at most 5 new replays wait at a time, the extra ones are skipped (see the log) and can be opened by hand; no page if the replay cannot be read or has no Zerg player. There is no on/off switch.</p>
+
+    <h3>Multi analysis</h3>
+    <p>Pick any number of replays. The page shows progress and, when done, is named <i>from &lt;first date&gt; to &lt;last date&gt;</i> (dates from the replays). Above 500 files you must confirm. Closing the page cancels the run.</p>
+    <p><b>Eligible games:</b> parsed OK, 1v1, with <b>Ladder games only</b> checked a ladder game (unchecked: any mode), at least 4:00 long (5376 game loops), and at least one Zerg player. The line under the header counts what each rule excluded. Replays that could not be parsed, and games without a phase table, are listed with the reason under <b>Skipped replays</b>.</p>
+    <p><b>Tracked players:</b> accounts, not names, so a renamed player counts once. The Zerg account with the most games is always tracked; a second one only with at least 3 games and 20% of all eligible games. At most 2, shown as <i>Name (REGION)</i>, the one with more games on the left.</p>
+    <p><b>Tables</b> per player: Milestones first, then All games, ZvP, ZvT, ZvZ.</p>
+    <ul>
+        <li><b>Avg phase end [m:ss]</b>: average game time at which the phase ended, over the games that reached it, shown as <i>m:ss (k/n)</i>: k of n games reached it. Games that never reached it are left out, not counted as the game end.</li>
+        <li>Inject uptime and the larva rows are <b>pooled</b>: counts and hatchery time of all games are added up, as if it were one long game, so longer games weigh more. They are not averages of per-game values.</li>
+        <li><b>Milestones</b>: 100 supply, 66 drones, 80 drones, 200 supply, each <i>average m:ss (k/n)</i>; games that never got there are not in the average.</li>
+        <li>No data shows <i>n/a</i>.</li>
+    </ul>
+    <p><b>Caveats.</b> The ranking rows rate an average with bands made for single games, so an average sits closer to the middle than single games do; it is not a percentile. Supply is recorded only about every 10 seconds, so the 100 and 200 supply times can be up to about 10 seconds late; drone times are exact.</p>
+
+    <p><i>Development:</i> start Scelight with <b>-Dlarva.dev.dump.enabled=true</b> for a diagnostic dump (path override <b>-Dlarva.dev.dump.file=...</b>; default: <b>LarvaSecondsLost-dev-dump.txt</b> in the home folder). If startup fails, check the log for the initialization phase.</p>
+    </td></tr></table>
 </body>
 </html>

@@ -58,20 +58,25 @@ final class LarvaDevPageCommands {
                 final IPage< ? > page = find( args.get( 0 ) );
                 if ( page == null )
                     return LarvaDevCommandResult.fail( "no such page '" + args.get( 0 ) + "'" );
-                if ( !module.getPageNavigator().selectPage( page ) )
-                    return LarvaDevCommandResult.fail( "selectPage returned false" );
-                final AbstractButton closeButton = new LarvaDevUiProbe( module.services.getMainFrame().getMultiPageComp().asComponent() )
-                        .findCloseButton();
-                if ( closeButton == null )
-                    return LarvaDevCommandResult.fail( "host close button not found" );
-                if ( !closeButton.isEnabled() )
-                    return LarvaDevCommandResult.fail( "close button disabled for '" + page.getDisplayName() + "' (closable=" + page.isCloseable() + ")" );
-                closeButton.doClick( 0 );
-                final IPage< ? > now = module.services.getMainFrame().getMultiPageComp().getSelectedPage();
-                return LarvaDevCommandResult.ok( "closed '" + page.getDisplayName() + "' stillOpen=" + ( find( args.get( 0 ) ) != null )
-                        + " selected='" + ( now == null ? "null" : now.getDisplayName() ) + "'" );
+                return closePage( module, page );
             }
         };
+    }
+
+    /** Selects the page and clicks the host's close button (also used by {@code multi-page-close}). */
+    static LarvaDevCommandResult closePage( final LarvaSecondsLostModule module, final IPage< ? > page ) {
+        if ( !module.getPageNavigator().selectPage( page ) )
+            return LarvaDevCommandResult.fail( "selectPage returned false" );
+        final AbstractButton closeButton = new LarvaDevUiProbe( module.services.getMainFrame().getMultiPageComp().asComponent() )
+                .findCloseButton();
+        if ( closeButton == null )
+            return LarvaDevCommandResult.fail( "host close button not found" );
+        if ( !closeButton.isEnabled() )
+            return LarvaDevCommandResult.fail( "close button disabled for '" + page.getDisplayName() + "' (closable=" + page.isCloseable() + ")" );
+        closeButton.doClick( 0 );
+        final IPage< ? > now = module.services.getMainFrame().getMultiPageComp().getSelectedPage();
+        return LarvaDevCommandResult.ok( "closed '" + page.getDisplayName() + "' stillOpen=" + ( module.getPageNavigator().getHub().getChildList().contains( page ) )
+                        + " selected='" + ( now == null ? "null" : now.getDisplayName() ) + "'" );
     }
 
     private abstract static class Cmd implements LarvaDevCommand {

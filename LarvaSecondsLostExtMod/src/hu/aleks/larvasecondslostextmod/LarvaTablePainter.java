@@ -9,7 +9,11 @@ import java.awt.Graphics2D;
  * Paints a {@link LarvaTableViewModel} as a grid table: header row, zebra body rows, centered phase cells.
  *
  * <p>All colors, paddings, minimum widths and baselines were moved unchanged from the former
- * <code>LarvaTimelinePreviewComp.drawPhaseTable</code>. Stateless; the caller sets the font and rendering hints.</p>
+ * <code>LarvaTimelinePreviewComp.drawPhaseTable</code>. The caller sets the font and rendering hints.</p>
+ *
+ * <p>The look is the single-replay look everywhere (one line per cell, CR-1.2): the multi-analysis page uses exactly the same
+ * painter. The metric column is as wide as the widest row label (or the corner label), so no label ever wraps; a table
+ * that is wider than its space is scrolled by the page, never squeezed.</p>
  */
 final class LarvaTablePainter {
 
@@ -22,6 +26,12 @@ final class LarvaTablePainter {
     /** Height of the optional title line above the table. */
     static final int TITLE_HEIGHT = 18;
 
+    /** Padding left and right of a text in a cell. */
+    private static final int CELL_PADDING = 8;
+
+    /** Minimum width of a data column. */
+    private static final int MIN_DATA_COLUMN_WIDTH = 58;
+
     private static final Color HEADER_BG = new Color( 235, 241, 248 );
 
     private static final Color ALT_ROW_BG = new Color( 248, 250, 252 );
@@ -29,11 +39,6 @@ final class LarvaTablePainter {
     private static final Color GRID_COLOR = new Color( 207, 214, 222 );
 
     private static final Color TEXT_COLOR = new Color( 90, 90, 90 );
-
-    /** Horizontal padding on both sides of a text. */
-    private static final int CELL_PADDING = 8;
-
-    private static final int MIN_DATA_COLUMN_WIDTH = 58;
 
     private static final int MIN_TABLE_WIDTH = 220;
 
@@ -53,7 +58,7 @@ final class LarvaTablePainter {
     Dimension measure( final FontMetrics fm, final LarvaTableViewModel model ) {
         final int[] columnWidths = resolveColumnWidths( fm, model );
         return new Dimension( Math.max( MIN_TABLE_WIDTH, naturalTableWidth( resolveMetricColumnWidth( fm, model ), columnWidths ) ) + 1,
-                titleOffset( model ) + tableHeight( model ) + 1 );
+                titleOffset( model ) + rowTops( model )[ model.getRowCount() ] + 1 );
     }
 
     /**
@@ -74,7 +79,8 @@ final class LarvaTablePainter {
                 Math.max( MIN_TABLE_WIDTH, maxWidth ) );
         final int titleOffset = titleOffset( model );
         final int tableTop = top + titleOffset;
-        final int tableHeight = tableHeight( model );
+        final int[] rowTops = rowTops( model );
+        final int tableHeight = rowTops[ model.getRowCount() ];
 
         if ( titleOffset > 0 ) {
             g.setColor( TEXT_COLOR );
@@ -87,38 +93,38 @@ final class LarvaTablePainter {
         for ( int column = 0; column < columnWidths.length; column++ )
             columnX[ column + 2 ] = columnX[ column + 1 ] + columnWidths[ column ];
 
-        paintBackground( g, model, left, tableTop, tableWidth, tableHeight );
-        paintGrid( g, model, columnX, tableTop, tableWidth, tableHeight );
-        paintTexts( g, fm, model, columnX, columnWidths, left, tableTop );
+        paintBackground( g, model, rowTops, left, tableTop, tableWidth );
+        paintGrid( g, rowTops, columnX, tableTop, tableWidth );
+        paintTexts( g, fm, model, rowTops, columnX, columnWidths, left, tableTop );
         return titleOffset + tableHeight;
     }
 
-    private void paintBackground( final Graphics2D g, final LarvaTableViewModel model, final int left, final int top, final int tableWidth,
-            final int tableHeight ) {
+    private void paintBackground( final Graphics2D g, final LarvaTableViewModel model, final int[] rowTops, final int left, final int top,
+            final int tableWidth ) {
         g.setColor( Color.WHITE );
-        g.fillRect( left, top, tableWidth, tableHeight );
+        g.fillRect( left, top, tableWidth, rowTops[ model.getRowCount() ] );
         g.setColor( HEADER_BG );
-        g.fillRect( left, top, tableWidth, HEADER_HEIGHT );
+        g.fillRect( left, top, tableWidth, rowTops[ 0 ] );
         for ( int row = 0; row < model.getRowCount(); row++ ) {
             if ( row % 2 == 1 ) {
                 g.setColor( ALT_ROW_BG );
-                g.fillRect( left, top + HEADER_HEIGHT + ROW_HEIGHT * row, tableWidth, ROW_HEIGHT );
+                g.fillRect( left, top + rowTops[ row ], tableWidth, rowTops[ row + 1 ] - rowTops[ row ] );
             }
         }
     }
 
-    private void paintGrid( final Graphics2D g, final LarvaTableViewModel model, final int[] columnX, final int top, final int tableWidth,
-            final int tableHeight ) {
+    private void paintGrid( final Graphics2D g, final int[] rowTops, final int[] columnX, final int top, final int tableWidth ) {
         final int left = columnX[ 0 ];
+        final int tableHeight = rowTops[ rowTops.length - 1 ];
         g.setColor( GRID_COLOR );
         g.drawRect( left, top, tableWidth, tableHeight );
         for ( int i = 1; i < columnX.length - 1; i++ )
             g.drawLine( columnX[ i ], top, columnX[ i ], top + tableHeight );
-        for ( int row = 0; row <= model.getRowCount(); row++ )
-            g.drawLine( left, top + HEADER_HEIGHT + ROW_HEIGHT * row, left + tableWidth, top + HEADER_HEIGHT + ROW_HEIGHT * row );
+        for ( final int rowTop : rowTops )
+            g.drawLine( left, top + rowTop, left + tableWidth, top + rowTop );
     }
 
-    private void paintTexts( final Graphics2D g, final FontMetrics fm, final LarvaTableViewModel model, final int[] columnX,
+    private void paintTexts( final Graphics2D g, final FontMetrics fm, final LarvaTableViewModel model, final int[] rowTops, final int[] columnX,
             final int[] columnWidths, final int left, final int top ) {
         g.setColor( TEXT_COLOR );
         g.drawString( model.getCornerLabel(), left + CELL_PADDING, top + HEADER_BASELINE );
@@ -129,13 +135,13 @@ final class LarvaTablePainter {
         }
 
         for ( int row = 0; row < model.getRowCount(); row++ ) {
-            final int baselineY = top + HEADER_HEIGHT + ROW_HEIGHT * row + ROW_BASELINE;
+            final int baseline = top + rowTops[ row ] + ROW_BASELINE;
             g.setColor( TEXT_COLOR );
             if ( model.getRowLabel( row ) != null )
-                g.drawString( model.getRowLabel( row ), left + CELL_PADDING, baselineY );
+                g.drawString( model.getRowLabel( row ), left + CELL_PADDING, baseline );
             for ( int column = 0; column < columnWidths.length; column++ ) {
-                final String text = model.getCell( row, column );
-                g.drawString( text, centeredX( fm, columnX[ column + 1 ], columnWidths[ column ], text ), baselineY );
+                final String cell = model.getCell( row, column );
+                g.drawString( cell, centeredX( fm, columnX[ column + 1 ], columnWidths[ column ], cell ), baseline );
             }
         }
     }
@@ -148,18 +154,27 @@ final class LarvaTablePainter {
         return model.hasTitle() ? TITLE_HEIGHT : 0;
     }
 
-    private static int tableHeight( final LarvaTableViewModel model ) {
-        return HEADER_HEIGHT + ROW_HEIGHT * model.getRowCount();
+    /**
+     * @return {@code tops[i]} = top of row i relative to the table top (so {@code tops[0]} is the header height), and
+     *         {@code tops[rowCount]} = the table height
+     */
+    private int[] rowTops( final LarvaTableViewModel model ) {
+        final int[] tops = new int[ model.getRowCount() + 1 ];
+        tops[ 0 ] = HEADER_HEIGHT;
+        for ( int row = 0; row < model.getRowCount(); row++ )
+            tops[ row + 1 ] = tops[ row ] + ROW_HEIGHT;
+        return tops;
     }
 
-    private static int naturalTableWidth( final int metricColumnWidth, final int[] columnWidths ) {
+    private int naturalTableWidth( final int metricColumnWidth, final int[] columnWidths ) {
         int tableWidth = metricColumnWidth + 1;
         for ( final int columnWidth : columnWidths )
             tableWidth += columnWidth;
         return tableWidth;
     }
 
-    private static int resolveMetricColumnWidth( final FontMetrics fm, final LarvaTableViewModel model ) {
+    /** Widest of the corner label and every row label, so a label never wraps (CR-1.2). */
+    private int resolveMetricColumnWidth( final FontMetrics fm, final LarvaTableViewModel model ) {
         int width = fm.stringWidth( model.getCornerLabel() ) + 2 * CELL_PADDING;
         for ( int row = 0; row < model.getRowCount(); row++ )
             if ( model.getRowLabel( row ) != null )
@@ -167,14 +182,16 @@ final class LarvaTablePainter {
         return width;
     }
 
-    private static int[] resolveColumnWidths( final FontMetrics fm, final LarvaTableViewModel model ) {
+    private int[] resolveColumnWidths( final FontMetrics fm, final LarvaTableViewModel model ) {
         final int[] widths = new int[ model.getColumnCount() ];
         for ( int column = 0; column < widths.length; column++ ) {
             final String header = model.getColumnHeader( column );
-            int width = header == null ? MIN_DATA_COLUMN_WIDTH : fm.stringWidth( header ) + 2 * CELL_PADDING;
+            int width = MIN_DATA_COLUMN_WIDTH;
+            if ( header != null )
+                width = Math.max( width, fm.stringWidth( header ) + 2 * CELL_PADDING );
             for ( int row = 0; row < model.getRowCount(); row++ )
                 width = Math.max( width, fm.stringWidth( model.getCell( row, column ) ) + 2 * CELL_PADDING );
-            widths[ column ] = Math.max( MIN_DATA_COLUMN_WIDTH, width );
+            widths[ column ] = width;
         }
         return widths;
     }

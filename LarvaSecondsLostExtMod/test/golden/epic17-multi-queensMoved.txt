@@ -1,0 +1,43 @@
+== Multi analysis dump ==
+filter: selected 1 · eligible 1 · excluded: not 1v1 0, non-ladder 0, < 4 min 0, no Zerg 0, failed to parse 0
+distinct eligible games: 1
+date range (UTC): 2026-07-03 18:55:08 .. 2026-07-03 18:55:08
+skipped: 0
+tracked players: 1
+player 1: name=ScorpionБГ key=2-S2-1-5946255 games=1 last=2026-07-03 18:55:08
+  bucket ALL games=1
+    phase EARLY: missed=7 missedInject=6 spawned=66 hatchEligibleLoops=12391 injectEligibleLoops=8267 injectActiveLoops=4528 | missed/h/min=0.54 missedInject/h/min=0.46 spawned/h/min=5.11 uptime=54.77% spawnedRank=top 90% dia missedRank=top 30% dia end=6:51 (411666 ms) 1/1
+    phase MID: missed=77 missedInject=66 spawned=123 hatchEligibleLoops=31723 injectEligibleLoops=31723 injectActiveLoops=14132 | missed/h/min=2.33 missedInject/h/min=2.00 spawned/h/min=3.72 uptime=44.55% spawnedRank=top 100% gold missedRank=top 65% gold end=14:05 (845000 ms) 1/1
+    phase LATE: missed=147 missedInject=105 spawned=242 hatchEligibleLoops=67541 injectEligibleLoops=67541 injectActiveLoops=16627 | missed/h/min=2.09 missedInject/h/min=1.49 spawned/h/min=3.44 uptime=24.62% spawnedRank=top 10% gold missedRank=top 15% plat end=22:10 (1330829 ms) 1/1
+    phase END: missed=0 missedInject=0 spawned=0 hatchEligibleLoops=0 injectEligibleLoops=0 injectActiveLoops=0 | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/1
+    milestone 100 supply: 11:18 (678888 ms) (1/1)
+    milestone 66 drones: 14:04 (844548 ms) (1/1)
+    milestone 80 drones: 14:50 (890093 ms) (1/1)
+    milestone 200 supply: 17:20 (1040000 ms) (1/1)
+  bucket ZVP games=0
+    phase EARLY: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
+    phase MID: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
+    phase LATE: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
+    phase END: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
+    milestone 100 supply: n/a (0/0)
+    milestone 66 drones: n/a (0/0)
+    milestone 80 drones: n/a (0/0)
+    milestone 200 supply: n/a (0/0)
+  bucket ZVT games=1
+    phase EARLY: missed=7 missedInject=6 spawned=66 hatchEligibleLoops=12391 injectEligibleLoops=8267 injectActiveLoops=4528 | missed/h/min=0.54 missedInject/h/min=0.46 spawned/h/min=5.11 uptime=54.77% spawnedRank=top 90% dia missedRank=top 30% dia end=6:51 (411666 ms) 1/1
+    phase MID: missed=77 missedInject=66 spawned=123 hatchEligibleLoops=31723 injectEligibleLoops=31723 injectActiveLoops=14132 | missed/h/min=2.33 missedInject/h/min=2.00 spawned/h/min=3.72 uptime=44.55% spawnedRank=top 100% gold missedRank=top 65% gold end=14:05 (845000 ms) 1/1
+    phase LATE: missed=147 missedInject=105 spawned=242 hatchEligibleLoops=67541 injectEligibleLoops=67541 injectActiveLoops=16627 | missed/h/min=2.09 missedInject/h/min=1.49 spawned/h/min=3.44 uptime=24.62% spawnedRank=top 10% gold missedRank=top 15% plat end=22:10 (1330829 ms) 1/1
+    phase END: missed=0 missedInject=0 spawned=0 hatchEligibleLoops=0 injectEligibleLoops=0 injectActiveLoops=0 | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/1
+    milestone 100 supply: 11:18 (678888 ms) (1/1)
+    milestone 66 drones: 14:04 (844548 ms) (1/1)
+    milestone 80 drones: 14:50 (890093 ms) (1/1)
+    milestone 200 supply: 17:20 (1040000 ms) (1/1)
+  bucket ZVZ games=0
+    phase EARLY: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
+    phase MID: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
+    phase LATE: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
+    phase END: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
+    milestone 100 supply: n/a (0/0)
+    milestone 66 drones: n/a (0/0)
+    milestone 80 drones: n/a (0/0)
+    milestone 200 supply: n/a (0/0)

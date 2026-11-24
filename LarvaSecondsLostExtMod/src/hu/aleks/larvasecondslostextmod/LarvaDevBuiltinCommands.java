@@ -33,12 +33,15 @@ final class LarvaDevBuiltinCommands {
         registry.register( c.dumpTree() );
         registry.register( c.selectLarva() );
         registry.register( c.windowInfo() );
+        registry.register( c.setFrameSize() );
         registry.register( c.exit() );
         LarvaDevPageCommands.registerAll( registry, module ); // E17-S04
         LarvaDevHubCommands.registerAll( registry, module ); // E17-S05
         LarvaDevReplayCommands.registerAll( registry, module ); // E17-S06
         LarvaDevAutoOpenCommands.registerAll( registry, module ); // E17-S07
-        LarvaSpikeBatchCommands.registerAll( registry, module ); // E17-S02 spike, delete after S02
+        LarvaDevMultiCommands.registerAll( registry, module ); // E17-S12
+        LarvaDevMultiPageCommands.registerAll( registry, module ); // E17-S14
+        LarvaDevChooserCommands.registerAll( registry, module ); // E17-S17
     }
 
     private IMultiPageComp multiPageComp() {
@@ -125,6 +128,33 @@ final class LarvaDevBuiltinCommands {
                 final Rectangle b = frame.getBounds();
                 return LarvaDevCommandResult.ok( "title='" + frame.getTitle() + "' bounds=" + b.x + "," + b.y + " " + b.width + "x" + b.height
                         + " visible=" + frame.isVisible() + " state=" + frame.getExtendedState() );
+            }
+        };
+    }
+
+    /** {@code set-frame-size <width> <height>}: un-maximizes and resizes the main frame (E17-S15 layout checks at 1280 / 1920 px). */
+    private LarvaDevCommand setFrameSize() {
+        return new Cmd( "set-frame-size", true ) {
+            @Override
+            LarvaDevCommandResult run( final List< String > args ) {
+                final Frame frame = findMainFrame();
+                if ( frame == null )
+                    return LarvaDevCommandResult.fail( "main frame not found" );
+                final int width;
+                final int height;
+                try {
+                    if ( args.size() != 2 )
+                        throw new NumberFormatException();
+                    width = Integer.parseInt( args.get( 0 ) );
+                    height = Integer.parseInt( args.get( 1 ) );
+                } catch ( final NumberFormatException e ) {
+                    return LarvaDevCommandResult.fail( "usage: set-frame-size <width> <height>" );
+                }
+                frame.setExtendedState( Frame.NORMAL );
+                frame.setSize( width, height );
+                frame.validate();
+                final Rectangle b = frame.getBounds();
+                return LarvaDevCommandResult.ok( "bounds=" + b.x + "," + b.y + " " + b.width + "x" + b.height + " state=" + frame.getExtendedState() );
             }
         };
     }

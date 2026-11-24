@@ -2,10 +2,11 @@ package hu.aleks.larvasecondslostextmod;
 
 import java.awt.Component;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * The behavior behind the hub buttons and the identical buttons on single-replay pages: Open Replay and Analyze Latest
- * create or focus a single-replay sub-page (E17-S06); Multi Analysis stays a placeholder until E17-S14.
+ * create or focus a single-replay sub-page (E17-S06); Multi Analysis chooses files, confirms big selections and opens a new multi page (E17-S14).
  *
  * <p>All methods run on the EDT. The dev commands call the same methods as the buttons.</p>
  */
@@ -28,7 +29,7 @@ final class LarvaModuleHubActions implements LarvaHubActions {
 
     @Override
     public void openReplay( final Component parent ) {
-        final Path replayFile = fileChooser.chooseReplay( parent, navigator.getSelectedReplayFile(), module.getLastDetectedReplayPath() );
+        final Path replayFile = fileChooser.chooseReplay( parent, module.getLastDetectedReplayPath() );
         if ( replayFile != null )
             openChosenReplay( replayFile );
     }
@@ -53,10 +54,53 @@ final class LarvaModuleHubActions implements LarvaHubActions {
         return navigator.openSingleReplay( replayFile, SOURCE_LATEST, true );
     }
 
+    /** Yes/no question to the user; the seam that lets the dev channel answer the confirm dialog (E17-S14). */
+    interface Confirmer {
+        boolean confirm( String message );
+    }
+
+    /** The real confirm dialog. */
+    private final Confirmer dialogConfirmer = new Confirmer() {
+        @Override
+        public boolean confirm( final String message ) {
+            return module.guiUtils.confirm( message );
+        }
+    };
+
     @Override
     public void startMultiAnalysis( final Component parent, final boolean ladderOnly ) {
-        module.logger.info( "[larva-hub] action startMultiAnalysis ladderOnly=" + ladderOnly + " (not available yet)" );
-        module.guiUtils.showInfoMsg( "Not available yet" );
+        final List< Path > files = fileChooser.chooseReplays( parent, module.getLastDetectedReplayPath() );
+        if ( files.isEmpty() ) {
+            module.logger.debug( "[larva-hub] multi analysis: nothing chosen, no page" );
+            return;
+        }
+        openMultiAnalysisPage( files, ladderOnly, dialogConfirmer );
+    }
+
+    /**
+     * Everything the Multi Analysis button does after the chooser: asks for confirmation above
+     * {@link LarvaMultiAnalysisEstimate#CONFIRM_THRESHOLD} files (OQ-14), then always opens a new page (FR-6).
+     *
+     * @param files the chosen replays
+     * @param ladderOnly the checkbox value at click time
+     * @param confirmer answers the confirm question
+     * @return the new page's controller; <code>null</code> if declined, empty or the hub is not ready
+     */
+    LarvaMultiAnalysisPageController openMultiAnalysisPage( final List< Path > files, final boolean ladderOnly, final Confirmer confirmer ) {
+        if ( files.isEmpty() )
+            return null;
+        if ( LarvaMultiAnalysisEstimate.needsConfirmation( files.size() )
+                && !confirmer.confirm( LarvaMultiAnalysisEstimate.confirmMessage( files.size() ) ) ) {
+            module.logger.info( "[larva-hub] multi analysis of " + files.size() + " replays declined, no page" );
+            return null;
+        }
+        module.logger.info( "[larva-hub] multi analysis requested: " + files.size() + " replays, ladderOnly=" + ladderOnly );
+        return navigator.openMultiAnalysisPage( files, ladderOnly );
+    }
+
+    /** @return the chooser factory (dev command {@code multi-chooser-config}) */
+    LarvaReplayFileChooser getFileChooser() {
+        return fileChooser;
     }
 
 }

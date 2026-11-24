@@ -81,7 +81,7 @@ final class LarvaAggregationRecordBuilder {
     }
 
     /**
-     * Builds one player record. Phase durations of 0 or missing intervals count as "not reached" (D-9). Milestones use the
+     * Builds one player record. Phases with duration 0 or a missing interval count as "not reached" (D-9); reached phases carry their end time (CR-1.1). Milestones use the
      * exact drone loops where available (S08) and are converted to display ms now (C-9, D-11).
      */
     static LarvaAggregationPlayerRecord buildPlayerRecord( final PlayerInput input, final LoopTimeConverter converter ) {
@@ -98,17 +98,17 @@ final class LarvaAggregationRecordBuilder {
 
     private static void addPhaseData( final LarvaAggregationPlayerRecord.Builder builder, final LarvaPlayerPhaseTable table,
             final LoopTimeConverter converter ) {
-        final Map< LarvaGamePhase, Integer > durationLoops = new EnumMap<>( LarvaGamePhase.class );
-        final Map< LarvaGamePhase, Long > durationMs = new EnumMap<>( LarvaGamePhase.class );
+        final Map< LarvaGamePhase, Integer > endLoops = new EnumMap<>( LarvaGamePhase.class );
+        final Map< LarvaGamePhase, Long > endMs = new EnumMap<>( LarvaGamePhase.class );
         for ( final LarvaGamePhase phase : LarvaGamePhase.values() ) {
             final LarvaPhaseInterval interval = table.getPhaseInterval( phase );
-            final int duration = interval == null ? 0 : interval.getDurationLoops();
-            if ( duration <= 0 )
+            // A phase with duration 0 (or no interval) was not reached: it has no end time (D-9, CR-1.1).
+            if ( interval == null || interval.getDurationLoops() <= 0 )
                 continue;
-            durationLoops.put( phase, Integer.valueOf( duration ) );
-            durationMs.put( phase, Long.valueOf( converter.loopToTimeMs( duration ) ) );
+            endLoops.put( phase, Integer.valueOf( interval.getEndLoop() ) );
+            endMs.put( phase, Long.valueOf( converter.loopToTimeMs( interval.getEndLoop() ) ) );
         }
-        builder.phaseStats( table.getPhaseStatsMap() ).phaseDurationLoops( durationLoops ).phaseDurationDisplayMs( durationMs );
+        builder.phaseStats( table.getPhaseStatsMap() ).phaseEndLoops( endLoops ).phaseEndDisplayMs( endMs );
     }
 
     private static Map< LarvaMilestone, Long > buildMilestoneDisplayMs( final PlayerInput input, final LoopTimeConverter converter ) {

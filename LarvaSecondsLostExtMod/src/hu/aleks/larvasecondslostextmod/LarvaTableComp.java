@@ -17,6 +17,7 @@ final class LarvaTableComp extends JComponent {
 
     private LarvaTableViewModel model;
 
+    /** Creates a table in the single-replay look (CR-1.2: the only look). */
     LarvaTableComp( final LarvaTableViewModel model ) {
         setOpaque( false );
         this.model = model;

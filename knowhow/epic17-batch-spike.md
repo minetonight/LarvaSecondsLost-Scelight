@@ -202,6 +202,57 @@ Both are far below the 5 % threshold. **Decision: gate them anyway (R-6)**, beca
 
 ## Files
 
-- `LarvaSecondsLostExtMod/src/hu/aleks/larvasecondslostextmod/LarvaSpikeBatchCommands.java` (new, throwaway, Java 7 level) and its one-line registration in `LarvaDevBuiltinCommands.java`. Delete both after S12 is built.
+- `LarvaSpikeBatchCommands.java` and its registration were deleted in E17-S12 (replaced by the `multi-*` dev commands).
 - `knowhow/epic17-batch-spike/BatchSpike.java.txt`, `knowhow/epic17-batch-spike/env.sh.txt` (headless harness).
 - No existing metric logic, Epic 13 CLI or benchmark output was changed.
+
+
+---
+
+## E17-S12: measurements of the real batch runner (2026-11-24)
+
+Setup: the production runner (`LarvaMultiAnalysisRunner`, 1 worker thread `larva-multi-analysis`, one `ReplaySummaryService` per worker, progress throttled to 100 ms) inside the real Scelight 6.5.4 (Java 8, `-Xmx1024m`, dev flag **off**, only `-Dlarva.dev.commands.file`), started by the dev command `multi-run <list> ...` (see [running-scelight.md](running-scelight.md)). All replays are the user's library read **by path** (read only). Library: 8 352 files in `Accounts`. Lists: the fixed-seed shuffle of S02 (`head -100`, `head -500`) and the sorted whole library. Machine as in S02.
+
+| Run | Files | Pre-filter | Ladder only | Wall time | Per file | Result |
+|---|---|---|---|---|---|---|
+| 100 files | 100 | yes | no | 1.6 s | 16 ms | 93 eligible, 0 failed |
+| 500 files | 500 | no (full analysis of all) | no | 5.6 s | 11 ms | 437 eligible, 2 failed to parse |
+| 500 files | 500 | yes | no | 4.4 s | 9 ms | identical result text to the run above (`diff` empty) |
+| Whole library | 8 352 | yes | yes (default) | 40.6 s | 4.9 ms | 3 624 eligible (= the S02 pre-filter count), 376 not 1v1, 3 787 non-ladder, 436 < 4 min, 58 no Zerg, **71 failed to parse** (= the 71 of S02: `getRepProc` null, 3+ player or Archon), 2 852 games of the top tracked player |
+| Whole library, then cancelled | 8 352 | no | no | cancelled at 2 560/8 352 after 23.5 s | | log `cancelled after 2560/8352`, no exception |
+
+Targets (S16 re-baseline): 100 replays <= 15 s and 500 replays <= 60 s: met by a factor of 10. `ESTIMATED_MS_PER_REPLAY = 50` stays (measured 5 to 16 ms here; the S02 cache-miss number of 46 to 50 ms is for replays Scelight never parsed before).
+
+**Heap (criterion 5, budget 200 MB growth over baseline).** Baseline after a forced GC: 14 to 24 MB.
+- Live heap: `heapPeakLiveGrowthMb` (peak of the pools' usage after their last collection) was **11 MB** for 500 replays and 10 to 11 MB for the whole library (8 352 files, 2 852 games kept as records). After the 500 run and a forced GC the retained growth was **3 MB**. So 500 replays cost far below the 200 MB budget; the per-game record is about 1 KB, as S02 estimated.
+- Raw used heap (`total - free`, garbage included) peaked at 300 to 380 MB over baseline (319 MB for the 500 run). That is allocation churn in a 637 to 700 MB young-generation-heavy heap that the collector had not yet reached, not retention. Do not use it to judge the budget; it only shows the batch allocates a lot per replay (parsing), which is why the pre-filter and the single worker are fine.
+
+**UI (criterion 1).** During the whole-library runs (40 s and 23 s) the page was switched between the hub and a single-replay page (`select-larva`, `open-replay`, `select "<label>"`) every 1 to 2 seconds, and the replay page itself was analyzed by its own worker at the same time. `progressPostsOnEdt` advanced continuously (about 9 posts per second: 383 posts for 8 352 files in 40.6 s, instead of one per file). The dev heartbeat (a task posted to the EDT every 50 ms) measured a **maximum EDT delay of 0 ms in the pure batch runs and 44 to 93 ms during the page opening**, 0 stalls over 200 ms in 810 and 469 heartbeats. No UI stall was seen.
+
+**Cancel (criterion 2).** `multi-cancel` at 2 560/8 352: the worker finished the file in progress, started no new one, `onCancelled` arrived on the EDT **6 ms** after the request (one replay is 5 to 16 ms here, worst case about 190 ms, the slowest replay of S02). Log: `[larva-multi] cancelled after 2560/8352`.
+
+**Corrupt file (criterion 3).** A 3 000-byte garbage `*.SC2Replay` inside a 121-file list: counted as `failed to parse 1`, listed as `corrupt.SC2Replay | replay could not be parsed`; the batch completed (the parser returns a processor whose `getFormat` throws a `NullPointerException`, which the pipeline logs with a stack trace and reports as `replay could not be parsed: NullPointerException`; the null-processor case (Archon, 3+ players) is reported as plain `replay could not be parsed` with a debug log line only).
+
+**Side effects (criterion 6).** With the dev flag off, `/tmp/larva-pos2jl.log` was not touched by the headless runs nor by the in-app runs (size and mtime unchanged).
+
+**Surprises.** (1) Scelight's JVM took more than 15 s to end after `exit` (the new `INSTALL_DEPLOYMENT` must wait for the process to be gone, not only for the log line `module stopped`). (2) `System.exit` is still needed in the headless CLI (non-daemon Scelight threads). (3) Scelight's bootstrap prints a warning to **stdout** when `boot-settings.xml` is missing in the working directory (with an absolute path), which would break a diff; `LarvaMultiAnalysisCli` therefore redirects `System.out` to stderr and prints the dump through its own stream. The existing `LarvaBenchmarkCliExtractor` was left untouched, so its stdout still can have that first-run warning line (same before and after this story).
+
+## E17-S16: performance run on the release build (2026-11-25)
+
+Setup: the final 3.0 release (build 192) installed in the real Scelight 6.5.4 (Java 8, `-Xmx1024m`, dev dump flag **off**, only `-Dlarva.dev.commands.file`), same machine as S02/S12. The runs use the dev command `multi-run <list> <ladderOnly> [noprefilter]` (the production `LarvaMultiAnalysisRunner`, one worker, progress throttled to 100 ms) and the dev monitor (`multi-state`, `multi-heap gc`; see [running-scelight.md](running-scelight.md)). All replays are read **by path**, read only: lists are fixed-seed shuffles (`shuf --random-source=<(yes 42)` of the sorted Accounts library, first 100 and first 500; `yes 7` of the sorted `benchmark-data/raw-replays` corpus, 1 847 pro and bucketed files, first 100 and first 500). Heap baseline is taken after a forced GC at the start of each run (14 to 20 MB). Targets: 100 replays within 2.5 min (<= 1.5 s each) and 500-replay peak heap growth <= 200 MB (epic section 9; S02 re-baselined 100 <= 15 s, 500 <= 60 s).
+
+| Run | Files | Ladder only | Pre-filter | Wall time | Per file | Live heap peak growth | Raw peak used (garbage incl.) | EDT max delay | Result |
+|---|---|---|---|---|---|---|---|---|---|
+| Accounts 100 (the default of the checkbox) | 100 | yes | yes | 0.93 s | 9 ms | 9 MB | 240 MB | 0 ms | 31 games, 0 failed |
+| Accounts 100 | 100 | no | no (all fully analyzed) | 1.14 s | 11 ms | 11 MB | 315 MB | 0 ms | 72 games, 0 failed |
+| Accounts 500 | 500 | yes | yes | 2.75 s | 5.5 ms | 12 MB | 332 MB | 0 ms | 223 games, 2 failed |
+| Accounts 500 | 500 | no | no | 5.18 s | 10 ms | 13 MB | 341 MB | 0 ms | 411 games, 2 failed |
+| Pro corpus 100 | 100 | no | no | 1.71 s | 17 ms | 9 MB | 343 MB | 0 ms | 27 games, 0 failed |
+| Pro corpus 500 | 500 | no | no | 9.63 s | 19 ms | **38 MB** | 353 MB | 0 ms | 120 games, 0 failed |
+| Whole Accounts library | 8 352 | yes | yes | 40.5 s | 4.9 ms | 15 MB | 375 MB | **69 ms** (807 heartbeats, 0 over 200 ms) while a replay page was opened and closed 8 times and the hub selected | 2 852 games, 71 failed (the known 71) |
+
+- **Wall time:** 100 replays take 0.9 to 1.7 s, 500 take 2.8 to 9.6 s, versus the 150 s budget for 100 (a factor of 90 or more). The slowest set is the pro corpus (longer games, probably not in Scelight's replay cache): 19 ms per file.
+- **Heap:** the worst peak of what survived a garbage collection was **38 MB** growth for 500 replays (the 200 MB budget is met by a factor of 5). After a forced GC the retained growth was 0 to 1 MB each time, so nothing leaks between runs. The raw peak (`total - free`, garbage included) of 240 to 375 MB is allocation churn in a 1 GB JVM and is not retention; do not judge the budget by it.
+- **EDT responsiveness:** a task posted to the EDT every 50 ms by the dev monitor was never delayed in the batch-only runs (max 0 ms). With a replay page being opened (single-replay analysis, page creation, tree rebuild), selected and closed 8 times and the hub selected during the 40-second whole-library run, the maximum delay was 69 ms and no heartbeat was late by more than 200 ms.
+- **Close and cancel (logs seen in the same session):** closing a single replay page logs `[larva-replay] page disposed, pending results are dropped: <path>`. Closing a multi page at 2 504/8 352 logs `[larva-multi] page disposed, run cancelled, pending callbacks are dropped (8352 files)`, then `cancelled after 2504/8352` (12 ms after the close), `late progress callback ignored, page closed` and `late cancellation callback ignored, page closed`. The page and its state were gone from `dump-tree` (`nodes=1`, hub selected, `controllerDisposed=true`). No exception in the log; the only `E` lines of the run are the two known `Replay Counter: null` lines.
+- **Caveat:** the Accounts replays are mostly in Scelight's replay-processor cache (about 10 600 entries), which makes the pre-filter cheap; a cold cache costs about 40 to 50 ms per replay (S02), still far inside the target.

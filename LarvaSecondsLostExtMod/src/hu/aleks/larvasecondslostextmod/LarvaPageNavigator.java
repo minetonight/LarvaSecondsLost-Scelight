@@ -22,22 +22,29 @@ import javax.swing.SwingUtilities;
  */
 final class LarvaPageNavigator {
 
+    /** S01 outcome: renaming a page (setDisplayName + rebuildPageTree) works in Scelight 6.5.4. */
+    static final boolean MULTI_RENAME_SUPPORTED = true;
+
     private final ILogger logger;
     private final IServices services;
     private final IRIcon hubIcon;
     private final IPageCompCreator< JComponent > hubContentCreator;
     private final LarvaSinglePageHost singleHost;
+    private final LarvaMultiPageHost multiHost;
+    /** Multi pages created so far in this session (EDT only); numbers the fixed label when rename is unsupported. */
+    private int multiPageCounter;
 
     private volatile LarvaHubPage hub;
     private volatile boolean ready;
 
     LarvaPageNavigator( final ILogger logger, final IServices services, final IRIcon hubIcon, final IPageCompCreator< JComponent > hubContentCreator,
-            final LarvaSinglePageHost singleHost ) {
+            final LarvaSinglePageHost singleHost, final LarvaMultiPageHost multiHost ) {
         this.logger = logger;
         this.services = services;
         this.hubIcon = hubIcon;
         this.hubContentCreator = hubContentCreator;
         this.singleHost = singleHost;
+        this.multiHost = multiHost;
     }
 
     /** Adds the hub as top-level page and marks the navigator ready. */
@@ -197,6 +204,50 @@ final class LarvaPageNavigator {
         page.setReplayController( controller );
         addSubPage( page, select );
         return controller;
+    }
+
+    /**
+     * Creates a new multi-analysis sub-page, selects it and starts its run (E17-S14, AC-6.1). Never deduped: every call
+     * adds a page and earlier pages stay untouched. The label starts as the running placeholder and is renamed when the
+     * run ends (rename is supported, S01).
+     *
+     * @param files the confirmed replay selection, not empty
+     * @param ladderOnly the checkbox value captured when the button was clicked (AC-1.2)
+     * @return the controller of the new page; <code>null</code> if not ready, off the EDT or no files
+     */
+    LarvaMultiAnalysisPageController openMultiAnalysisPage( final List< Path > files, final boolean ladderOnly ) {
+        if ( !requireEdt( "openMultiAnalysisPage" ) || !requireReady( "openMultiAnalysisPage" ) )
+            return null;
+        if ( files.isEmpty() ) {
+            logger.error( "[larva-nav] openMultiAnalysisPage called without files; ignored" );
+            return null;
+        }
+        final PageLabelSink labelSink = new PageLabelSink();
+        final LarvaMultiAnalysisPageController controller = new LarvaMultiAnalysisPageController( files, ladderOnly,
+                new LarvaMultiPageLabels( MULTI_RENAME_SUPPORTED, ++multiPageCounter ), multiHost.getRunFactory(), labelSink, logger );
+        final LarvaSubPage page = new LarvaSubPage( LarvaSubPageKind.MULTI_ANALYSIS, controller.getLabel(), multiHost.getMultiIcon(),
+                new IPageCompCreator< JComponent >() {
+                    @Override
+                    public JComponent createPageComp() {
+                        return multiHost.createMultiPageComp( controller );
+                    }
+                } );
+        page.setMultiController( controller );
+        labelSink.page = page;
+        addSubPage( page, true );
+        controller.start();
+        return controller;
+    }
+
+    /** Renames the page that owns the controller; set once, right after the page exists. */
+    private final class PageLabelSink implements LarvaMultiAnalysisPageController.LabelSink {
+        private LarvaSubPage page;
+
+        @Override
+        public void setLabel( final String label ) {
+            if ( page != null && hub.hasChild( page ) )
+                relabel( page, label );
+        }
     }
 
     /** @return the open single-replay page for this replay (any path form), or <code>null</code> (EDT only) */

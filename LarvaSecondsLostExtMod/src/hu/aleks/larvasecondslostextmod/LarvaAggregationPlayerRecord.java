@@ -29,9 +29,9 @@ public final class LarvaAggregationPlayerRecord {
 
     private final Map< LarvaGamePhase, LarvaPhaseStats > phaseStats;
 
-    private final Map< LarvaGamePhase, Integer > phaseDurationLoops;
+    private final Map< LarvaGamePhase, Integer > phaseEndLoops;
 
-    private final Map< LarvaGamePhase, Long > phaseDurationDisplayMs;
+    private final Map< LarvaGamePhase, Long > phaseEndDisplayMs;
 
     private final Map< LarvaMilestone, Long > milestoneDisplayMs;
 
@@ -45,8 +45,8 @@ public final class LarvaAggregationPlayerRecord {
         opponentRace = b.opponentRace;
         matchup = b.matchup;
         phaseStats = Collections.unmodifiableMap( copy( LarvaGamePhase.class, b.phaseStats ) );
-        phaseDurationLoops = Collections.unmodifiableMap( copy( LarvaGamePhase.class, b.phaseDurationLoops ) );
-        phaseDurationDisplayMs = Collections.unmodifiableMap( copy( LarvaGamePhase.class, b.phaseDurationDisplayMs ) );
+        phaseEndLoops = Collections.unmodifiableMap( copy( LarvaGamePhase.class, b.phaseEndLoops ) );
+        phaseEndDisplayMs = Collections.unmodifiableMap( copy( LarvaGamePhase.class, b.phaseEndDisplayMs ) );
         milestoneDisplayMs = Collections.unmodifiableMap( copy( LarvaMilestone.class, b.milestoneDisplayMs ) );
         missingPhaseTable = b.missingPhaseTable;
     }
@@ -95,14 +95,14 @@ public final class LarvaAggregationPlayerRecord {
         return phaseStats;
     }
 
-    /** @return unmodifiable phase length in loops; a phase that was not reached (missing interval or 0) is absent (D-9) */
-    public Map< LarvaGamePhase, Integer > getPhaseDurationLoops() {
-        return phaseDurationLoops;
+    /** @return unmodifiable loop at which each phase ended (CR-1.1); a phase that was not reached (missing interval or duration 0) is absent (D-9) */
+    public Map< LarvaGamePhase, Integer > getPhaseEndLoops() {
+        return phaseEndLoops;
     }
 
-    /** @return unmodifiable phase length in display milliseconds (D-11); same keys as the loop map */
-    public Map< LarvaGamePhase, Long > getPhaseDurationDisplayMs() {
-        return phaseDurationDisplayMs;
+    /** @return unmodifiable game time in display milliseconds at which each phase ended (D-11, CR-1.1); same keys as the loop map */
+    public Map< LarvaGamePhase, Long > getPhaseEndDisplayMs() {
+        return phaseEndDisplayMs;
     }
 
     /** @return unmodifiable milestone time in display milliseconds; absent = not reached (D-10) */
@@ -132,9 +132,9 @@ public final class LarvaAggregationPlayerRecord {
 
         private final Map< LarvaGamePhase, LarvaPhaseStats > phaseStats = new EnumMap<>( LarvaGamePhase.class );
 
-        private final Map< LarvaGamePhase, Integer > phaseDurationLoops = new EnumMap<>( LarvaGamePhase.class );
+        private final Map< LarvaGamePhase, Integer > phaseEndLoops = new EnumMap<>( LarvaGamePhase.class );
 
-        private final Map< LarvaGamePhase, Long > phaseDurationDisplayMs = new EnumMap<>( LarvaGamePhase.class );
+        private final Map< LarvaGamePhase, Long > phaseEndDisplayMs = new EnumMap<>( LarvaGamePhase.class );
 
         private final Map< LarvaMilestone, Long > milestoneDisplayMs = new EnumMap<>( LarvaMilestone.class );
 
@@ -184,17 +184,17 @@ public final class LarvaAggregationPlayerRecord {
             return this;
         }
 
-        public Builder phaseDurationLoops( final Map< LarvaGamePhase, Integer > phaseDurationLoops ) {
-            this.phaseDurationLoops.clear();
-            if ( phaseDurationLoops != null )
-                this.phaseDurationLoops.putAll( phaseDurationLoops );
+        public Builder phaseEndLoops( final Map< LarvaGamePhase, Integer > phaseEndLoops ) {
+            this.phaseEndLoops.clear();
+            if ( phaseEndLoops != null )
+                this.phaseEndLoops.putAll( phaseEndLoops );
             return this;
         }
 
-        public Builder phaseDurationDisplayMs( final Map< LarvaGamePhase, Long > phaseDurationDisplayMs ) {
-            this.phaseDurationDisplayMs.clear();
-            if ( phaseDurationDisplayMs != null )
-                this.phaseDurationDisplayMs.putAll( phaseDurationDisplayMs );
+        public Builder phaseEndDisplayMs( final Map< LarvaGamePhase, Long > phaseEndDisplayMs ) {
+            this.phaseEndDisplayMs.clear();
+            if ( phaseEndDisplayMs != null )
+                this.phaseEndDisplayMs.putAll( phaseEndDisplayMs );
             return this;
         }
 

@@ -2,11 +2,23 @@
 
 | | |
 |---|---|
-| **Status** | Ready for story planning |
+| **Status** | Implementation complete (stories S00 to S17, 2026-11-25), release 3.0 built and installed; pending the manual checks listed under section 11 ("Open items for the user") |
 | **Created** | 2026-11-24 |
 | **Source** | [prompts/epic17-draft.md](epic17-draft.md) (authoritative requirements), [prompts/v3-spec.md](v3-spec.md) items 6 and 7 |
 | **Builds on** | Epic 12 phase tables, Epic 13 headless extraction / benchmark bands |
 | **Estimated size** | 12–16 dev days across 14 work packages (incl. 2 spikes) |
+
+### Change request CR-1 (2026-11-25, after Phase 3)
+
+The user changed these points after seeing the finished multi page. They override older text; the affected sections below are updated.
+
+| # | Change | Affects |
+|---|---|---|
+| CR-1.1 | Row 1 of the aggregated tables is **Avg phase end [m:ss]** (mean game time at which the phase ended), not average phase length. The user reads "mid game ends at 9:10" directly instead of adding lengths. | FR-12, D-9, OQ-13, D-8 |
+| CR-1.2 | The multi page tables use the **same table style as the single-replay page** (no compact style). The first (metric) column is wide enough that every row label fits on one line. A horizontal page scroll at narrow windows is acceptable. | FR-14, AC-14.1 |
+| CR-1.3 | The **milestone table goes first** under the player heading, above All / ZvP / ZvT / ZvZ (reverses OQ-3). | FR-12, FR-14, OQ-3 |
+| CR-1.4 | Player names on the multi page carry a **region suffix**, e.g. `Scorpion (EU)`, in the column heading and in the page header. | FR-8, D-5 |
+| CR-1.5 | `Open Replay...` and `Multi Analysis...` each **remember the last folder used** in their chooser, also across Scelight restarts. | FR-3, FR-5 |
 
 ---
 
@@ -72,6 +84,7 @@ The tip says: *select multiple replays; you will receive aggregated larva stats 
 - [ ] AC-3.2 If no latest replay can be resolved, the existing info message is shown and no page is created.
 - [ ] AC-3.3 If parsing fails, the page stays open and shows the existing error state (same behavior as today, but scoped to that page).
 - [ ] AC-3.4 If a single-replay page for the chosen replay is already open, that page is selected instead of creating a duplicate (OQ-6). An open page is never re-rendered with another replay's data.
+- [ ] AC-3.5 (CR-1.5) The `Open Replay...` chooser opens in the folder of the last replay picked with it (from the hub or any single-replay page), also after a Scelight restart. With no remembered folder (or a folder that no longer exists) it falls back to the last-detected replay folder.
 
 **FR-4 Single-replay page content is unchanged.** The current overview (header, the three buttons, timeline preview, phase tables, text details) is kept as is. Only the scope changes:
 - `Refresh Current Replay` re-analyzes **this page's** replay in place. It does not create a new page.
@@ -82,9 +95,10 @@ The tip says: *select multiple replays; you will receive aggregated larva stats 
 
 ### B. Multi analysis
 
-**FR-5 Replay selection.** `Multi Analysis...` opens a Scelight file chooser in multi-selection mode, filtered to `*.SC2Replay`. It starts in the last-detected replay folder when one is known.
+**FR-5 Replay selection.** `Multi Analysis...` opens a Scelight file chooser in multi-selection mode, filtered to `*.SC2Replay`. It opens in the folder last used with `Multi Analysis...` (remembered across Scelight restarts, CR-1.5). With no remembered folder (or a folder that no longer exists) it starts in the last-detected replay folder when one is known.
 - [ ] AC-5.1 The user can select 1..N files, using ctrl/shift selection and select-all.
 - [ ] AC-5.2 If the user cancels, no page is created.
+- [ ] AC-5.3 (CR-1.5) After a confirmed selection, the next `Multi Analysis...` chooser opens in that selection's folder, also after a restart. Cancel does not change the remembered folder.
 
 **FR-6 One new page per request.** Each confirmed selection creates and selects a **new** multi-analysis sub-page with `larva-multy-analysis-icon.png`. The page shows progress while it runs. Earlier multi pages are never reused or overwritten.
 - [ ] AC-6.1 Two consecutive requests produce two sibling nodes.
@@ -94,7 +108,7 @@ The tip says: *select multiple replays; you will receive aggregated larva stats 
 - [ ] AC-7.1 With the default locale set to `bg_BG` and to `en_US`, the label matches that locale's short date pattern.
 - [ ] AC-7.2 `start` and `end` are the earliest and latest replay dates among **eligible** games.
 
-**FR-8 Page header.** The header reads `Averaged larva stats for {names, comma-separated} for {n} replays from {start} to {end}`. Notes:
+**FR-8 Page header.** The header reads `Averaged larva stats for {names, comma-separated} for {n} replays from {start} to {end}`. Each name carries its region suffix, e.g. `Scorpion (EU)` (CR-1.4, D-5). Notes:
 - `n` is the number of distinct eligible games that include at least one tracked player.
 - Dates use the same format as FR-7.
 
@@ -119,7 +133,7 @@ Below the header, a one-line **filter summary** shows: `selected S · eligible E
 - [ ] AC-11.2 With 20 games on account A and 15 on account B, both are tracked and A is listed first.
 - [ ] AC-11.3 A game where the tracked identity played Terran or Protoss is not counted for that player.
 
-**FR-12 Aggregated phase tables.** For each tracked player, the page shows, top to bottom:
+**FR-12 Aggregated phase tables.** For each tracked player, the page shows, top to bottom (after the milestone table, CR-1.3):
 1. **All games** table
 2. **ZvP** table
 3. **ZvT** table
@@ -129,7 +143,7 @@ Every table has the same columns as the existing phase table (Early / Mid / Late
 
 | # | Row | Source |
 |---|---|---|
-| 1 | Avg phase length [m:ss] (`k/n` games reached) | replaces "Phase span" |
+| 1 | Avg phase end [m:ss] (`k/n` games reached) | replaces "Phase span"; mean game time at which the phase ended (D-9, CR-1.1) |
 | 2 | Inject uptime [%] | pooled |
 | 3 | Larva gen [lrv / htch / min] | pooled |
 | 4 | larva gen ranking | `LarvaPhaseBenchmarkRatingFormatter` on row 3 |
@@ -153,8 +167,8 @@ Columns are All / ZvP / ZvT / ZvZ. Each cell shows `avg m:ss (k/n)`, where `k` i
 - [ ] AC-13.2 The 66-drone milestone loop for a fixture replay is within one `PlayerStats` interval of the loop where the analyzer's alive-drone count first reaches 66. If the exact-loop variant is chosen, it is equal (D-4).
 - [ ] AC-13.3 The single-replay page does not show milestones.
 
-**FR-14 Layout.** Two equal-width columns, one per tracked player, each with a player-name heading. The heading is followed by the All-games table, the three matchup tables (ZvP, ZvT, ZvZ) and, last, the milestone table (OQ-3). With one tracked player, see OQ-1 (default: the player uses the left column and the right column stays empty, so table widths match the two-player case). The page scrolls vertically inside Scelight's page scroll pane.
-- [ ] AC-14.1 With two players, both columns are visible side by side at 1280 px width without horizontal scrolling of a single table.
+**FR-14 Layout.** Two equal-width columns, one per tracked player, each with a player-name heading (with region suffix, CR-1.4). The heading is followed by the milestone table (first, CR-1.3 / OQ-3), then the All-games table and the three matchup tables (ZvP, ZvT, ZvZ). All tables use the single-replay page's table style; the metric column is wide enough for one-line row labels (CR-1.2). With one tracked player, see OQ-1 (default: the player uses the left column and the right column stays empty, so table widths match the two-player case). The page scrolls vertically inside Scelight's page scroll pane.
+- [ ] AC-14.1 With two players, the two columns are side by side and no table is clipped. Every row label and column header is on one line, and the tables look like the single-replay page's table. At narrow windows (e.g. 1280 px) the page may scroll horizontally (CR-1.2).
 
 **FR-15 Background execution, progress and errors.**
 - Analysis runs off the EDT.
@@ -191,10 +205,10 @@ Columns are All / ZvP / ZvT / ZvZ. Each cell shows `avg m:ss (k/n)`, where `k` i
 |---|---|---|
 | `LarvaSecondsLostModule` | `installReplayPage()` calls `getMultiPageComp().addPage(guiFactory.newPage("Larva", larvaIcon, false, creator))` and then `rebuildPageTree(false)`. It holds a **singleton** `replayPageComp` and `latestReplaySummary`. `requestReplayAnalysis()` starts a raw daemon `Thread` and pushes results into that singleton. The `INewRepListener` eagerly analyzes every new replay. | Replace with a hub page plus a page navigator/registry. Move result routing per page. Keep the replay monitor and auto-open new Zerg replays (OQ-10, FR-17). Load the two new icons in `loadResources()`. |
 | `LarvaReplayPageComp` | Implements `IPageSelectedListener` and `HierarchyListener`, both of which auto-load the latest replay. Holds the buttons, a `LarvaTimelinePreviewComp` and the text area. The buttons call `module.requestReplayAnalysis`. | Bind each instance to one replay `Path`. Remove auto-latest. Open/Latest call the navigator (new sub-page). Refresh stays in place. Add `IPageDisposedListener` for cleanup. |
-| `LarvaTimelinePreviewComp.drawPhaseTable(...)` (≈ line 250) | The phase table is **custom-painted** with Graphics2D inside the timeline component. Labels are hard-coded (`"Phase span"`, `"Inject uptime [%]"`, …), and it reads `LarvaPlayerPhaseTable` directly. Header labels come from `resolvePhaseHeaderLabel`. | Extract a reusable phase-table renderer or component that takes a **string-matrix view model** (row labels × 4 phases). Single page keeps its visuals; the multi page reuses it with the "Avg phase length" row. |
+| `LarvaTimelinePreviewComp.drawPhaseTable(...)` (≈ line 250) | The phase table is **custom-painted** with Graphics2D inside the timeline component. Labels are hard-coded (`"Phase span"`, `"Inject uptime [%]"`, …), and it reads `LarvaPlayerPhaseTable` directly. Header labels come from `resolvePhaseHeaderLabel`. | Extract a reusable phase-table renderer or component that takes a **string-matrix view model** (row labels × 4 phases). Single page keeps its visuals; the multi page reuses it with the "Avg phase end" row. |
 | `LarvaPlayerPhaseTable`, `LarvaPhaseStats`, `LarvaPhaseInterval`, `LarvaGamePhase` | `LarvaPhaseStats` stores **raw counts and loop denominators** (`missedLarvaCount`, `missedInjectLarvaCount`, `totalSpawnedLarvaCount`, `hatchEligibleLoops`, `injectEligibleLoops`, `injectActiveLoops`) and derives rates using 16 loops/s. Phases are promoted at workers **>** 36 / 66 / 89. | Pooled aggregation can **construct a summed `LarvaPhaseStats`** and reuse its rate getters unchanged (D-1). |
 | `LarvaReplayAnalyzer` | The alive-drone count lives in local `aliveDroneCountByPlayerName` (`incrementDroneCount` / `decrementDroneCount`, ≈ lines 3094–3113, fed by UnitBorn/Init/Died/TypeChange). The `PlayerStats` handler (≈ line 286) stores `LarvaPlayerResourceSnapshot(foodUsed, foodMade, workerCountToUse = calculated drone count)`. `resolvePhasePromotionLoop` (≈ line 2157) scans snapshots for `workers > threshold`. `PHASE_PROMOTION_DWELL_SECONDS` is declared but not used by that scan. | Milestones: either scan existing snapshots (zero analyzer change) or record the exact first loop inside the drone counter (D-4). `foodUsed` is **fixed-point ×4096** (see `LarvaTimelineModelBuilder` ≈ line 818). Note: debug code writes `/tmp/larva-pos2jl.log` per snapshot whenever a hatchery tagged `2jl` exists. This costs I/O in batch runs (R-6). |
-| `LarvaAnalysisReport` | Exposes `getResourceSnapshotsByPlayerName()`, `getPlayerPhaseTable(name)`, `getReplayLengthLoops()`, `isRealTime()`, `getConverterGameSpeedRelative()`, and the loop→display-ms conversion (≈ line 416). | Source for per-game records and for formatting milestone and phase-length times consistently with the single page. |
+| `LarvaAnalysisReport` | Exposes `getResourceSnapshotsByPlayerName()`, `getPlayerPhaseTable(name)`, `getReplayLengthLoops()`, `isRealTime()`, `getConverterGameSpeedRelative()`, and the loop→display-ms conversion (≈ line 416). | Source for per-game records and for formatting milestone and phase-end times consistently with the single page. |
 | `ReplaySummaryService` | `analyzeReplayContext()`: `getRepProc` → reparse if events are missing → analyzer → `ReplaySummary`. It also has `analyzeBenchmarkReplay()` (headless, no UI model) and helpers such as `indexPlayersByName`, `findOpponent` (first other player, 1v1 assumption), `buildMatchupLabel`, and Zerg-only filtering. It holds a non-thread-safe `SimpleDateFormat`. | Add a headless `analyze…ForAggregation()` path that reuses the context and emits a compact per-game record (D-8). Use **one service instance per worker thread**. |
 | `ReplaySummary` | `replayEndTime` is a **formatted String**. `lengthMs` follows the user's real-time setting. | The multi analysis needs a raw `Date` and length in loops. Carry them in the new record, not by parsing strings. |
 | `LarvaBenchmarkExtractionService` / `LarvaBenchmarkReplayRecord` / `LarvaBenchmarkPlayerRecord` / `LarvaBenchmarkPhaseRecord` | Epic 13 headless export with raw per-phase counts, matchup and race. It is consumed by the CLI (`LarvaBenchmarkCliExtractor`), the JSON serializer and the Python batch tools. | Good template, but **do not change its schema** (it is the benchmark-tool contract). Add a sibling record type instead (D-8). |
@@ -237,13 +251,13 @@ Each item is a default decision with its rationale. Planners may revisit, but st
 | D-2 | Inject uptime | Pooled: Σ `injectActiveLoops` / Σ `injectEligibleLoops`. | Same as D-1. |
 | D-3 | Ranking rows | Apply `LarvaPhaseBenchmarkRatingFormatter` to the pooled value. END stays `n/a` (no anchors). | Reuses the bands. Caveat (add to help text): bands are per-game medians, so an average sits closer to the middle than single games do. |
 | D-4 | Milestone detection | Milestone loop = first `PlayerStats` snapshot where `foodUsed/4096 ≥ 100` (resp. `≥ 200`) or snapshot worker count (calculated alive drones) `≥ 66` (resp. `≥ 80`). **Preferred upgrade:** record the exact loop of the first increment that reaches 66 or 80 inside the analyzer's drone counter. Supply stays snapshot-based. | Snapshots exist today. `PlayerStats` cadence is about 10 s of game time, so up to one interval of lateness. Note `≥` here versus `>` for phase promotion: "66 drones made" means reaching 66. |
-| D-5 | Player identity across replays | Key = toon (`IToon` string: region/realm/id). Fall back to name only if the toon is missing. Display name = name in the most recent eligible game. | Names change and clan tags vary. Toons are stable per account. Within a replay, the analyzer keys by name, so map toon→name per replay. |
+| D-5 | Player identity across replays | Key = toon (`IToon` string: region/realm/id). Fall back to name only if the toon is missing. Display name = name in the most recent eligible game, plus a region suffix from the toon's region id (`US`, `EU`, `KR`, `CN`, …; none when the key is a name fallback), CR-1.4. | Names change and clan tags vary. Toons are stable per account. Within a replay, the analyzer keys by name, so map toon→name per replay. |
 | D-6 | Choosing up to two tracked players | Rank Zerg identities by player-game count. Ties go to the more recent last game, then case-insensitive name. #1 is always tracked. #2 is tracked only if count ≥ 3 **and** ≥ 20 % of eligible games. | Without a threshold, any random ZvZ opponent seen twice would become "player 2". |
 | D-7 | Bucket membership | Matchup comes from the tracked player's view, using the opponent's resolved race (Random resolved). If two tracked players faced each other, the game counts in **both** players' ZvZ and All tables. Header `n` counts that game once. Games where the identity was not Zerg are ignored for that identity. | Each player-game stands alone. |
-| D-8 | Per-game record | A new immutable compact record per eligible game contains: path, `Date`, game mode, format, length loops, and per Zerg player: toon, name, race, opponent race, per-phase interval and raw `LarvaPhaseStats` counts, milestone loops. Discard the full `LarvaAnalysisReport` after extraction. | Bounded memory for 100–1000 replays. Keeps the Epic 13 schema untouched. |
-| D-9 | Phase length row | Mean of `LarvaPhaseInterval.getDurationLoops()` over player-games where duration > 0, formatted `m:ss`, plus `k/n` reached. | Absent phases (game ended in Mid) must not drag the mean toward 0. |
-| D-10 | Absent data | Any cell whose denominator is 0 shows `n/a`. Milestones and phase length never treat "not reached" as game end (no censoring). `k/n` is always shown. | Transparent. Avoids fake precision. |
-| D-11 | Time display | Format loops with the same conversion as the single page (`LarvaAnalysisReport` loop→ms, honoring Scelight's real-time setting). | Milestones and phase lengths stay comparable with the single-replay page. |
+| D-8 | Per-game record | A new immutable compact record per eligible game contains: path, `Date`, game mode, format, length loops, and per Zerg player: toon, name, race, opponent race, per-phase interval (incl. phase end time, CR-1.1) and raw `LarvaPhaseStats` counts, milestone loops. Discard the full `LarvaAnalysisReport` after extraction. | Bounded memory for 100–1000 replays. Keeps the Epic 13 schema untouched. |
+| D-9 | Phase end row (CR-1.1, was "phase length") | Mean of the phase's end time (`LarvaPhaseInterval` end loop → display ms) over player-games where the phase was reached (duration > 0), formatted `m:ss`, plus `k/n` reached. END's end is the game end. | The user reads when each phase ends without adding lengths. Absent phases (game ended in Mid) must not drag the mean. |
+| D-10 | Absent data | Any cell whose denominator is 0 shows `n/a`. Milestones and phase end never treat "not reached" as game end (no censoring). `k/n` is always shown. | Transparent. Avoids fake precision. |
+| D-11 | Time display | Format loops with the same conversion as the single page (`LarvaAnalysisReport` loop→ms, honoring Scelight's real-time setting). | Milestones and phase end times stay comparable with the single-replay page. |
 
 ---
 
@@ -253,7 +267,7 @@ Each item is a default decision with its rationale. Planners may revisit, but st
 |---|---|---|
 | OQ-1 | "If the players are two, use a second column, for one player, use only the left half of the window." | Always a 2-column grid. Player 1 goes left, player 2 goes right. With one player, use the **left** column only and leave the right empty. Updated and decided! |
 | OQ-2 | Tie-breaking and threshold for "most common Zerg player(s)". | D-6 (≥ 3 games and ≥ 20 %; ties by recency, then name). Identity by toon, display name from the most recent eligible game (D-5). Scelight's "favored player" setting is **not** used (no reflective settings lookup). Decided! |
-| OQ-3 | Where the milestone table goes and which columns it has. | Its own table per player, **below** the other 4 larva tables. Columns All / ZvP / ZvT / ZvZ, cells `avg (k/n)`. Decided! |
+| OQ-3 | Where the milestone table goes and which columns it has. | Its own table per player, **above** the other 4 larva tables (changed by CR-1.3 on 2026-11-25; was below). Columns All / ZvP / ZvT / ZvZ, cells `avg (k/n)`. Decided! |
 | OQ-4 | Show or hide matchup tables with 0 games. | Show them with title `— 0 games` and `n/a` cells, so the layout stays stable and the two columns align. Decided! |
 | OQ-5 | What "4 minutes" means: SC2 LotV in-game clock (22.4 loops/s → 5 376 loops) or module "gameplay time" (16 loops/s → 3 840 loops)? | **5 376 loops**: matches what players see as game length in the SC2 client and Scelight's real-time display. Implement as a named constant. Decided! |
 | OQ-6 | Single-replay node name: full file name or without `.SC2Replay`? And what happens when the same replay is opened twice? | Strip the extension. Re-opening an already open replay **selects the existing page** instead of creating a duplicate. Confirmed and Decided! |
@@ -263,7 +277,7 @@ Each item is a default decision with its rationale. Planners may revisit, but st
 | OQ-10 | Replay folder monitor: today it eagerly analyzes each new replay into the singleton page. | Keep the listener! It auto-creates a sub-page for a newly detected zerg replay. Decision: A story creation is needed! |
 | OQ-11 | Is supply "used" taken from tracker `PlayerStats` `foodUsed`? | Yes. `foodUsed` is fixed-point /4096, includes units in production (eggs), and never counts overlord-provided cap (`foodMade`). Cadence caveat in D-4. Decided! |
 | OQ-12 | Locale short date format: the JVM default `DateFormat.SHORT` may render `bg` as `24.11.26 г.` on CLDR-based JREs (Java 9+), and the year can be 2-digit. | Use `DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault())` as is. If the `г.` suffix appears, strip trailing non-digit tokens. Verify on the JRE bundled with Scelight. Confirmed! |
-| OQ-13 | Meaning of "lategame/endgame" columns when the phase never occurs. | Same columns as today (Late = workers > 66, End = workers > 89). The cell shows `n/a` when no player-game in the bucket reached the phase, and phase length shows `0/n`. Confirmed! |
+| OQ-13 | Meaning of "lategame/endgame" columns when the phase never occurs. | Same columns as today (Late = workers > 66, End = workers > 89). The cell shows `n/a` when no player-game in the bucket reached the phase, and phase end shows `n/a (0/n)`. Confirmed! |
 | OQ-14 | Upper limit on selection size. | No hard limit. Show a confirm dialog above 500 files with an estimated duration. Confirmed! |
 | OQ-15 | Should eligible-but-unparsable or partially analyzed games (e.g. missing phase table) count in `n`? | Failed parse → excluded and listed. Missing phase table for a tracked player → that player-game is excluded and listed with reason `missing-phase-table` (existing diagnostic flag). Confirmed! |
 
@@ -284,7 +298,7 @@ Sizes: S ≤ 1 day, M 1–2 days, L 2–3 days. "FR" = acceptance pointers.
 | WP-07 | **Milestone extraction** | Compute 100/200 supply and 66/80 alive-drone loops per player (D-4). Optionally capture the exact drone loop in the analyzer and expose it via `LarvaAnalysisReport`. | `LarvaReplayAnalyzer`, `LarvaAnalysisReport`, new milestone model | WP-03 | FR-13 | M |
 | WP-08 | **Per-game aggregation record and headless path** | New compact record (D-8) with `Date`, game mode, format and length loops. Toon-keyed Zerg players. Built from the shared `ReplayAnalysisContext`. Epic 13 records untouched. | `ReplaySummaryService`, new record classes | WP-02, WP-07 | FR-9, FR-10, FR-11 | M |
 | WP-09 | **Filtering and tracked-player selection** | Pure functions: eligibility with reason codes, filter summary counts, D-5/D-6 selection. | new `…Filter` / `…PlayerSelector` | WP-08 (record type only) | FR-8, FR-10, FR-11 | S |
-| WP-10 | **Aggregation engine** | Buckets All / ZvP / ZvT / ZvZ per tracked player. Pooled `LarvaPhaseStats` (D-1/D-2), phase length (D-9), milestone averages with `k/n` (D-10), D-7 mirror rule. Pure and immutable output model. | new aggregator and result model | WP-09 | FR-12, FR-13 | M |
+| WP-10 | **Aggregation engine** | Buckets All / ZvP / ZvT / ZvZ per tracked player. Pooled `LarvaPhaseStats` (D-1/D-2), phase end (D-9), milestone averages with `k/n` (D-10), D-7 mirror rule. Pure and immutable output model. | new aggregator and result model | WP-09 | FR-12, FR-13 | M |
 | WP-11 | **Batch runner** | Background job over the selected files. Progress callbacks on the EDT, cancellation on page close, per-file error capture, one `ReplaySummaryService` per worker, bounded memory. | new runner, `IFactory` job/thread API | WP-08 | FR-6, FR-15 | M |
 | WP-12 | **Reusable phase-table renderer** | Extract the Graphics2D table from `LarvaTimelinePreviewComp` into a component driven by a row-label × phase string-matrix view model. The single page must look the same (screenshot / golden check). | `LarvaTimelinePreviewComp`, new renderer | WP-03 | FR-4, FR-12 | M |
 | WP-13 | **Multi-analysis page** | Multi-select chooser. Page creation with placeholder then dated label (FR-7, OQ-7). Header, filter summary, 2-column layout (OQ-1), milestone table, All plus three matchup tables, skipped-replays list, empty state. | new multi page component, navigator | WP-05, WP-10, WP-11, WP-12 | FR-5–FR-8, FR-12–FR-15 | L |
@@ -313,7 +327,7 @@ Critical path: WP-01 → WP-04 → (WP-10 ∥ WP-11 ∥ WP-12) → WP-13 → WP-
 
 | Level | What | How |
 |---|---|---|
-| Unit (WP-03 harness) | D-1/D-2 pooled math, D-9 phase length, D-10 n/a rules, D-6 player selection incl. ties and thresholds, D-7 mirror counting, filter reason codes, OQ-5 length boundary (5 375 / 5 376 loops), milestone scan on synthetic snapshot lists (never reached, reached exactly at threshold, fixed-point /4096), locale date label (`bg_BG`, `en_US`, single-day range). | Synthetic `LarvaPhaseStats` / snapshot / record fixtures, with no Scelight runtime. Target: meaningful coverage of the aggregator, filter, selector and milestone classes (≥ 80 % lines there). |
+| Unit (WP-03 harness) | D-1/D-2 pooled math, D-9 phase end, D-10 n/a rules, D-6 player selection incl. ties and thresholds, D-7 mirror counting, filter reason codes, OQ-5 length boundary (5 375 / 5 376 loops), milestone scan on synthetic snapshot lists (never reached, reached exactly at threshold, fixed-point /4096), locale date label (`bg_BG`, `en_US`, single-day range). | Synthetic `LarvaPhaseStats` / snapshot / record fixtures, with no Scelight runtime. Target: meaningful coverage of the aggregator, filter, selector and milestone classes (≥ 80 % lines there). |
 | Golden / fixture | Single-page parity after WP-06/WP-12. Milestone loops on known replays. | Existing `LarvaTimelineGoldenFormatter` / `LarvaBenchmarkRecordFormatter` outputs before vs. after. Fixtures: `benchmark-data/queensMoved/*.SC2Replay`, the local `benchmark-data/raw-replays/` corpus (git-ignored), and Zerg replays under `parser-research/s2protocol/tests/s2replaystatsdata/` (old builds: use only for parse-robustness, not metric values). |
 | Integration (headless) | Run filter → select → aggregate over a folder through `StandaloneScelightBootstrap`. Print a deterministic text dump of the result model. | Extend the CLI (e.g. a `--multi <dir>` mode) so planners and CI can diff dumps. |
 | Manual / UI | Hub layout. Create, close and Ctrl+F4 sub-pages. Rename on completion. Two-column layout at 1280 px and 1920 px. Cancel on close. Navigating away during a run. Error list. Icons at several title font sizes. | Checklist in WP-14 with screenshots into `knowhow/epic17-*.png` (repo convention). |
@@ -357,10 +371,26 @@ Critical path: WP-01 → WP-04 → (WP-10 ∥ WP-11 ∥ WP-12) → WP-13 → WP-
 
 ## 11. Definition of done
 
-- [ ] All FR acceptance criteria pass. OQ decisions are recorded in this file (§6 updated with the chosen answers).
-- [ ] The single-replay page is at parity with the pre-epic version (golden and screenshot checks).
-- [ ] Unit tests for filter, selector, aggregator, milestones and date label pass via the Ant `TEST` target. The release jar contains no test classes.
-- [ ] A 100-replay run completes within the §9 target without UI freezes. Results are recorded in `knowhow/`.
-- [ ] Closing any sub-page releases its resources and cancels its work (verified in logs).
-- [ ] Help HTML updated. `knowhow/` note on the hub and sub-page pattern added. Screenshots `knowhow/epic17-*.png` added.
-- [ ] `BUILD_RELEASE` succeeds against SDK 1.5.2 and the module loads in Scelight with no init errors.
+Checked 2026-11-25 (E17-S16).
+
+- [ ] All FR acceptance criteria pass. OQ decisions are recorded in this file (§6 updated with the chosen answers). **OQ decisions: recorded (§6). Acceptance criteria: not all verifiable by an agent**: the agent checked them in the real Scelight through the dev channel (see the story result blocks), but real mouse and keyboard checks remain (list below), so this stays open until the user has done them.
+- [x] The single-replay page is at parity with the pre-epic version (golden and screenshot checks). S06: 5 replays headless and 3 in-app byte-identical, screenshot `knowhow/epic17-s06-single-page.png`; S16: dev dump section of 6 replays (3 fixtures, 3 from the user's library) pre-epic commit `e629a5e` versus the release build: identical apart from the dump file path line (details in the S16 result of `epic17-stories.md`).
+- [x] Unit tests for filter, selector, aggregator, milestones and date label pass via the Ant `TEST` target (248 green). The release jar contains no test classes (`unzip -l`: 329 entries, no `*Test.class`, no junit or hamcrest; zip holds the jar plus the 3 JAXB jars only).
+- [x] A 100-replay run completes within the §9 target without UI freezes. Results are recorded in `knowhow/epic17-batch-spike.md` (100 replays 0.9 to 1.7 s, 500 replays 2.8 to 9.6 s, 500-replay live heap growth at most 38 MB, EDT max delay 0 to 69 ms).
+- [x] Closing any sub-page releases its resources and cancels its work (verified in logs: single page `page disposed, pending results are dropped`, multi page `run cancelled` and `cancelled after k/N`).
+- [x] Help HTML updated (`help/larva-module-help.html`, screenshot `knowhow/epic17-help.png`). `knowhow/epic17-subpages.md` (hub and sub-page pattern) added. Screenshots `knowhow/epic17-*.png` added.
+- [x] `BUILD_RELEASE` succeeds against SDK 1.5.2 (`ant CLEAN TEST BUILD_RELEASE`, version 3.0) and the module loads in Scelight with no init errors.
+
+### Open items for the user (manual checks and follow-ups)
+
+Manual checks an agent cannot do:
+- [ ] Click the **X** and press the real **Ctrl+F4** on a sub-page (and on the hub: nothing happens); Back and Forward history after closing pages (S01 list in `knowhow/epic17-subpages-spike.md`).
+- [ ] The real **Open Replay...** (hub and a single page) and **Multi Analysis...** dialogs: selection works, they open in the remembered folder after a restart, Cancel changes nothing, no page after Cancel (S06, S14, S17).
+- [ ] **Analyze Latest Replay** on the hub and on a page, and the info message when no latest replay exists (AC-3.2, S06).
+- [ ] The `?` tip icon hover popup, the module help icon popup, and the look of the hub (S05); icons at a larger page title font size (AC-16.1).
+- [ ] The multi page at 1280 px and 1920 px (horizontal scroll at narrow width, S17), and the Skipped replays toggle by mouse.
+- [ ] A real new Zerg replay after a game while Scelight runs (the agent used `auto-open-submit` and, in S07, copied test replays): the page appears under Larva, not selected unless you are on a Larva page (AC-17.1, AC-17.4). The busy state of an auto page is never visible (the page is created READY, S07 deviation 1).
+
+Open follow-ups (not blocking):
+- **D17-d, "no selection change" on a duplicate:** the user confirmed the dedupe itself; that a duplicate detection also leaves the selection unchanged is a default (S07 table) that has not been confirmed explicitly. All other S07 defaults D17-a to D17-j are marked Confirmed in `epic17-stories.md` (cap 20 open single pages, 5 pending requests, no toggle, focus rule D17-c as the user decided).
+- The multi page offers no manual player picker (R-8 follow-up) and no folder selection (OQ-9).

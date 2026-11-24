@@ -14,12 +14,17 @@ import java.util.Set;
  *
  * <p>Pure and stateless. Rules:</p>
  * <ul>
- * <li>One player-game is one record entry whose identity key equals a tracked player. It counts in {@code ALL} and, if the
- * opponent matchup is known, in that matchup bucket. A game between two tracked players therefore counts in both players'
- * tables (D-7), but once in {@link LarvaAggregationResult#getDistinctGameCount()}.</li>
+ * <li>One player-game is one record entry whose identity key equals a tracked player. It counts in {@code ALL} and in its
+ * matchup bucket. A game between two tracked players therefore counts in both players' tables (D-7), but once in
+ * {@link LarvaAggregationResult#getDistinctGameCount()}.</li>
+ * <li>A player-game with an unknown matchup (no opponent race) is omitted entirely (user decision 2026-11-24): not in
+ * {@code ALL}, not in a bucket, not in {@code n}, not in the distinct count, and a game whose Zerg player-games are all of
+ * that kind does not widen the date range. It is listed as {@code unknown-opponent-race}. The 1v1 filter makes this a
+ * safety net. The tracked-player selector still counts such a player-game (it has no matchup knowledge); a player who has
+ * only such games ends with empty tables and {@code distinctGameCount == 0}, which the page shows as the empty state.</li>
  * <li>Pooled larva rates come from a {@link LarvaPhaseStats} over the summed counts and loops (D-1, D-2); this class holds no
  * rate formula.</li>
- * <li>Phase length is the mean over the player-games that reached the phase, reported with {@code k} of {@code n} (D-9).
+ * <li>Phase end is the mean game time at which the phase ended, over the player-games that reached the phase, reported with {@code k} of {@code n} (D-9, CR-1.1).
  * Milestones are the mean over the games that reached them, again {@code k/n}, without censoring (D-10).</li>
  * <li>Player-games without phase table are left out and listed as {@code missing-phase-table} (OQ-15). They are not part of
  * {@code n}.</li>
@@ -64,7 +69,7 @@ public final class LarvaAggregator {
         Date end = null;
         for ( final LarvaAggregationGameRecord game : eligible ) {
             final Date date = game.getReplayDate();
-            if ( date == null )
+            if ( date == null || isOnlyUnknownMatchup( game ) )
                 continue;
             if ( start == null || date.before( start ) )
                 start = date;
@@ -85,14 +90,16 @@ public final class LarvaAggregator {
                 if ( !player.getIdentityKey().equals( record.getIdentityKey() ) )
                     continue;
                 if ( record.isMissingPhaseTable() ) {
-                    skipped.add( new LarvaSkippedReplay( String.valueOf( game.getReplayFile() == null ? null : game.getReplayFile().getFileName() )
-                            + " (" + record.getName() + ")", LarvaSkippedReplay.REASON_MISSING_PHASE_TABLE ) );
+                    skipped.add( new LarvaSkippedReplay( describe( game, record ), LarvaSkippedReplay.REASON_MISSING_PHASE_TABLE ) );
+                    continue;
+                }
+                if ( record.getMatchup() == null ) {
+                    skipped.add( new LarvaSkippedReplay( describe( game, record ), LarvaSkippedReplay.REASON_UNKNOWN_OPPONENT_RACE ) );
                     continue;
                 }
                 contributing.add( game );
                 buckets.get( LarvaMatchupBucket.ALL ).add( record );
-                if ( record.getMatchup() != null )
-                    buckets.get( record.getMatchup() ).add( record );
+                buckets.get( record.getMatchup() ).add( record );
             }
 
         final Map< LarvaMatchupBucket, Integer > counts = new EnumMap<>( LarvaMatchupBucket.class );
@@ -105,6 +112,20 @@ public final class LarvaAggregator {
             milestoneCells.put( acc.bucket, Collections.unmodifiableMap( acc.buildMilestoneCells() ) );
         }
         return new LarvaAggregationResult.PlayerResult( player, counts, phaseCells, milestoneCells );
+    }
+
+    private static String describe( final LarvaAggregationGameRecord game, final LarvaAggregationPlayerRecord record ) {
+        return String.valueOf( game.getReplayFile() == null ? null : game.getReplayFile().getFileName() ) + " (" + record.getName() + ")";
+    }
+
+    /** True if the game has Zerg player-games and every one of them has an unknown matchup (omitted, so no date range). */
+    private static boolean isOnlyUnknownMatchup( final LarvaAggregationGameRecord game ) {
+        if ( game.getZergPlayers().isEmpty() )
+            return false;
+        for ( final LarvaAggregationPlayerRecord record : game.getZergPlayers() )
+            if ( record.getMatchup() != null )
+                return false;
+        return true;
     }
 
     /** Mean of non-negative values, rounded half-up to a whole number; null if k is 0. */
@@ -146,10 +167,9 @@ public final class LarvaAggregator {
                 final LarvaPhaseStats stats = record.getPhaseStats().get( phase );
                 if ( stats != null )
                     sums.add( stats );
-                final Long lengthMs = record.getPhaseDurationDisplayMs().get( phase );
-                final Integer lengthLoops = record.getPhaseDurationLoops().get( phase );
-                if ( lengthMs != null && ( lengthLoops == null || lengthLoops.intValue() > 0 ) ) {
-                    sums.lengthMsSum += lengthMs.longValue();
+                final Long endMs = record.getPhaseEndDisplayMs().get( phase );
+                if ( endMs != null ) {
+                    sums.endMsSum += endMs.longValue();
                     sums.reached++;
                 }
             }
@@ -174,7 +194,7 @@ public final class LarvaAggregator {
                 final String spawnedRanking = spawned == null ? null : RATINGS.formatSpawnedLarvaRanking( phase, spawned );
                 final String missedRanking = missed == null ? null : RATINGS.formatMissedLarvaRanking( phase, missed );
                 cells.put( phase, new LarvaAggregatedPhaseCell( phase, pooled, spawnedRanking, missedRanking,
-                        meanHalfUp( sums.lengthMsSum, sums.reached ), sums.reached, games ) );
+                        meanHalfUp( sums.endMsSum, sums.reached ), sums.reached, games ) );
             }
             return cells;
         }
@@ -207,7 +227,7 @@ public final class LarvaAggregator {
 
         private int statsCount;
 
-        private long lengthMsSum;
+        private long endMsSum;
 
         private int reached;
 

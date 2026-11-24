@@ -39,17 +39,17 @@ final class LarvaTestFixtures {
         return all;
     }
 
-    /** Sets the length of one phase in ms (loops derived as ms * 16 / 1000 so both maps agree). */
-    static LarvaAggregationPlayerRecord.Builder withLength( final LarvaAggregationPlayerRecord.Builder b, final LarvaGamePhase phase,
+    /** Sets the game time at which one phase ends, in ms (loops derived as ms * 16 / 1000 so both maps agree). */
+    static LarvaAggregationPlayerRecord.Builder withEnd( final LarvaAggregationPlayerRecord.Builder b, final LarvaGamePhase phase,
             final long ms ) {
         final LarvaAggregationPlayerRecord current = b.build();
         final Map< LarvaGamePhase, Long > ms1 = new EnumMap<>( LarvaGamePhase.class );
-        ms1.putAll( current.getPhaseDurationDisplayMs() );
+        ms1.putAll( current.getPhaseEndDisplayMs() );
         ms1.put( phase, Long.valueOf( ms ) );
         final Map< LarvaGamePhase, Integer > loops = new EnumMap<>( LarvaGamePhase.class );
-        loops.putAll( current.getPhaseDurationLoops() );
+        loops.putAll( current.getPhaseEndLoops() );
         loops.put( phase, Integer.valueOf( (int) ( ms * 16 / 1000 ) ) );
-        return b.phaseDurationDisplayMs( ms1 ).phaseDurationLoops( loops );
+        return b.phaseEndDisplayMs( ms1 ).phaseEndLoops( loops );
     }
 
     /** Sets one milestone time in ms. */

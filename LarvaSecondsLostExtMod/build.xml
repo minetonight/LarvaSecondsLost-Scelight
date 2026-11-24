@@ -93,6 +93,67 @@
         </java>
     </target>
 
+    <!-- Integration golden (E17-S12): needs the installed Scelight (parser jars) and Java 8, so it is NOT part of TEST.
+         Run: ant TEST_GOLDEN_MULTI   (override the JVM with -Dgolden.java=/path/to/java8/bin/java)
+         Regenerate: ant GOLDEN_MULTI_REGENERATE, review the diff, commit it manually. -->
+    <property name="golden.java" value="/usr/lib/jvm/java-8-openjdk-amd64/bin/java" />
+    <property name="goldenMultiFile" value="${testFolder}/golden/epic17-multi-queensMoved.txt" />
+    <property name="goldenMultiActual" value="${testBinFolder}/epic17-multi-queensMoved.actual.txt" />
+    <property name="goldenMultiViewActual" value="${testBinFolder}/epic17-multi-queensMoved.view.txt" />
+
+    <target name="GOLDEN_MULTI_RUN" depends="COMPILE" description="Runs the headless --multi dump over benchmark-data/queensMoved into bin-test.">
+        <mkdir dir="${testBinFolder}" />
+        <java jvm="${golden.java}" classname="hu.aleks.larvasecondslostextmod.LarvaMultiAnalysisCli" fork="true" failonerror="true"
+              output="${goldenMultiActual}" error="${testBinFolder}/epic17-multi-queensMoved.stderr.txt">
+            <classpath>
+                <pathelement location="${binFolder}" />
+                <pathelement location="${extModApiJar}" />
+                <fileset dir="${customLibsFolder}" includes="**/*.jar" />
+                <fileset dir="${scelightFolder}/mod" includes="app/*/*.sldat app-libs/*/*.sldat launcher/*/*.sldat sc2-t/*/*.sldat sc2-bd/*/*.sldat" />
+            </classpath>
+            <arg value="--multi" />
+            <arg value="../benchmark-data/queensMoved" />
+            <arg value="--scelight-app-dir" />
+            <arg value="${scelightFolder}" />
+        </java>
+    </target>
+
+    <!-- E17-S15 criterion 8: the same run with the view-model flag prints the multi page's display model; LarvaMultiViewGoldenCheck compares
+         every cell string with the formatted values of the golden dump. -->
+    <target name="GOLDEN_MULTI_VIEW_RUN" depends="COMPILE" description="Runs the headless --multi --view-model dump over benchmark-data/queensMoved into bin-test.">
+        <mkdir dir="${testBinFolder}" />
+        <java jvm="${golden.java}" classname="hu.aleks.larvasecondslostextmod.LarvaMultiAnalysisCli" fork="true" failonerror="true"
+              output="${goldenMultiViewActual}" error="${testBinFolder}/epic17-multi-queensMoved.view.stderr.txt">
+            <classpath>
+                <pathelement location="${binFolder}" />
+                <pathelement location="${extModApiJar}" />
+                <fileset dir="${customLibsFolder}" includes="**/*.jar" />
+                <fileset dir="${scelightFolder}/mod" includes="app/*/*.sldat app-libs/*/*.sldat launcher/*/*.sldat sc2-t/*/*.sldat sc2-bd/*/*.sldat" />
+            </classpath>
+            <arg value="--multi" />
+            <arg value="../benchmark-data/queensMoved" />
+            <arg value="--view-model" />
+            <arg value="--scelight-app-dir" />
+            <arg value="${scelightFolder}" />
+        </java>
+    </target>
+
+    <target name="TEST_GOLDEN_MULTI" depends="COMPILE_TESTS,GOLDEN_MULTI_RUN,GOLDEN_MULTI_VIEW_RUN" description="Diffs the --multi dump against test/golden/epic17-multi-queensMoved.txt and checks the view-model cells against it (needs Scelight and Java 8).">
+        <condition property="goldenMultiMatches">
+            <filesmatch file1="${goldenMultiFile}" file2="${goldenMultiActual}" />
+        </condition>
+        <fail message="Multi dump differs from the golden: diff ${goldenMultiFile} ${goldenMultiActual}" unless="goldenMultiMatches" />
+        <echo>Multi dump matches the golden.</echo>
+        <java classname="hu.aleks.larvasecondslostextmod.LarvaMultiViewGoldenCheck" fork="true" failonerror="true" classpathref="testClasspath">
+            <arg value="${goldenMultiFile}" />
+            <arg value="${goldenMultiViewActual}" />
+        </java>
+    </target>
+
+    <target name="GOLDEN_MULTI_REGENERATE" depends="GOLDEN_MULTI_RUN" description="Overwrites the golden with the current dump (review and commit manually).">
+        <copy file="${goldenMultiActual}" tofile="${goldenMultiFile}" overwrite="true" />
+    </target>
+
     <target name="BUILD_RELEASE" depends="COMPILE" description="Creates a release and deployment of the external module.">
         <tstamp>
             <format property="date" pattern="yyyy-MM-dd'T'HH:mm:ss.SSSXXX"/>

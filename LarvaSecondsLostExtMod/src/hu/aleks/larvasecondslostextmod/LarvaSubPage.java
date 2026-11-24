@@ -23,6 +23,7 @@ final class LarvaSubPage implements IPage< JComponent > {
     private volatile String displayName;
     private IPage< ? > parent;
     private LarvaReplayPageController replayController;
+    private LarvaMultiAnalysisPageController multiController;
 
     LarvaSubPage( final LarvaSubPageKind kind, final String displayName, final IRIcon ricon, final IPageCompCreator< JComponent > contentCreator ) {
         this.kind = kind;
@@ -43,6 +44,16 @@ final class LarvaSubPage implements IPage< JComponent > {
     /** @return the controller of a single-replay page; <code>null</code> for other kinds */
     LarvaReplayPageController getReplayController() {
         return replayController;
+    }
+
+    /** Binds a multi-analysis page to its controller (the page's state holder, see S14). */
+    void setMultiController( final LarvaMultiAnalysisPageController multiController ) {
+        this.multiController = multiController;
+    }
+
+    /** @return the controller of a multi-analysis page; <code>null</code> for other kinds */
+    LarvaMultiAnalysisPageController getMultiController() {
+        return multiController;
     }
 
     void setDisplayName( final String displayName ) {

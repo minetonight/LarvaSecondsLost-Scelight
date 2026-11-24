@@ -37,6 +37,9 @@ public class ReplaySummaryService {
     /** Fallback mode description for Epic 2. */
     private static final String FALLBACK_INTEGRATION_MODE = "Module-owned replay diagnostics page (fallback replay-view surface)";
 
+    /** Message of the exception for a replay that Scelight cannot parse (null processor, e.g. Archon or 3+ player games). */
+    static final String MESSAGE_COULD_NOT_PARSE = "Scelight could not parse the replay file.";
+
     /** Date formatter for replay end time. */
     private final SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
 
@@ -174,6 +177,18 @@ public class ReplaySummaryService {
     }
 
     /**
+     * Cheap per-replay metadata record for the batch pre-filter (E17-S12, S02). With a cache hit in Scelight this needs no
+     * event parsing; a cache miss costs one parse, like any first load.
+     *
+     * @param replayFile replay file
+     * @return metadata-only record (no phase or milestone data)
+     * @throws IllegalStateException if Scelight cannot parse the replay (null processor)
+     */
+    public LarvaAggregationGameRecord readMetadataForAggregation( final Path replayFile ) {
+        return LarvaAggregationRecordBuilder.buildMetadataOnly( loadRepProc( replayFile ) );
+    }
+
+    /**
      * Builds the shared replay-analysis context used by both page rendering and headless benchmark export.
      *
      * @param replayFile replay file to analyze
@@ -193,7 +208,7 @@ public class ReplaySummaryService {
 
         final IRepProcessor repProc = repParserEngine.getRepProc( replayFile );
         if ( repProc == null )
-            throw new IllegalStateException( "Scelight could not parse the replay file." );
+            throw new IllegalStateException( MESSAGE_COULD_NOT_PARSE );
         return repProc;
     }
 
@@ -222,7 +237,8 @@ public class ReplaySummaryService {
             + larvaAnalysisReport.getNoEligibleHatcheryLarvaCount() + ", injectEvidence=" + larvaAnalysisReport.getInjectEvidenceCount()
             + ", injectWindows=" + larvaAnalysisReport.getInjectWindowCount() + ", injectOverlapDiscarded="
             + larvaAnalysisReport.getInjectOverlapDiscardCount() + ", fullReplayParseUsed=" + larvaAnalysisReport.isFullReplayParseUsed() );
-        logSpawnLarvaCommands( repProc );
+        if ( DevDiagnosticDumpWriter.isEnabledBySystemProperties() )
+            logSpawnLarvaCommands( repProc ); // R-6 (E17-S12): per-replay debug noise only with the dev flag
 
         final ReplaySummary replaySummary = new ReplaySummary( replayFile, safe( sourceDescription, "Unknown" ),
             safe( details == null ? null : details.getTitle(), "Unknown map" ), safe( repProc.getPlayersGrouped(), "Unknown players" ),

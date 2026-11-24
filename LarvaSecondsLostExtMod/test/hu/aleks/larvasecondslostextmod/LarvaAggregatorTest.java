@@ -6,7 +6,7 @@ import static hu.aleks.larvasecondslostextmod.LarvaTestFixtures.player;
 import static hu.aleks.larvasecondslostextmod.LarvaTestFixtures.stats;
 import static hu.aleks.larvasecondslostextmod.LarvaTestFixtures.summaryOf;
 import static hu.aleks.larvasecondslostextmod.LarvaTestFixtures.tracked;
-import static hu.aleks.larvasecondslostextmod.LarvaTestFixtures.withLength;
+import static hu.aleks.larvasecondslostextmod.LarvaTestFixtures.withEnd;
 import static hu.aleks.larvasecondslostextmod.LarvaTestFixtures.withMilestone;
 import static hu.aleks.larvasecondslostextmod.LarvaTestFixtures.withStats;
 import static org.junit.Assert.assertEquals;
@@ -70,14 +70,14 @@ public class LarvaAggregatorTest {
     private static List< LarvaAggregationGameRecord > workedExampleGames() {
         final LarvaAggregationPlayerRecord.Builder g1 = withStats( player( "A", LarvaMatchupBucket.ZVP ),
                 stats( EARLY, 10, 4, 48, 9600, 8000, 6000 ) );
-        withLength( g1, EARLY, 300000 );
+        withEnd( g1, EARLY, 300000 );
         withMilestone( g1, LarvaMilestone.SUPPLY_100, 400000 );
         final LarvaAggregationPlayerRecord.Builder g2 = withStats( player( "A", LarvaMatchupBucket.ZVT ),
                 stats( EARLY, 5, 1, 20, 1920, 1000, 1000 ) );
-        withLength( g2, EARLY, 120000 );
+        withEnd( g2, EARLY, 120000 );
         final LarvaAggregationPlayerRecord.Builder g3 = withStats( player( "A", LarvaMatchupBucket.ZVZ ),
                 stats( EARLY, 3, 1, 8, 480, 200, 100 ) );
-        withLength( g3, EARLY, 61000 );
+        withEnd( g3, EARLY, 61000 );
         withMilestone( g3, LarvaMilestone.SUPPLY_100, 500001 );
         return Arrays.asList( game( 1, g1.build() ), game( 2, g2.build() ), game( 3, g3.build() ) );
     }
@@ -98,7 +98,7 @@ public class LarvaAggregatorTest {
         assertCell( r.getPhaseCell( LarvaMatchupBucket.ZVZ, EARLY ), 6.00, 2.00, 16.0, 50.0 );
         final LarvaAggregatedPhaseCell all = r.getPhaseCell( LarvaMatchupBucket.ALL, EARLY );
         assertCell( all, 1.44, 0.48, 6.08, 77.1739 );
-        assertEquals( 160333L, all.getMeanLengthMs().longValue() );
+        assertEquals( 160333L, all.getMeanEndMs().longValue() );
         assertEquals( 3, all.getReachedCount() );
         assertEquals( 3, all.getGameCount() );
         final LarvaAggregatedMilestoneCell supply = r.getMilestoneCell( LarvaMatchupBucket.ALL, LarvaMilestone.SUPPLY_100 );
@@ -146,7 +146,7 @@ public class LarvaAggregatorTest {
             assertNull( c.getInjectUptimePercent() );
             assertNull( c.getSpawnedRanking() );
             assertNull( c.getMissedRanking() );
-            assertNull( c.getMeanLengthMs() );
+            assertNull( c.getMeanEndMs() );
             assertEquals( 0, c.getReachedCount() );
             assertEquals( 0, c.getGameCount() );
         }
@@ -156,25 +156,25 @@ public class LarvaAggregatorTest {
         }
     }
 
-    /** AC 4 (D-9, OQ-13): END 60/120/180 s in 3 of 5 games gives 120 s with 3/5; LATE never reached gives null with 0/5. */
+    /** AC 1 (CR-1.1, D-9, OQ-13): END ends at 10:00 / 12:00 / 14:00 in 3 of 5 games gives 12:00 with 3/5; LATE never reached gives null with 0/5. */
     @Test
-    public void ac4_phaseLengthMeanOverReachedGames() {
+    public void ac1_phaseEndMeanOverReachedGames() {
         final List< LarvaAggregationGameRecord > games = new ArrayList<>();
-        final long[] endMs = { 60000, 120000, 180000, 0, 0 };
+        final long[] endMs = { 600000, 720000, 840000, 0, 0 };
         for ( int i = 0; i < 5; i++ ) {
             final LarvaAggregationPlayerRecord.Builder b = withStats( player( "A", LarvaMatchupBucket.ZVP ),
                     stats( LarvaGamePhase.END, 1, 0, 2, 960, 0, 0 ) );
             if ( endMs[ i ] > 0 )
-                withLength( b, LarvaGamePhase.END, endMs[ i ] );
+                withEnd( b, LarvaGamePhase.END, endMs[ i ] );
             games.add( game( i + 1, b.build() ) );
         }
         final LarvaAggregationResult.PlayerResult r = run( games, "A" );
         final LarvaAggregatedPhaseCell end = r.getPhaseCell( LarvaMatchupBucket.ALL, LarvaGamePhase.END );
-        assertEquals( 120000L, end.getMeanLengthMs().longValue() );
+        assertEquals( 720000L, end.getMeanEndMs().longValue() ); // 10:00 / 12:00 / 14:00 -> 12:00
         assertEquals( 3, end.getReachedCount() );
         assertEquals( 5, end.getGameCount() );
         final LarvaAggregatedPhaseCell late = r.getPhaseCell( LarvaMatchupBucket.ALL, LarvaGamePhase.LATE );
-        assertNull( late.getMeanLengthMs() );
+        assertNull( late.getMeanEndMs() );
         assertEquals( 0, late.getReachedCount() );
         assertEquals( 5, late.getGameCount() );
     }
@@ -291,24 +291,49 @@ public class LarvaAggregatorTest {
         assertEquals( "bad.SC2Replay", result.getSkipped().get( 0 ).getFile() );
     }
 
+    /** User decision 2026-11-24: a player-game with unknown matchup is omitted entirely and listed. */
     @Test
-    public void unknownMatchupCountsInAllOnly() {
-        final LarvaAggregationResult.PlayerResult r = run( Arrays.asList( game( 1, early( null, 1, 0, 1, 960, 0, 0 ) ) ), "A" );
+    public void unknownMatchupIsOmittedEverywhereAndListed() {
+        final LarvaAggregationResult result = aggregator.aggregate(
+                Arrays.asList( game( 1, early( LarvaMatchupBucket.ZVP, 1, 0, 1, 960, 0, 0 ) ), game( 5, early( null, 1, 0, 1, 960, 0, 0 ) ) ),
+                Arrays.asList( tracked( "A", 2 ) ), summaryOf( 2 ) );
+        final LarvaAggregationResult.PlayerResult r = result.getPlayers().get( 0 );
         assertEquals( 1, r.getGameCount( LarvaMatchupBucket.ALL ) );
-        assertEquals( 0, r.getGameCount( LarvaMatchupBucket.ZVP ) + r.getGameCount( LarvaMatchupBucket.ZVT )
-                + r.getGameCount( LarvaMatchupBucket.ZVZ ) );
+        assertEquals( 1, r.getGameCount( LarvaMatchupBucket.ZVP ) );
+        assertEquals( 1, r.getPhaseCell( LarvaMatchupBucket.ALL, EARLY ).getGameCount() );
+        assertEquals( 1, result.getDistinctGameCount() );
+        assertEquals( new Date( DAY_MS ), result.getStartDate() );
+        assertEquals( new Date( DAY_MS ), result.getEndDate() );
+        assertEquals( 1, result.getSkipped().size() );
+        assertEquals( "g5.SC2Replay (A)", result.getSkipped().get( 0 ).getFile() );
+        assertEquals( LarvaSkippedReplay.REASON_UNKNOWN_OPPONENT_RACE, result.getSkipped().get( 0 ).getReason() );
+    }
+
+    /** A player whose only games have no matchup gives empty tables and no distinct games, not a broken result. */
+    @Test
+    public void playerWithOnlyUnknownMatchupGamesHasEmptyResult() {
+        final LarvaAggregationResult result = aggregator.aggregate( Arrays.asList( game( 3, early( null, 1, 0, 1, 960, 0, 0 ) ) ),
+                Arrays.asList( tracked( "A", 1 ) ), summaryOf( 1 ) );
+        assertEquals( 0, result.getDistinctGameCount() );
+        assertNull( result.getStartDate() );
+        assertNull( result.getEndDate() );
+        final LarvaAggregationResult.PlayerResult r = result.getPlayers().get( 0 );
+        for ( final LarvaMatchupBucket bucket : LarvaMatchupBucket.values() )
+            assertEquals( 0, r.getGameCount( bucket ) );
+        assertNull( r.getPhaseCell( LarvaMatchupBucket.ALL, EARLY ).getMissedPerHatchPerMinute() );
+        assertEquals( 1, result.getSkipped().size() );
     }
 
     @Test
     public void zeroDenominatorCellsAreNullButPhaseLengthStillCounts() {
         // Stats exist but with zero hatchery and inject loops: rates and uptime are null (D-10).
         final LarvaAggregationPlayerRecord.Builder b = withStats( player( "A", LarvaMatchupBucket.ZVP ), stats( EARLY, 0, 0, 0, 0, 0, 0 ) );
-        withLength( b, EARLY, 5000 );
+        withEnd( b, EARLY, 5000 );
         final LarvaAggregatedPhaseCell c = run( Arrays.asList( game( 1, b.build() ) ), "A" ).getPhaseCell( LarvaMatchupBucket.ALL, EARLY );
         assertNull( c.getMissedPerHatchPerMinute() );
         assertNull( c.getInjectUptimePercent() );
         assertNull( c.getSpawnedRanking() );
-        assertEquals( 5000L, c.getMeanLengthMs().longValue() );
+        assertEquals( 5000L, c.getMeanEndMs().longValue() );
     }
 
     @Test

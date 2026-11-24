@@ -62,8 +62,14 @@ public class LarvaReplayAnalyzer {
 
     /** Conservative SC2 queen max energy cap used for estimates. */
 
+    /** Development diagnostics flag, fixed for the JVM lifetime (system properties). */
+    private static final boolean DEV_DIAGNOSTICS_ENABLED = DevDiagnosticDumpWriter.isEnabledBySystemProperties();
+
     // Writes POS2JL snapshot lines to a dedicated temp file for reliable capture during CLI runs.
     private static void writePos2jlLog( final String line ) {
+        // R-6 (E17-S12): development diagnostic only; unbounded file growth must not happen in normal and batch runs.
+        if ( !DEV_DIAGNOSTICS_ENABLED )
+            return;
         try ( final FileWriter fw = new FileWriter( "/tmp/larva-pos2jl.log", true );
               final PrintWriter pw = new PrintWriter( fw ) ) {
             pw.println( line );

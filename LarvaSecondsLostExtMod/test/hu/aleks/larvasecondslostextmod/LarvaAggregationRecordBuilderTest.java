@@ -89,10 +89,11 @@ public class LarvaAggregationRecordBuilderTest {
         for ( final LarvaGamePhase phase : LarvaGamePhase.values() )
             assertSame( t.getPhaseStats( phase ), rec.getPhaseStats().get( phase ) );
         final LarvaGamePhase[] phases = LarvaGamePhase.values();
-        assertEquals( Integer.valueOf( 1000 ), rec.getPhaseDurationLoops().get( phases[ 0 ] ) );
-        assertEquals( Long.valueOf( 10000L ), rec.getPhaseDurationDisplayMs().get( phases[ 0 ] ) );
-        assertEquals( Integer.valueOf( 2000 ), rec.getPhaseDurationLoops().get( phases[ 1 ] ) );
-        assertEquals( Long.valueOf( 20000L ), rec.getPhaseDurationDisplayMs().get( phases[ 1 ] ) );
+        // CR-1.1: the record carries the end of each reached phase (end loop and display ms), not its length.
+        assertEquals( Integer.valueOf( 1000 ), rec.getPhaseEndLoops().get( phases[ 0 ] ) );
+        assertEquals( Long.valueOf( 10000L ), rec.getPhaseEndDisplayMs().get( phases[ 0 ] ) );
+        assertEquals( Integer.valueOf( 3000 ), rec.getPhaseEndLoops().get( phases[ 1 ] ) );
+        assertEquals( Long.valueOf( 30000L ), rec.getPhaseEndDisplayMs().get( phases[ 1 ] ) );
     }
 
     @Test
@@ -101,10 +102,10 @@ public class LarvaAggregationRecordBuilderTest {
         in.phaseTable = table( 1000, 1000 );
         final LarvaAggregationPlayerRecord rec = LarvaAggregationRecordBuilder.buildPlayerRecord( in, TEN_MS );
         final LarvaGamePhase[] phases = LarvaGamePhase.values();
-        assertTrue( rec.getPhaseDurationLoops().containsKey( phases[ 0 ] ) );
-        assertFalse( rec.getPhaseDurationLoops().containsKey( phases[ 1 ] ) );
-        assertFalse( rec.getPhaseDurationDisplayMs().containsKey( phases[ 1 ] ) );
-        assertFalse( rec.getPhaseDurationLoops().containsKey( phases[ phases.length - 1 ] ) );
+        assertTrue( rec.getPhaseEndLoops().containsKey( phases[ 0 ] ) );
+        assertFalse( rec.getPhaseEndLoops().containsKey( phases[ 1 ] ) );
+        assertFalse( rec.getPhaseEndDisplayMs().containsKey( phases[ 1 ] ) );
+        assertFalse( rec.getPhaseEndLoops().containsKey( phases[ phases.length - 1 ] ) );
     }
 
     @Test
@@ -112,7 +113,7 @@ public class LarvaAggregationRecordBuilderTest {
         final LarvaAggregationPlayerRecord rec = LarvaAggregationRecordBuilder.buildPlayerRecord( input(), TEN_MS );
         assertTrue( rec.isMissingPhaseTable() );
         assertTrue( rec.getPhaseStats().isEmpty() );
-        assertTrue( rec.getPhaseDurationLoops().isEmpty() );
+        assertTrue( rec.getPhaseEndLoops().isEmpty() );
         assertTrue( rec.getMilestoneDisplayMs().isEmpty() );
     }
 
@@ -140,7 +141,7 @@ public class LarvaAggregationRecordBuilderTest {
     public void playerRecordMapsAreUnmodifiable() {
         final LarvaAggregationRecordBuilder.PlayerInput in = input();
         in.phaseTable = table( 1000, 3000 );
-        LarvaAggregationRecordBuilder.buildPlayerRecord( in, TEN_MS ).getPhaseDurationLoops().clear();
+        LarvaAggregationRecordBuilder.buildPlayerRecord( in, TEN_MS ).getPhaseEndLoops().clear();
     }
 
     @Test

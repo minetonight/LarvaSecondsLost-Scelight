@@ -1,7 +1,12 @@
 package hu.aleks.larvasecondslostextmod;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+
+import hu.scelightapibase.gui.comp.IPopupIcon;
 
 /**
  * E17-S05 dev commands: {@code hub-state} (buttons, checkbox, tooltip) and {@code set-ladder-only <true|false>}.
@@ -21,6 +26,7 @@ final class LarvaDevHubCommands {
         final LarvaDevHubCommands c = new LarvaDevHubCommands( module );
         registry.register( c.hubState() );
         registry.register( c.setLadderOnly() );
+        registry.register( c.showHelp() );
     }
 
     private LarvaDevCommand hubState() {
@@ -54,6 +60,41 @@ final class LarvaDevHubCommands {
                 return LarvaDevCommandResult.ok( "ladderOnly=" + module.isLadderOnly() );
             }
         };
+    }
+
+    /** {@code show-help [hide]}: opens (or closes) the help popup of the hub's help icon, as a click on it would. */
+    private LarvaDevCommand showHelp() {
+        return new EdtCommand( "show-help" ) {
+            @Override
+            LarvaDevCommandResult run( final List< String > args ) {
+                final LarvaHubPageComp comp = module.getHubComp();
+                if ( comp == null )
+                    return LarvaDevCommandResult.fail( NOT_CREATED );
+                final IPopupIcon icon = findPopupIcon( comp );
+                if ( icon == null )
+                    return LarvaDevCommandResult.fail( "no help icon in the hub" );
+                if ( !args.isEmpty() && "hide".equals( args.get( 0 ) ) ) {
+                    icon.hidePopup();
+                    return LarvaDevCommandResult.ok( "help popup hidden" );
+                }
+                final Component source = (Component) icon;
+                icon.showPopup( new MouseEvent( source, MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), 0, 1, 1, 1, false ) );
+                return LarvaDevCommandResult.ok( "help popup shown" );
+            }
+        };
+    }
+
+    private static IPopupIcon findPopupIcon( final Container parent ) {
+        for ( final Component child : parent.getComponents() ) {
+            if ( child instanceof IPopupIcon && child.getClass().getName().endsWith( "HelpIcon" ) )
+                return (IPopupIcon) child;
+            if ( child instanceof Container ) {
+                final IPopupIcon found = findPopupIcon( (Container) child );
+                if ( found != null )
+                    return found;
+            }
+        }
+        return null;
     }
 
     private abstract static class EdtCommand implements LarvaDevCommand {
