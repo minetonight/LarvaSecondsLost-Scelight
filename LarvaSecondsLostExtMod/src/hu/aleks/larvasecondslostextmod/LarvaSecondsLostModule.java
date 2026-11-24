@@ -12,8 +12,10 @@ import hu.scelightapibase.gui.icon.IRIcon;
 import hu.scelightapibase.util.IRHtml;
 
 import java.nio.file.Path;
+import java.util.concurrent.Executor;
 
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 /**
  * Epic 01 baseline external module for the larva analysis feature.
@@ -30,11 +32,26 @@ public class LarvaSecondsLostModule extends BaseExtModule {
     /** Icon used by the placeholder page. */
     private IRIcon larvaIcon;
 
+    /** Icon of single-replay sub-pages. */
+    private IRIcon replayIcon;
+
+    /** Icon of multi-analysis sub-pages. */
+    private IRIcon multiAnalysisIcon;
+
     /** Help content for the placeholder page. */
     private IRHtml helpContent;
 
-    /** Service that produces replay diagnostics for the replay page. */
-    private ReplaySummaryService replaySummaryService;
+    /** Tip content of the multi analysis button. */
+    private IRHtml multiTipContent;
+
+    /** Hub content component; <code>null</code> until Scelight first shows the hub. */
+    private volatile LarvaHubPageComp hubComp;
+
+    /** The one FIFO analysis worker shared by all single-replay pages; <code>null</code> until init created it. */
+    private LarvaSingleReplayAnalysisQueue analysisQueue;
+
+    /** Behavior of the hub buttons (and the identical buttons on replay pages). */
+    private volatile LarvaModuleHubActions hubActions;
 
     /** Resolves the latest replay even if the replay-folder event was missed. */
     private LatestReplayResolver latestReplayResolver;
@@ -57,20 +74,14 @@ public class LarvaSecondsLostModule extends BaseExtModule {
     /** Dev command channel; <code>null</code> unless the system property is set. */
     private LarvaDevCommandChannel devCommandChannel;
 
-    /** The installed Larva page; <code>null</code> before installation. */
-    private volatile IPage< ? > larvaPage;
+    /** Owns the Larva hub and all sub-pages; <code>null</code> until init created it. */
+    private volatile LarvaPageNavigator pageNavigator;
 
     /** Listener registered at the replay folder monitor. */
     private INewRepListener newRepListener;
 
     /** Latest replay detected by the replay folder monitor. */
     private volatile Path lastDetectedReplayPath;
-
-    /** Latest successful replay summary produced by this module. */
-    private volatile LarvaReplayPageSummary latestReplaySummary;
-
-    /** Replay page component if the page was instantiated. */
-    private volatile LarvaReplayPageComp replayPageComp;
 
     @Override
     public void init( final IExtModManifestBean manifest, final IServices services, final IModEnv modEnv ) {
@@ -81,8 +92,8 @@ public class LarvaSecondsLostModule extends BaseExtModule {
             loadResources();
             devDiagnosticDumpWriter = new DevDiagnosticDumpWriter( logger );
             recordLifecycleUpdate( "initializing", "Resources loaded successfully." );
-            replaySummaryService = new ReplaySummaryService( this );
             updateInitPhase( "creating replay services" );
+            analysisQueue = createAnalysisQueue();
             latestReplayResolver = new LatestReplayResolver( this );
             chartIntegrationManager = new ChartIntegrationManager( new ChartIntegrationCapabilityDetector() );
             chartIntegrationCapability = chartIntegrationManager.initialize( logger );
@@ -124,32 +135,125 @@ public class LarvaSecondsLostModule extends BaseExtModule {
      */
     private void loadResources() {
         updateInitPhase( "loading packaged resources" );
-        larvaIcon = guiFactory.newRIcon( getClass().getResource( "icon/larva-module-icon.png" ) );
-        helpContent = guiFactory.newRHtml( "Larva Module Help", getClass().getResource( "help/larva-module-help.html" ) );
+        larvaIcon = guiFactory.newRIcon( requireResource( "icon/larva-module-icon.png" ) );
+        replayIcon = guiFactory.newRIcon( requireResource( "icon/larva-replay-icon.png" ) );
+        multiAnalysisIcon = guiFactory.newRIcon( requireResource( "icon/larva-multi-analysis-icon.png" ) );
+        helpContent = guiFactory.newRHtml( "Larva Module Help", requireResource( "help/larva-module-help.html" ) );
+        multiTipContent = guiFactory.newRHtml( "Multi Analysis", requireResource( "help/larva-multi-tip.html" ) );
     }
 
     /**
-     * Adds the replay diagnostics page to Scelight.
+     * Resolves a packaged resource and fails init (via the init failure message) if it is missing.
+     *
+     * @param path resource path relative to the module package
+     * @return the resource URL, never <code>null</code>
+     */
+    private java.net.URL requireResource( final String path ) {
+        final java.net.URL url = getClass().getResource( path );
+        if ( url == null )
+            throw new IllegalStateException( "Missing packaged resource: " + path );
+        return url;
+    }
+
+    /**
+     * Creates the shared analysis queue. Its single worker thread is the only user of the {@link ReplaySummaryService}
+     * (the service is not thread-safe); results are posted to the EDT without blocking the worker.
+     */
+    private LarvaSingleReplayAnalysisQueue createAnalysisQueue() {
+        final ReplaySummaryService service = new ReplaySummaryService( this );
+        return new LarvaSingleReplayAnalysisQueue( logger, new LarvaReplayAnalysisRunner() {
+            @Override
+            public LarvaReplayPageSummary analyze( final Path replayFile, final String sourceDescription ) {
+                return service.analyze( replayFile, sourceDescription );
+            }
+
+            @Override
+            public LarvaAutoOpenOutcome analyzeForAutoOpen( final Path replayFile, final String sourceDescription ) {
+                return service.analyzeForAutoOpen( replayFile, sourceDescription );
+            }
+        }, new Executor() {
+            @Override
+            public void execute( final Runnable command ) {
+                SwingUtilities.invokeLater( command );
+            }
+        }, devDiagnosticDumpWriter );
+    }
+
+    /**
+     * Creates the page navigator and installs the Larva hub on the EDT.
      */
     private void installReplayPage() {
+        pageNavigator = new LarvaPageNavigator( logger, services, larvaIcon, new IPageCompCreator< JComponent >() {
+            @Override
+            public JComponent createPageComp() {
+                return createHubComp();
+            }
+        }, new LarvaSinglePageHost() {
+            @Override
+            public IRIcon getReplayIcon() {
+                return replayIcon;
+            }
+
+            @Override
+            public LarvaReplayAnalysisQueue getAnalysisQueue() {
+                return analysisQueue;
+            }
+
+            @Override
+            public JComponent createReplayPageComp( final LarvaReplayPageController controller ) {
+                return new LarvaReplayPageComp( LarvaSecondsLostModule.this, controller, hubActions );
+            }
+        } );
+        hubActions = new LarvaModuleHubActions( this, pageNavigator, new LarvaReplayFileChooser( guiFactory ) );
+        analysisQueue.setAutoOpenHost( new LarvaAutoOpenHost() {
+            @Override
+            public LarvaAutoOpenPolicy.Admission admit( final Path replayFile ) {
+                return pageNavigator.checkAutoOpenAdmission( replayFile );
+            }
+
+            @Override
+            public LarvaReplayPageController open( final Path replayFile, final LarvaAutoOpenOutcome outcome ) {
+                final LarvaReplayPageController controller = pageNavigator.autoOpenSingleReplay( replayFile, outcome );
+                if ( controller != null )
+                    analysisQueue.getAutoOpenStats().recordOpened( controller.getReplayFile().toString(), pageNavigator.isLarvaPageSelected() );
+                return controller;
+            }
+        } );
         guiUtils.runInEDT( new Runnable() {
             @Override
             public void run() {
-                // E17-S01 spike: module-owned hub IPage (same content as before), with a mutable child list.
-                larvaPage = new LarvaSpikeHubPage( "Larva", larvaIcon,
-                        new IPageCompCreator< JComponent >() {
-                            @Override
-                            public JComponent createPageComp() {
-                                replayPageComp = new LarvaReplayPageComp( LarvaSecondsLostModule.this );
-                                if ( latestReplaySummary != null )
-                                    replayPageComp.showSummary( latestReplaySummary );
-                                return replayPageComp;
-                            }
-                        } );
-                services.getMainFrame().getMultiPageComp().addPage( larvaPage );
-                services.getMainFrame().getMultiPageComp().rebuildPageTree( false );
+                pageNavigator.install();
             }
         } );
+    }
+
+    /**
+     * Creates the hub content (EDT, called once by Scelight when the hub is first shown). Starts no analysis (AC-1.4).
+     */
+    private JComponent createHubComp() {
+        final LarvaHubPageComp comp = new LarvaHubPageComp( hubActions, guiFactory.newTipIcon( multiTipContent ).asLabel(),
+                guiFactory.newHelpIcon( helpContent ).asLabel() );
+        hubComp = comp;
+        return comp;
+    }
+
+    /**
+     * Returns the state of the hub's "Ladder games only" checkbox for the multi analysis (E17-S14).
+     *
+     * @return the checkbox state; <code>true</code> (the default, OQ-8) while the hub content was not created yet
+     */
+    boolean isLadderOnly() {
+        final LarvaHubPageComp comp = hubComp;
+        return comp == null || comp.isLadderOnly();
+    }
+
+    /**
+     * Returns the hub content component.
+     *
+     * @return the hub component; <code>null</code> until the hub was shown for the first time
+     */
+    LarvaHubPageComp getHubComp() {
+        return hubComp;
     }
 
     /**
@@ -166,99 +270,66 @@ public class LarvaSecondsLostModule extends BaseExtModule {
     }
 
     /**
-     * Returns the installed Larva page.
+     * Returns the installed Larva hub page.
      *
-     * @return the Larva page; may be <code>null</code> before installation
+     * @return the Larva hub; may be <code>null</code> before installation
      */
     IPage< ? > getLarvaPage() {
-        return larvaPage;
+        final LarvaPageNavigator navigator = pageNavigator;
+        return navigator == null ? null : navigator.getHub();
     }
 
     /**
-     * Installs a replay-folder listener so newly detected replays can be surfaced on the module page.
+     * Returns the page navigator.
+     *
+     * @return the navigator; <code>null</code> before init reached page installation
+     */
+    LarvaPageNavigator getPageNavigator() {
+        return pageNavigator;
+    }
+
+    /**
+     * Returns the shared analysis queue (auto-open counters for the dev commands).
+     *
+     * @return the queue; <code>null</code> before init created it
+     */
+    LarvaSingleReplayAnalysisQueue getAnalysisQueue() {
+        return analysisQueue;
+    }
+
+    /**
+     * Hands a detected replay to the analysis queue and returns at once: the listener runs on Scelight's replay-handler
+     * job thread, so no parsing and no EDT work happens here (AC-17.6). Never throws.
+     */
+    private void handOffToAutoOpen( final Path replayFile ) {
+        final LarvaSingleReplayAnalysisQueue queue = analysisQueue;
+        if ( queue == null || replayFile == null )
+            return;
+        final long startNanos = System.nanoTime();
+        try {
+            queue.submitAutoOpen( replayFile );
+        } catch ( final RuntimeException e ) {
+            logger.error( "[larva-auto] hand-off failed: " + replayFile, e );
+            return;
+        }
+        logger.debug( "[larva-auto] hand-off took " + ( System.nanoTime() - startNanos ) / 1000L + " us: " + replayFile );
+    }
+
+    /**
+     * Installs the replay-folder listener. It records the latest detected replay (for "Analyze Latest Replay" and the
+     * file chooser start folder) and hands the replay to the queue for auto-open (E17-S07, FR-17).
      */
     private void installReplayMonitorListener() {
         newRepListener = new INewRepListener() {
             @Override
             public void newRepDetected( final INewRepEvent event ) {
                 lastDetectedReplayPath = event.getFile();
-                logger.debug( manifest.getName() + " detected replay for fallback replay page: " + lastDetectedReplayPath );
-                requestReplayAnalysis( lastDetectedReplayPath, "Replay Folder Monitor" );
+                logger.debug( manifest.getName() + " detected replay: " + lastDetectedReplayPath );
+                handOffToAutoOpen( lastDetectedReplayPath );
             }
         };
 
         services.getRepFolderMonitor().addNewRepListener( newRepListener );
-    }
-
-    /**
-     * Requests replay analysis on a worker thread and refreshes the replay page when complete.
-     *
-     * @param replayFile replay file to analyze
-     * @param sourceDescription short label describing where the request came from
-     */
-    void requestReplayAnalysis( final Path replayFile, final String sourceDescription ) {
-        if ( replayFile == null )
-            return;
-
-        final LarvaReplayPageComp pageComp = replayPageComp;
-        if ( pageComp != null )
-            pageComp.showBusy( replayFile, sourceDescription );
-        if ( devDiagnosticDumpWriter != null && devDiagnosticDumpWriter.isEnabled() )
-            devDiagnosticDumpWriter.recordAnalysisStart( replayFile, sourceDescription );
-
-        final Thread worker = new Thread( new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final LarvaReplayPageSummary summary = replaySummaryService.analyze( replayFile, sourceDescription );
-                    latestReplaySummary = summary;
-                    refreshReplayPage( summary );
-                    if ( devDiagnosticDumpWriter != null && devDiagnosticDumpWriter.isEnabled() )
-                        devDiagnosticDumpWriter.recordAnalysisSuccess( summary );
-                    logger.debug( manifest.getName() + " replay diagnostics ready for: " + replayFile );
-                } catch ( final RuntimeException e ) {
-                    logger.error( "Failed to analyze replay for the Larva page: " + replayFile, e );
-                    if ( devDiagnosticDumpWriter != null && devDiagnosticDumpWriter.isEnabled() )
-                        devDiagnosticDumpWriter.recordAnalysisFailure( replayFile, sourceDescription, e.getMessage() );
-                    showReplayError( replayFile, sourceDescription, e.getMessage() );
-                }
-            }
-        }, "larva-replay-loader" );
-
-        worker.setDaemon( true );
-        worker.start();
-    }
-
-    /**
-     * Refreshes the replay page with a fresh summary.
-     *
-     * @param summary replay summary to display
-     */
-    private void refreshReplayPage( final LarvaReplayPageSummary summary ) {
-        guiUtils.runInEDT( new Runnable() {
-            @Override
-            public void run() {
-                if ( replayPageComp != null )
-                    replayPageComp.showSummary( summary );
-            }
-        } );
-    }
-
-    /**
-     * Refreshes the replay page with an error state.
-     *
-     * @param replayFile replay file that failed to analyze
-     * @param sourceDescription source of the request
-     * @param message error message to display
-     */
-    private void showReplayError( final Path replayFile, final String sourceDescription, final String message ) {
-        guiUtils.runInEDT( new Runnable() {
-            @Override
-            public void run() {
-                if ( replayPageComp != null )
-                    replayPageComp.showError( replayFile, sourceDescription, message );
-            }
-        } );
     }
 
     /**
@@ -268,6 +339,24 @@ public class LarvaSecondsLostModule extends BaseExtModule {
      */
     IRIcon getLarvaIcon() {
         return larvaIcon;
+    }
+
+    /**
+     * Returns the icon of single-replay sub-pages.
+     *
+     * @return the replay icon
+     */
+    IRIcon getReplayIcon() {
+        return replayIcon;
+    }
+
+    /**
+     * Returns the icon of multi-analysis sub-pages.
+     *
+     * @return the multi-analysis icon
+     */
+    IRIcon getMultiAnalysisIcon() {
+        return multiAnalysisIcon;
     }
 
     /**
@@ -302,12 +391,12 @@ public class LarvaSecondsLostModule extends BaseExtModule {
     }
 
     /**
-     * Returns the latest replay summary if one has already been produced.
+     * Returns the hub button behavior (also used by the dev commands).
      *
-     * @return the latest replay summary; may be <code>null</code>
+     * @return the hub actions; <code>null</code> before page installation
      */
-    LarvaReplayPageSummary getLatestReplaySummary() {
-        return latestReplaySummary;
+    LarvaModuleHubActions getHubActions() {
+        return hubActions;
     }
 
     /**
@@ -381,6 +470,12 @@ public class LarvaSecondsLostModule extends BaseExtModule {
 
     @Override
     public void destroy() {
+        if ( pageNavigator != null )
+            pageNavigator.shutdown();
+
+        if ( analysisQueue != null )
+            analysisQueue.shutdown();
+
         if ( devCommandChannel != null )
             devCommandChannel.stop();
 

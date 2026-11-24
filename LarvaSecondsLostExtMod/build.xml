@@ -29,6 +29,14 @@
         <property name="versionFolder" value="${releaseBuildFolder}/mod-x/${folder}/${version}" />
         <property name="deploymentFileName" value="${deploymentName}-${version}.zip" />
         <property name="deploymentFile" value="${deploymentFolder}/${deploymentFileName}" />
+        <!-- Defined here, not at top level: ${extModApiJar} only exists after the properties above are set (S04 tests use SDK types). -->
+        <path id="testClasspath">
+            <pathelement location="${testBinFolder}" />
+            <pathelement location="${binFolder}" />
+            <pathelement location="${extModApiJar}" />
+            <fileset dir="${customLibsFolder}" includes="**/*.jar" />
+            <fileset dir="${testLibsFolder}" includes="**/*.jar" />
+        </path>
     </target>
 
     <target name="CLEAN" depends="INIT_PROPERTIES" description="Removes generated build outputs.">
@@ -58,13 +66,6 @@
 
     <!-- Test targets. Test jars live in test-lib/ (never lib/): COMPILE and BUILD_RELEASE use lib/**/*.jar.
          BUILD_RELEASE does not depend on these targets and never packs bin-test/ or test-lib/. -->
-    <path id="testClasspath">
-        <pathelement location="${testBinFolder}" />
-        <pathelement location="${binFolder}" />
-        <pathelement location="${extModApiJar}" />
-        <fileset dir="${customLibsFolder}" includes="**/*.jar" />
-        <fileset dir="${testLibsFolder}" includes="**/*.jar" />
-    </path>
 
     <target name="COMPILE_TESTS" depends="COMPILE" description="Compiles the unit tests (Java 7 source level) into bin-test.">
         <delete dir="${testBinFolder}" />

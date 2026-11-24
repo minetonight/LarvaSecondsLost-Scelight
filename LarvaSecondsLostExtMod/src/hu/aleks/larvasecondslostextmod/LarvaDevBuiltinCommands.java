@@ -11,11 +11,11 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
-
 import javax.swing.SwingUtilities;
 
-/** Commands delivered by E17-S00: ping, dump-tree, select-larva, window-info, exit. */
+/** Commands delivered by E17-S00 (ping, dump-tree, select-larva, window-info, exit); dump-tree lists sub-pages since E17-S04. */
 final class LarvaDevBuiltinCommands {
 
     private static final String MAIN_FRAME_TITLE_PREFIX = "Scelight";
@@ -34,7 +34,10 @@ final class LarvaDevBuiltinCommands {
         registry.register( c.selectLarva() );
         registry.register( c.windowInfo() );
         registry.register( c.exit() );
-        LarvaSpikeCommands.registerAll( registry, module ); // E17-S01 spike, delete or promote in S04
+        LarvaDevPageCommands.registerAll( registry, module ); // E17-S04
+        LarvaDevHubCommands.registerAll( registry, module ); // E17-S05
+        LarvaDevReplayCommands.registerAll( registry, module ); // E17-S06
+        LarvaDevAutoOpenCommands.registerAll( registry, module ); // E17-S07
         LarvaSpikeBatchCommands.registerAll( registry, module ); // E17-S02 spike, delete after S02
     }
 
@@ -61,7 +64,9 @@ final class LarvaDevBuiltinCommands {
                 final IPage< ? > selected = multiPageComp().getSelectedPage();
                 final List< String > lines = new ArrayList< String >();
                 appendNode( lines, larva, selected, 0 );
-                return LarvaDevCommandResult.ok( "larvaSelected=" + ( selected == larva ) + " nodes=" + lines.size(), lines );
+                final AbstractButton close = new LarvaDevUiProbe( multiPageComp().asComponent() ).findCloseButton();
+                return LarvaDevCommandResult.ok( "larvaSelected=" + ( selected == larva ) + " nodes=" + lines.size() + " selected='"
+                        + ( selected == null ? "null" : selected.getDisplayName() ) + "' hostCloseEnabled=" + ( close != null && close.isEnabled() ), lines );
             }
         };
     }
@@ -92,6 +97,8 @@ final class LarvaDevBuiltinCommands {
     /** Simple class name; anonymous classes (Scelight's guiFactory.newPage result) fall back to the full name. */
     private static String typeName( final IPage< ? > page ) {
         final String simple = page.getClass().getSimpleName();
+        if ( page instanceof LarvaSubPage )
+            return simple + "(" + ( (LarvaSubPage) page ).getKind() + ")";
         return simple.isEmpty() ? page.getClass().getName() : simple;
     }
 

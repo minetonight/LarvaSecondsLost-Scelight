@@ -421,6 +421,8 @@ Scratch code may live in the CLI behind a hidden flag on a spike branch. Do not 
 
 ### E17-S04 — Larva hub page and page navigator
 
+> **S04 result (2026-11-24): code, unit tests and agent real-app checks done (AC-1..AC-5).** Added `LarvaHubPage`, `LarvaSubPage`, `LarvaSubPageKind`, `LarvaPageNavigator`, dev commands `select`, `close`, `add-test-page` (the AC-2 test hook) in `LarvaDevPageCommands`, and `LarvaDevUiProbe` (trimmed S01 probe, only finds the host close button). S01 spike classes and `spike-*` UI commands deleted (`LarvaSpikeBatchCommands` stays for S12). `build.xml`: `testClasspath` moved into `INIT_PROPERTIES` because the top-level definition did not see `${extModApiJar}` (tests now may use SDK types). Sub-pages return `null` from `getChildList()` (leaf, as in the spike). AC-1 note: the host X is disabled when `Larva` is selected (`dump-tree` `hostCloseEnabled=false`, `close Larva` FAILs "close button disabled"). Startup selects `Replay Folders`, not Larva.
+
 | Maps to | WP-04 · FR-2, FR-16 · AC-2.1–2.4, AC-16.1, AC-16.2 · R-1 |
 |---|---|
 | Size | M |
@@ -473,9 +475,11 @@ Scratch code may live in the CLI behind a hidden flag on a spike branch. Do not 
 - Manual in Scelight: criteria 1–5.
 
 **Definition of done.**
-- [ ] Hub, sub-page and navigator classes added. `installReplayPage()` replaced.
-- [ ] Three icons loaded. The missing-icon failure path is verified once.
-- [ ] Unit tests green. Manual checks recorded.
+- [x] Hub, sub-page and navigator classes added. `installReplayPage()` replaced.
+- [x] Three icons loaded (`requireResource` throws `Missing packaged resource: <path>` in phase `loading packaged resources`).
+- [x] The missing-icon failure path is verified once in a running Scelight.
+- [x] Unit tests green (`LarvaHubPageTest`, 28 tests in total).
+- [x] Agent checks AC-1..AC-5 recorded in a real Scelight (2026-11-24, screenshots `knowhow/epic17-s04-*.png`). Real X click, Ctrl+F4 key and larger title font stay manual for the user.
 
 ---
 
@@ -519,12 +523,16 @@ Scratch code may live in the CLI behind a hidden flag on a spike branch. Do not 
 - Manual: layout at 1280 px and 1920 px, tooltip, no auto-analysis.
 
 **Definition of done.**
-- [ ] `LarvaHubPageComp` and `LarvaHubActions` added and wired as the hub's creator.
-- [ ] Manual layout screenshot `knowhow/epic17-hub.png`.
+- [x] `LarvaHubPageComp` and `LarvaHubActions` added and wired as the hub's creator.
+- [x] Manual layout screenshot `knowhow/epic17-hub.png` (1920 px; 1280 px not checked, see S05 result).
+
+> **S05 result (2026-11-24): code, unit tests and agent real-app checks done.** New `LarvaHubPageComp`, `LarvaHubActions` (implemented by `LarvaPageNavigator` with an info dialog "Not available yet" plus a `[larva-hub]` info log line), `LarvaDevHubCommands`, `help/larva-multi-tip.html` (tip content). `LarvaSecondsLostModule.isLadderOnly()` exposes the checkbox for S14 (true until the hub was shown). Deviations: (1) `LarvaReplayPageComp` is no longer instantiated; the monitor listener still calls `requestReplayAnalysis` for new replays (its page refresh is a no-op now), S06 removes that. (2) The 1280 px layout was not checked: no xdotool/wmctrl to resize the window; the layout is a GridBag block centered in its parent so it does not depend on width. (3) Tip icon tooltip is null by Scelight design, the popup shows on hover/click. (4) No dev command clicks the buttons, since the placeholder dialog is modal and would block the channel. Manual: real clicks on the three buttons (dialog, and `[larva-hub] action startMultiAnalysis ladderOnly=false` after unchecking), tip hover popup, navigate away and back.
 
 ---
 
 ### E17-S06 — Single-replay sub-pages (per-page binding, remove singleton auto-update)
+
+> **S06 result (2026-11-24): code, unit tests, golden parity and agent real-app checks done.** New: `LarvaReplayPageController` (per-page state BUSY/READY/ERROR, lives independent of the lazily created component, request ids so a superseded or closed page's result is dropped), `LarvaReplayPageView` (what the controller needs from the component), `LarvaReplayAnalysisQueue` (interface) + `LarvaSingleReplayAnalysisQueue` (one daemon thread `larva-replay-loader`, owns the one `ReplaySummaryService`, FIFO, results posted with `invokeLater`, queued work of closed pages skipped, `shutdown()` in `destroy()`), `LarvaReplayAnalysisRunner`, `LarvaSinglePageHost` (module services for the navigator), `LarvaReplayPaths` (`normalize`, `nodeName`), `LarvaReplayFileChooser` (chooser extracted for S14), `LarvaModuleHubActions` (Open / Analyze Latest create or focus; Multi Analysis stays the S05 placeholder), `LarvaDevReplayCommands` (`open-replay`, `analyze-latest`, `refresh`, `page-text`). Navigator gained `openSingleReplay(Path, source, select)` (dedupe by `toAbsolutePath().normalize()`, focus-only on a hit, log "already open"), `findSingleReplayPage`, `getSelectedReplayFile`; the navigator no longer implements `LarvaHubActions`. `LarvaSubPage` carries the controller; `LarvaHubPage.findSingleReplayPage` is the pure lookup. `LarvaReplayPageComp` takes (module, controller, actions), no longer listens to page selection or hierarchy (no auto-latest), implements `IPageDisposedListener` (-> `controller.dispose()`), has an EDT guard in `show*`; visuals and texts unchanged. Module: singletons, `requestReplayAnalysis`, `refreshReplayPage`, `showReplayError`, `getLatestReplaySummary` and the off-EDT `showBusy` are gone; the monitor listener only records `lastDetectedReplayPath` (+ debug log). Dev-dump `recordAnalysisStart/Success/Failure` run inside the queue task; `sourceDescription` strings unchanged. **Decisions:** (1) the temporary `add-test-page` command and its placeholder comp were **removed** (real pages exist; S14 brings its own multi test path). (2) Two pages for different replays with the same file name get the same label (OQ-6 says the label is the file name); the dedupe key is the full path so both can be open, but `select/close/refresh/page-text <label>` act on the first one. (3) A failed analysis with a null message shows "Unknown error" as before. (4) `Error`s from the analysis are logged and shown as error state too, so a page never stays busy forever. **Parity (AC-4.1):** golden snapshot (`LarvaTimelineGoldenFormatter` + analysis report, the dev dump section) for 5 replays (`queensMoved`, `injectsQueued`, 3 `raw-replays/seeded-sample`): headless harness on pre-epic code (commit e629a5e, built in a scratch dir) vs the new classes: byte-identical for all 5. In the real Scelight, the pre-epic module 2.3 (built from e629a5e, fed by the replay-folder monitor) vs the new 3.0 sub-pages (via `open-replay`): the dump sections of 3 replays are byte-identical. (Headless vs in-app differ in two environment lines, `replay load=` and the `replay.players` order of one replay, in old and new alike.) Screenshot `knowhow/epic17-s06-single-page.png` (new) against the pre-epic page in `knowhow/epic17-spike-hub-with-children.png`: same layout. **Not covered by the agent:** real clicks on Open Replay (chooser dialog) and Analyze Latest on hub and page, the "no latest replay" info message (AC-3.2: not exercised, the real latest replay always resolves here; the dev command FAILs instead of showing the dialog), X / Ctrl+F4 key. Surprise: Scelight renames the copied test replay and also writes a backup copy (see running-scelight.md); both were deleted.
 
 | Maps to | WP-06 (**without** the OQ-10 auto-open feature; that is S07) · FR-3, FR-4 · AC-3.1–3.4, AC-4.1–4.3, AC-2.3 · OQ-6 · R-5 |
 |---|---|
@@ -608,14 +616,16 @@ Scratch code may live in the CLI behind a hidden flag on a spike branch. Do not 
 - Manual: criteria 1–8 in Scelight. Screenshot old vs. new page.
 
 **Definition of done.**
-- [ ] Controller, queue, chooser helper and navigator `openSingleReplay` added. Module singletons removed.
-- [ ] Listener reduced to path recording (S07 will extend it).
-- [ ] Parity checkpoint passed (criterion 5). Golden diff attached to the PR.
-- [ ] Unit tests green. Manual checklist ticked.
+- [x] Controller, queue, chooser helper and navigator `openSingleReplay` added. Module singletons removed.
+- [x] Listener reduced to path recording (S07 will extend it).
+- [x] Parity checkpoint passed (criterion 5). Golden diff empty (see S06 result).
+- [x] Unit tests green (63 tests). Agent checklist ticked (criteria 1-9, see S06 result); real clicks stay manual for the user.
 
 ---
 
 ### E17-S07 — [FR-17, new scope] Auto-open sub-page for newly detected Zerg replays
+
+> **S07 result (2026-11-24): code, unit tests and agent real-app checks done.** New: `LarvaAutoOpenPolicy` (pure: `qualifies(List<RaceView>)`, `shouldSelect`, `underCap`, `admit(ready, alreadyOpen, openCount)` -> `Admission` OPEN / SKIP_NOT_READY / SKIP_ALREADY_OPEN / SKIP_CAP; constants `MAX_AUTO_OPEN_SINGLE_PAGES = 20`, `MAX_PENDING_AUTO_REQUESTS = 5`, `SOURCE_MONITOR = "Replay Folder Monitor"`), `LarvaAutoOpenPendingLimit` (AtomicInteger CAS counter), `LarvaAutoOpenOutcome`, `LarvaAutoOpenHost`, `LarvaAutoOpenStats`, `LarvaDevAutoOpenCommands` (`auto-open-state`, plus dev-only `auto-open-submit <path>`). Changed: `LarvaSingleReplayAnalysisQueue.submitAutoOpen(Path)`, `LarvaReplayAnalysisRunner.analyzeForAutoOpen`, `ReplaySummaryService.analyzeForAutoOpen` (loads the processor once, Zerg check on `IDetails` player races, analyzes that same processor; `analyze` now shares `buildPageSummary`/`analyzeLoadedReplay`), `LarvaPageNavigator.checkAutoOpenAdmission` + `autoOpenSingleReplay`, `LarvaReplayPageController.presetResult`, module listener (`handOffToAutoOpen`, logs hand-off time). **Flow:** listener (job thread) records the path, calls `submitAutoOpen` (pending limit, returns in 0.06-0.5 ms) -> worker: EDT admission check (ready, dedupe, cap; before any parse) -> `analyzeForAutoOpen` (one parse) -> EDT: `autoOpenSingleReplay` re-checks admission, creates the page already READY (or ERROR if the analysis failed after a passed Zerg check) and selects it only by the focus rule. **Deviations:** (1) A new page is created already READY, not BUSY first (the story's allowed single-parse option); busy is never visible. (2) `autoOpenSingleReplay` takes the outcome as second argument and the dedupe/cap check is also done on the worker before parsing (saves a parse for duplicates and capped events). (3) Extra dev command `auto-open-submit`. (4) Pending limit counts waiting requests only: a burst of 10 gave 1 running + 5 pending = 6 pages, 4 dropped (logged). **Surprise:** Scelight opens and selects its own Replay Analyzer before notifying listeners, so for real new replays the user is always on a non-Larva page and the page is only added (D17-c). The select branch was verified with `auto-open-submit` (on the hub and on a Larva sub-page). **Side effect:** the SC2ReplayStatsUploader module also picks up copied test replays (see running-scelight.md). **Not covered by the agent:** an event before the hub is installed (unit-tested via the null host / `SKIP_NOT_READY`), the busy state of an auto page, visual check beyond one screenshot, user's own "Minimize to tray" behaviour.
 
 | Maps to | **Proposed FR-17** (§0.1) · OQ-10 · OQ-6 (dedupe) · FR-3/FR-4 (page type) · AC-17.1–17.8 |
 |---|---|
@@ -688,8 +698,8 @@ Scratch code may live in the CLI behind a hidden flag on a spike branch. Do not 
 - In Scelight, by the agent: criteria 1–10. To simulate new replays, copy fixture replays into the monitored Accounts folder and delete them afterwards (user-approved, procedure and naming in [knowhow/running-scelight.md](../knowhow/running-scelight.md)). If Scelight ignores copied replays because of an "only just played" style setting, record it in the knowhow file.
 
 **Definition of done.**
-- [ ] Policy, queue extension, navigator method and listener wiring added.
-- [ ] Unit tests green. Manual checklist ticked with notes.
+- [x] Policy, queue extension, navigator method and listener wiring added.
+- [x] Unit tests green (79 tests). Agent checklist ticked (criteria 1-10, see S07 result); real-click and visual checks stay manual for the user.
 - [ ] Help text mentions auto-open (in S16).
 
 ---

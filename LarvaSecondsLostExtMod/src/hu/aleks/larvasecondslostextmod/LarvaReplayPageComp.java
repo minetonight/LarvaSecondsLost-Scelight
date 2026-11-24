@@ -1,17 +1,13 @@
 package hu.aleks.larvasecondslostextmod;
 
-import hu.scelightapibase.gui.comp.multipage.IPageSelectedListener;
-import hu.scelightapibase.gui.comp.IFileChooser;
+import hu.scelightapibase.gui.comp.multipage.IPageDisposedListener;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.nio.file.Path;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -19,16 +15,22 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingConstants;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- * Module-owned replay diagnostics page used as the Epic 2 fallback replay-view surface.
+ * Content of one single-replay sub-page, bound to exactly one replay through its {@link LarvaReplayPageController}.
+ * It only renders what the controller tells it (EDT only); it never starts an analysis by itself (no auto-latest).
  */
 @SuppressWarnings("serial")
-public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener, HierarchyListener {
+public class LarvaReplayPageComp extends JPanel implements LarvaReplayPageView, IPageDisposedListener {
 
     /** Owning external module. */
     private final LarvaSecondsLostModule module;
+
+    /** State holder of this page. */
+    private final LarvaReplayPageController controller;
+
+    /** Behavior of the Open Replay and Analyze Latest buttons (same as on the hub). */
+    private final LarvaHubActions actions;
 
     /** Status label displayed above the replay summary. */
     private final JLabel statusLabel;
@@ -42,18 +44,20 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
     /** Formats compact player-facing benchmark tier strings. */
     private final LarvaPhaseBenchmarkRatingFormatter phaseBenchmarkRatingFormatter;
 
-    /** Last replay file displayed on this page. */
-    private Path currentReplayFile;
-
     /**
-     * Creates a new replay page component.
+     * Creates the component and renders the controller's current state (the component is created lazily, so the
+     * analysis may already be finished).
      *
      * @param module owning external module
+     * @param controller state holder of this page
+     * @param actions behavior of the Open Replay and Analyze Latest buttons
      */
-    public LarvaReplayPageComp( final LarvaSecondsLostModule module ) {
+    LarvaReplayPageComp( final LarvaSecondsLostModule module, final LarvaReplayPageController controller, final LarvaHubActions actions ) {
         super( new BorderLayout( 10, 10 ) );
 
         this.module = module;
+        this.controller = controller;
+        this.actions = actions;
 
         statusLabel = new JLabel( "Larva timeline ready.", module.getLarvaIcon().get(), SwingConstants.LEADING );
         detailsArea = new JTextArea();
@@ -61,42 +65,23 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         phaseBenchmarkRatingFormatter = new LarvaPhaseBenchmarkRatingFormatter();
 
         buildGui();
-        addHierarchyListener( this );
-        showIdleMessage();
+        controller.attach( this );
     }
 
+    /** Closing the page: pending results of this page are dropped from now on. */
     @Override
-    public void pageSelected() {
-        requestAutomaticLatestReplayLoad( "Larva page navigation" );
+    public void pageDisposed() {
+        controller.dispose();
     }
 
-    @Override
-    public void hierarchyChanged( final HierarchyEvent event ) {
-        if ( ( event.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED ) == 0L || !isShowing() )
-            return;
-
-        requestAutomaticLatestReplayLoad( "Larva page shown" );
+    /** @return the status line text, for the dev command {@code page-text} */
+    String getStatusText() {
+        return statusLabel.getText();
     }
 
-    /**
-     * Attempts to load the latest replay automatically.
-     *
-     * @param sourceDescription source label describing the automatic trigger
-     */
-    private void requestAutomaticLatestReplayLoad( final String sourceDescription ) {
-        final Path replayFile = module.resolveLatestReplayPath();
-        if ( replayFile == null ) {
-            if ( module.getLatestReplaySummary() == null )
-                showIdleMessage();
-            return;
-        }
-
-        final LarvaReplayPageSummary latestSummary = module.getLatestReplaySummary();
-        final Path latestLoadedReplay = latestSummary == null || latestSummary.getReplaySummary() == null ? null : latestSummary.getReplaySummary().getReplayFile();
-        if ( replayFile.equals( latestLoadedReplay ) )
-            return;
-
-        module.requestReplayAnalysis( replayFile, sourceDescription );
+    /** @return the details text, for the dev command {@code page-text} */
+    String getDetailsText() {
+        return detailsArea.getText();
     }
 
     /**
@@ -140,7 +125,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
     }
 
     /**
-     * Creates the button used to pick a replay file manually.
+     * Creates the button used to pick a replay file manually; the replay opens on a new page (or focuses its page).
      *
      * @return the configured button
      */
@@ -149,7 +134,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         button.addActionListener( new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed( final java.awt.event.ActionEvent event ) {
-                openReplayChooser();
+                actions.openReplay( LarvaReplayPageComp.this );
             }
         } );
 
@@ -157,7 +142,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
     }
 
     /**
-     * Creates the button used to analyze the latest replay that Scelight would consider current.
+     * Creates the button used to analyze the latest replay that Scelight would consider current, on a new page.
      *
      * @return the configured button
      */
@@ -166,13 +151,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         button.addActionListener( new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed( final java.awt.event.ActionEvent event ) {
-                final Path replayFile = module.resolveLatestReplayPath();
-                if ( replayFile == null ) {
-                    module.guiUtils.showInfoMsg( "No replay could be resolved from the replay monitor or monitored replay folders yet." );
-                    return;
-                }
-
-                module.requestReplayAnalysis( replayFile, "Latest replay resolver" );
+                actions.analyzeLatestReplay();
             }
         } );
 
@@ -180,7 +159,7 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
     }
 
     /**
-     * Creates the button used to refresh the currently displayed replay.
+     * Creates the button used to re-analyze this page's replay in place.
      *
      * @return the configured button
      */
@@ -189,59 +168,11 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
         button.addActionListener( new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed( final java.awt.event.ActionEvent event ) {
-                if ( currentReplayFile == null ) {
-                    final LarvaReplayPageSummary latestSummary = module.getLatestReplaySummary();
-                    if ( latestSummary != null )
-                        currentReplayFile = latestSummary.getReplaySummary().getReplayFile();
-                }
-
-                if ( currentReplayFile == null ) {
-                    module.guiUtils.showInfoMsg( "No replay is currently loaded on the Larva page." );
-                    return;
-                }
-
-                module.requestReplayAnalysis( currentReplayFile, "Larva replay page refresh" );
+                controller.requestAnalysis( LarvaModuleHubActions.SOURCE_REFRESH );
             }
         } );
 
         return button;
-    }
-
-    /**
-     * Opens a replay chooser and starts analysis for the selected replay.
-     */
-    private void openReplayChooser() {
-        final IFileChooser fileChooser = currentReplayFile == null ? module.guiFactory.newFileChooser() : module.guiFactory.newFileChooser( currentReplayFile.getParent() );
-        fileChooser.asFileChooser().setFileSelectionMode( JFileChooser.FILES_ONLY );
-        fileChooser.asFileChooser().setFileFilter( new FileNameExtensionFilter( "StarCraft II Replay (*.SC2Replay)", "SC2Replay", "sc2replay" ) );
-
-        final Path lastDetectedReplayPath = module.getLastDetectedReplayPath();
-        if ( currentReplayFile == null && lastDetectedReplayPath != null && lastDetectedReplayPath.getParent() != null )
-            fileChooser.setCurrentFolder( lastDetectedReplayPath.getParent() );
-
-        if ( JFileChooser.APPROVE_OPTION != fileChooser.asFileChooser().showOpenDialog( this ) )
-            return;
-
-        module.requestReplayAnalysis( fileChooser.getSelectedPath(), "Manual replay selection" );
-    }
-
-    /**
-     * Shows the idle message before any replay has been loaded.
-     */
-    void showIdleMessage() {
-        timelinePreviewComp.setTimelineModel( null );
-        detailsArea.setText( "Choose a replay to see where Zerg hatcheries floated at 3+ larva.\n\n"
-            + "What you are looking at:\n"
-            + "- Under each player name, a phase table breaks the game into Early, Mid, Late, and End based on sustained worker-count promotions.\n"
-            + "- The first two phase-table rows benchmark larva generation and larva missed against compact gold / plat / dia / masters / pro reference bands.\n"
-            + "- Red bars show how long a hatchery stayed at 3 or more larva.\n"
-            + "- A green lane shows inject-active windows inferred from replay-derived triple-larva bursts.\n"
-            + "- A dark red lane shows conservative missed inject potential windows backed by trustworthy queen evidence.\n"
-            + "- Black ticks on the main rail mark every LARVA_PERIOD (9.9) seconds of missed potential larva while a hatchery stayed at 3 or more larva.\n"
-            + "- Black ticks on the dark red lane mark every 29 seconds of accumulated missed inject potential, worth 3 potential larva per hatchery.\n"
-            + "- Player totals add up both missed larva and potential injected larva missed across visible hatcheries, while the phase table normalizes those values per hatch per minute.\n\n"
-            + "Use the buttons above to open a replay, analyze the latest replay, or refresh the current one." );
-        detailsArea.setCaretPosition( 0 );
     }
 
     /**
@@ -250,8 +181,10 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
      * @param replayFile replay being analyzed
      * @param sourceDescription source of the request
      */
-    void showBusy( final Path replayFile, final String sourceDescription ) {
-        currentReplayFile = replayFile;
+    @Override
+    public void showBusy( final Path replayFile, final String sourceDescription ) {
+        if ( !requireEdt( "showBusy" ) )
+            return;
         statusLabel.setText( "Analyzing replay..." );
         timelinePreviewComp.setTimelineModel( null );
         detailsArea.setText( "Analyzing " + ( replayFile == null ? "replay" : replayFile.getFileName() ) + "..." );
@@ -262,8 +195,10 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
      *
      * @param summary replay summary to display
      */
-    void showSummary( final LarvaReplayPageSummary summary ) {
-        currentReplayFile = summary.getReplaySummary().getReplayFile();
+    @Override
+    public void showSummary( final LarvaReplayPageSummary summary ) {
+        if ( !requireEdt( "showSummary" ) )
+            return;
         statusLabel.setText( "Replay ready: " + summary.getReplaySummary().getReplayFile().getFileName() );
         timelinePreviewComp.setTimelineModel( summary.getTimelineModel() );
         detailsArea.setText( buildSummaryText( summary ) );
@@ -277,14 +212,24 @@ public class LarvaReplayPageComp extends JPanel implements IPageSelectedListener
      * @param sourceDescription source of the request
      * @param errorMessage error message to show
      */
-    void showError( final Path replayFile, final String sourceDescription, final String errorMessage ) {
-        currentReplayFile = replayFile;
+    @Override
+    public void showError( final Path replayFile, final String sourceDescription, final String errorMessage ) {
+        if ( !requireEdt( "showError" ) )
+            return;
         statusLabel.setText( "Replay could not be analyzed." );
         timelinePreviewComp.setTimelineModel( null );
         detailsArea.setText( "Could not analyze " + ( replayFile == null ? "the selected replay" : replayFile.getFileName() ) + ".\n\n"
             + "Reason:\n"
                 + ( errorMessage == null ? "Unknown error" : errorMessage ) );
         detailsArea.setCaretPosition( 0 );
+    }
+
+    /** Component methods must only run on the EDT (AC-9); a violation is logged and the update skipped. */
+    private boolean requireEdt( final String operation ) {
+        if ( SwingUtilities.isEventDispatchThread() )
+            return true;
+        module.logger.error( "[larva-replay] " + operation + " called off the EDT on thread '" + Thread.currentThread().getName() + "'; ignored" );
+        return false;
     }
 
     /**

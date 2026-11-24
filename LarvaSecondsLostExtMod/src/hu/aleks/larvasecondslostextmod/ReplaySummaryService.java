@@ -93,7 +93,48 @@ public class ReplaySummaryService {
     * @return replay summary to display on the module page
      */
     public LarvaReplayPageSummary analyze( final Path replayFile, final String sourceDescription ) {
-        final ReplayAnalysisContext context = analyzeReplayContext( replayFile, sourceDescription );
+        return buildPageSummary( analyzeReplayContext( replayFile, sourceDescription ) );
+    }
+
+    /**
+     * Auto-open path (E17-S07): loads the replay processor once, checks the races, and analyzes that same processor if a
+     * Zerg player is present. A new replay is usually a cache miss, where {@code getRepProc} is already a full parse with
+     * events, so the analysis needs no second parse. The race check uses the replay details only (not the phase-table
+     * map, which is not guaranteed to be Zerg-only).
+     *
+     * @param replayFile replay file
+     * @param sourceDescription short description of how the replay was selected
+     * @return the outcome; never <code>null</code>, bad replays are reported instead of thrown
+     */
+    public LarvaAutoOpenOutcome analyzeForAutoOpen( final Path replayFile, final String sourceDescription ) {
+        final IRepProcessor repProc;
+        try {
+            repProc = loadRepProc( replayFile );
+            if ( !LarvaAutoOpenPolicy.qualifies( buildRaceViews( repProc ) ) )
+                return LarvaAutoOpenOutcome.notZerg();
+        } catch ( final RuntimeException e ) {
+            logger.debug( "Auto-open pre-check failed for " + replayFile + ": " + e );
+            return LarvaAutoOpenOutcome.precheckFailed( e.getMessage() );
+        }
+        try {
+            return LarvaAutoOpenOutcome.analyzed( buildPageSummary( analyzeLoadedReplay( replayFile, sourceDescription, repProc ) ) );
+        } catch ( final RuntimeException e ) {
+            logger.error( "Failed to analyze auto-opened replay: " + replayFile, e );
+            return LarvaAutoOpenOutcome.analysisFailed( e.getMessage() );
+        }
+    }
+
+    private static List< LarvaAutoOpenPolicy.RaceView > buildRaceViews( final IRepProcessor repProc ) {
+        final List< LarvaAutoOpenPolicy.RaceView > views = new ArrayList<>();
+        final IDetails details = repProc.getReplay() == null ? null : repProc.getReplay().getDetails();
+        if ( details == null || details.getPlayerList() == null )
+            return views;
+        for ( final IPlayer player : details.getPlayerList() )
+            views.add( new LarvaAutoOpenPolicy.RaceView( player != null && IRace.ZERG.equals( player.getRace() ) ) );
+        return views;
+    }
+
+    private LarvaReplayPageSummary buildPageSummary( final ReplayAnalysisContext context ) {
         final long lengthMs = context.repProc.getLengthMs();
         final long previewWindowStartMs = lengthMs <= 0L ? 0L : lengthMs / 4L;
         final long previewWindowDurationMs = lengthMs <= 0L ? 0L : Math.max( 10000L, lengthMs / 5L );
@@ -124,15 +165,24 @@ public class ReplaySummaryService {
      * @return analysis context
      */
     private ReplayAnalysisContext analyzeReplayContext( final Path replayFile, final String sourceDescription ) {
+        return analyzeLoadedReplay( replayFile, sourceDescription, loadRepProc( replayFile ) );
+    }
+
+    private IRepProcessor loadRepProc( final Path replayFile ) {
         if ( replayFile == null )
             throw new IllegalArgumentException( "Replay file is required." );
 
         if ( !Files.exists( replayFile ) )
             throw new IllegalArgumentException( "Replay file does not exist: " + replayFile );
 
-        IRepProcessor repProc = repParserEngine.getRepProc( replayFile );
+        final IRepProcessor repProc = repParserEngine.getRepProc( replayFile );
         if ( repProc == null )
             throw new IllegalStateException( "Scelight could not parse the replay file." );
+        return repProc;
+    }
+
+    private ReplayAnalysisContext analyzeLoadedReplay( final Path replayFile, final String sourceDescription, final IRepProcessor loadedRepProc ) {
+        IRepProcessor repProc = loadedRepProc;
 
         boolean fullReplayParseUsed = false;
         if ( repProc.getReplay().getTrackerEvents() == null || repProc.getReplay().getGameEvents() == null ) {
