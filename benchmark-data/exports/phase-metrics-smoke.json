@@ -29,7 +29,7 @@
         "canonicalSourceCount": 1
       },
       "analysis": {
-        "replayFilePath": "/home/aleks/Development/Java/LarvaSecondsLost-Scelight/benchmark-data/raw-replays/seeded-sample/637083f8f95f7389f370cf3c68ef9506.SC2Replay",
+        "replayFilePath": "<REPO>/benchmark-data/raw-replays/seeded-sample/637083f8f95f7389f370cf3c68ef9506.SC2Replay",
         "replaySha256": "8b83038a95564f3dda84e0e5a94637a86f1e41f147b3080450097b5eabb3685c",
         "sourceDescription": "benchmark-corpus:8b83038a95564f3dda84e0e5a94637a86f1e41f147b3080450097b5eabb3685c:SpawningTool filtered replay browser",
         "mapTitle": "[ESL] Oceanborn",

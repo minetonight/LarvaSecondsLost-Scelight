@@ -4,7 +4,7 @@
   "manifestSchemaVersion": "epic13-phase1-v1",
   "extractorProtocolVersion": "stdin-json-v1",
   "extractionRunId": "run-20260422T192810Z",
-  "extractorCommand": "python3 benchmark-data/tools/benchmark_java_extractor.py --java-bin /usr/lib/jvm/java-8-openjdk-amd64/bin/java --classpath '/home/aleks/Documents/StarCraft II/Scelight/mod-x/larva-seconds-lost/1.3/larva-seconds-lost.jar:/home/aleks/Documents/StarCraft II/Scelight/mod/app/6.5.4/scelight.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/mod-x-api/1.5.2/ext-mod-api.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/app-libs/1.5.2/app-libs.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/launcher/3.1.4/scelight-launcher.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/sc2-t/2.0/sc2-t.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/sc2-bd/1.8/sc2-bd.sldat' --scelight-app-dir '/home/aleks/Documents/StarCraft II/Scelight'",
+  "extractorCommand": "python3 benchmark-data/tools/benchmark_java_extractor.py --java-bin /usr/lib/jvm/java-8-openjdk-amd64/bin/java --classpath '~/Documents/StarCraft II/Scelight/mod-x/larva-seconds-lost/1.3/larva-seconds-lost.jar:~/Documents/StarCraft II/Scelight/mod/app/6.5.4/scelight.sldat:~/Documents/StarCraft II/Scelight/mod/mod-x-api/1.5.2/ext-mod-api.sldat:~/Documents/StarCraft II/Scelight/mod/app-libs/1.5.2/app-libs.sldat:~/Documents/StarCraft II/Scelight/mod/launcher/3.1.4/scelight-launcher.sldat:~/Documents/StarCraft II/Scelight/mod/sc2-t/2.0/sc2-t.sldat:~/Documents/StarCraft II/Scelight/mod/sc2-bd/1.8/sc2-bd.sldat' --scelight-app-dir '~/Documents/StarCraft II/Scelight'",
   "manifestEntry": {
     "replayHash": "85d045ad0b72011e53c560e57ee9a56e79a93f27439d5e76487525d73424feb5",
     "filePath": "benchmark-data/raw-replays/categorized/SpawningTool_filtered_replay_browser/elite-7000/Reynor/ZvZ/elite-reynor-zvz/c189bed5ca5ba37c22bac65c29964a2d.SC2Replay",
@@ -22,7 +22,7 @@
     "canonicalSourceCount": 1
   },
   "analysis": {
-    "replayFilePath": "/home/aleks/Development/Java/LarvaSecondsLost-Scelight/benchmark-data/raw-replays/categorized/SpawningTool_filtered_replay_browser/elite-7000/Reynor/ZvZ/elite-reynor-zvz/c189bed5ca5ba37c22bac65c29964a2d.SC2Replay",
+    "replayFilePath": "<REPO>/benchmark-data/raw-replays/categorized/SpawningTool_filtered_replay_browser/elite-7000/Reynor/ZvZ/elite-reynor-zvz/c189bed5ca5ba37c22bac65c29964a2d.SC2Replay",
     "replaySha256": "85d045ad0b72011e53c560e57ee9a56e79a93f27439d5e76487525d73424feb5",
     "sourceDescription": "benchmark-corpus:85d045ad0b72011e53c560e57ee9a56e79a93f27439d5e76487525d73424feb5:SpawningTool filtered replay browser",
     "mapTitle": "[ESL] NeoHumanity",

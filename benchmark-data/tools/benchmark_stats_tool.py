@@ -13,6 +13,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
+from portable_paths import portable_text
+
 from benchmark_corpus_tool import COHORT_BUCKETS
 from benchmark_corpus_tool import MATCHUPS
 from benchmark_corpus_tool import write_json
@@ -414,7 +416,7 @@ def main(argv: Sequence[str]) -> int:
     summary_payload = {
         "schemaVersion": SCHEMA_VERSION,
         "generatedAt": iso_now(),
-        "phaseMetricsCsv": str(args.csv_input),
+        "phaseMetricsCsv": portable_text(str(args.csv_input)),
         "phaseRowCount": len(phase_rows),
         "matchupSpecificTable": matchup_specific_rows,
         "fallbackTable": fallback_rows,

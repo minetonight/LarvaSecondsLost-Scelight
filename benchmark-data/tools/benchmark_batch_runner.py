@@ -25,6 +25,8 @@ from benchmark_corpus_tool import SCHEMA_VERSION as MANIFEST_SCHEMA_VERSION
 from benchmark_corpus_tool import read_json
 from benchmark_corpus_tool import validate_manifest
 from benchmark_corpus_tool import write_json
+from portable_paths import portable_paths
+from portable_paths import portable_text
 
 RUNNER_SCHEMA_VERSION = "epic13-phase4-v1"
 EXTRACTOR_PROTOCOL_VERSION = "stdin-json-v1"
@@ -550,7 +552,7 @@ def main(argv: Sequence[str]) -> int:
                 analysis_payload = invoke_extractor(args.extract_command, request_payload)
                 validate_analysis_payload(analysis_payload, replay_hash)
                 sidecar_payload = build_sidecar_payload(manifest_entry, analysis_payload, args.run_id, args.extract_command)
-                write_json(sidecar_path, sidecar_payload)
+                write_json(sidecar_path, portable_paths(sidecar_payload))
                 new_replay_count += 1
             except Exception as exc:
                 failure_list.append(
@@ -597,9 +599,9 @@ def main(argv: Sequence[str]) -> int:
         "phaseRowCount": len(phase_rows),
         "replayRecords": replay_records,
     }
-    write_json(args.json_out, json_export_payload)
-    write_phase_csv(args.csv_out, phase_rows)
-    write_jsonl(args.failure_log_out, failure_list)
+    write_json(args.json_out, portable_paths(json_export_payload))
+    write_phase_csv(args.csv_out, portable_paths(phase_rows))
+    write_jsonl(args.failure_log_out, portable_paths(failure_list))
 
     summary_payload = {
         "schemaVersion": RUNNER_SCHEMA_VERSION,
@@ -630,6 +632,7 @@ def main(argv: Sequence[str]) -> int:
         "failureList": failure_list,
         "status": "success" if not failure_list else "partial-failure",
     }
+    summary_payload = portable_paths(summary_payload)
     write_json(args.summary_json_out, summary_payload)
     args.summary_md_out.parent.mkdir(parents=True, exist_ok=True)
     args.summary_md_out.write_text(build_summary_markdown(summary_payload), encoding="utf-8")

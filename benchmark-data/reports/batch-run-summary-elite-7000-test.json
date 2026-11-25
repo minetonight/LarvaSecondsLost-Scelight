@@ -12,7 +12,7 @@
   "newReplayCount": 1,
   "phaseRowCount": 4,
   "extractionRunId": "run-20260422T192105Z",
-  "extractorCommand": "python3 benchmark-data/tools/benchmark_java_extractor.py --java-bin /usr/lib/jvm/java-8-openjdk-amd64/bin/java --classpath '/home/aleks/Documents/StarCraft II/Scelight/mod-x/larva-seconds-lost/1.3/larva-seconds-lost.jar:/home/aleks/Documents/StarCraft II/Scelight/mod/app/6.5.4/scelight.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/mod-x-api/1.5.2/ext-mod-api.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/app-libs/1.5.2/app-libs.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/launcher/3.1.4/scelight-launcher.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/sc2-t/2.0/sc2-t.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/sc2-bd/1.8/sc2-bd.sldat' --scelight-app-dir '/home/aleks/Documents/StarCraft II/Scelight'",
+  "extractorCommand": "python3 benchmark-data/tools/benchmark_java_extractor.py --java-bin /usr/lib/jvm/java-8-openjdk-amd64/bin/java --classpath '~/Documents/StarCraft II/Scelight/mod-x/larva-seconds-lost/1.3/larva-seconds-lost.jar:~/Documents/StarCraft II/Scelight/mod/app/6.5.4/scelight.sldat:~/Documents/StarCraft II/Scelight/mod/mod-x-api/1.5.2/ext-mod-api.sldat:~/Documents/StarCraft II/Scelight/mod/app-libs/1.5.2/app-libs.sldat:~/Documents/StarCraft II/Scelight/mod/launcher/3.1.4/scelight-launcher.sldat:~/Documents/StarCraft II/Scelight/mod/sc2-t/2.0/sc2-t.sldat:~/Documents/StarCraft II/Scelight/mod/sc2-bd/1.8/sc2-bd.sldat' --scelight-app-dir '~/Documents/StarCraft II/Scelight'",
   "resume": true,
   "force": true,
   "successMatrix": {

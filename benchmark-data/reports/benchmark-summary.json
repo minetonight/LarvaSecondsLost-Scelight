@@ -1,7 +1,7 @@
 {
   "schemaVersion": "epic13-phase5-v1",
   "generatedAt": "2026-04-07T13:12:49Z",
-  "phaseMetricsCsv": "/home/aleks/Development/Java/LarvaSecondsLost-Scelight/benchmark-data/exports/phase-metrics.csv",
+  "phaseMetricsCsv": "<REPO>/benchmark-data/exports/phase-metrics.csv",
   "phaseRowCount": 24,
   "matchupSpecificTable": [
     {

@@ -41,7 +41,7 @@
         "canonicalSourceCount": 3
       },
       "analysis": {
-        "replayFilePath": "/home/aleks/Development/Java/LarvaSecondsLost-Scelight/benchmark-data/raw-replays/bucketed-mmr/mmr-2000/ZvP/75699faaa6244ff09c9047fa955d1944d9ebbe3a955e3bcbc9224f0bec6d9156.SC2Replay",
+        "replayFilePath": "<REPO>/benchmark-data/raw-replays/bucketed-mmr/mmr-2000/ZvP/75699faaa6244ff09c9047fa955d1944d9ebbe3a955e3bcbc9224f0bec6d9156.SC2Replay",
         "replaySha256": "75699faaa6244ff09c9047fa955d1944d9ebbe3a955e3bcbc9224f0bec6d9156",
         "sourceDescription": "benchmark-corpus:75699faaa6244ff09c9047fa955d1944d9ebbe3a955e3bcbc9224f0bec6d9156:SpawningTool replay browser",
         "mapTitle": "Beckett Industries LE",

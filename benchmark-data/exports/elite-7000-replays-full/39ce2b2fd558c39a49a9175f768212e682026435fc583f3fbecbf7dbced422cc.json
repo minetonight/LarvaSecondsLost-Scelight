@@ -4,7 +4,7 @@
   "manifestSchemaVersion": "epic13-phase1-v1",
   "extractorProtocolVersion": "stdin-json-v1",
   "extractionRunId": "run-20260422T192119Z",
-  "extractorCommand": "python3 benchmark-data/tools/benchmark_java_extractor.py --java-bin /usr/lib/jvm/java-8-openjdk-amd64/bin/java --classpath '/home/aleks/Documents/StarCraft II/Scelight/mod-x/larva-seconds-lost/1.3/larva-seconds-lost.jar:/home/aleks/Documents/StarCraft II/Scelight/mod/app/6.5.4/scelight.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/mod-x-api/1.5.2/ext-mod-api.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/app-libs/1.5.2/app-libs.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/launcher/3.1.4/scelight-launcher.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/sc2-t/2.0/sc2-t.sldat:/home/aleks/Documents/StarCraft II/Scelight/mod/sc2-bd/1.8/sc2-bd.sldat' --scelight-app-dir '/home/aleks/Documents/StarCraft II/Scelight'",
+  "extractorCommand": "python3 benchmark-data/tools/benchmark_java_extractor.py --java-bin /usr/lib/jvm/java-8-openjdk-amd64/bin/java --classpath '~/Documents/StarCraft II/Scelight/mod-x/larva-seconds-lost/1.3/larva-seconds-lost.jar:~/Documents/StarCraft II/Scelight/mod/app/6.5.4/scelight.sldat:~/Documents/StarCraft II/Scelight/mod/mod-x-api/1.5.2/ext-mod-api.sldat:~/Documents/StarCraft II/Scelight/mod/app-libs/1.5.2/app-libs.sldat:~/Documents/StarCraft II/Scelight/mod/launcher/3.1.4/scelight-launcher.sldat:~/Documents/StarCraft II/Scelight/mod/sc2-t/2.0/sc2-t.sldat:~/Documents/StarCraft II/Scelight/mod/sc2-bd/1.8/sc2-bd.sldat' --scelight-app-dir '~/Documents/StarCraft II/Scelight'",
   "manifestEntry": {
     "replayHash": "39ce2b2fd558c39a49a9175f768212e682026435fc583f3fbecbf7dbced422cc",
     "filePath": "benchmark-data/raw-replays/categorized/SpawningTool_filtered_replay_browser/elite-7000/Serral/ZvP/elite-serral-zvp/073de0777fdb61a8d15ffa6312734f61.SC2Replay",
@@ -22,7 +22,7 @@
     "canonicalSourceCount": 1
   },
   "analysis": {
-    "replayFilePath": "/home/aleks/Development/Java/LarvaSecondsLost-Scelight/benchmark-data/raw-replays/categorized/SpawningTool_filtered_replay_browser/elite-7000/Serral/ZvP/elite-serral-zvp/073de0777fdb61a8d15ffa6312734f61.SC2Replay",
+    "replayFilePath": "<REPO>/benchmark-data/raw-replays/categorized/SpawningTool_filtered_replay_browser/elite-7000/Serral/ZvP/elite-serral-zvp/073de0777fdb61a8d15ffa6312734f61.SC2Replay",
     "replaySha256": "39ce2b2fd558c39a49a9175f768212e682026435fc583f3fbecbf7dbced422cc",
     "sourceDescription": "benchmark-corpus:39ce2b2fd558c39a49a9175f768212e682026435fc583f3fbecbf7dbced422cc:SpawningTool filtered replay browser",
     "mapTitle": "Persephone LE",

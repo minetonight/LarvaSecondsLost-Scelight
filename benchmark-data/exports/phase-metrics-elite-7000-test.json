@@ -23,7 +23,7 @@
         "canonicalSourceCount": 1
       },
       "analysis": {
-        "replayFilePath": "/home/aleks/Development/Java/LarvaSecondsLost-Scelight/benchmark-data/raw-replays/categorized/SpawningTool_filtered_replay_browser/elite-7000/Reynor/ZvP/elite-reynor-zvp/f878b067d4289f354db69eee5b886ba4.SC2Replay",
+        "replayFilePath": "<REPO>/benchmark-data/raw-replays/categorized/SpawningTool_filtered_replay_browser/elite-7000/Reynor/ZvP/elite-reynor-zvp/f878b067d4289f354db69eee5b886ba4.SC2Replay",
         "replaySha256": "04f41bd9c90d6792f0c75700ea87b897b41b3ccdcbe6d0dbadefc71966363fdf",
         "sourceDescription": "benchmark-corpus:04f41bd9c90d6792f0c75700ea87b897b41b3ccdcbe6d0dbadefc71966363fdf:SpawningTool filtered replay browser",
         "mapTitle": "[ESL] Ghost River",
