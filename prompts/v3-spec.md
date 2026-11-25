@@ -79,3 +79,6 @@ Batch process the replays and find averages per phase. Look for correlations bet
  - chart over time
 
 6) opening a replay opens it in a new window in the tree, like the matches in the main program
+
+7) epic 17 - batch of replays analysis: show players aggregated larva stats over arbitrary time period.
+

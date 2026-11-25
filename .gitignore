@@ -15,7 +15,7 @@
 *.war
 *.nar
 *.ear
-*.zip
+# *.zip
 *.tar.gz
 *.rar
 
@@ -784,3 +784,13 @@ ScelightExtModSDK/src/hu/belicza/andras/helloworldextmod/icon/hw-icon.png
 ScelightExtModSDK/src/hu/belicza/andras/helloworldextmod/icon/package.html
 ScelightExtModSDK/src/hu/belicza/andras/helloworldextmod/icon/plus-button.png
 .directory
+
+# Test jars are tracked (JUnit, see LarvaSecondsLostExtMod/test-lib/README.txt)
+
+# Epic 18: machine-specific settings and paths (templates are tracked)
+LarvaSecondsLostExtMod/release/local.properties
+knowhow/local-paths.md
+# Deployment zips are published to the GitHub Pages repo, not kept here
+LarvaSecondsLostExtMod/release/deployment/*.zip
+__pycache__/
+LarvaSecondsLostExtMod/release/lint-tmp/

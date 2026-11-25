@@ -17,8 +17,12 @@
     <property name="releaseBuildFolder" value="${releaseFolder}/Scelight" />
     <property name="releasePropertiesFile" value="${releaseFolder}/release.properties" />
     <property name="deploymentFolder" value="${releaseFolder}/deployment" />
+    <!-- Machine-specific settings (scelightFolder, pagesRepoFolder). Gitignored; template: release/local.properties.example. -->
+    <property name="localPropertiesFile" value="${releaseFolder}/local.properties" />
 
     <target name="INIT_PROPERTIES">
+        <!-- Loaded first: Ant keeps the first value set, so -D and local.properties win over release.properties. -->
+        <property file="${localPropertiesFile}" />
         <property file="${releasePropertiesFile}" />
 
         <condition property="version" value="${version.major}.${version.minor}" else="${version.major}.${version.minor}.${version.revision}">
@@ -101,7 +105,12 @@
     <property name="goldenMultiActual" value="${testBinFolder}/epic17-multi-queensMoved.actual.txt" />
     <property name="goldenMultiViewActual" value="${testBinFolder}/epic17-multi-queensMoved.view.txt" />
 
-    <target name="GOLDEN_MULTI_RUN" depends="COMPILE" description="Runs the headless --multi dump over benchmark-data/queensMoved into bin-test.">
+    <target name="REQUIRE_SCELIGHT_FOLDER" depends="INIT_PROPERTIES">
+        <fail unless="scelightFolder"
+              message="scelightFolder is not set. Copy release/local.properties.example to release/local.properties and set it, or pass -DscelightFolder=/path/to/Scelight/" />
+    </target>
+
+    <target name="GOLDEN_MULTI_RUN" depends="COMPILE,REQUIRE_SCELIGHT_FOLDER" description="Runs the headless --multi dump over benchmark-data/queensMoved into bin-test.">
         <mkdir dir="${testBinFolder}" />
         <java jvm="${golden.java}" classname="hu.aleks.larvasecondslostextmod.LarvaMultiAnalysisCli" fork="true" failonerror="true"
               output="${goldenMultiActual}" error="${testBinFolder}/epic17-multi-queensMoved.stderr.txt">
@@ -120,7 +129,7 @@
 
     <!-- E17-S15 criterion 8: the same run with the view-model flag prints the multi page's display model; LarvaMultiViewGoldenCheck compares
          every cell string with the formatted values of the golden dump. -->
-    <target name="GOLDEN_MULTI_VIEW_RUN" depends="COMPILE" description="Runs the headless --multi --view-model dump over benchmark-data/queensMoved into bin-test.">
+    <target name="GOLDEN_MULTI_VIEW_RUN" depends="COMPILE,REQUIRE_SCELIGHT_FOLDER" description="Runs the headless --multi --view-model dump over benchmark-data/queensMoved into bin-test.">
         <mkdir dir="${testBinFolder}" />
         <java jvm="${golden.java}" classname="hu.aleks.larvasecondslostextmod.LarvaMultiAnalysisCli" fork="true" failonerror="true"
               output="${goldenMultiViewActual}" error="${testBinFolder}/epic17-multi-queensMoved.view.stderr.txt">
@@ -154,7 +163,9 @@
         <copy file="${goldenMultiActual}" tofile="${goldenMultiFile}" overwrite="true" />
     </target>
 
-    <target name="BUILD_RELEASE" depends="COMPILE" description="Creates a release and deployment of the external module.">
+    <target name="BUILD_RELEASE" depends="PACKAGE_RELEASE,CHECK_RELEASE" description="Creates a release and deployment of the external module, then checks it." />
+
+    <target name="PACKAGE_RELEASE" depends="COMPILE" description="Creates a release and deployment of the external module (no checks; use BUILD_RELEASE).">
         <tstamp>
             <format property="date" pattern="yyyy-MM-dd'T'HH:mm:ss.SSSXXX"/>
         </tstamp>
@@ -220,7 +231,149 @@
         </java>
     </target>
 
-    <target name="INSTALL_DEPLOYMENT" depends="BUILD_RELEASE" description="Installs the deployment into a Scelight folder after replacing older versions.">
+    <!-- E18-S05: the deployment is published to every user, so stop on placeholder URLs, personal paths and dev leftovers. -->
+    <target name="CHECK_RELEASE" depends="INIT_PROPERTIES" description="Fails if the deployment has placeholder URLs, personal paths or dev leftovers.">
+        <property name="moduleXmlFile" value="${deploymentFolder}/module.xml" />
+        <property name="lintFolder" value="${releaseFolder}/lint-tmp" />
+
+        <available file="${deploymentFile}" property="lintDeploymentPresent" />
+        <fail unless="lintDeploymentPresent" message="No deployment to check: ${deploymentFile}. Run PACKAGE_RELEASE first." />
+
+        <condition property="lintBadBaseUrl">
+            <not>
+                <matches string="${archiveBaseUrl}" pattern="^https://minetonight\.github\.io/.+/$" />
+            </not>
+        </condition>
+        <fail if="lintBadBaseUrl" message="archiveBaseUrl must start with https://minetonight.github.io/ and end with /, but is: ${archiveBaseUrl}" />
+
+        <delete dir="${lintFolder}" />
+        <unzip src="${deploymentFile}" dest="${lintFolder}/zip" />
+        <unzip dest="${lintFolder}/jar">
+            <fileset dir="${lintFolder}/zip" includes="**/${folder}.jar" />
+        </unzip>
+        <copy file="${moduleXmlFile}" todir="${lintFolder}" />
+
+        <fileset id="lintTextHits" dir="${lintFolder}" excludes="zip/**/*.jar">
+            <or>
+                <contains text="example.invalid" />
+                <contains text="/home/" />
+                <contains text="/Users/" />
+                <contains text="C:\Users\" casesensitive="false" />
+            </or>
+        </fileset>
+        <pathconvert refid="lintTextHits" property="lintTextHitList" pathsep="${line.separator}  " setonempty="false" />
+        <fail if="lintTextHitList" message="Release contains a placeholder URL or a personal path (example.invalid, /home/, /Users/, C:\Users\) in:${line.separator}  ${lintTextHitList}${line.separator}Files are under ${lintFolder}." />
+
+        <fileset id="lintLeftoverHits" dir="${lintFolder}" includes="**/*.log **/*Test.class **/*Tests.class **/*.SC2Replay **/*-dev-dump*.txt" />
+        <pathconvert refid="lintLeftoverHits" property="lintLeftoverHitList" pathsep="${line.separator}  " setonempty="false" />
+        <fail if="lintLeftoverHitList" message="Release contains dev leftovers (logs, test classes, replays, dumps):${line.separator}  ${lintLeftoverHitList}" />
+
+        <delete dir="${lintFolder}" />
+        <echo>Release check passed: ${deploymentFileName}</echo>
+    </target>
+
+    <!-- E18-S07: copies a checked release into the local clone of the GitHub Pages repo. Never pushes: publishing reaches every
+         user, so a person reviews the diff and pushes (see RELEASING.md). -->
+    <target name="PUBLISH_RELEASE" depends="BUILD_RELEASE" description="Copies the release into the GitHub Pages clone (pagesRepoFolder); does not push.">
+        <fail unless="pagesRepoFolder"
+              message="pagesRepoFolder is not set. Clone https://github.com/minetonight/minetonight.github.io and set pagesRepoFolder in release/local.properties." />
+        <available file="${pagesRepoFolder}/.git" type="dir" property="pagesRepoIsGit" />
+        <fail unless="pagesRepoIsGit" message="pagesRepoFolder is not a git clone: ${pagesRepoFolder}" />
+
+        <property name="pagesTargetFolder" value="${pagesRepoFolder}/scelight/${folder}" />
+        <available file="${pagesTargetFolder}/${deploymentFileName}" property="pagesZipExists" />
+        <fail if="pagesZipExists"
+              message="${deploymentFileName} is already published. Published zips are never replaced: bump version.* in release/release.properties." />
+
+        <java classname="hu.aleks.larvasecondslostextmod.update.ReleaseTool" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${binFolder}" />
+                <pathelement location="${extModApiJar}" />
+            </classpath>
+            <arg value="check-newer" />
+            <arg file="${deploymentFolder}/module.xml" />
+            <arg file="${pagesTargetFolder}/module.xml" />
+        </java>
+
+        <mkdir dir="${pagesTargetFolder}" />
+        <copy file="${deploymentFile}" todir="${pagesTargetFolder}" preservelastmodified="true" />
+        <copy file="${deploymentFolder}/module.xml" todir="${pagesTargetFolder}" overwrite="true" />
+        <copy todir="${pagesTargetFolder}/img" overwrite="true">
+            <fileset dir="${releaseFolder}/site/img" />
+        </copy>
+
+        <java classname="hu.aleks.larvasecondslostextmod.update.ReleaseTool" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${binFolder}" />
+                <pathelement location="${extModApiJar}" />
+            </classpath>
+            <arg value="page" />
+            <arg file="${releaseFolder}/site/index-template.html" />
+            <arg file="${pagesTargetFolder}/index.html" />
+            <arg file="${deploymentFolder}/module.xml" />
+        </java>
+
+        <echo>Copied ${deploymentFileName}, module.xml and index.html to ${pagesTargetFolder}</echo>
+        <echo>Review and publish (this reaches every user):</echo>
+        <echo>  cd "${pagesRepoFolder}"</echo>
+        <echo>  git status &amp;&amp; git diff --stat</echo>
+        <echo>  git add scelight/${folder}</echo>
+        <echo>  git commit -m "Larva Seconds Lost ${version}"</echo>
+        <echo>  git push</echo>
+        <echo>Then, after GitHub Pages has deployed (about 1 minute): ant SMOKE_CHECK_RELEASE</echo>
+    </target>
+
+    <!-- Updates only the landing page and its images for the version that is already published (no build, no zip, no
+         module.xml change). The release date stays the one of the published zip. Never pushes. -->
+    <target name="PUBLISH_SITE" depends="COMPILE" description="Updates index.html and images in the GitHub Pages clone for the published version; does not push.">
+        <fail unless="pagesRepoFolder"
+              message="pagesRepoFolder is not set. Clone https://github.com/minetonight/minetonight.github.io and set pagesRepoFolder in release/local.properties." />
+        <property name="pagesTargetFolder" value="${pagesRepoFolder}/scelight/${folder}" />
+        <available file="${pagesTargetFolder}/module.xml" property="pagesModuleXmlExists" />
+        <fail unless="pagesModuleXmlExists" message="Nothing published yet in ${pagesTargetFolder}. Use PUBLISH_RELEASE for the first release." />
+        <loadfile property="publishedArchiveName" srcfile="${pagesTargetFolder}/module.xml">
+            <filterchain>
+                <linecontains>
+                    <contains value="&lt;archiveFile " />
+                </linecontains>
+                <replaceregex pattern=".*path=&quot;([^&quot;]+)&quot;.*" replace="\1" />
+                <striplinebreaks />
+            </filterchain>
+        </loadfile>
+
+        <copy todir="${pagesTargetFolder}/img" overwrite="true">
+            <fileset dir="${releaseFolder}/site/img" />
+        </copy>
+        <java classname="hu.aleks.larvasecondslostextmod.update.ReleaseTool" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${binFolder}" />
+                <pathelement location="${extModApiJar}" />
+            </classpath>
+            <arg value="page" />
+            <arg file="${releaseFolder}/site/index-template.html" />
+            <arg file="${pagesTargetFolder}/index.html" />
+            <arg file="${pagesTargetFolder}/module.xml" />
+            <arg file="${pagesTargetFolder}/${publishedArchiveName}" />
+        </java>
+        <echo>Updated index.html and img/ in ${pagesTargetFolder}. Review and publish:</echo>
+        <echo>  cd "${pagesRepoFolder}"</echo>
+        <echo>  git status &amp;&amp; git diff --stat</echo>
+        <echo>  git add scelight/${folder}</echo>
+        <echo>  git commit -m "Larva Seconds Lost page update"</echo>
+        <echo>  git push</echo>
+    </target>
+
+    <target name="SMOKE_CHECK_RELEASE" depends="COMPILE" description="Downloads the live module.xml and zip and installs them into a temp folder, like a user's Scelight would.">
+        <java classname="hu.aleks.larvasecondslostextmod.update.ReleaseTool" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="${binFolder}" />
+                <pathelement location="${extModApiJar}" />
+            </classpath>
+            <arg value="smoke" />
+        </java>
+    </target>
+
+    <target name="INSTALL_DEPLOYMENT" depends="REQUIRE_SCELIGHT_FOLDER,BUILD_RELEASE" description="Installs the deployment into a Scelight folder after replacing older versions.">
         <echo>Checking Scelight folder: ${scelightFolder}</echo>
 
         <basename file="${scelightFolder}" property="scelightFolderName" />

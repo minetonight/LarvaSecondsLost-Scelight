@@ -1,0 +1,8 @@
+# Machine-specific build settings. Copy this file to release/local.properties (gitignored) and edit it.
+# Values here win over release/release.properties. You can also pass them as -Dkey=value.
+
+# Scelight install used by INSTALL_DEPLOYMENT and the golden tests. The folder must be named "Scelight".
+scelightFolder=/path/to/Scelight/
+
+# Local clone of https://github.com/minetonight/minetonight.github.io (used by PUBLISH_RELEASE).
+#pagesRepoFolder=/path/to/minetonight.github.io

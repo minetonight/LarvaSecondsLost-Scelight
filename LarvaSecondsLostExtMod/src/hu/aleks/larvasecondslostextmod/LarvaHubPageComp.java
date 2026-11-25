@@ -56,6 +56,16 @@ final class LarvaHubPageComp extends JPanel {
      * @param helpIcon the module help icon shown in the top-right corner; may be <code>null</code> (tests)
      */
     LarvaHubPageComp( final LarvaHubActions actions, final JComponent tipIcon, final JComponent helpIcon ) {
+        this( actions, tipIcon, helpIcon, null );
+    }
+
+    /**
+     * @param actions the actions behind the buttons
+     * @param tipIcon the "?" tip icon shown left of the multi analysis button
+     * @param helpIcon the module help icon shown in the top-right corner; may be <code>null</code> (tests)
+     * @param footer the online update row (E18-S09) shown at the bottom; may be <code>null</code>
+     */
+    LarvaHubPageComp( final LarvaHubActions actions, final JComponent tipIcon, final JComponent helpIcon, final JComponent footer ) {
         super( new BorderLayout() );
         this.actions = actions;
         this.tipIcon = tipIcon;
@@ -68,6 +78,8 @@ final class LarvaHubPageComp extends JPanel {
             add( header, BorderLayout.NORTH );
         }
         add( buildCenteredStack(), BorderLayout.CENTER );
+        if ( footer != null )
+            add( footer, BorderLayout.SOUTH );
     }
 
     private void wireListeners() {

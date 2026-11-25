@@ -38,51 +38,14 @@ The build uses the shared Scelight external module API jar from `../ScelightExtM
 
 ## Install into a local Scelight instance
 
-1. Edit `release/release.properties` and set `scelightFolder` to your local Scelight installation directory.
-2. Run `ant INSTALL_DEPLOYMENT`.
+1. Copy `release/local.properties.example` to `release/local.properties` (gitignored) and set `scelightFolder` to your local Scelight installation directory. You can also pass `-DscelightFolder=...`.
+2. Stop Scelight, then run `ant INSTALL_DEPLOYMENT`.
 3. The install target removes older copies of `mod-x/larva-seconds-lost` and unpacks the fresh deployment.
 4. In Scelight, enable the module from the Installed Modules page.
 
-## Publish or export the module to other users and computers
+## Publish a new version online
 
-Use the SDK-style deployment artifacts produced by `ant BUILD_RELEASE`:
-
-- `release/deployment/LarvaSecondsLost-<version>.zip` — the distributable archive
-- `release/deployment/module.xml` — the hosted update descriptor for Scelight-style published modules
-- `release/Scelight/mod-x/larva-seconds-lost/<version>/` — the unpacked module tree
-
-### Manual export to another computer
-
-This is the simplest distribution path for non-official module sharing.
-
-1. Run `ant BUILD_RELEASE`.
-2. Copy either:
-   - `release/deployment/LarvaSecondsLost-<version>.zip`, or
-   - the folder `release/Scelight/mod-x/larva-seconds-lost/<version>/`.
-3. On the target computer, install it in one of these ways:
-   - unzip `LarvaSecondsLost-<version>.zip` into the folder **that contains** the target `Scelight` folder, or
-   - manually copy `larva-seconds-lost/<version>/` under the target `Scelight/mod-x/` folder.
-4. Start Scelight and enable the module on the Installed Modules page.
-
-### Hosted publish for repeatable installs or updates
-
-This is the path to use when other users should download the module from a stable URL.
-
-1. Update [release/release.properties](release/release.properties):
-   - increment `version.major`, `version.minor`, or `version.revision`
-   - set `archiveBaseUrl` to the public HTTP or HTTPS directory where the deployment zip will be hosted
-2. Update [release/resources/Scelight-mod-x-manifest-template.xml](release/resources/Scelight-mod-x-manifest-template.xml) with real release metadata such as home page, short description, and longer HTML description.
-3. Run `ant BUILD_RELEASE`.
-4. Publish both generated files from [release/deployment](release/deployment):
-   - `LarvaSecondsLost-<version>.zip`
-   - `module.xml`
-5. Keep the `module.xml` URL stable. For a new release, upload the new zip and replace `module.xml` at the same URL.
-
-### Official-module style publishing note
-
-If the module is ever distributed through Scelight's official external-module listing flow, the Scelight operator needs the public URL of your hosted `module.xml`. The generated `module.xml` already contains the version, archive URL, SHA-256, archive size, and file list expected by that flow.
-
-See [docs/publishing-and-release.md](docs/publishing-and-release.md) for a step-by-step release guide.
+Players install once from https://minetonight.github.io/scelight/larva-seconds-lost/, and the module updates itself after that (package `hu.aleks.larvasecondslostextmod.update`). The whole release process, its Ant targets (`BUILD_RELEASE` with `CHECK_RELEASE`, `PUBLISH_RELEASE`, `SMOKE_CHECK_RELEASE`) and its rules are in [RELEASING.md](../RELEASING.md). Copying a zip to another computer by hand is described in [docs/publishing-and-release.md](docs/publishing-and-release.md).
 
 ## Story 01.07 zero-click diagnostic dump
 

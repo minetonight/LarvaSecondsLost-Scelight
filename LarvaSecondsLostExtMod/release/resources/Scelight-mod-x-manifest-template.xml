@@ -13,13 +13,26 @@
         <personName v="1">
             <first>Aleks</first>
         </personName>
+        <contact v="1">
+            <other>Discord: scorpion_rbp</other>
+        </contact>
     </authorList>
-    <homePage>https://example.invalid/larva-seconds-lost</homePage>
-    <shortDesc>Scelight module for Zerg larva analysis, phase metrics, timelines, and benchmark rankings.</shortDesc>
+    <homePage>https://minetonight.github.io/scelight/larva-seconds-lost/</homePage>
+    <shortDesc>Zerg larva and inject analysis: missed larva, inject uptime, phase tables, benchmarks and multi-replay averages.</shortDesc>
     <description><![CDATA[
         <html><body>
-            <p>Larva Seconds Lost analyzes Zerg replays inside Scelight and highlights when hatcheries floated larva, how much inject uptime was maintained, and where missed inject windows likely occurred.</p>
-            <p>The replay page now includes a larva timeline preview, per-phase metrics for Early, Mid, Late, and End game, and benchmark-based larva generation and larva missed rankings.</p>
+            <p><b>Larva Seconds Lost</b> shows how well you use your larva and injects as Zerg, for one replay or averaged over many replays.</p>
+            <ul>
+                <li><b>Larva page (hub):</b> Open Replay, Analyze Latest Replay and Multi Analysis. Every result opens as its own sub-page under Larva.</li>
+                <li><b>New replays open automatically:</b> when Scelight detects a new replay with a Zerg player, it is analyzed in the background and added as a sub-page.</li>
+                <li><b>Larva timeline</b> per hatchery: when larva sat at 3 (floating), inject uptime, and likely missed inject windows.</li>
+                <li><b>Phase table:</b> Early, Mid, Late and End game columns with larva generated, larva missed, missed inject value and inject uptime.</li>
+                <li><b>Benchmarks:</b> your larva generation and larva missed rates ranked against bands from higher-level games.</li>
+                <li><b>Multi analysis:</b> pooled tables for All games, ZvP, ZvT and ZvZ for up to two tracked players, plus milestones (100 supply, 66 and 80 drones, 200 supply).</li>
+                <li><b>Updates:</b> the module checks its home page for new versions and can install them for you (restart Scelight to use the new version).</li>
+            </ul>
+            <p>Home page and install guide: https://minetonight.github.io/scelight/larva-seconds-lost/<br>
+            Report problems: https://github.com/minetonight/LarvaSecondsLost-Scelight/issues (or Discord: scorpion_rbp)</p>
         </body></html>
     ]]></description>
     <mainClass>hu.aleks.larvasecondslostextmod.LarvaSecondsLostModule</mainClass>

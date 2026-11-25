@@ -42,6 +42,7 @@ final class LarvaDevBuiltinCommands {
         LarvaDevMultiCommands.registerAll( registry, module ); // E17-S12
         LarvaDevMultiPageCommands.registerAll( registry, module ); // E17-S14
         LarvaDevChooserCommands.registerAll( registry, module ); // E17-S17
+        LarvaDevUpdateCommands.registerAll( registry, module ); // E18
     }
 
     private IMultiPageComp multiPageComp() {

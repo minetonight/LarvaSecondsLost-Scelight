@@ -1,5 +1,14 @@
 package hu.aleks.larvasecondslostextmod;
 
+import hu.aleks.larvasecondslostextmod.update.HttpReleaseDownloader;
+import hu.aleks.larvasecondslostextmod.update.ModuleVersion;
+import hu.aleks.larvasecondslostextmod.update.OldVersionCleaner;
+import hu.aleks.larvasecondslostextmod.update.UpdateChecker;
+import hu.aleks.larvasecondslostextmod.update.UpdateConfig;
+import hu.aleks.larvasecondslostextmod.update.UpdateInstaller;
+import hu.aleks.larvasecondslostextmod.update.UpdatePanel;
+import hu.aleks.larvasecondslostextmod.update.UpdatePreferences;
+import hu.aleks.larvasecondslostextmod.update.UpdateService;
 import hu.scelightapi.BaseExtModule;
 import hu.scelightapi.IModEnv;
 import hu.scelightapi.IServices;
@@ -84,6 +93,9 @@ public class LarvaSecondsLostModule extends BaseExtModule {
     /** Latest replay detected by the replay folder monitor. */
     private volatile Path lastDetectedReplayPath;
 
+    /** Online update (E18); <code>null</code> if it could not be created (the module works without it). */
+    private volatile UpdateService updateService;
+
     @Override
     public void init( final IExtModManifestBean manifest, final IServices services, final IModEnv modEnv ) {
         super.init( manifest, services, modEnv );
@@ -106,6 +118,7 @@ public class LarvaSecondsLostModule extends BaseExtModule {
             updateInitPhase( "installing replay monitor listener" );
             installReplayMonitorListener();
             recordLifecycleUpdate( "initializing", "Replay monitor listener installed." );
+            startUpdateService();
             updateInitPhase( "installing Larva page" );
             installReplayPage();
             recordLifecycleUpdate( "initializing", "Larva page installation requested on the EDT." );
@@ -282,9 +295,72 @@ public class LarvaSecondsLostModule extends BaseExtModule {
      */
     private JComponent createHubComp() {
         final LarvaHubPageComp comp = new LarvaHubPageComp( hubActions, guiFactory.newTipIcon( multiTipContent ).asLabel(),
-                guiFactory.newHelpIcon( helpContent ).asLabel() );
+                guiFactory.newHelpIcon( helpContent ).asLabel(), createUpdatePanel() );
         hubComp = comp;
         return comp;
+    }
+
+    /**
+     * Creates and starts the online update (E18-S09, E18-S10). The update is an extra: if anything here fails it is logged and
+     * the module runs without it.
+     */
+    private void startUpdateService() {
+        updateInitPhase( "starting online update" );
+        try {
+            final ModuleVersion running = new ModuleVersion( manifest.getVersion().getMajor(), manifest.getVersion().getMinor(),
+                    manifest.getVersion().getRevision() );
+            final Path cacheFolder = modEnv.getCacheFolder();
+            final HttpReleaseDownloader downloader = new HttpReleaseDownloader( running );
+            final UpdateChecker checker = new UpdateChecker( downloader, UpdateConfig.moduleXmlUrl(), manifest.getName(), manifest.getFolder(), running );
+            final UpdateInstaller installer = new UpdateInstaller( downloader, modEnv.getRootFolder(), cacheFolder.resolve( "update" ),
+                    modEnv.getVersionFolder(), logger );
+            final UpdateService service = new UpdateService( checker, installer, new OldVersionCleaner( logger ), new UpdatePreferences(
+                    cacheFolder.resolve( UpdatePreferences.FILE_NAME ), logger ), running, modEnv.getRootFolder(), modEnv.getVersionFolder(), logger,
+                    new Executor() {
+                        @Override
+                        public void execute( final Runnable command ) {
+                            SwingUtilities.invokeLater( command );
+                        }
+                    }, new UpdateService.Clock() {
+                        @Override
+                        public long nowMillis() {
+                            return System.currentTimeMillis();
+                        }
+                    } );
+            service.start();
+            updateService = service;
+            logger.debug( "[larva-update] online update started, checking " + checker.getModuleXmlUrl() );
+        } catch ( final RuntimeException e ) {
+            logger.error( "[larva-update] online update is not available in this session", e );
+        }
+    }
+
+    /** @return the update row for the hub (EDT), or <code>null</code> if the online update is not available */
+    private JComponent createUpdatePanel() {
+        final UpdateService service = updateService;
+        if ( service == null )
+            return null;
+        final UpdatePanel panel = new UpdatePanel( service, new UpdatePanel.HomePageOpener() {
+            @Override
+            public void openHomePage() {
+                try {
+                    utils.showURLInBrowser( new java.net.URL( UpdateConfig.HOME_PAGE_URL ) );
+                } catch ( final java.net.MalformedURLException e ) {
+                    logger.error( "[larva-update] invalid home page URL", e );
+                }
+            }
+        } );
+        service.addListener( panel );
+        return panel;
+    }
+
+    /**
+     * Returns the online update service (dev commands).
+     *
+     * @return the service; <code>null</code> if not available
+     */
+    UpdateService getUpdateService() {
+        return updateService;
     }
 
     /**
@@ -528,6 +604,9 @@ public class LarvaSecondsLostModule extends BaseExtModule {
 
         if ( devCommandChannel != null )
             devCommandChannel.stop();
+
+        if ( updateService != null )
+            updateService.shutdown();
 
         if ( newRepListener != null )
             services.getRepFolderMonitor().removeNewRepListener( newRepListener );

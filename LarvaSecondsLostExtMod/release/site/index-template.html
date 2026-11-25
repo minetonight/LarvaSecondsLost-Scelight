@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Larva Seconds Lost</title>
+<meta name="description" content="Scelight module for StarCraft II Zerg players: larva and inject analysis of your replays.">
+<style>
+  :root { --bg: #fbfaf7; --fg: #1d1d1b; --muted: #5f5e58; --line: #dedbd2; --accent: #7a3e9d; --code: #efece4; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #18171a; --fg: #ecebe8; --muted: #a8a6a0; --line: #34323a; --accent: #c79ae6; --code: #25232a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 2rem; margin: 0 0 4px; }
+  h2 { font-size: 1.25rem; margin: 40px 0 8px; padding-top: 16px; border-top: 1px solid var(--line); }
+  p.lead { color: var(--muted); margin-top: 0; }
+  a { color: var(--accent); }
+  code { background: var(--code); padding: 1px 5px; border-radius: 4px; font-size: 0.92em; }
+  .download { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin: 24px 0; padding: 16px; border: 1px solid var(--line); border-radius: 8px; }
+  .download a.button { background: var(--accent); color: var(--bg); text-decoration: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; }
+  .download span { color: var(--muted); font-size: 0.92em; }
+  ol li, ul li { margin: 4px 0; }
+  footer { margin-top: 48px; color: var(--muted); font-size: 0.9em; }
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 8px 0 0; }
+  .shots figure { margin: 0; }
+  .shots a { display: block; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; cursor: zoom-in; background: #d8dde3; }
+  .shots img { display: block; width: 100%; height: 220px; object-fit: cover; object-position: top left; transition: transform .15s; }
+  .shots a:hover img, .shots a:focus-visible img { transform: scale(1.02); }
+  .shots figcaption { color: var(--muted); font-size: 0.92em; margin-top: 6px; }
+  .lightbox { position: fixed; inset: 0; z-index: 10; display: none; align-items: center; justify-content: center; padding: 16px;
+              background: rgba(10, 10, 12, 0.88); cursor: zoom-out; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 8px 40px rgba(0, 0, 0, .5); }
+  .lightbox button { position: absolute; top: 10px; right: 14px; font: 28px/1 system-ui, sans-serif; color: #fff; background: none; border: 0; cursor: pointer; padding: 6px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Larva Seconds Lost</h1>
+  <p class="lead">A <a href="https://sites.google.com/site/scelight/">Scelight</a> module for StarCraft II Zerg players. It shows how well you use your larva and injects, for one replay or averaged over many.</p>
+
+  <div class="download">
+    <a class="button" href="@archiveFile@">Download version @version@</a>
+    <span>@archiveFile@ · @archiveSizeKb@ KB · released @releaseDate@</span>
+  </div>
+
+  <h2>What you get</h2>
+  <div class="shots">
+    <figure>
+      <a href="img/single-replay.png" data-full="img/single-replay.png"><img src="img/single-replay-thumb.png" alt="Single replay: phase table and larva timeline per hatchery for both players" loading="lazy"></a>
+      <figcaption><b>One replay:</b> phase table with benchmark rankings, and a larva timeline per hatchery (pro game, Reynor vs Serral).</figcaption>
+    </figure>
+    <figure>
+      <a href="img/multi-analysis.png" data-full="img/multi-analysis.png"><img src="img/multi-analysis-thumb.png" alt="Multi analysis: milestones and pooled tables for All games, ZvP, ZvT and ZvZ, for two players" loading="lazy"></a>
+      <figcaption><b>Multi analysis:</b> milestones and pooled tables per matchup over many replays, for up to two players.</figcaption>
+    </figure>
+  </div>
+  <p style="color: var(--muted); font-size: 0.92em;">Click a picture to see it full size.</p>
+
+  <h2>What it shows</h2>
+  <ul>
+    <li><b>Larva timeline</b> per hatchery: when larva sat at 3 (wasted), inject uptime, and likely missed inject windows.</li>
+    <li><b>Phase table</b>: Early, Mid, Late and End game columns with larva generated, larva missed, missed inject value and inject uptime.</li>
+    <li><b>Benchmarks</b>: your larva rates ranked against bands from higher-level games.</li>
+    <li><b>Multi analysis</b>: pick many replays and get pooled tables for All games, ZvP, ZvT and ZvZ, plus milestones (100 supply, 66 and 80 drones, 200 supply).</li>
+    <li><b>New replays open automatically</b> after each game.</li>
+  </ul>
+
+  <h2>Install (one time)</h2>
+  <p>You need <a href="https://sites.google.com/site/scelight/">Scelight</a> and Java 8 or newer.</p>
+  <ol>
+    <li>Download the zip above.</li>
+    <li>Close Scelight.</li>
+    <li>Extract the zip into the folder that <b>contains</b> your <code>Scelight</code> folder. Afterwards this folder must exist: <code>Scelight/mod-x/larva-seconds-lost/@version@/</code></li>
+    <li>Start Scelight. Open <b>Help → About Scelight</b> (F1), then <b>Available Modules → Installed Modules</b>. Enable <b>Larva Seconds Lost</b> and restart Scelight.</li>
+    <li>Open the new <b>Larva</b> page in the left tree.</li>
+  </ol>
+
+  <h2>Updates</h2>
+  <p>You install by hand only once. After that, the bottom row of the Larva page tells you when a new version is out: click <b>Install</b>, then restart Scelight. The module checks this page once a day and sends no data about you or your replays. You can turn the check off on the Larva page.</p>
+
+  <h2>Changes</h2>
+  <!-- Newest first. One entry per published version. Edit release/site/index-template.html in the source repo, not the published page. -->
+  <ul>
+    <li><b>3.1</b>: first online release. In-app updates, new module description, release checks.</li>
+  </ul>
+
+  <h2>Help and problems</h2>
+  <p>Report problems on <a href="https://github.com/minetonight/LarvaSecondsLost-Scelight/issues">GitHub issues</a> or on Discord: <code>scorpion_rbp</code>. Source code: <a href="https://github.com/minetonight/LarvaSecondsLost-Scelight">github.com/minetonight/LarvaSecondsLost-Scelight</a>.</p>
+  <p>Older versions stay downloadable at <code>LarvaSecondsLost-&lt;version&gt;.zip</code> in this folder.</p>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Screenshot">
+    <button type="button" aria-label="Close">&times;</button>
+    <img alt="">
+  </div>
+  <script>
+    (function () {
+      var box = document.getElementById('lightbox'), img = box.querySelector('img');
+      function close() { box.classList.remove('open'); img.removeAttribute('src'); }
+      document.querySelectorAll('.shots a[data-full]').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          img.src = link.getAttribute('data-full');
+          img.alt = link.querySelector('img').alt;
+          box.classList.add('open');
+          box.querySelector('button').focus();
+        });
+      });
+      box.addEventListener('click', close);
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    })();
+  </script>
+
+  <footer>Larva Seconds Lost is not made or endorsed by Blizzard Entertainment or by the Scelight author. StarCraft is a trademark of Blizzard Entertainment.</footer>
+</main>
+</body>
+</html>
