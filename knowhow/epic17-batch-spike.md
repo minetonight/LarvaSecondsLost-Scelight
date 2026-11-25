@@ -25,7 +25,7 @@ source env.sh        # defines $M $S $J8 $CPLIBS $SP, see env.sh.txt
 javac -nowarn -source 1.7 -target 1.7 -cp "$M/bin:$CPLIBS" -d classes BatchSpike.java
 
 # lists (fixed seed, so the runs are repeatable)
-find "/home/aleks/Documents/StarCraft II/Accounts" -name '*.SC2Replay' | sort | shuf --random-source=<(yes) > all-accounts-shuffled.txt
+find "$SC2_ACCOUNTS" -name '*.SC2Replay' | sort | shuf --random-source=<(yes) > all-accounts-shuffled.txt
 head -300 all-accounts-shuffled.txt > list-accounts300.txt
 # 120 = every 10th (offset 3) file of each of the 12 bucketed-mmr/mmr-*/Zv* folders, first 10 per folder
 # 40 largest Accounts files: xargs -d '\n' -a all-accounts-shuffled.txt stat -c '%s %n' | sort -rn | head -40

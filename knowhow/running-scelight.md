@@ -10,17 +10,19 @@ Use `/usr/lib/jvm/java-8-openjdk-amd64/bin/java` (the default `java` on the PATH
 
 ## Paths
 
+Machine-specific paths are written as shell variables. Their values for this machine are in [local-paths.md](local-paths.md), which is gitignored (copy [local-paths.example.md](local-paths.example.md) on a new machine). Run its `export` block once per shell before using the commands below.
+
 | What | Path |
 |---|---|
-| Scelight install (used for development) | `/home/aleks/StarCraft II/Scelight/` |
-| Installed module | `/home/aleks/StarCraft II/Scelight/mod-x/larva-seconds-lost/<version>/` |
-| Start script | `/home/aleks/StarCraft II/Scelight/startScelight.sh` |
+| Scelight install (used for development) | `$SCELIGHT_HOME/` |
+| Installed module | `$SCELIGHT_HOME/mod-x/larva-seconds-lost/<version>/` |
+| Start script | `$SCELIGHT_HOME/startScelight.sh` |
 | Scelight log (one file per run) | `~/.config/scelight/logs/<yyyy-MM-dd HH_mm_ss>.log`, newest = current run |
 | Dev diagnostic dump | `/tmp/larva-latest-dump.txt` (set by `startScelight.sh` via `JAVA_TOOL_OPTIONS`) |
-| Monitored replay folder | `/home/aleks/Documents/StarCraft II/Accounts` (with sub-folders) |
+| Monitored replay folder | `$SC2_ACCOUNTS` (with sub-folders) |
 | Fixture replays | `benchmark-data/queensMoved/*.SC2Replay` |
 
-A second Scelight install exists at `/home/aleks/Documents/StarCraft II/Scelight/`. Do not use it for development.
+`$SCELIGHT_HOME_2/` looks like a second install, but on this machine `$SCELIGHT_HOME`'s parent is a symlink to it (checked 2026-11-25): it is the **same** folder. Log lines show the resolved `Documents/...` path.
 
 ## Build and deploy the module
 
@@ -29,7 +31,7 @@ cd LarvaSecondsLostExtMod
 ant INSTALL_DEPLOYMENT
 ```
 
-This builds the release and replaces `mod-x/larva-seconds-lost/` in the Scelight folder set by `scelightFolder` in `release/release.properties`. **Scelight must be stopped first**, otherwise the running JVM keeps the old jar.
+This builds the release and replaces `mod-x/larva-seconds-lost/` in the Scelight folder set by `scelightFolder` in `release/local.properties` (gitignored, copy it from `release/local.properties.example`). **Scelight must be stopped first**, otherwise the running JVM keeps the old jar.
 
 ## Start
 
@@ -38,18 +40,18 @@ Check that no Scelight is running, then start it:
 ```bash
 pgrep -f hu.sllauncher.ScelightLauncher && echo "already running - stop it first"
 
-cd "/home/aleks/StarCraft II/Scelight"
-export JAVA_TOOL_OPTIONS='-Dlarva.dev.dump.enabled=true -Dlarva.dev.dump.file=/tmp/larva-latest-dump.txt -Dlarva.dev.commands.file=/home/aleks/larva-dev-commands.txt'
+cd "$SCELIGHT_HOME"
+export JAVA_TOOL_OPTIONS="-Dlarva.dev.dump.enabled=true -Dlarva.dev.dump.file=/tmp/larva-latest-dump.txt -Dlarva.dev.commands.file=$HOME/larva-dev-commands.txt"
 /usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx1024m -Dfile.encoding=UTF-8 \
   -Dhu.scelight.launched-with=Scelight-linux.sh \
   -cp "mod/launcher/3.1.4/scelight-launcher.sldat:mod/launcher/3.1.4/jl1.0.1.jar:mod/launcher/3.1.4/mp3spi1.9.5.jar:mod/launcher/3.1.4/tritonus_share.jar" \
-  hu.sllauncher.ScelightLauncher > "/home/aleks/StarCraft II/Scelight/scelight-stdout.log" 2>&1 &
+  hu.sllauncher.ScelightLauncher > "$SCELIGHT_HOME/scelight-stdout.log" 2>&1 &
 ```
 
-- `larva.dev.commands.file` enables the dev command channel (E17-S00, implemented). Without it the module starts no channel thread and touches no file. Create the file (empty is fine) before starting: `: > /home/aleks/larva-dev-commands.txt`. If it does not exist, the channel starts at offset 0 and reads it once it appears.
+- `larva.dev.commands.file` enables the dev command channel (E17-S00, implemented). Without it the module starts no channel thread and touches no file. Create the file (empty is fine) before starting: `: > $HOME/larva-dev-commands.txt`. If it does not exist, the channel starts at offset 0 and reads it once it appears.
 - `pgrep -f hu.sllauncher.ScelightLauncher` also matches the shell running it. Use `pgrep -f '[h]u.sllauncher.ScelightLauncher'`.
-- `JAVA_TOOL_OPTIONS` is split on spaces, so every path in it must be free of spaces. That is why the commands file is `/home/aleks/larva-dev-commands.txt` and not inside the Scelight folder.
-- Note: `startScelight.sh` redirects stdout to an **unquoted** path with a space, so its output lands in a file named `/home/aleks/StarCraft` and `II/Scelight/...` is passed to Scelight as an argument. Use the command above, or quote the path in the script.
+- `JAVA_TOOL_OPTIONS` is split on spaces, so every path in it must be free of spaces. That is why the commands file is `$HOME/larva-dev-commands.txt` and not inside the Scelight folder.
+- Note: `startScelight.sh` redirects stdout to an **unquoted** path with a space, so its output lands in a file named `$HOME/StarCraft` and `II/Scelight/...` is passed to Scelight as an argument. Use the command above, or quote the path in the script.
 
 **Startup is ready** when the newest log contains `Larva Seconds Lost module started successfully.` This takes about 20–25 s, because an unregistered start is delayed by 10 s.
 
@@ -91,7 +93,7 @@ Implemented (E17-S00). Available when Scelight was started with `-Dlarva.dev.com
 Append one line per command: `<id> <command> [args…]`. Quote arguments with spaces. Use a new id every time.
 
 ```bash
-CMD="/home/aleks/larva-dev-commands.txt"
+CMD="$HOME/larva-dev-commands.txt"
 echo '1 ping' >> "$CMD"
 sleep 2
 grep '\[larva-dev\] 1 ' "$LOG"
@@ -117,6 +119,9 @@ Each command logs `[larva-dev] <id> OK …` or `[larva-dev] <id> FAIL …`; long
 | `multi-page-state <index> [full]` (extended), `multi-page-toggle-skipped <index>`, `multi-page-snapshot <index> <png>`, `set-frame-size <w> <h>` | S15 | For a finished page `multi-page-state` adds `\| layout ...` lines about the results view: header, filter summary, help line and empty-state text; panel size and preferred size; the enclosing page scroll pane (`viewport=`, `horizontalScrollBar=`, `verticalScrollBar=`); per column its `x`/`width` and per table `title`, `x`, `y`, `width`, `height`, `preferredWidth`, `clipped=` (the table reaches beyond its grid cell); `anyTableClipped=`; skipped count, `skippedExpanded=` and the toggle text. `full` appends the view-model text (`header:`, `summary:`, `player n:`, `table:` with the header and rows as `label \| cell \| ...`; per player the tables are Milestones, All, ZvP, ZvT, ZvZ since S17, `skipped (n):`), the cell strings of the golden check. `multi-page-toggle-skipped` clicks the section's toggle in code and logs the entries. `multi-page-snapshot` paints the whole results panel (not only the visible part) into a PNG. `set-frame-size` un-maximizes the main frame and sets its size (the window manager may add or remove a few pixels, check `window-info`); at 1280 px Scelight's page area is about 1000 px wide |
 | `chooser-folder-state`, `chooser-folder-confirm <open\|multi> <path>` | S17 | `chooser-folder-state` logs the memory file, `lastDetected`, and per chooser (`open` = Open Replay on hub and single pages, `multi` = Multi Analysis) the remembered folder, whether it still exists, the start folder (remembered if it exists, else parent of the last detected replay, else none) and the `currentDirectory` of a freshly built real chooser (not shown). `chooser-folder-confirm` feeds a confirmed selection of that file through `LarvaReplayFileChooser.rememberSelection`, the method the chooser result uses (the folder of the file is remembered and written to disk); it does not open the chooser and never touches the file itself |
 | `show-help [hide]` | S16 | Shows (or hides) the help popup of the hub's help icon, as a click on it would (`IPopupIcon.showPopup` with a synthetic mouse press). Needs the hub component (`select-larva` first). The popup is a lightweight popup inside the main window when it fits (current help: about 750 x 930 px), otherwise a separate `###focusableSwingPopup###` X window cut off by the screen; screenshot the Scelight window (`xwininfo -root -tree`, `import -window <id>`) or that popup window. It stays open until `show-help hide` |
+| `update-state` | E18 | Online update status: phase (IDLE, CHECKING, UP_TO_DATE, AVAILABLE, INSTALLING, INSTALLED, FAILED), running version, message, checked URL, automatic checks on/off, the found release, and whether the hub row exists. |
+| `update-check` | E18 | Like **Check now**: queues a check and returns at once. Poll `update-state`. |
+| `update-install` | E18 | Like **Install**: only in phase AVAILABLE or FAILED. Returns at once. Poll `update-state` for INSTALLED, then `exit` and start Scelight again to load the new version. |
 
 Keep this table in sync when a story adds or changes a command.
 
@@ -143,7 +148,7 @@ The channel bypasses only the file chooser and the mouse. Real clicks, dialogs a
 
 > **Precondition — the SC2ReplayStatsUploader module must be disabled before any copy.** The user disabled it on 2026-11-24. Check before every copy test: `grep -o 'sc2replaystats&lt;/folder&gt;&#xA;        &lt;enabled&gt;[a-z]*' ~/.config/scelight/launcher-settings.xml` must end in `false`; if it does not, STOP and ask the user. Background: on 2026-11-24 the S06 and S07 test runs copied 16 replays (pro games plus the user's own) and the uploader picked up every one; one upload failed with HTTP 413, the rest may have been uploaded to the user's sc2replaystats.com account. For pure logic checks, prefer the `auto-open-submit <path>` dev command, which needs no copy.
 
-The user approved copying test replays into the real monitored folder **and deleting them afterwards**. Scelight renames every copy about 1.5 s after it lands and also writes a backup copy into `/home/aleks/Scelight Replay Backup/` (verified E17-S06/S07), so the cleanup must be exact. Follow these steps literally.
+The user approved copying test replays into the real monitored folder **and deleting them afterwards**. Scelight renames every copy about 1.5 s after it lands and also writes a backup copy into `$REPLAY_BACKUP/` (verified E17-S06/S07), so the cleanup must be exact. Follow these steps literally.
 
 Facts to know first:
 - Scelight renames to `<date> <matchup> {..} vs {..} on <map>.SC2Replay` (`zz-larva-test-` prefix gone) and unifies a name that already exists (a backup of the same name gets ` (2)`). Scelight also opens and **selects its own Replay Analyzer page** just before it notifies the module, so the user is never on a `Larva` page when a real new replay arrives (focus rule D17-c then adds without selecting). To test "select" use `auto-open-submit` while on the hub.
@@ -153,8 +158,8 @@ Facts to know first:
 Steps:
 1. **Before copying anything**, record the counts and sorted lists (scratchpad, not the repo):
    ```bash
-   A="/home/aleks/Documents/StarCraft II/Accounts"; B="/home/aleks/Scelight Replay Backup"
-   DEST="$A/452903306/2-S2-1-7509272/Replays/Multiplayer"
+   A="$SC2_ACCOUNTS"; B="$REPLAY_BACKUP"
+   DEST="$SC2_REPLAY_DEST"
    find "$A" -name "*.SC2Replay" | wc -l      # expected 8352 on 2026-11-24
    ls "$B" | wc -l                            # expected 4059
    find "$A" -name "*.SC2Replay" | sort > $SP/before-accounts.txt
@@ -183,3 +188,15 @@ Close behaviour notes: Scelight's main frame (`XFrame`, `DO_NOTHING_ON_CLOSE`) h
 4. Run the story's dev commands, grep the log for `[larva-dev]` results and ` E ` errors, take screenshots where the story asks.
 5. For FR-17: copy, check, then `exit` and delete the test replays (see "Simulate a new replay").
 6. `exit`, and confirm `Larva Seconds Lost module stopped.` in the log.
+
+## Test the online update locally (E18)
+
+Verified 2026-11-25 (3.0 to 3.0.1). Point the module at a local `module.xml` instead of GitHub Pages:
+
+1. Temporarily set `version.revision=1` in `LarvaSecondsLostExtMod/release/release.properties`, run `ant BUILD_RELEASE`, copy `release/deployment/LarvaSecondsLost-3.0.1.zip` and `module.xml` to a scratch folder, and set the version back to `0`.
+2. In the scratch copy of `module.xml`, change `<urlList>` to `http://127.0.0.1:8765/LarvaSecondsLost-3.0.1.zip`. The URL is not part of any hash.
+3. Serve the folder: `python3 -I -m http.server 8765 --bind 127.0.0.1` (in the background).
+4. Stop Scelight, run `ant INSTALL_DEPLOYMENT` (installs 3.0), then start Scelight with `-Dlarva.update.moduleXmlUrl=http://127.0.0.1:8765/module.xml` added to `JAVA_TOOL_OPTIONS`.
+5. `select-larva`, `update-check`, `update-state` (AVAILABLE), `update-install`, `update-state` (INSTALLED), `exit`. Start again: `ping` must answer `3.0.1`, and the log shows `removed old module folder .../3.0`.
+6. Clean up: stop Scelight, stop the server (kill its PID; `pkill -f` also matches your own shell), delete `~/.config/scelight/mod-x-cache/larva-seconds-lost/update.properties`, and run `ant INSTALL_DEPLOYMENT` again.
+
