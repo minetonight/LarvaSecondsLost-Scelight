@@ -310,7 +310,7 @@ public class LarvaSecondsLostModule extends BaseExtModule {
             final ModuleVersion running = new ModuleVersion( manifest.getVersion().getMajor(), manifest.getVersion().getMinor(),
                     manifest.getVersion().getRevision() );
             final Path cacheFolder = modEnv.getCacheFolder();
-            final HttpReleaseDownloader downloader = new HttpReleaseDownloader( running );
+            final HttpReleaseDownloader downloader = new HttpReleaseDownloader( running, logger );
             final UpdateChecker checker = new UpdateChecker( downloader, UpdateConfig.moduleXmlUrl(), manifest.getName(), manifest.getFolder(), running );
             final UpdateInstaller installer = new UpdateInstaller( downloader, modEnv.getRootFolder(), cacheFolder.resolve( "update" ),
                     modEnv.getVersionFolder(), logger );

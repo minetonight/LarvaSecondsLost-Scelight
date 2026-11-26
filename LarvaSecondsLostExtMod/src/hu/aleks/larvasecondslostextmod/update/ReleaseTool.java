@@ -82,7 +82,7 @@ public final class ReleaseTool {
             final Path modRoot = Files.createDirectories( temp.resolve( "Scelight/mod-x/larva-seconds-lost" ) );
             final Path fakeRunning = Files.createDirectories( modRoot.resolve( "0.0" ) );
             final ModuleVersion zero = new ModuleVersion( 0, 0, 0 );
-            final HttpReleaseDownloader downloader = new HttpReleaseDownloader( zero );
+            final HttpReleaseDownloader downloader = new HttpReleaseDownloader( zero, new StdErrLogger() );
             final UpdateCheckResult result = new UpdateChecker( downloader, moduleXmlUrl, "Larva Seconds Lost", "larva-seconds-lost", zero ).check();
             if ( result.getKind() != UpdateCheckResult.Kind.AVAILABLE )
                 fail( "Live check failed: " + result.getMessage() );

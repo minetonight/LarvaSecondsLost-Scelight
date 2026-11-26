@@ -99,6 +99,9 @@ public final class UpdatePanel extends JPanel implements UpdateService.Listener 
     public void statusChanged( final UpdateStatus status ) {
         final UpdateStatus.Phase phase = status.getPhase();
         statusLabel.setText( status.getMessage() );
+        // Failure texts can be longer than the row; the tooltip always shows all of it.
+        final String message = status.getMessage();
+        statusLabel.setToolTipText( message == null || message.isEmpty() ? null : message );
         final boolean available = phase == UpdateStatus.Phase.AVAILABLE;
         final boolean failedInstall = phase == UpdateStatus.Phase.FAILED && status.getRelease() != null;
         installButton.setText( failedInstall ? RETRY_LABEL : INSTALL_LABEL );

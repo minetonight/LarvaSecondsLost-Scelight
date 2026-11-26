@@ -164,7 +164,7 @@ public final class UpdateInstaller {
                 downloadOnce( url, zip, release, progress );
                 return zip;
             } catch ( final IOException | UpdateException e ) {
-                lastProblem = e.getMessage();
+                lastProblem = ConnectionProblems.describe( e, System.getProperty( "java.version" ) );
                 logger.warning( "[larva-update] download failed from " + url + ": " + lastProblem );
                 deleteQuietly( zip );
             }

@@ -37,7 +37,7 @@ public final class UpdateChecker {
         try ( final InputStream in = new LimitedInputStream( downloader.open( moduleXmlUrl ), UpdateConfig.MAX_MODULE_XML_BYTES ) ) {
             release = parser.parse( in );
         } catch ( final IOException e ) {
-            return UpdateCheckResult.failed( "cannot reach the update page (" + e.getMessage() + ")" );
+            return UpdateCheckResult.failed( "cannot reach the update page (" + ConnectionProblems.describe( e, System.getProperty( "java.version" ) ) + ")" );
         } catch ( final UpdateException e ) {
             return UpdateCheckResult.failed( e.getMessage() );
         }
