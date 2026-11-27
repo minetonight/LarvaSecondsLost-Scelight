@@ -1,0 +1,106 @@
+{
+ "source": "https://burnysc2.github.io/MMR-Ranges/",
+ "script": "https://burnysc2.github.io/MMR-Ranges/static/js/main.394f42fa.js",
+ "mode": "1v1",
+ "fetchedAt": "2026-11-26T14:06:30Z",
+ "season": 69,
+ "seasonStart": "2026-11-10",
+ "siteUpdated": "2026-11-26 03:43",
+ "leagues": {
+  "GrandMaster": {
+   "Americas": [4464, 6263],
+   "Europe": [4713, 6453],
+   "Korea": [4043, 6135]
+  },
+  "Master 1": {
+   "Americas": [4716, 4954],
+   "Europe": [4764, 5005],
+   "Korea": [5305, 5577]
+  },
+  "Master 2": {
+   "Americas": [4478, 4716],
+   "Europe": [4522, 4764],
+   "Korea": [5032, 5305]
+  },
+  "Master 3": {
+   "Americas": [4240, 4478],
+   "Europe": [4280, 4522],
+   "Korea": [4760, 5032]
+  },
+  "Diamond 1": {
+   "Americas": [3867, 4240],
+   "Europe": [3947, 4280],
+   "Korea": [4373, 4760]
+  },
+  "Diamond 2": {
+   "Americas": [3493, 3867],
+   "Europe": [3613, 3947],
+   "Korea": [3987, 4373]
+  },
+  "Diamond 3": {
+   "Americas": [3120, 3493],
+   "Europe": [3280, 3613],
+   "Korea": [3600, 3987]
+  },
+  "Platinum 1": {
+   "Americas": [2987, 3120],
+   "Europe": [3133, 3280],
+   "Korea": [3427, 3600]
+  },
+  "Platinum 2": {
+   "Americas": [2853, 2987],
+   "Europe": [2987, 3133],
+   "Korea": [3253, 3427]
+  },
+  "Platinum 3": {
+   "Americas": [2720, 2853],
+   "Europe": [2840, 2987],
+   "Korea": [3080, 3253]
+  },
+  "Gold 1": {
+   "Americas": [2587, 2720],
+   "Europe": [2707, 2840],
+   "Korea": [2947, 3080]
+  },
+  "Gold 2": {
+   "Americas": [2453, 2587],
+   "Europe": [2573, 2707],
+   "Korea": [2813, 2947]
+  },
+  "Gold 3": {
+   "Americas": [2320, 2453],
+   "Europe": [2440, 2573],
+   "Korea": [2680, 2813]
+  },
+  "Silver 1": {
+   "Americas": [2107, 2320],
+   "Europe": [2227, 2440],
+   "Korea": [2453, 2680]
+  },
+  "Silver 2": {
+   "Americas": [1893, 2107],
+   "Europe": [2013, 2227],
+   "Korea": [2227, 2453]
+  },
+  "Silver 3": {
+   "Americas": [1680, 1893],
+   "Europe": [1800, 2013],
+   "Korea": [2000, 2227]
+  },
+  "Bronze 1": {
+   "Americas": [1442, 1680],
+   "Europe": [1558, 1800],
+   "Korea": [1728, 2000]
+  },
+  "Bronze 2": {
+   "Americas": [1204, 1442],
+   "Europe": [1316, 1558],
+   "Korea": [1455, 1728]
+  },
+  "Bronze 3": {
+   "Americas": [966, 1204],
+   "Europe": [1075, 1316],
+   "Korea": [1183, 1455]
+  }
+ }
+}

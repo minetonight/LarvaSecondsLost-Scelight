@@ -112,10 +112,10 @@ public class LarvaMultiAnalysisViewModelBuilderTest {
         assertEquals( "6:51 (2/2)", all.getCell( 0, 0 ) );
         assertEquals( "n/a (0/2)", all.getCell( 0, 1 ) );
         assertEquals( "54.77%", all.getCell( 1, 0 ) );
-        assertEquals( "5.11", all.getCell( 2, 0 ) );
-        assertEquals( "top 90% dia", all.getCell( 3, 0 ) );
-        assertEquals( "0.54", all.getCell( 4, 0 ) );
-        assertEquals( "0.46", all.getCell( 6, 0 ) );
+        assertEquals( "7.16", all.getCell( 2, 0 ) ); // 66 larva * 1344 / 12391 loops
+        assertEquals( "n/a", all.getCell( 3, 0 ) ); // fixture bands: no early larva gen band
+        assertEquals( "0.76", all.getCell( 4, 0 ) );
+        assertEquals( "0.65", all.getCell( 6, 0 ) );
         final LarvaTableViewModel milestones = tables.get( 0 );
         assertEquals( "Milestone", milestones.getCornerLabel() );
         assertEquals( "100 supply used", milestones.getRowLabel( 0 ) );

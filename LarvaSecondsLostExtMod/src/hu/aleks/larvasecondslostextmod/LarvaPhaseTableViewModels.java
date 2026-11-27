@@ -16,10 +16,6 @@ final class LarvaPhaseTableViewModels {
 
     private static final LarvaPhaseBenchmarkRatingFormatter RATING_FORMATTER = new LarvaPhaseBenchmarkRatingFormatter();
 
-    private static final int FALLBACK_LOOPS_PER_SECOND = 16;
-
-    private static final long MS_PER_SECOND = 1000L;
-
     private LarvaPhaseTableViewModels() {
     }
 
@@ -54,15 +50,7 @@ final class LarvaPhaseTableViewModels {
     private static String formatInterval( final LarvaPhaseInterval interval, final LarvaAnalysisReport report ) {
         if ( interval == null || interval.getEndLoop() <= interval.getStartLoop() )
             return LarvaStatFormat.NOT_AVAILABLE;
-        return formatLoopTime( interval.getStartLoop(), report ) + "-" + formatLoopTime( interval.getEndLoop(), report );
+        return LarvaGameClock.format( interval.getStartLoop() ) + "-" + LarvaGameClock.format( interval.getEndLoop() );
     }
 
-    /** Uses the report's time basis (real-time setting, game speed) when there is one. */
-    private static String formatLoopTime( final int loop, final LarvaAnalysisReport report ) {
-        if ( loop <= 0 )
-            return "0:00";
-        if ( report != null )
-            return report.formatLoopTime( loop );
-        return LarvaStatFormat.formatMinSec( loop * MS_PER_SECOND / FALLBACK_LOOPS_PER_SECOND );
-    }
 }

@@ -7,13 +7,12 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
 
-/** Unit tests for {@link LarvaMilestoneCalculator} and {@link LarvaFirstDroneLoopTracker} (synthetic data only). */
+/** Unit tests for {@link LarvaMilestoneCalculator} (synthetic data only). */
 public class LarvaMilestoneCalculatorTest {
 
     private static final int SCALE = 4096;
@@ -23,7 +22,7 @@ public class LarvaMilestoneCalculatorTest {
     }
 
     private static Map< LarvaMilestone, Integer > compute( final List< LarvaPlayerResourceSnapshot > s ) {
-        return LarvaMilestoneCalculator.compute( s, null, null );
+        return LarvaMilestoneCalculator.compute( s );
     }
 
     @Test
@@ -68,26 +67,10 @@ public class LarvaMilestoneCalculatorTest {
     }
 
     @Test
-    public void exactDroneLoopsWinOverSnapshotScan() {
-        final List< LarvaPlayerResourceSnapshot > s = Arrays.asList( snap( 200, 0, 66 ), snap( 500, 0, 80 ) );
-        final Map< LarvaMilestone, Integer > m = LarvaMilestoneCalculator.compute( s, Integer.valueOf( 150 ), Integer.valueOf( 420 ) );
-        assertEquals( Integer.valueOf( 150 ), m.get( LarvaMilestone.DRONES_66 ) );
-        assertEquals( Integer.valueOf( 420 ), m.get( LarvaMilestone.DRONES_80 ) );
-    }
-
-    @Test
-    public void nullExactLoopFallsBackToSnapshotPerMilestone() {
-        final List< LarvaPlayerResourceSnapshot > s = Arrays.asList( snap( 200, 0, 66 ), snap( 500, 0, 80 ) );
-        final Map< LarvaMilestone, Integer > m = LarvaMilestoneCalculator.compute( s, Integer.valueOf( 150 ), null );
-        assertEquals( Integer.valueOf( 150 ), m.get( LarvaMilestone.DRONES_66 ) );
-        assertEquals( Integer.valueOf( 500 ), m.get( LarvaMilestone.DRONES_80 ) );
-    }
-
-    @Test
-    public void exactLoopIsUsedEvenWithoutSnapshots() {
-        final Map< LarvaMilestone, Integer > m = LarvaMilestoneCalculator.compute( null, Integer.valueOf( 77 ), null );
-        assertEquals( 1, m.size() );
-        assertEquals( Integer.valueOf( 77 ), m.get( LarvaMilestone.DRONES_66 ) );
+    public void droneMilestonesIgnoreTheZeroSamplesAfterAPlayerLeft() {
+        final Map< LarvaMilestone, Integer > m = compute( Arrays.asList( snap( 100, 0, 70 ), snap( 260, 0, 0 ), snap( 420, 0, 0 ) ) );
+        assertEquals( Integer.valueOf( 100 ), m.get( LarvaMilestone.DRONES_66 ) );
+        assertNull( m.get( LarvaMilestone.DRONES_80 ) );
     }
 
     @Test
@@ -102,34 +85,5 @@ public class LarvaMilestoneCalculatorTest {
         assertEquals( Arrays.asList( LarvaMilestone.SUPPLY_100, LarvaMilestone.DRONES_66, LarvaMilestone.DRONES_80, LarvaMilestone.SUPPLY_200 ), order );
         final Map< LarvaMilestone, Integer > m = compute( Arrays.asList( snap( 1, 200 * SCALE, 80 ) ) );
         assertEquals( order, new ArrayList<>( m.keySet() ) );
-    }
-
-    @Test
-    public void trackerKeepsFirstReachAcrossDipAndReReach() {
-        final LarvaFirstDroneLoopTracker tracker = new LarvaFirstDroneLoopTracker();
-        final Map< String, Integer > alive = new LinkedHashMap<>();
-        alive.put( "A", Integer.valueOf( 65 ) );
-        tracker.observe( alive, 10 );
-        alive.put( "A", Integer.valueOf( 66 ) );
-        tracker.observe( alive, 20 );
-        alive.put( "A", Integer.valueOf( 60 ) );
-        tracker.observe( alive, 30 );
-        alive.put( "A", Integer.valueOf( 66 ) );
-        tracker.observe( alive, 40 );
-        alive.put( "A", Integer.valueOf( 81 ) );
-        tracker.observe( alive, 50 );
-
-        final Map< Integer, Integer > loops = tracker.getFirstLoopByPlayerName().get( "A" );
-        assertEquals( Integer.valueOf( 20 ), loops.get( Integer.valueOf( 66 ) ) );
-        assertEquals( Integer.valueOf( 50 ), loops.get( Integer.valueOf( 80 ) ) );
-    }
-
-    @Test
-    public void trackerIgnoresPlayersBelowThreshold() {
-        final LarvaFirstDroneLoopTracker tracker = new LarvaFirstDroneLoopTracker();
-        final Map< String, Integer > alive = new LinkedHashMap<>();
-        alive.put( "A", Integer.valueOf( 65 ) );
-        tracker.observe( alive, 10 );
-        assertNull( tracker.getFirstLoopByPlayerName().get( "A" ) );
     }
 }

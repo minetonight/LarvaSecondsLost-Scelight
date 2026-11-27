@@ -10,9 +10,6 @@ import java.util.List;
  */
 public class LarvaSaturationWindowCalculator {
 
-    /** Replay loops per second in SC2 timelines. */
-    private static final long LOOPS_PER_SECOND = 16L;
-
     /** Missing loop sentinel. */
     private static final int NO_LOOP = -1;
 
@@ -134,38 +131,13 @@ public class LarvaSaturationWindowCalculator {
     }
 
     /**
-     * Converts loops to milliseconds.
-     *
-     * @param loops replay loops
-     * @return milliseconds
-     */
-    public long loopsToMs( final int loops ) {
-        if ( loops <= 0 )
-            return 0L;
-        return ( loops * 1000L ) / LOOPS_PER_SECOND;
-    }
-
-    /**
      * Formats a replay loop as a short time label.
      *
      * @param loop replay loop
      * @return formatted time label
      */
     public String formatLoopTime( final int loop ) {
-        return formatMs( loopsToMs( loop ) );
-    }
-
-    /**
-     * Formats a replay time as m:ss.
-     *
-     * @param ms time in milliseconds
-     * @return formatted time
-     */
-    public String formatMs( final long ms ) {
-        final long totalSeconds = ms / 1000L;
-        final long minutes = totalSeconds / 60L;
-        final long seconds = totalSeconds % 60L;
-        return minutes + ":" + ( seconds < 10L ? "0" : "" ) + seconds;
+        return LarvaGameClock.format( loop );
     }
 
     /**
@@ -179,7 +151,7 @@ public class LarvaSaturationWindowCalculator {
         if ( endLoop <= startLoop )
             return;
 
-        windowList.add( new LarvaSaturationWindow( startLoop, endLoop, loopsToMs( startLoop ), loopsToMs( endLoop ),
+        windowList.add( new LarvaSaturationWindow( startLoop, endLoop, LarvaGameClock.loopToMs( startLoop ), LarvaGameClock.loopToMs( endLoop ),
                 formatLoopTime( startLoop ), formatLoopTime( endLoop ) ) );
     }
 

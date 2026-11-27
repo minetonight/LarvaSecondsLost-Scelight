@@ -24,13 +24,13 @@ public class HatcheryIdleInjectTimeline {
     /** Dedicated queen-to-hatchery radius used for qualification. */
     private final double injectRadius;
 
-    /** Number of singleton-selected queen commands confidently attributed. */
+    /** Queen evidence points at this hatchery (E19-S10; the getter keeps its old name). */
     private final int attributedQueenCommandCount;
 
-    /** Number of singleton-selected SpawnLarva commands confidently attributed to queens. */
+    /** Injects on this hatchery matched to a Spawn Larva command. */
     private final int attributedInjectCommandCount;
 
-    /** Number of candidate windows suppressed for uncertainty. */
+    /** Spends at this hatchery with several candidate queens. */
     private final int uncertaintyDiscardCount;
 
     /** Normalized idle-inject windows kept for this hatchery. */
@@ -47,9 +47,9 @@ public class HatcheryIdleInjectTimeline {
      * @param playerName player owning the hatchery
      * @param hatcheryType final hatchery type on the tag
      * @param injectRadius dedicated queen-to-hatchery radius used for qualification
-     * @param attributedQueenCommandCount number of singleton-selected queen commands confidently attributed
-     * @param attributedInjectCommandCount number of singleton-selected SpawnLarva commands confidently attributed
-     * @param uncertaintyDiscardCount number of candidate windows suppressed for uncertainty
+     * @param attributedQueenCommandCount queen evidence points at this hatchery (E19: birth, injects, tumors, positions, death)
+     * @param attributedInjectCommandCount injects on this hatchery matched to a Spawn Larva command
+     * @param uncertaintyDiscardCount spends at this hatchery with several candidate queens (attribution by distance and energy)
      * @param idleWindowList normalized idle-inject windows kept for this hatchery
      * @param diagnosticLineList deterministic diagnostics explaining kept and suppressed decisions
      */

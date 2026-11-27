@@ -10,17 +10,8 @@ import java.util.List;
  */
 public class LarvaMissedLarvaMarkerCalculator {
 
-    /** Replay loops per second in SC2 timelines. */
-    private static final int REPLAY_LOOPS_PER_SECOND = 16;
-
-    /** Base missed-larva threshold in displayed game-timer seconds. */
-    private static final double MISSED_LARVA_THRESHOLD_SECONDS = 10.7d;
-
-    /** Scelight normal-speed relative value. */
-    private static final double NORMAL_GAME_SPEED_RELATIVE = 36.0d;
-
-    /** Scelight Faster-speed relative value used as the fallback default. */
-    private static final long DEFAULT_GAME_SPEED_RELATIVE = 26L;
+    /** A hatchery at 3+ larva misses one natural larva per larva spawn interval. */
+    private static final int MISSED_LARVA_THRESHOLD_LOOPS = LarvaGameClock.LARVA_SPAWN_LOOPS;
 
     /**
      * Builds the missed-larva threshold markers for a hatchery.
@@ -28,7 +19,7 @@ public class LarvaMissedLarvaMarkerCalculator {
      * @param saturationWindowList replay-derived 3+ larva windows
      * @return threshold markers in chronological order
      */
-    public List< LarvaTimelineMarker > buildMarkers( final List< LarvaSaturationWindow > saturationWindowList, final long gameSpeedRelative ) {
+    public List< LarvaTimelineMarker > buildMarkers( final List< LarvaSaturationWindow > saturationWindowList ) {
         if ( saturationWindowList == null || saturationWindowList.isEmpty() )
             return Collections.emptyList();
 
@@ -37,7 +28,7 @@ public class LarvaMissedLarvaMarkerCalculator {
             return Collections.emptyList();
 
         final List< LarvaTimelineMarker > markerList = new ArrayList<>();
-        final int missedLarvaThresholdLoops = resolveMissedLarvaThresholdLoops( gameSpeedRelative );
+        final int missedLarvaThresholdLoops = MISSED_LARVA_THRESHOLD_LOOPS;
         int accumulatedLoops = 0;
         int missedLarvaCount = 0;
 
@@ -53,7 +44,7 @@ public class LarvaMissedLarvaMarkerCalculator {
                 final int loopsUntilThreshold = missedLarvaThresholdLoops - accumulatedLoops;
                 markerLoop += loopsUntilThreshold;
                 missedLarvaCount++;
-                markerList.add( new LarvaTimelineMarker( markerLoop, loopsToMs( markerLoop ),
+                markerList.add( new LarvaTimelineMarker( markerLoop, LarvaGameClock.loopToMs( markerLoop ),
                         "Missed larva " + missedLarvaCount + " at " + formatLoopTime( markerLoop ), LarvaTimelineMarker.Kind.MISSED_LARVA ) );
 
                 loopsRemainingInWindow -= loopsUntilThreshold;
@@ -64,29 +55,6 @@ public class LarvaMissedLarvaMarkerCalculator {
         }
 
         return markerList;
-    }
-
-    /**
-     * Builds markers using the default Faster-speed timing when no replay speed is available.
-     *
-     * @param saturationWindowList replay-derived 3+ larva windows
-     * @return threshold markers in chronological order
-     */
-    public List< LarvaTimelineMarker > buildMarkers( final List< LarvaSaturationWindow > saturationWindowList ) {
-        return buildMarkers( saturationWindowList, DEFAULT_GAME_SPEED_RELATIVE );
-    }
-
-    /**
-     * Resolves the loop threshold corresponding to 11 visible game-timer seconds at the supplied game speed.
-     *
-     * @param gameSpeedRelative replay game-speed relative value
-     * @return missed-larva threshold in loops
-     */
-    private int resolveMissedLarvaThresholdLoops( final long gameSpeedRelative ) {
-        final double effectiveGameSpeedRelative = gameSpeedRelative <= 0L ? DEFAULT_GAME_SPEED_RELATIVE : gameSpeedRelative;
-
-        
-        return (int) Math.floor( MISSED_LARVA_THRESHOLD_SECONDS * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / effectiveGameSpeedRelative ) );
     }
 
     /**
@@ -142,7 +110,7 @@ public class LarvaMissedLarvaMarkerCalculator {
     private LarvaSaturationWindow mergeWindows( final LarvaSaturationWindow current, final LarvaSaturationWindow next ) {
         final int startLoop = Math.min( current.getStartLoop(), next.getStartLoop() );
         final int endLoop = Math.max( current.getEndLoop(), next.getEndLoop() );
-        return new LarvaSaturationWindow( startLoop, endLoop, loopsToMs( startLoop ), loopsToMs( endLoop ),
+        return new LarvaSaturationWindow( startLoop, endLoop, LarvaGameClock.loopToMs( startLoop ), LarvaGameClock.loopToMs( endLoop ),
                 formatLoopTime( startLoop ), formatLoopTime( endLoop ) );
     }
 
@@ -153,32 +121,7 @@ public class LarvaMissedLarvaMarkerCalculator {
      * @return formatted time label
      */
     public String formatLoopTime( final int loop ) {
-        return formatMs( loopsToMs( loop ) );
-    }
-
-    /**
-     * Converts loops to milliseconds.
-     *
-     * @param loops replay loops
-     * @return milliseconds
-     */
-    private long loopsToMs( final int loops ) {
-        if ( loops <= 0 )
-            return 0L;
-        return ( loops * 1000L ) / REPLAY_LOOPS_PER_SECOND;
-    }
-
-    /**
-     * Formats a replay time as m:ss.
-     *
-     * @param ms time in milliseconds
-     * @return formatted time
-     */
-    private String formatMs( final long ms ) {
-        final long totalSeconds = ms / 1000L;
-        final long minutes = totalSeconds / 60L;
-        final long seconds = totalSeconds % 60L;
-        return minutes + ":" + ( seconds < 10L ? "0" : "" ) + seconds;
+        return LarvaGameClock.format( loop );
     }
 
 }

@@ -39,7 +39,7 @@ final class LarvaTestFixtures {
         return all;
     }
 
-    /** Sets the game time at which one phase ends, in ms (loops derived as ms * 16 / 1000 so both maps agree). */
+    /** Sets the game time at which one phase ends, in ms (loops derived with the game clock so both maps agree). */
     static LarvaAggregationPlayerRecord.Builder withEnd( final LarvaAggregationPlayerRecord.Builder b, final LarvaGamePhase phase,
             final long ms ) {
         final LarvaAggregationPlayerRecord current = b.build();
@@ -48,7 +48,7 @@ final class LarvaTestFixtures {
         ms1.put( phase, Long.valueOf( ms ) );
         final Map< LarvaGamePhase, Integer > loops = new EnumMap<>( LarvaGamePhase.class );
         loops.putAll( current.getPhaseEndLoops() );
-        loops.put( phase, Integer.valueOf( (int) ( ms * 16 / 1000 ) ) );
+        loops.put( phase, Integer.valueOf( LarvaGameClock.secondsToLoops( ms / 1000.0d ) ) );
         return b.phaseEndDisplayMs( ms1 ).phaseEndLoops( loops );
     }
 

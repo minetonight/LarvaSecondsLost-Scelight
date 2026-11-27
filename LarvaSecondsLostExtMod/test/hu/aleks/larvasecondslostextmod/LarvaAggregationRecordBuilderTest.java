@@ -118,10 +118,9 @@ public class LarvaAggregationRecordBuilderTest {
     }
 
     @Test
-    public void milestonesUseExactDroneLoopsAndDisplayMs() {
+    public void milestonesUseSnapshotWorkersAndDisplayMs() {
         final LarvaAggregationRecordBuilder.PlayerInput in = input();
-        in.snapshots = Arrays.asList( snap( 1000, 100, 66 ), snap( 2000, 150, 80 ), snap( 3000, 200, 80 ) );
-        in.exactDrone66Loop = Integer.valueOf( 900 );
+        in.snapshots = Arrays.asList( snap( 900, 99, 66 ), snap( 1000, 100, 66 ), snap( 2000, 150, 80 ), snap( 3000, 200, 80 ) );
         final LarvaAggregationPlayerRecord rec = LarvaAggregationRecordBuilder.buildPlayerRecord( in, TEN_MS );
         final Map< LarvaMilestone, Long > m = rec.getMilestoneDisplayMs();
         assertEquals( Long.valueOf( 10000L ), m.get( LarvaMilestone.SUPPLY_100 ) );

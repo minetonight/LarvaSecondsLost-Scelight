@@ -5,9 +5,6 @@ package hu.aleks.larvasecondslostextmod;
  */
 public class LarvaPhaseStats {
 
-    /** Replay loops per second in SC2 timelines. */
-    private static final double REPLAY_LOOPS_PER_SECOND = 16.0d;
-
     /** Phase represented by this stat block. */
     private final LarvaGamePhase phase;
 
@@ -90,24 +87,29 @@ public class LarvaPhaseStats {
     }
 
     /**
-     * Returns larva missed per hatch per minute, or <code>null</code> if no denominator exists.
+     * Returns larva missed per hatch per game clock minute, or <code>null</code> if no denominator exists.
      */
     public Double getMissedLarvaPerHatchPerMinute() {
-        return hatchEligibleLoops <= 0L ? null : Double.valueOf( missedLarvaCount * 60.0d * REPLAY_LOOPS_PER_SECOND / hatchEligibleLoops );
+        return perHatchMinute( missedLarvaCount );
     }
 
     /**
-     * Returns potential injected larva missed per hatch per minute, or <code>null</code> if no denominator exists.
+     * Returns potential injected larva missed per hatch per game clock minute, or <code>null</code> if no denominator exists.
      */
     public Double getMissedInjectLarvaPerHatchPerMinute() {
-        return hatchEligibleLoops <= 0L ? null : Double.valueOf( missedInjectLarvaCount * 60.0d * REPLAY_LOOPS_PER_SECOND / hatchEligibleLoops );
+        return perHatchMinute( missedInjectLarvaCount );
     }
 
     /**
-     * Returns spawned larva per hatch per minute, or <code>null</code> if no denominator exists.
+     * Returns spawned larva per hatch per game clock minute, or <code>null</code> if no denominator exists.
      */
     public Double getSpawnedLarvaPerHatchPerMinute() {
-        return hatchEligibleLoops <= 0L ? null : Double.valueOf( totalSpawnedLarvaCount * 60.0d * REPLAY_LOOPS_PER_SECOND / hatchEligibleLoops );
+        return perHatchMinute( totalSpawnedLarvaCount );
+    }
+
+    /** @return count per hatchery-minute of the game clock ({@link LarvaGameClock#LOOPS_PER_MINUTE}), null without hatchery time */
+    private Double perHatchMinute( final long count ) {
+        return hatchEligibleLoops <= 0L ? null : Double.valueOf( count / LarvaGameClock.loopsToMinutes( hatchEligibleLoops ) );
     }
 
     /**

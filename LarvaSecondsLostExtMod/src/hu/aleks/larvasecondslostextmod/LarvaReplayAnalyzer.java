@@ -2,22 +2,13 @@ package hu.aleks.larvasecondslostextmod;
 
 import hu.scelightapi.service.IFactory;
 import hu.scelightapi.sc2.balancedata.IBdUtil;
-import hu.scelightapi.sc2.balancedata.model.ICommand;
-import hu.scelightapi.sc2.balancedata.model.IUnit;
 import hu.scelightapi.sc2.rep.model.IEvent;
 import hu.scelightapi.sc2.rep.model.IReplay;
-import hu.scelightapi.sc2.rep.model.gameevents.IControlGroupUpdateEvent;
-import hu.scelightapi.sc2.rep.model.gameevents.IGameEvents;
-import hu.scelightapi.sc2.rep.model.gameevents.cmd.ICmdEvent;
-import hu.scelightapi.sc2.rep.model.gameevents.selectiondelta.ISelectionDeltaEvent;
 import hu.scelightapi.sc2.rep.repproc.IRepProcessor;
-import hu.scelightapi.sc2.rep.repproc.ISelectionTracker;
 import hu.scelightapi.sc2.rep.repproc.IUser;
 import hu.scelightapi.sc2.rep.model.trackerevents.IBaseUnitEvent;
 import hu.scelightapi.sc2.rep.model.trackerevents.IPlayerStatsEvent;
 import hu.scelightapi.sc2.rep.model.trackerevents.ITrackerEvents;
-import hu.scelightapi.sc2.rep.model.trackerevents.IUnitBornEvent;
-import hu.scelightapi.sc2.rep.model.trackerevents.IUnitInitEvent;
 import hu.scelightapi.util.type.IXString;
 
 import java.util.ArrayList;
@@ -30,85 +21,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.LinkedHashSet;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * Epic 6 replay analysis foundation that reconstructs per-hatchery larva counts.
  */
 public class LarvaReplayAnalyzer {
 
-    /** Queen unit id. */
-    private static final String UNIT_QUEEN = "Queen";
+    /** Inject-active window per inject, in loops (one inject, about 29 s on the game clock). */
+    private static final int INJECT_ACTIVE_DURATION_LOOPS = LarvaGameClock.INJECT_CYCLE_LOOPS;
 
-    /** Dedicated queen-to-hatchery radius for Story 11.03. */
-    private static final double IDLE_INJECT_RADIUS = 12.0d;
+    /** Loops after Spawning Pool completion before inject uptime becomes eligible: the first queen's build time. */
+    private static final int INJECT_ELIGIBILITY_DELAY_LOOPS = LarvaGameClock.QUEEN_BUILD_LOOPS;
 
-    /** Queen starting energy on completion. */
-    private static final double QUEEN_STARTING_ENERGY = 25.0d;
-
-    /** Queen SpawnLarva energy cost. */
-    private static final double QUEEN_INJECT_ENERGY_COST = 25.0d;
-
-    /** Queen creep tumor energy cost. */
-    private static final double QUEEN_CREEP_TUMOR_ENERGY_COST = 25.0d;
-
-    /** Queen transfuse energy cost. */
-    private static final double QUEEN_TRANSFUSE_ENERGY_COST = 50.0d;
-
-    /** Real-time seconds required for a queen to regenerate 25 energy. */
-    private static final double QUEEN_RESTORE_25_ENERGY_SECONDS = 30.0d;
-
-    /** Conservative SC2 queen max energy cap used for estimates. */
-
-    /** Development diagnostics flag, fixed for the JVM lifetime (system properties). */
-    private static final boolean DEV_DIAGNOSTICS_ENABLED = DevDiagnosticDumpWriter.isEnabledBySystemProperties();
-
-    // Writes POS2JL snapshot lines to a dedicated temp file for reliable capture during CLI runs.
-    private static void writePos2jlLog( final String line ) {
-        // R-6 (E17-S12): development diagnostic only; unbounded file growth must not happen in normal and batch runs.
-        if ( !DEV_DIAGNOSTICS_ENABLED )
-            return;
-        try ( final FileWriter fw = new FileWriter( "/tmp/larva-pos2jl.log", true );
-              final PrintWriter pw = new PrintWriter( fw ) ) {
-            pw.println( line );
-        } catch ( final IOException e ) {
-            // best-effort; ignore
-        }
-    }
-
-    private static final double QUEEN_MAX_ENERGY = 200.0d;
-
-    /** Hardened Story 11.03 public replay-surface conclusion. */
-    private static final String IDLE_INJECT_SIGNAL_CONCLUSION = "Idle-inject windows prefer singleton-selected queen command attribution, then assign each queen's available 25-energy chunks across nearby hatcheries using observed queen proximity. Known queen energy spends delay readiness, and nearby ambiguity is resolved into deterministic hatchery assignments so full inject opportunity cost can be displayed.";
-
-    /** Replay loops per second in SC2 timelines. */
-    private static final int REPLAY_LOOPS_PER_SECOND = 16;
-
-    /** Visible inject-active duration in gameplay seconds. */
-    private static final int INJECT_ACTIVE_DURATION_SECONDS = 29;
-
-    /** Gameplay seconds required to confirm a phase promotion. */
-    private static final int PHASE_PROMOTION_DWELL_SECONDS = 30;
-
-    /** Gameplay seconds after Spawning Pool completion before inject uptime becomes eligible. */
-    private static final int INJECT_ELIGIBILITY_DELAY_SECONDS = 36;
-
-    /** Visible gameplay seconds represented by one missed-inject threshold. */
-    private static final int MISSED_INJECT_THRESHOLD_SECONDS = 29;
+    /** Red (missed-inject) loops represented by one missed inject. */
+    private static final int MISSED_INJECT_THRESHOLD_LOOPS = LarvaGameClock.INJECT_CYCLE_LOOPS;
 
     /** Potential injected larva counted for each missed-inject threshold. */
     private static final int MISSED_INJECT_LARVA_PER_THRESHOLD = 3;
 
-    /** Scelight normal-speed relative value. */
-    private static final double NORMAL_GAME_SPEED_RELATIVE = 36.0d;
-
-    /** Scelight Faster-speed relative value used as the fallback default. */
-    private static final long DEFAULT_GAME_SPEED_RELATIVE = 26L;
-
     /** Public replay-surface conclusion for green inject reconstruction. */
-    private static final String INJECT_SIGNAL_CONCLUSION = "No direct injected-building state is exposed by the public external-module replay model, so green inject-active windows are inferred from replay-derived hatchery bursts where 3 larva appear within 8 replay loops, then projected backward as 29-second gameplay-time windows converted to replay loops by game speed.";
+    private static final String INJECT_SIGNAL_CONCLUSION = "No direct injected-building state is exposed by the public external-module replay model, so green inject-active windows are inferred from replay-derived hatchery bursts where 3 larva appear within 8 replay loops, then projected backward as one-inject windows of " + LarvaGameClock.INJECT_CYCLE_LOOPS + " loops (about 29 s on the game clock).";
 
     /** Evidence label for inferred inject completions. */
     private static final String INFERRED_INJECT_EVIDENCE_KIND = "3 larva within 8 loops";
@@ -260,20 +192,11 @@ public class LarvaReplayAnalyzer {
         final LarvaAssignmentHeuristic assignmentHeuristic = new LarvaAssignmentHeuristic( calibration );
 
         final Map< Integer, HatcheryState > hatcheryByTag = new LinkedHashMap<>();
-        final Map< Integer, QueenState > queenByTag = new LinkedHashMap<>();
         final Map< Integer, LarvaState > larvaByTag = new HashMap<>();
         final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName = new LinkedHashMap<>();
         final Map< String, Integer > spawningPoolCompletionLoopByPlayerName = new LinkedHashMap<>();
         final Map< Integer, String > pendingSpawningPoolPlayerNameByTag = new HashMap<>();
 
-        // Track drone counts per player for accurate phase transitions
-        final Map< String, Integer > aliveDroneCountByPlayerName = new HashMap<>();
-        // First loop where the alive drone count reached the milestone thresholds (E17-S08, D-4); additive, feeds no existing output
-        final LarvaFirstDroneLoopTracker firstDroneLoopTracker = new LarvaFirstDroneLoopTracker();
-        // Track unit completion status: tag -> completed boolean
-        final Map< Integer, Boolean > unitCompletedByTag = new HashMap<>();
-        // Track buildings started by a drone so we can restore drones on cancellation
-        final Map< Integer, String > buildingConstructionPlayerNameByTag = new HashMap<>();
 
         int larvaBirthCount = 0;
         int assignedLarvaCount = 0;
@@ -295,12 +218,10 @@ public class LarvaReplayAnalyzer {
                         final IPlayerStatsEvent playerStatsEvent = (IPlayerStatsEvent) event;
                         final Integer playerId = playerStatsEvent.getPlayerId();
                         final String playerName = resolvePlayerName( repProc, playerId );
-                        // Use calculated drone count instead of workersActiveCount to accurately track alive drones
-                        final Integer calculatedDroneCount = aliveDroneCountByPlayerName.get( playerName );
-                        final Integer workerCountToUse = calculatedDroneCount != null ? calculatedDroneCount : playerStatsEvent.getWorkersActiveCount();
+                        // E19-S03: the same value as Scelight's Workers Active chart (drones at work; not in eggs or in buildings)
                         addResourceSnapshot( resourceSnapshotsByPlayerName, new LarvaPlayerResourceSnapshot( playerName, event.getLoop(),
-                            repProc.formatLoopTime( event.getLoop() ), playerStatsEvent.getMineralsCurrent(), playerStatsEvent.getGasCurrent(),
-                            playerStatsEvent.getFoodUsed(), playerStatsEvent.getFoodMade(), workerCountToUse ) );
+                            LarvaGameClock.format( event.getLoop() ), playerStatsEvent.getMineralsCurrent(), playerStatsEvent.getGasCurrent(),
+                            playerStatsEvent.getFoodUsed(), playerStatsEvent.getFoodMade(), playerStatsEvent.getWorkersActiveCount() ) );
                         break;
                     }
                     case ITrackerEvents.ID_UNIT_INIT :
@@ -318,12 +239,6 @@ public class LarvaReplayAnalyzer {
                                 recordSpawningPoolCompletion( spawningPoolCompletionLoopByPlayerName, playerName, event.getLoop() );
                             }
                         }
-                        // Track drone births
-                        if ( IBdUtil.UNIT_DRONE.equals( unitType ) && unitTag != null ) {
-                            final String playerName = resolvePlayerName( repProc, firstNonNull( baseUnitEvent.getControlPlayerId(), baseUnitEvent.getUpkeepPlayerId() ) );
-                            incrementDroneCount( aliveDroneCountByPlayerName, playerName );
-                        }
-                        final boolean buildingConstructionLike = isBuildingConstructionLike( unitType, creatorAbilityName, event.getId() );
                         if ( isHatcheryLike( unitType ) ) {
                             final HatcheryState hatcheryState = getOrCreateHatcheryState( repProc, hatcheryByTag, buildCombinedTag( baseUnitEvent.getUnitTagIndex(),
                                     baseUnitEvent.getUnitTagRecycle() ) );
@@ -337,18 +252,6 @@ public class LarvaReplayAnalyzer {
                             if ( hatcheryState.completed )
                                 hatcheryState.recordCompletion( event.getLoop(), repProc );
                             hatcheryState.ensurePoint( event.getLoop(), repProc );
-                            // Mark completed buildings
-                            if ( unitTag != null && hatcheryState.completed )
-                                unitCompletedByTag.put( unitTag, Boolean.TRUE );
-                        }
-                        if ( buildingConstructionLike && unitTag != null ) {
-                            if ( event.getId() == ITrackerEvents.ID_UNIT_INIT ) {
-                                recordBuildingConstructionStart( aliveDroneCountByPlayerName, buildingConstructionPlayerNameByTag, unitTag,
-                                        resolvePlayerName( repProc, firstNonNull( baseUnitEvent.getControlPlayerId(), baseUnitEvent.getUpkeepPlayerId() ) ),
-                                        unitType, repProc, event.getLoop() );
-                            } else if ( event.getId() == ITrackerEvents.ID_UNIT_BORN ) {
-                                unitCompletedByTag.put( unitTag, Boolean.TRUE );
-                            }
                         } else if ( IBdUtil.UNIT_LARVA.equals( unitType ) ) {
                             larvaBirthCount++;
                             final int larvaTag = buildCombinedTag( baseUnitEvent.getUnitTagIndex(), baseUnitEvent.getUnitTagRecycle() );
@@ -396,8 +299,6 @@ public class LarvaReplayAnalyzer {
                             final String pendingSpawningPoolPlayerName = pendingSpawningPoolPlayerNameByTag.remove( hatcheryTag );
                             if ( pendingSpawningPoolPlayerName != null )
                                 recordSpawningPoolCompletion( spawningPoolCompletionLoopByPlayerName, pendingSpawningPoolPlayerName, event.getLoop() );
-                            // Mark building as completed
-                            unitCompletedByTag.put( hatcheryTag, Boolean.TRUE );
                         }
 
                         if ( hatcheryTag != null ) {
@@ -417,23 +318,6 @@ public class LarvaReplayAnalyzer {
 
                         pendingSpawningPoolPlayerNameByTag.remove( tag );
 
-                        // If the dying unit is a Drone, decrement the per-player alive drone count.
-                        final String diedUnitType = toStringValue( event.get( F_UNIT_TYPE_NAME ) );
-                        if ( IBdUtil.UNIT_DRONE.equals( diedUnitType ) ) {
-                            final String dronePlayerName = resolvePlayerName( repProc,
-                                    firstNonNull( (Integer) event.get( F_CONTROL_PLAYER_ID ), (Integer) event.get( F_UPKEEP_PLAYER_ID ) ) );
-                            decrementDroneCount( aliveDroneCountByPlayerName, dronePlayerName );
-                        }
-
-                        // If a building under construction dies before completion, restore the drone that began it.
-                        final String cancellingPlayerName = buildingConstructionPlayerNameByTag.remove( tag );
-                        if ( cancellingPlayerName != null ) {
-                            final Boolean completed = unitCompletedByTag.get( tag );
-                            if ( completed == null || !completed.booleanValue() ) {
-                                incrementDroneCount( aliveDroneCountByPlayerName, cancellingPlayerName );
-                            }
-                        }
-
                         final LarvaState larvaState = larvaByTag.remove( tag );
                         if ( larvaState != null ) {
                             final HatcheryState hatcheryState = hatcheryByTag.get( larvaState.hatcheryTag );
@@ -445,18 +329,6 @@ public class LarvaReplayAnalyzer {
                         if ( hatcheryState != null ) {
                             hatcheryState.alive = false;
                             hatcheryState.recordDestroyed( event.getLoop(), repProc );
-                            // If a building that was never completed dies (cancelled), add back a drone
-                            final Boolean completed = unitCompletedByTag.get( tag );
-                            if ( !hatcheryState.completed && ( completed == null || !completed.booleanValue() ) ) {
-                                if ( hatcheryState.playerName != null && cancellingPlayerName == null )
-                                    incrementDroneCount( aliveDroneCountByPlayerName, hatcheryState.playerName );
-                            }
-                        }
-
-                        final QueenState queenState = queenByTag.get( tag );
-                        if ( queenState != null ) {
-                            queenState.alive = false;
-                            queenState.recordDestroyed( event.getLoop(), repProc );
                         }
                         break;
                     }
@@ -468,9 +340,6 @@ public class LarvaReplayAnalyzer {
 
                         if ( !isSpawningPoolLike( unitType ) )
                             pendingSpawningPoolPlayerNameByTag.remove( tag );
-
-                        // Track drone → building morphs and building → drone transformations
-                        handleDroneMorphs( aliveDroneCountByPlayerName, unitCompletedByTag, buildingConstructionPlayerNameByTag, tag, unitType, hatcheryByTag, repProc, event );
 
                         final HatcheryState hatcheryState = hatcheryByTag.get( tag );
                         if ( hatcheryState != null && isHatcheryLike( unitType ) ) {
@@ -490,19 +359,6 @@ public class LarvaReplayAnalyzer {
                             if ( larvaHatcheryState != null )
                                 larvaHatcheryState.removeLarva( event.getLoop(), repProc );
                         }
-
-                        final QueenState queenState = isQueenType( unitType ) ? getOrCreateQueenState( repProc, queenByTag, tag.intValue() ) : queenByTag.get( tag );
-                        if ( queenState != null ) {
-                            if ( isQueenType( unitType ) ) {
-                                queenState.alive = true;
-                                queenState.completed = true;
-                                queenState.unitType = unitType == null || unitType.length() == 0 ? queenState.unitType : unitType;
-                                queenState.recordCompletion( event.getLoop(), repProc );
-                            } else {
-                                queenState.alive = false;
-                                queenState.recordDestroyed( event.getLoop(), repProc );
-                            }
-                        }
                         break;
                     }
                     case ITrackerEvents.ID_UNIT_OWNER_CHANGE : {
@@ -512,28 +368,11 @@ public class LarvaReplayAnalyzer {
                             hatcheryState.playerId = firstNonNull( (Integer) event.get( F_CONTROL_PLAYER_ID ), (Integer) event.get( F_UPKEEP_PLAYER_ID ) );
                             hatcheryState.playerName = resolvePlayerName( repProc, hatcheryState.playerId );
                         }
-
-                        final QueenState queenState = tag == null ? null : queenByTag.get( tag );
-                        if ( queenState != null ) {
-                            queenState.playerId = firstNonNull( (Integer) event.get( F_CONTROL_PLAYER_ID ), (Integer) event.get( F_UPKEEP_PLAYER_ID ) );
-                            queenState.playerName = resolvePlayerName( repProc, queenState.playerId );
-                        }
                         break;
                     }
                     default :
                         break;
                 }
-
-                if ( event instanceof IBaseUnitEvent ) {
-                    final IBaseUnitEvent baseUnitEvent = (IBaseUnitEvent) event;
-                    final Integer unitTag = buildCombinedTagOrNull( baseUnitEvent.getUnitTagIndex(), baseUnitEvent.getUnitTagRecycle() );
-                    final String unitType = toStringValue( baseUnitEvent.getUnitTypeName() );
-                    if ( isQueenType( unitType ) || queenByTag.containsKey( unitTag ) ) {
-                        updateQueenState( repProc, queenByTag, event, baseUnitEvent, unitType );
-                    }
-                }
-
-                firstDroneLoopTracker.observe( aliveDroneCountByPlayerName, event.getLoop() );
             }
         }
 
@@ -561,1115 +400,74 @@ public class LarvaReplayAnalyzer {
 
         sortResourceSnapshotsByLoop( resourceSnapshotsByPlayerName );
 
-        final int injectActiveDurationLoops = resolveInjectActiveDurationLoops( repProc );
+        final int injectActiveDurationLoops = INJECT_ACTIVE_DURATION_LOOPS;
         final List< HatcheryInjectTimeline > injectTimelineList = buildInjectTimelines( repProc, hatcheryByTag, injectActiveDurationLoops,
                 replay.getHeader() == null || replay.getHeader().getElapsedGameLoops() == null ? 0 : replay.getHeader().getElapsedGameLoops().intValue() );
-        final Map< Integer, List< QueenCommandEvidence > > queenCommandEvidenceByTag = collectQueenCommandEvidence( repProc, gameEventArray, queenByTag );
-        final List< HatcheryIdleInjectTimeline > idleInjectTimelineList = buildIdleInjectTimelines( repProc, hatcheryByTag, queenByTag,
-                injectTimelineList, queenCommandEvidenceByTag,
-                replay.getHeader() == null || replay.getHeader().getElapsedGameLoops() == null ? 0 : replay.getHeader().getElapsedGameLoops().intValue() );
-        final int trackedQueenCount = queenByTag.size();
-        final int trackerObservedQueenCount = countTrackerObservedQueens( queenByTag );
-        final int commandSeededQueenCount = countCommandSeededQueens( queenByTag );
-        final int queenCommandEvidenceCount = countQueenCommandEvidence( queenCommandEvidenceByTag );
         final int replayEndLoop = replay.getHeader() == null || replay.getHeader().getElapsedGameLoops() == null ? 0 : replay.getHeader().getElapsedGameLoops().intValue();
-        final long gameSpeedRelative = repProc.getConverterGameSpeed() == null ? DEFAULT_GAME_SPEED_RELATIVE : repProc.getConverterGameSpeed().getRelativeSpeed();
-        final Map< String, LarvaPlayerPhaseTable > playerPhaseTableByPlayerName = buildPlayerPhaseTables( repProc, replayEndLoop, gameSpeedRelative,
+        final LarvaMissedInjectAnalysis.Output missedInjects = LarvaMissedInjectAnalysis.build( repProc, factory, toHatchInfos( hatcheryByTag ),
+                injectTimelineList, buildInjectUnlockLoops( spawningPoolCompletionLoopByPlayerName ), replayEndLoop );
+        final List< HatcheryIdleInjectTimeline > idleInjectTimelineList = sortIdleInjectTimelines( missedInjects.timelines, hatcheryByTag );
+        final Map< String, LarvaPlayerPhaseTable > playerPhaseTableByPlayerName = buildPlayerPhaseTables( repProc, replayEndLoop,
             resourceSnapshotsByPlayerName, spawningPoolCompletionLoopByPlayerName, hatcheryByTag, injectTimelineList, idleInjectTimelineList );
 
         return new LarvaAnalysisReport( calibration, timelineList, injectTimelineList, INJECT_SIGNAL_CONCLUSION,
-            idleInjectTimelineList, IDLE_INJECT_SIGNAL_CONCLUSION, IDLE_INJECT_RADIUS,
-            trackedQueenCount, trackerObservedQueenCount, commandSeededQueenCount, queenCommandEvidenceCount,
+            idleInjectTimelineList, LarvaMissedInjectAnalysis.CONCLUSION, LarvaMissedInjectAnalysis.RADIUS,
+            missedInjects.queens, missedInjects.queensWithPositions, missedInjects.spendsFromSelection, missedInjects.queenCommands,
             hatcheryByTag.size(), larvaBirthCount, assignedLarvaCount, unassignedLarvaCount,
             ambiguousLarvaCount, noEligibleHatcheryLarvaCount,
             directAssignmentCount, injectCorrelatedAssignmentCount, heuristicAssignmentCount, hatcheryMorphCount,
             trackerEventArray == null ? 0 : trackerEventArray.length, gameEventArray == null ? 0 : gameEventArray.length, fullReplayParseUsed,
-            repProc.isRealTime(), gameSpeedRelative,
-            replayEndLoop, resourceSnapshotsByPlayerName, aliveDroneCountByPlayerName, playerPhaseTableByPlayerName,
-            firstDroneLoopTracker.getFirstLoopByPlayerName() );
+            replayEndLoop, resourceSnapshotsByPlayerName, playerPhaseTableByPlayerName );
     }
 
     /**
-     * Updates mutable queen lifecycle state from a tracker event.
+     * Hatchery facts for the missed-inject model (E19-S10).
      */
-    private void updateQueenState( final IRepProcessor repProc, final Map< Integer, QueenState > queenByTag, final IEvent event,
-            final IBaseUnitEvent baseUnitEvent, final String unitType ) {
-        final Integer queenTag = buildCombinedTagOrNull( baseUnitEvent.getUnitTagIndex(), baseUnitEvent.getUnitTagRecycle() );
-        if ( queenTag == null )
-            return;
-
-        final QueenState queenState = getOrCreateQueenState( repProc, queenByTag, queenTag.intValue() );
-        queenState.playerId = firstNonNull( baseUnitEvent.getControlPlayerId(), baseUnitEvent.getUpkeepPlayerId() );
-        queenState.playerName = resolvePlayerName( repProc, queenState.playerId );
-        queenState.x = baseUnitEvent.getXCoord();
-        queenState.y = baseUnitEvent.getYCoord();
-        queenState.lastKnownPositionLoop = event.getLoop();
-        queenState.trackerObserved = true;
-        queenState.unitType = unitType == null || unitType.length() == 0 ? queenState.unitType : unitType;
-        
-        // Capture position snapshot for proximity re-validation during idle window building
-        if ( baseUnitEvent.getXCoord() != null && baseUnitEvent.getYCoord() != null ) {
-            queenState.positionTimeline.add( new PositionSnapshot( event.getLoop(), 
-                baseUnitEvent.getXCoord().intValue(), baseUnitEvent.getYCoord().intValue() ) );
-        }
-
-        switch ( event.getId() ) {
-            case ITrackerEvents.ID_UNIT_INIT :
-                queenState.alive = true;
-                break;
-            case ITrackerEvents.ID_UNIT_BORN :
-            case ITrackerEvents.ID_UNIT_DONE :
-                queenState.alive = true;
-                queenState.completed = true;
-                queenState.recordCompletion( event.getLoop(), repProc );
-                break;
-            default :
-                break;
-        }
-    }
-
-    /**
-     * Collects conservative singleton-selected queen command evidence.
-     */
-    private Map< Integer, List< QueenCommandEvidence > > collectQueenCommandEvidence( final IRepProcessor repProc,
-            final IEvent[] gameEventArray, final Map< Integer, QueenState > queenByTag ) {
-        final Map< Integer, List< QueenCommandEvidence > > evidenceByQueenTag = new LinkedHashMap<>();
-        if ( gameEventArray == null || factory == null )
-            return evidenceByQueenTag;
-
-        final Map< Integer, ISelectionTracker > selectionTrackerByUserId = new HashMap<>();
-        for ( final IEvent event : gameEventArray ) {
-            if ( event == null )
-                continue;
-
-            final ISelectionTracker selectionTracker = getOrCreateSelectionTracker( selectionTrackerByUserId, event.getUserId() );
-            switch ( event.getId() ) {
-                case IGameEvents.ID_SELECTION_DELTA :
-                    if ( selectionTracker != null && event instanceof ISelectionDeltaEvent )
-                        selectionTracker.processSelectionDelta( (ISelectionDeltaEvent) event );
-                    break;
-                case IGameEvents.ID_CONTROL_GROUP_UPDATE :
-                    if ( selectionTracker != null && event instanceof IControlGroupUpdateEvent )
-                        selectionTracker.processControlGroupUpdate( (IControlGroupUpdateEvent) event );
-                    break;
-                case IGameEvents.ID_CMD :
-                    if ( selectionTracker != null && event instanceof ICmdEvent )
-                        recordQueenCommandEvidence( repProc, evidenceByQueenTag, queenByTag, selectionTracker, (ICmdEvent) event );
-                    break;
-                default :
-                    break;
-            }
-        }
-
-        return evidenceByQueenTag;
-    }
-
-    /**
-     * Creates one command-evidence record if the active selection proves a singleton queen caster.
-     */
-    private void recordQueenCommandEvidence( final IRepProcessor repProc, final Map< Integer, List< QueenCommandEvidence > > evidenceByQueenTag,
-            final Map< Integer, QueenState > queenByTag, final ISelectionTracker selectionTracker, final ICmdEvent cmdEvent ) {
-        final Integer queenTag = resolveSingletonSelectedQueenTag( repProc, selectionTracker );
-        if ( queenTag == null )
-            return;
-
-        final QueenState queenState = getOrCreateQueenState( repProc, queenByTag, queenTag.intValue() );
-        if ( queenState.playerId == null )
-            queenState.playerId = resolvePlayerIdForUserId( repProc, cmdEvent.getUserId() );
-        if ( queenState.playerName == null || queenState.playerName.length() == 0 || "Unknown player".equals( queenState.playerName ) )
-            queenState.playerName = resolvePlayerName( repProc, queenState.playerId );
-        queenState.commandSeeded = true;
-        queenState.alive = true;
-        queenState.completed = true;
-        queenState.recordCompletion( cmdEvent.getLoop(), repProc );
-
-        final ICommand command = cmdEvent.getCommand();
-        final String abilityId = command == null ? null : command.getAbilId();
-        final Integer targetHatcheryTag = cmdEvent.getTargetUnit() == null ? null : cmdEvent.getTargetUnit().getTag();
-        final boolean inject = targetHatcheryTag != null && isQueenInjectCommand( command );
-        final int energyCost = resolveQueenEnergyCost( command );
-
-        List< QueenCommandEvidence > evidenceList = evidenceByQueenTag.get( queenTag );
-        if ( evidenceList == null ) {
-            evidenceList = new ArrayList<>();
-            evidenceByQueenTag.put( queenTag, evidenceList );
-        }
-
-        evidenceList.add( new QueenCommandEvidence( queenTag.intValue(), cmdEvent.getLoop(), repProc.formatLoopTime( cmdEvent.getLoop() ),
-        inject ? targetHatcheryTag.intValue() : -1, abilityId, inject, energyCost ) );
-    }
-
-    /**
-     * Resolves a singleton queen from the active player selection.
-     */
-    private Integer resolveSingletonSelectedQueenTag( final IRepProcessor repProc, final ISelectionTracker selectionTracker ) {
-        if ( selectionTracker == null || selectionTracker.getActiveSelection() == null || selectionTracker.getActiveSelection().size() != 1 )
-            return null;
-
-        final Integer[] selectedUnit = selectionTracker.getActiveSelection().get( 0 );
-        if ( selectedUnit == null || selectedUnit.length < 2 || selectedUnit[ 0 ] == null || selectedUnit[ 1 ] == null )
-            return null;
-
-        return isQueenLink( repProc, selectedUnit[ 0 ] ) ? selectedUnit[ 1 ] : null;
-    }
-
-    /**
-     * Tells if a unit link resolves to a queen.
-     */
-    private boolean isQueenLink( final IRepProcessor repProc, final Integer unitLink ) {
-        if ( repProc == null || repProc.getReplay() == null || repProc.getReplay().getBalanceData() == null || unitLink == null )
-            return false;
-
-        final IUnit unit = repProc.getReplay().getBalanceData().getUnit( unitLink );
-        return unit != null && isQueenType( unit.getId() );
-    }
-
-    /**
-     * Tells if a tracker or balance-data unit id clearly identifies a queen.
-     */
-    private boolean isQueenType( final String unitType ) {
-        final String normalizedUnitType = normalizeUnitTypeToken( unitType );
-        return normalizedUnitType.length() > 0 && normalizedUnitType.indexOf( "queen" ) >= 0;
-    }
-
-    /**
-     * Normalizes unit identifiers for tolerant comparison.
-     */
-    private String normalizeUnitTypeToken( final String value ) {
-        if ( value == null || value.length() == 0 )
-            return "";
-
-        final StringBuilder builder = new StringBuilder( value.length() );
-        for ( int i = 0; i < value.length(); i++ ) {
-            final char character = value.charAt( i );
-            if ( Character.isLetterOrDigit( character ) )
-                builder.append( Character.toLowerCase( character ) );
-        }
-
-        return builder.toString();
-    }
-
-    /**
-     * Resolves a player id from a command user id when tracker ownership was not available.
-     */
-    private Integer resolvePlayerIdForUserId( final IRepProcessor repProc, final int userId ) {
-        if ( repProc == null || userId < 0 )
-            return null;
-
-        final IUser[] usersByUserId = repProc.getUsersByUserId();
-        if ( usersByUserId == null || userId >= usersByUserId.length )
-            return null;
-
-        final IUser user = usersByUserId[ userId ];
-        if ( user == null )
-            return null;
-
-        final IUser[] usersByPlayerId = repProc.getUsersByPlayerId();
-        if ( usersByPlayerId != null )
-            for ( int playerId = 1; playerId < usersByPlayerId.length; playerId++ )
-                if ( usersByPlayerId[ playerId ] == user )
-                    return Integer.valueOf( playerId );
-
-        return user.getPlayerIdx() < 0 ? null : Integer.valueOf( user.getPlayerIdx() + 1 );
-    }
-
-    /**
-     * Counts queens that were position-observed from tracker events.
-     */
-    private int countTrackerObservedQueens( final Map< Integer, QueenState > queenByTag ) {
-        int count = 0;
-        if ( queenByTag == null )
-            return 0;
-
-        for ( final QueenState queenState : queenByTag.values() )
-            if ( queenState != null && queenState.trackerObserved )
-                count++;
-
-        return count;
-    }
-
-    /**
-     * Counts queens that required command-side seeding.
-     */
-    private int countCommandSeededQueens( final Map< Integer, QueenState > queenByTag ) {
-        int count = 0;
-        if ( queenByTag == null )
-            return 0;
-
-        for ( final QueenState queenState : queenByTag.values() )
-            if ( queenState != null && queenState.commandSeeded )
-                count++;
-
-        return count;
-    }
-
-    /**
-     * Counts recorded singleton queen command evidence rows.
-     */
-    private int countQueenCommandEvidence( final Map< Integer, List< QueenCommandEvidence > > queenCommandEvidenceByTag ) {
-        int count = 0;
-        if ( queenCommandEvidenceByTag == null )
-            return 0;
-
-        for ( final List< QueenCommandEvidence > evidenceList : queenCommandEvidenceByTag.values() )
-            count += evidenceList == null ? 0 : evidenceList.size();
-
-        return count;
-    }
-
-    /**
-     * Returns an existing selection tracker or creates a new one for a user id.
-     */
-    private ISelectionTracker getOrCreateSelectionTracker( final Map< Integer, ISelectionTracker > selectionTrackerByUserId, final int userId ) {
-        if ( selectionTrackerByUserId == null || factory == null || userId < 0 )
-            return null;
-
-        final Integer key = Integer.valueOf( userId );
-        ISelectionTracker selectionTracker = selectionTrackerByUserId.get( key );
-        if ( selectionTracker == null ) {
-            selectionTracker = factory.newSelectionTracker();
-            selectionTrackerByUserId.put( key, selectionTracker );
-        }
-        return selectionTracker;
-    }
-
-    /**
-     * Builds per-hatchery idle-inject timelines from conservative queen command attribution.
-     */
-    private List< HatcheryIdleInjectTimeline > buildIdleInjectTimelines( final IRepProcessor repProc, final Map< Integer, HatcheryState > hatcheryByTag,
-            final Map< Integer, QueenState > queenByTag, final List< HatcheryInjectTimeline > injectTimelineList,
-            final Map< Integer, List< QueenCommandEvidence > > queenCommandEvidenceByTag, final int replayEndLoop ) {
-        if ( hatcheryByTag == null || hatcheryByTag.isEmpty() )
-            return Collections.emptyList();
-
-        final Map< Integer, HatcheryInjectTimeline > injectTimelineByHatchTag = new HashMap<>();
-        if ( injectTimelineList != null )
-            for ( final HatcheryInjectTimeline injectTimeline : injectTimelineList )
-                if ( injectTimeline != null )
-                    injectTimelineByHatchTag.put( Integer.valueOf( injectTimeline.getHatcheryTag() ), injectTimeline );
-
-        final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag = new HashMap<>();
-        final Map< Integer, List< String > > diagnosticsByHatchTag = new HashMap<>();
-        final Map< Integer, Integer > attributedQueenCommandCountByHatchTag = new HashMap<>();
-        final Map< Integer, Integer > attributedInjectCommandCountByHatchTag = new HashMap<>();
-        final Map< Integer, Integer > uncertaintyDiscardCountByHatchTag = new HashMap<>();
-
-        for ( final QueenState queenState : queenByTag.values() ) {
-            if ( queenState == null || !queenState.completed || queenState.playerId == null )
-                continue;
-
-            final List< QueenCommandEvidence > evidenceList = queenCommandEvidenceByTag.get( Integer.valueOf( queenState.queenTag ) );
-            if ( evidenceList != null && !evidenceList.isEmpty() ) {
-                Collections.sort( evidenceList, new Comparator< QueenCommandEvidence >() {
-                    @Override
-                    public int compare( final QueenCommandEvidence left, final QueenCommandEvidence right ) {
-                        return left.loop < right.loop ? -1 : left.loop == right.loop ? 0 : 1;
-                    }
-                } );
-                buildQueenIdleCandidatesFromCommands( repProc, queenState, evidenceList, hatcheryByTag, injectTimelineByHatchTag, replayEndLoop,
-                        candidateWindowsByHatchTag, diagnosticsByHatchTag, attributedQueenCommandCountByHatchTag,
-                        attributedInjectCommandCountByHatchTag, uncertaintyDiscardCountByHatchTag );
-            }
-
-                trySeedInitialIdleCandidateFromCompletion( repProc, queenState, hatcheryByTag, injectTimelineByHatchTag, replayEndLoop,
-                    candidateWindowsByHatchTag, diagnosticsByHatchTag, uncertaintyDiscardCountByHatchTag );
-                // Use position timeline discretization instead of single-position seeding to avoid false positive windows
-                // when queens move away after initial detection (SOLUTION 1 to idle-inject queen bug)
-                addQueenIdleCandidatesFromPositionTimeline( repProc, queenState, hatcheryByTag, injectTimelineByHatchTag, replayEndLoop,
-                    candidateWindowsByHatchTag, diagnosticsByHatchTag, uncertaintyDiscardCountByHatchTag );
-        }
-
-        final List< HatcheryIdleInjectTimeline > idleTimelineList = new ArrayList<>();
+    private List< LarvaMissedInjectAnalysis.HatchInfo > toHatchInfos( final Map< Integer, HatcheryState > hatcheryByTag ) {
+        final List< LarvaMissedInjectAnalysis.HatchInfo > hatchInfos = new ArrayList<>();
         for ( final HatcheryState hatcheryState : hatcheryByTag.values() ) {
-            if ( hatcheryState == null || !hatcheryState.completed || hatcheryState.completionLoop < 0 )
+            if ( hatcheryState == null || hatcheryState.playerId == null || hatcheryState.x == null || hatcheryState.y == null )
                 continue;
-
-            final List< CandidateIdleWindow > candidateWindowList = candidateWindowsByHatchTag.get( Integer.valueOf( hatcheryState.hatcheryTag ) );
-            final List< HatcheryIdleInjectWindow > idleWindowList = mergeIdleCandidates( repProc, candidateWindowList );
-            final List< String > diagnosticLineList = diagnosticsByHatchTag.get( Integer.valueOf( hatcheryState.hatcheryTag ) );
-            idleTimelineList.add( new HatcheryIdleInjectTimeline( hatcheryState.hatcheryTag, hatcheryState.hatcheryTagText,
-                    hatcheryState.playerName, hatcheryState.hatcheryType, IDLE_INJECT_RADIUS,
-                    intValue( attributedQueenCommandCountByHatchTag.get( Integer.valueOf( hatcheryState.hatcheryTag ) ) ),
-                    intValue( attributedInjectCommandCountByHatchTag.get( Integer.valueOf( hatcheryState.hatcheryTag ) ) ),
-                    intValue( uncertaintyDiscardCountByHatchTag.get( Integer.valueOf( hatcheryState.hatcheryTag ) ) ),
-                    idleWindowList, diagnosticLineList == null ? Collections.< String >emptyList() : diagnosticLineList ) );
+            hatchInfos.add( new LarvaMissedInjectAnalysis.HatchInfo( hatcheryState.hatcheryTag, hatcheryState.hatcheryTagText,
+                    hatcheryState.playerId.intValue(), hatcheryState.playerName, hatcheryState.hatcheryType, hatcheryState.x.intValue(),
+                    hatcheryState.y.intValue(), hatcheryState.completed ? hatcheryState.completionLoop : -1, hatcheryState.destroyedLoop ) );
         }
+        return hatchInfos;
+    }
 
-        Collections.sort( idleTimelineList, new Comparator< HatcheryIdleInjectTimeline >() {
+    /**
+     * First loop an inject can be missed, per player: Spawning Pool completion plus the queen build time.
+     */
+    private Map< String, Integer > buildInjectUnlockLoops( final Map< String, Integer > spawningPoolCompletionLoopByPlayerName ) {
+        final Map< String, Integer > unlockLoopByPlayerName = new HashMap<>();
+        for ( final Map.Entry< String, Integer > entry : spawningPoolCompletionLoopByPlayerName.entrySet() )
+            unlockLoopByPlayerName.put( entry.getKey(), Integer.valueOf( entry.getValue().intValue()
+                    + INJECT_ELIGIBILITY_DELAY_LOOPS ) );
+        return unlockLoopByPlayerName;
+    }
+
+    /**
+     * Sorts idle-inject timelines by player, hatchery completion and tag text.
+     */
+    private List< HatcheryIdleInjectTimeline > sortIdleInjectTimelines( final List< HatcheryIdleInjectTimeline > idleTimelineList,
+            final Map< Integer, HatcheryState > hatcheryByTag ) {
+        final List< HatcheryIdleInjectTimeline > sorted = new ArrayList<>( idleTimelineList );
+        Collections.sort( sorted, new Comparator< HatcheryIdleInjectTimeline >() {
             @Override
             public int compare( final HatcheryIdleInjectTimeline left, final HatcheryIdleInjectTimeline right ) {
                 final int playerCompare = compareIgnoreCaseSafe( left.getPlayerName(), right.getPlayerName() );
                 if ( playerCompare != 0 )
                     return playerCompare;
-
                 final HatcheryState leftState = hatcheryByTag.get( Integer.valueOf( left.getHatcheryTag() ) );
                 final HatcheryState rightState = hatcheryByTag.get( Integer.valueOf( right.getHatcheryTag() ) );
                 final int completionCompare = compareCompletionLoops( leftState == null ? -1 : leftState.completionLoop,
                         rightState == null ? -1 : rightState.completionLoop );
                 if ( completionCompare != 0 )
                     return completionCompare;
-
                 return compareIgnoreCaseSafe( left.getHatcheryTagText(), right.getHatcheryTagText() );
             }
         } );
-        return idleTimelineList;
-    }
-
-    /**
-     * Builds conservative idle-window candidates from confidently attributed queen commands.
-     */
-    private void buildQueenIdleCandidatesFromCommands( final IRepProcessor repProc, final QueenState queenState,
-            final List< QueenCommandEvidence > evidenceList, final Map< Integer, HatcheryState > hatcheryByTag,
-            final Map< Integer, HatcheryInjectTimeline > injectTimelineByHatchTag, final int replayEndLoop,
-            final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag, final Map< Integer, List< String > > diagnosticsByHatchTag,
-            final Map< Integer, Integer > attributedQueenCommandCountByHatchTag, final Map< Integer, Integer > attributedInjectCommandCountByHatchTag,
-            final Map< Integer, Integer > uncertaintyDiscardCountByHatchTag ) {
-        int boundHatchTag = -1;
-        int boundStartLoop = -1;
-        int nextReadyLoop = Integer.MAX_VALUE;
-
-        for ( final QueenCommandEvidence evidence : evidenceList ) {
-            if ( boundHatchTag >= 0 && boundStartLoop >= 0 ) {
-                addQueenIdleCandidatesForBoundInterval( repProc, queenState, boundHatchTag, boundStartLoop, evidence.loop, nextReadyLoop,
-                        hatcheryByTag, injectTimelineByHatchTag, candidateWindowsByHatchTag, diagnosticsByHatchTag );
-                addCount( attributedQueenCommandCountByHatchTag, boundHatchTag, 1 );
-            }
-
-            if ( evidence.inject && evidence.targetHatcheryTag >= 0 && hatcheryByTag.containsKey( Integer.valueOf( evidence.targetHatcheryTag ) ) ) {
-                boundHatchTag = evidence.targetHatcheryTag;
-                boundStartLoop = evidence.loop;
-                nextReadyLoop = evidence.loop + resolveQueenReadyDelayLoops( repProc, evidence.energyCost );
-                addCount( attributedInjectCommandCountByHatchTag, boundHatchTag, 1 );
-                addDiagnostic( diagnosticsByHatchTag, boundHatchTag, "Queen " + queenState.queenTagText + " bound by singleton SpawnLarva at "
-                        + evidence.timeLabel + "; next 25 energy reaches at " + repProc.formatLoopTime( nextReadyLoop ) + '.' );
-                addQueenStateUpdateAtInjectExpiry( repProc, queenState, evidence, hatcheryByTag, diagnosticsByHatchTag );
-            } else if ( evidence.energyCost > 0 && boundHatchTag >= 0 && isKnownNonInjectQueenEnergySpend( evidence ) ) {
-                final int spentReadyLoop = evidence.loop + resolveQueenReadyDelayLoops( repProc, evidence.energyCost );
-                addDiagnostic( diagnosticsByHatchTag, boundHatchTag, "Queen " + queenState.queenTagText + " spent " + evidence.energyCost
-                        + " energy on " + safeAbilityId( evidence.abilityId ) + " at " + evidence.timeLabel
-                        + "; hybrid proof kept the same hatchery binding but delayed readiness until "
-                        + repProc.formatLoopTime( spentReadyLoop ) + '.' );
-                boundStartLoop = evidence.loop;
-                nextReadyLoop = Math.max( nextReadyLoop, spentReadyLoop );
-            } else if ( evidence.energyCost > 0 && boundHatchTag >= 0 ) {
-                final int spentReadyLoop = evidence.loop + resolveQueenReadyDelayLoops( repProc, evidence.energyCost );
-                addDiagnostic( diagnosticsByHatchTag, boundHatchTag, "Queen " + queenState.queenTagText + " spent " + evidence.energyCost
-                        + " energy on " + safeAbilityId( evidence.abilityId ) + " at " + evidence.timeLabel
-                        + "; the spend looked inject-like but lacked a trustworthy hatchery target, so proof was reset conservatively. Earliest re-ready time would be "
-                        + repProc.formatLoopTime( spentReadyLoop ) + '.' );
-                addCount( uncertaintyDiscardCountByHatchTag, boundHatchTag, 1 );
-                boundHatchTag = -1;
-                boundStartLoop = -1;
-                nextReadyLoop = Integer.MAX_VALUE;
-            } else if ( boundHatchTag >= 0 ) {
-                addDiagnostic( diagnosticsByHatchTag, boundHatchTag, "Queen " + queenState.queenTagText + " proof stopped at " + evidence.timeLabel
-                        + " due to singleton-selected non-inject command " + safeAbilityId( evidence.abilityId ) + '.' );
-                addCount( uncertaintyDiscardCountByHatchTag, boundHatchTag, 1 );
-                boundHatchTag = -1;
-                boundStartLoop = -1;
-                nextReadyLoop = Integer.MAX_VALUE;
-            }
-        }
-
-        if ( boundHatchTag >= 0 && boundStartLoop >= 0 ) {
-            final int intervalEndLoop = queenState.destroyedLoop >= 0 ? queenState.destroyedLoop : replayEndLoop;
-            addQueenIdleCandidatesForBoundInterval( repProc, queenState, boundHatchTag, boundStartLoop, intervalEndLoop, nextReadyLoop,
-                    hatcheryByTag, injectTimelineByHatchTag, candidateWindowsByHatchTag, diagnosticsByHatchTag );
-            addCount( attributedQueenCommandCountByHatchTag, boundHatchTag, 1 );
-            if ( queenState.destroyedLoop >= 0 )
-                addDiagnostic( diagnosticsByHatchTag, boundHatchTag, "Queen " + queenState.queenTagText + " proof ended at "
-                        + queenState.destroyedTimeLabel + " because the queen died." );
-        }
-    }
-
-    /**
-     * Records a synthetic queen position update at the moment her inject energy returns.
-     */
-    private void addQueenStateUpdateAtInjectExpiry( final IRepProcessor repProc, final QueenState queenState,
-            final QueenCommandEvidence evidence, final Map< Integer, HatcheryState > hatcheryByTag,
-            final Map< Integer, List< String > > diagnosticsByHatchTag ) {
-        if ( repProc == null || queenState == null || evidence == null || !evidence.inject || evidence.targetHatcheryTag < 0 )
-            return;
-
-        final int expiryLoop = evidence.loop + resolveInjectActiveDurationLoops( repProc );
-        if ( expiryLoop <= 0 || queenState.lastKnownPositionLoop >= expiryLoop )
-            return;
-
-        Integer x = queenState.x;
-        Integer y = queenState.y;
-        if ( ( x == null || y == null ) && hatcheryByTag != null ) {
-            final HatcheryState hatcheryState = hatcheryByTag.get( Integer.valueOf( evidence.targetHatcheryTag ) );
-            if ( hatcheryState != null && hatcheryState.x != null && hatcheryState.y != null ) {
-                x = hatcheryState.x;
-                y = hatcheryState.y;
-            }
-        }
-
-        if ( x == null || y == null )
-            return;
-
-        final PositionSnapshot syntheticSnapshot = new PositionSnapshot( expiryLoop, x.intValue(), y.intValue() );
-        for ( final PositionSnapshot existingSnapshot : queenState.positionTimeline ) {
-            if ( existingSnapshot != null && existingSnapshot.loop == expiryLoop )
-                return;
-        }
-
-        queenState.positionTimeline.add( syntheticSnapshot );
-        queenState.lastKnownPositionLoop = expiryLoop;
-        queenState.x = x;
-        queenState.y = y;
-        Collections.sort( queenState.positionTimeline, new java.util.Comparator< PositionSnapshot >() {
-            @Override
-            public int compare( final PositionSnapshot left, final PositionSnapshot right ) {
-                return left.loop < right.loop ? -1 : left.loop == right.loop ? 0 : 1;
-            }
-        } );
-
-        if ( diagnosticsByHatchTag != null ) {
-            addDiagnostic( diagnosticsByHatchTag, evidence.targetHatcheryTag, "Queen " + queenState.queenTagText
-                    + " inject expired at " + repProc.formatLoopTime( expiryLoop ) + "; synthetic position update inserted for proximity re-validation." );
-        }
-    }
-
-    /**
-     * Tries to seed an initial conservative idle candidate from a queen completion moment.
-     */
-    private void trySeedInitialIdleCandidateFromCompletion( final IRepProcessor repProc, final QueenState queenState,
-            final Map< Integer, HatcheryState > hatcheryByTag, final Map< Integer, HatcheryInjectTimeline > injectTimelineByHatchTag,
-            final int replayEndLoop, final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag,
-            final Map< Integer, List< String > > diagnosticsByHatchTag,
-            final Map< Integer, Integer > uncertaintyDiscardCountByHatchTag ) {
-        if ( queenState.completionLoop < 0 || queenState.x == null || queenState.y == null )
-            return;
-
-        final List< HatcheryState > nearbyHatcheryList = new ArrayList<>();
-        for ( final HatcheryState hatcheryState : hatcheryByTag.values() ) {
-            if ( hatcheryState == null || !hatcheryState.completed || !hatcheryState.alive || hatcheryState.playerId == null
-                    || !hatcheryState.playerId.equals( queenState.playerId ) || hatcheryState.completionLoop < 0
-                    || hatcheryState.completionLoop > queenState.completionLoop || hatcheryState.x == null || hatcheryState.y == null )
-                continue;
-
-            final double distance = distance( queenState.x.intValue(), queenState.y.intValue(), hatcheryState.x.intValue(), hatcheryState.y.intValue() );
-            if ( distance <= IDLE_INJECT_RADIUS )
-                nearbyHatcheryList.add( hatcheryState );
-        }
-
-        if ( nearbyHatcheryList.isEmpty() )
-            return;
-
-        if ( nearbyHatcheryList.size() > 1 ) {
-            allocateNearbyQueenInjectOpportunity( repProc, queenState, nearbyHatcheryList, injectTimelineByHatchTag, queenState.completionLoop,
-                    queenState.completionLoop, replayEndLoop, hatcheryByTag, candidateWindowsByHatchTag, diagnosticsByHatchTag,
-                    "completed at " + queenState.completionTimeLabel + " within the dedicated radius of multiple hatcheries; allocated deterministic nearby inject opportunities" );
-            return;
-        }
-
-        final HatcheryState hatcheryState = nearbyHatcheryList.get( 0 );
-        final int intervalEndLoop = queenState.destroyedLoop >= 0 ? queenState.destroyedLoop : replayEndLoop;
-        addDiagnostic( diagnosticsByHatchTag, hatcheryState.hatcheryTag, "Queen " + queenState.queenTagText + " completed at "
-            + queenState.completionTimeLabel + " within radius " + formatRadius() + " of this hatchery; hybrid nearby-queen eligibility seeded." );
-        addQueenIdleCandidatesForBoundInterval( repProc, queenState, hatcheryState.hatcheryTag, queenState.completionLoop, intervalEndLoop,
-                queenState.completionLoop, hatcheryByTag, injectTimelineByHatchTag, candidateWindowsByHatchTag, diagnosticsByHatchTag );
-    }
-
-    /**
-     * Builds idle-inject windows from position timeline, discretizing based on observed proximity.
-     * This solves the bug where once a queen was found nearby, the window would extend infinitely
-     * even after the queen moved away. Now windows end when proximity is lost.
-     *
-     * Solution 1: Position-based discretization. Only extends windows while position data confirms
-     * the queen remained nearby. When observations show the queen moved away OR we run out of confirming
-     * observations, the window ends. This satisfies the acceptance criteria of failing safely when
-     * proximity cannot be confidently proven.
-     */
-    private void addQueenIdleCandidatesFromPositionTimeline( final IRepProcessor repProc, final QueenState queenState,
-            final Map< Integer, HatcheryState > hatcheryByTag, final Map< Integer, HatcheryInjectTimeline > injectTimelineByHatchTag,
-            final int replayEndLoop, final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag,
-            final Map< Integer, List< String > > diagnosticsByHatchTag,
-            final Map< Integer, Integer > uncertaintyDiscardCountByHatchTag ) {
-        if ( queenState.positionTimeline == null || queenState.positionTimeline.isEmpty() )
-            return;
-
-        // Find hatchery '2jl' if present so we can log distances for every snapshot
-        Integer hatchery2jlTag = null;
-        HatcheryState hatch2jl = null;
-        for ( final HatcheryState hs : hatcheryByTag.values() ) {
-            if ( hs != null && hs.hatcheryTagText != null && "2jl".equals( hs.hatcheryTagText ) ) {
-                hatchery2jlTag = Integer.valueOf( hs.hatcheryTag );
-                hatch2jl = hs;
-                break;
-            }
-        }
-
-        // Walk through position timeline and detect proximity windows
-        Integer currentNearbyHatchTag = null;
-        int windowStartLoop = -1;
-        int lastNearbyLoop = -1;
-
-        for ( int i = 0; i < queenState.positionTimeline.size(); i++ ) {
-            final PositionSnapshot snapshot = queenState.positionTimeline.get( i );
-
-            // Find which hatchery (if any) is nearby at this observation
-            final List< HatcheryState > nearbyAtThisLoop = new ArrayList<>();
-            for ( final HatcheryState hatcheryState : hatcheryByTag.values() ) {
-                if ( hatcheryState == null || !hatcheryState.completed || !hatcheryState.alive || hatcheryState.playerId == null
-                        || !hatcheryState.playerId.equals( queenState.playerId ) || hatcheryState.completionLoop < 0
-                        || hatcheryState.completionLoop > snapshot.loop || hatcheryState.x == null || hatcheryState.y == null )
-                    continue;
-
-                final double distance = distance( snapshot.x, snapshot.y, hatcheryState.x.intValue(), hatcheryState.y.intValue() );
-                if ( distance <= IDLE_INJECT_RADIUS )
-                    nearbyAtThisLoop.add( hatcheryState );
-            }
-
-            // Determine which hatchery to assign to (if multiple, use deterministic rotation)
-            Integer assignedHatchTag = null;
-            if ( !nearbyAtThisLoop.isEmpty() ) {
-                if ( nearbyAtThisLoop.size() == 1 ) {
-                    assignedHatchTag = Integer.valueOf( nearbyAtThisLoop.get( 0 ).hatcheryTag );
-                } else {
-                    // Multiple nearby hatcheries: use deterministic assignment based on queen tag
-                    java.util.Collections.sort( nearbyAtThisLoop, new java.util.Comparator< HatcheryState >() {
-                        @Override
-                        public int compare( final HatcheryState left, final HatcheryState right ) {
-                            return left.hatcheryTag < right.hatcheryTag ? -1 : left.hatcheryTag == right.hatcheryTag ? 0 : 1;
-                        }
-                    } );
-                    final int rotation = Math.abs( queenState.queenTag ) % nearbyAtThisLoop.size();
-                    assignedHatchTag = Integer.valueOf( nearbyAtThisLoop.get( rotation ).hatcheryTag );
-                }
-            }
-
-            // Emit raw position snapshot diagnostics for hatchery "2jl" so we can inspect exact transitions
-            // Log every snapshot's distance to hatchery 2jl if available
-            if ( hatch2jl != null && hatchery2jlTag != null ) {
-                try {
-                    final double dist2jl = distance( snapshot.x, snapshot.y, hatch2jl.x.intValue(), hatch2jl.y.intValue() );
-                    final String posLine = "POS2JL: " + repProc.formatLoopTime( snapshot.loop ) + " (loop " + snapshot.loop + ") -> x=" + snapshot.x + ", y=" + snapshot.y + ", dist=" + String.format( "%.2f", dist2jl );
-                    addDiagnostic( diagnosticsByHatchTag, hatchery2jlTag.intValue(), posLine );
-                    writePos2jlLog( posLine );
-                } catch ( final Exception e ) {
-                    // ignore
-                }
-            }
-
-            // Check for state transition: queen moved away or switched hatcheries
-            if ( assignedHatchTag == null ) {
-                // Queen is NOT nearby at this observation
-                if ( currentNearbyHatchTag != null && windowStartLoop >= 0 && lastNearbyLoop >= 0 ) {
-                    // End the current window at the previous observation
-                    finalizeDiscreteIdleWindow( repProc, queenState, currentNearbyHatchTag.intValue(),
-                            windowStartLoop, lastNearbyLoop, hatcheryByTag, injectTimelineByHatchTag,
-                            candidateWindowsByHatchTag, diagnosticsByHatchTag );
-                    currentNearbyHatchTag = null;
-                    windowStartLoop = -1;
-                    lastNearbyLoop = -1;
-                }
-            } else if ( assignedHatchTag.intValue() != ( currentNearbyHatchTag == null ? -1 : currentNearbyHatchTag.intValue() ) ) {
-                // Queen switched to a different hatchery
-                if ( currentNearbyHatchTag != null && windowStartLoop >= 0 && lastNearbyLoop >= 0 ) {
-                    // End previous window
-                    finalizeDiscreteIdleWindow( repProc, queenState, currentNearbyHatchTag.intValue(),
-                            windowStartLoop, lastNearbyLoop, hatcheryByTag, injectTimelineByHatchTag,
-                            candidateWindowsByHatchTag, diagnosticsByHatchTag );
-                }
-                // Start new window at this hatchery
-                currentNearbyHatchTag = assignedHatchTag;
-                windowStartLoop = snapshot.loop;
-                lastNearbyLoop = snapshot.loop;
-            } else if ( currentNearbyHatchTag != null ) {
-                // Queen remained nearby at the same hatchery - extend window
-                lastNearbyLoop = snapshot.loop;
-            } else {
-                // First observation where queen is nearby
-                currentNearbyHatchTag = assignedHatchTag;
-                windowStartLoop = snapshot.loop;
-                lastNearbyLoop = snapshot.loop;
-            }
-        }
-
-        // Handle trailing window: if queen was last seen nearby
-        if ( currentNearbyHatchTag != null && windowStartLoop >= 0 && lastNearbyLoop >= 0 ) {
-            // Extend to queen destroyed or replay end
-            final int effectiveEndLoop = queenState.destroyedLoop >= 0 ? queenState.destroyedLoop : replayEndLoop;
-            finalizeDiscreteIdleWindow( repProc, queenState, currentNearbyHatchTag.intValue(),
-                    windowStartLoop, effectiveEndLoop, hatcheryByTag, injectTimelineByHatchTag,
-                    candidateWindowsByHatchTag, diagnosticsByHatchTag );
-        }
-    }
-
-    /**
-     * Finalizes one discrete idle window for a queen bound to a hatchery during a position-observation interval.
-     */
-    private void finalizeDiscreteIdleWindow( final IRepProcessor repProc, final QueenState queenState, final int hatcheryTag,
-            final int startLoop, final int endLoop, final Map< Integer, HatcheryState > hatcheryByTag,
-            final Map< Integer, HatcheryInjectTimeline > injectTimelineByHatchTag,
-            final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag,
-            final Map< Integer, List< String > > diagnosticsByHatchTag ) {
-        if ( startLoop >= endLoop )
-            return;
-
-        final int nextReadyLoop = startLoop;  // Conservative: queen needs 25 energy starting from window start
-        addDiagnostic( diagnosticsByHatchTag, hatcheryTag, "Queen " + queenState.queenTagText + " was observed nearby from "
-                + repProc.formatLoopTime( startLoop ) + " to " + repProc.formatLoopTime( endLoop )
-                + " (position timeline discretization); seeding idle-inject candidates." );
-        addQueenIdleCandidatesForBoundInterval( repProc, queenState, hatcheryTag, startLoop, endLoop, nextReadyLoop,
-                hatcheryByTag, injectTimelineByHatchTag, candidateWindowsByHatchTag, diagnosticsByHatchTag );
-    }
-
-    /**
-     * Tries to seed a hardened idle candidate from the latest observed unique nearby queen position.
-     */
-    private void trySeedObservedIdleCandidateFromNearbyQueen( final IRepProcessor repProc, final QueenState queenState,
-            final Map< Integer, HatcheryState > hatcheryByTag, final Map< Integer, HatcheryInjectTimeline > injectTimelineByHatchTag,
-            final int replayEndLoop, final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag,
-            final Map< Integer, List< String > > diagnosticsByHatchTag,
-            final Map< Integer, Integer > uncertaintyDiscardCountByHatchTag ) {
-        if ( queenState.lastKnownPositionLoop < 0 || queenState.x == null || queenState.y == null || queenState.playerId == null )
-            return;
-
-        final List< HatcheryState > nearbyHatcheryList = new ArrayList<>();
-        for ( final HatcheryState hatcheryState : hatcheryByTag.values() ) {
-            if ( hatcheryState == null || !hatcheryState.completed || !hatcheryState.alive || hatcheryState.playerId == null
-                    || !hatcheryState.playerId.equals( queenState.playerId ) || hatcheryState.completionLoop < 0
-                    || hatcheryState.completionLoop > queenState.lastKnownPositionLoop || hatcheryState.x == null || hatcheryState.y == null )
-                continue;
-
-            final double distance = distance( queenState.x.intValue(), queenState.y.intValue(), hatcheryState.x.intValue(), hatcheryState.y.intValue() );
-            if ( distance <= IDLE_INJECT_RADIUS )
-                nearbyHatcheryList.add( hatcheryState );
-        }
-
-        if ( nearbyHatcheryList.isEmpty() )
-            return;
-
-        if ( nearbyHatcheryList.size() > 1 ) {
-            final int readyLoop = resolveObservedNearbyQueenReadyLoop( repProc, queenState,
-                injectTimelineByHatchTag, queenState.lastKnownPositionLoop );
-            allocateNearbyQueenInjectOpportunity( repProc, queenState, nearbyHatcheryList, injectTimelineByHatchTag,
-                queenState.lastKnownPositionLoop, readyLoop, replayEndLoop, hatcheryByTag, candidateWindowsByHatchTag,
-                diagnosticsByHatchTag, "was observed at " + repProc.formatLoopTime( queenState.lastKnownPositionLoop )
-                + " within the dedicated radius of multiple hatcheries; allocated deterministic nearby inject opportunities" );
-            return;
-        }
-
-        final HatcheryState hatcheryState = nearbyHatcheryList.get( 0 );
-        final int intervalEndLoop = queenState.destroyedLoop >= 0 ? queenState.destroyedLoop : replayEndLoop;
-        final int readyLoop = resolveObservedNearbyQueenReadyLoop( repProc, queenState, injectTimelineByHatchTag, queenState.lastKnownPositionLoop );
-        addDiagnostic( diagnosticsByHatchTag, hatcheryState.hatcheryTag, "Queen " + queenState.queenTagText + " was observed at "
-                + repProc.formatLoopTime( queenState.lastKnownPositionLoop ) + " within radius " + formatRadius()
-                + " of this hatchery; hardened nearby-queen proof seeded from the latest observed position." );
-        addQueenIdleCandidatesForBoundInterval( repProc, queenState, hatcheryState.hatcheryTag, queenState.lastKnownPositionLoop, intervalEndLoop,
-                readyLoop, hatcheryByTag, injectTimelineByHatchTag, candidateWindowsByHatchTag, diagnosticsByHatchTag );
-    }
-
-    /**
-     * Allocates one queen's 25-energy inject opportunities across nearby hatcheries deterministically.
-     */
-    private void allocateNearbyQueenInjectOpportunity( final IRepProcessor repProc, final QueenState queenState,
-            final List< HatcheryState > nearbyHatcheryList, final Map< Integer, HatcheryInjectTimeline > injectTimelineByHatchTag,
-            final int intervalStartLoop, final int firstReadyLoop, final int replayEndLoop, final Map< Integer, HatcheryState > hatcheryByTag,
-            final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag,
-            final Map< Integer, List< String > > diagnosticsByHatchTag, final String diagnosticReason ) {
-        if ( nearbyHatcheryList == null || nearbyHatcheryList.isEmpty() )
-            return;
-
-        final List< HatcheryState > sortedNearbyHatcheryList = new ArrayList<>( nearbyHatcheryList );
-        Collections.sort( sortedNearbyHatcheryList, new Comparator< HatcheryState >() {
-            @Override
-            public int compare( final HatcheryState left, final HatcheryState right ) {
-                return left.hatcheryTag < right.hatcheryTag ? -1 : left.hatcheryTag == right.hatcheryTag ? 0 : 1;
-            }
-        } );
-
-        final int intervalEndLoop = queenState.destroyedLoop >= 0 ? queenState.destroyedLoop : replayEndLoop;
-        final int readyDelayLoops = resolveQueenReadyDelayLoops( repProc, QUEEN_INJECT_ENERGY_COST );
-        final int rotation = Math.abs( queenState.queenTag ) % sortedNearbyHatcheryList.size();
-        for ( int opportunityIndex = 0; opportunityIndex < sortedNearbyHatcheryList.size(); opportunityIndex++ ) {
-            final int hatcheryIndex = ( rotation + opportunityIndex ) % sortedNearbyHatcheryList.size();
-            final HatcheryState hatcheryState = sortedNearbyHatcheryList.get( hatcheryIndex );
-            final int readyLoop = firstReadyLoop + readyDelayLoops * opportunityIndex;
-            if ( readyLoop >= intervalEndLoop )
-                break;
-            addDiagnostic( diagnosticsByHatchTag, hatcheryState.hatcheryTag, "Queen " + queenState.queenTagText + ' ' + diagnosticReason
-                    + "; assigned inject opportunity #" + ( opportunityIndex + 1 ) + " to this hatchery starting at "
-                    + repProc.formatLoopTime( Math.max( intervalStartLoop, readyLoop ) ) + '.' );
-            addQueenIdleCandidatesForBoundInterval( repProc, queenState, hatcheryState.hatcheryTag, intervalStartLoop, intervalEndLoop,
-                    readyLoop, hatcheryByTag, injectTimelineByHatchTag, candidateWindowsByHatchTag, diagnosticsByHatchTag );
-        }
-    }
-
-    /**
-     * Adds non-injected red-lane candidates for one queen-bound interval.
-     */
-    private void addQueenIdleCandidatesForBoundInterval( final IRepProcessor repProc, final QueenState queenState, final int hatcheryTag,
-            final int intervalStartLoop, final int intervalEndLoop, final int nextReadyLoop, final Map< Integer, HatcheryState > hatcheryByTag,
-            final Map< Integer, HatcheryInjectTimeline > injectTimelineByHatchTag,
-            final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag,
-            final Map< Integer, List< String > > diagnosticsByHatchTag ) {
-        final HatcheryState hatcheryState = hatcheryByTag.get( Integer.valueOf( hatcheryTag ) );
-        if ( hatcheryState == null || !hatcheryState.completed || hatcheryState.completionLoop < 0 )
-            return;
-
-        final int effectiveStartLoop = Math.max( Math.max( intervalStartLoop, nextReadyLoop ), hatcheryState.completionLoop );
-        final int effectiveEndLoop = hatcheryState.destroyedLoop >= 0 ? Math.min( intervalEndLoop, hatcheryState.destroyedLoop ) : intervalEndLoop;
-        if ( effectiveEndLoop <= effectiveStartLoop ) {
-            addDiagnostic( diagnosticsByHatchTag, hatcheryTag, "Queen " + queenState.queenTagText + " never reached a qualifying non-injected 25-energy interval." );
-            return;
-        }
-
-        final HatcheryInjectTimeline injectTimeline = injectTimelineByHatchTag.get( Integer.valueOf( hatcheryTag ) );
-        int cursor = effectiveStartLoop;
-        int currentReadyLoop = nextReadyLoop;
-        if ( injectTimeline != null ) {
-            for ( final HatcheryInjectWindow injectWindow : injectTimeline.getInjectWindowList() ) {
-                if ( injectWindow == null || injectWindow.getEndLoop() <= cursor )
-                    continue;
-                if ( injectWindow.getStartLoop() >= effectiveEndLoop )
-                    break;
-
-                if ( injectWindow.getStartLoop() > cursor )
-                    addCandidateIdleWindow( repProc, hatcheryTag, Math.max( cursor, currentReadyLoop ),
-                            Math.min( effectiveEndLoop, injectWindow.getStartLoop() ), queenState, currentReadyLoop,
-                            candidateWindowsByHatchTag, diagnosticsByHatchTag );
-                currentReadyLoop = Math.max( currentReadyLoop, injectWindow.getStartLoop() + resolveQueenReadyDelayLoops( repProc, QUEEN_INJECT_ENERGY_COST ) );
-                cursor = Math.max( cursor, injectWindow.getEndLoop() );
-            }
-        }
-
-        if ( cursor < effectiveEndLoop )
-            addCandidateIdleWindow( repProc, hatcheryTag, Math.max( cursor, currentReadyLoop ), effectiveEndLoop, queenState, currentReadyLoop,
-                    candidateWindowsByHatchTag, diagnosticsByHatchTag );
-    }
-
-    /**
-     * Adds one candidate idle window if it has positive width.
-     */
-    private void addCandidateIdleWindow( final IRepProcessor repProc, final int hatcheryTag, final int startLoop, final int endLoop,
-            final QueenState queenState, final int nextReadyLoop, final Map< Integer, List< CandidateIdleWindow > > candidateWindowsByHatchTag,
-            final Map< Integer, List< String > > diagnosticsByHatchTag ) {
-        if ( startLoop >= endLoop )
-            return;
-
-        List< CandidateIdleWindow > candidateWindowList = candidateWindowsByHatchTag.get( Integer.valueOf( hatcheryTag ) );
-        if ( candidateWindowList == null ) {
-            candidateWindowList = new ArrayList<>();
-            candidateWindowsByHatchTag.put( Integer.valueOf( hatcheryTag ), candidateWindowList );
-        }
-
-        final String queenSummary = queenState.queenTagText;
-        final String diagnosticNote = "Qualified by queen " + queenState.queenTagText + " with hybrid queen-proof attribution.";
-        candidateWindowList.add( new CandidateIdleWindow( startLoop, endLoop,
-            estimateQueenEnergyAtLoop( repProc, nextReadyLoop, startLoop ), estimateQueenEnergyAtLoop( repProc, nextReadyLoop, endLoop ),
-            queenSummary, diagnosticNote ) );
-        addDiagnostic( diagnosticsByHatchTag, hatcheryTag, "Kept idle-inject candidate " + repProc.formatLoopTime( startLoop ) + '-'
-                + repProc.formatLoopTime( endLoop ) + " from queen " + queenState.queenTagText + '.' );
-    }
-
-    /**
-     * Merges overlapping candidate idle windows into normalized hatchery windows.
-     */
-    private List< HatcheryIdleInjectWindow > mergeIdleCandidates( final IRepProcessor repProc, final List< CandidateIdleWindow > candidateWindowList ) {
-        if ( candidateWindowList == null || candidateWindowList.isEmpty() )
-            return Collections.emptyList();
-
-        final List< CandidateIdleWindow > sortedCandidateList = new ArrayList<>( candidateWindowList );
-        Collections.sort( sortedCandidateList, new Comparator< CandidateIdleWindow >() {
-            @Override
-            public int compare( final CandidateIdleWindow left, final CandidateIdleWindow right ) {
-                if ( left.startLoop != right.startLoop )
-                    return left.startLoop < right.startLoop ? -1 : 1;
-                return left.endLoop < right.endLoop ? -1 : left.endLoop == right.endLoop ? 0 : 1;
-            }
-        } );
-
-        final List< HatcheryIdleInjectWindow > mergedWindowList = new ArrayList<>();
-        int mergedStartLoop = -1;
-        int mergedEndLoop = -1;
-        double mergedMinStartEnergy = 0.0d;
-        double mergedMaxStartEnergy = 0.0d;
-        double mergedMinEndEnergy = 0.0d;
-        double mergedMaxEndEnergy = 0.0d;
-        final Set< String > mergedQueenSummarySet = new LinkedHashSet<>();
-        final List< String > mergedDiagnosticList = new ArrayList<>();
-
-        for ( final CandidateIdleWindow candidateWindow : sortedCandidateList ) {
-            if ( mergedStartLoop < 0 ) {
-                mergedStartLoop = candidateWindow.startLoop;
-                mergedEndLoop = candidateWindow.endLoop;
-                mergedMinStartEnergy = candidateWindow.estimatedStartEnergy;
-                mergedMaxStartEnergy = candidateWindow.estimatedStartEnergy;
-                mergedMinEndEnergy = candidateWindow.estimatedEndEnergy;
-                mergedMaxEndEnergy = candidateWindow.estimatedEndEnergy;
-                mergedQueenSummarySet.add( candidateWindow.queenSummary );
-                mergedDiagnosticList.add( candidateWindow.diagnosticNote );
-                continue;
-            }
-
-            if ( candidateWindow.startLoop <= mergedEndLoop ) {
-                if ( candidateWindow.endLoop > mergedEndLoop )
-                    mergedEndLoop = candidateWindow.endLoop;
-                mergedMinStartEnergy = Math.min( mergedMinStartEnergy, candidateWindow.estimatedStartEnergy );
-                mergedMaxStartEnergy = Math.max( mergedMaxStartEnergy, candidateWindow.estimatedStartEnergy );
-                mergedMinEndEnergy = Math.min( mergedMinEndEnergy, candidateWindow.estimatedEndEnergy );
-                mergedMaxEndEnergy = Math.max( mergedMaxEndEnergy, candidateWindow.estimatedEndEnergy );
-                mergedQueenSummarySet.add( candidateWindow.queenSummary );
-                mergedDiagnosticList.add( candidateWindow.diagnosticNote );
-                continue;
-            }
-
-            mergedWindowList.add( buildMergedIdleWindow( repProc, mergedStartLoop, mergedEndLoop, mergedMinStartEnergy, mergedMaxStartEnergy,
-                    mergedMinEndEnergy, mergedMaxEndEnergy, mergedQueenSummarySet, mergedDiagnosticList ) );
-            mergedStartLoop = candidateWindow.startLoop;
-            mergedEndLoop = candidateWindow.endLoop;
-            mergedMinStartEnergy = candidateWindow.estimatedStartEnergy;
-            mergedMaxStartEnergy = candidateWindow.estimatedStartEnergy;
-            mergedMinEndEnergy = candidateWindow.estimatedEndEnergy;
-            mergedMaxEndEnergy = candidateWindow.estimatedEndEnergy;
-            mergedQueenSummarySet.clear();
-            mergedDiagnosticList.clear();
-            mergedQueenSummarySet.add( candidateWindow.queenSummary );
-            mergedDiagnosticList.add( candidateWindow.diagnosticNote );
-        }
-
-        if ( mergedStartLoop >= 0 )
-            mergedWindowList.add( buildMergedIdleWindow( repProc, mergedStartLoop, mergedEndLoop, mergedMinStartEnergy, mergedMaxStartEnergy,
-                    mergedMinEndEnergy, mergedMaxEndEnergy, mergedQueenSummarySet, mergedDiagnosticList ) );
-
-        return mergedWindowList;
-    }
-
-    /**
-     * Creates one immutable merged idle window.
-     */
-        private HatcheryIdleInjectWindow buildMergedIdleWindow( final IRepProcessor repProc, final int startLoop, final int endLoop,
-            final double minEstimatedStartEnergy, final double maxEstimatedStartEnergy, final double minEstimatedEndEnergy,
-            final double maxEstimatedEndEnergy, final Set< String > queenSummarySet, final List< String > diagnosticList ) {
-        final String queenSummary = joinStrings( queenSummarySet );
-        final long startMs = toTimelineMs( repProc, startLoop );
-        final long endMs = toTimelineMs( repProc, endLoop );
-        final String startTimeLabel = repProc == null ? null : repProc.formatLoopTime( startLoop );
-        final String endTimeLabel = repProc == null ? null : repProc.formatLoopTime( endLoop );
-        return new HatcheryIdleInjectWindow( startLoop, endLoop, startMs, endMs, startTimeLabel, endTimeLabel,
-            queenSummarySet.size(), minEstimatedStartEnergy, maxEstimatedStartEnergy, minEstimatedEndEnergy, maxEstimatedEndEnergy,
-            queenSummary, joinStrings( diagnosticList ) );
-    }
-
-    /**
-     * Estimates queen energy at the specified loop using the conservative ready-loop baseline.
-     */
-    private double estimateQueenEnergyAtLoop( final IRepProcessor repProc, final int nextReadyLoop, final int targetLoop ) {
-        if ( targetLoop <= nextReadyLoop )
-            return QUEEN_INJECT_ENERGY_COST;
-
-        final int loopsForTwentyFiveEnergy = resolveQueenReadyDelayLoops( repProc, QUEEN_INJECT_ENERGY_COST );
-        if ( loopsForTwentyFiveEnergy <= 0 )
-            return QUEEN_INJECT_ENERGY_COST;
-
-        final double energyPerLoop = QUEEN_INJECT_ENERGY_COST / loopsForTwentyFiveEnergy;
-        return Math.min( QUEEN_MAX_ENERGY, QUEEN_INJECT_ENERGY_COST + ( targetLoop - nextReadyLoop ) * energyPerLoop );
-    }
-
-    /**
-     * Converts raw loops to game-time milliseconds.
-     */
-    private long toTimelineMs( final IRepProcessor repProc, final int loop ) {
-        if ( loop <= 0 )
-            return 0L;
-
-        long gameMs = loop * 1000L / REPLAY_LOOPS_PER_SECOND;
-        if ( repProc != null && repProc.isRealTime() )
-            gameMs = repProc.convertToRealTime( gameMs );
-        return gameMs;
-    }
-
-    /**
-     * Resolves the replay-loop delay for a queen to regenerate energy using the 25-energy-per-30-seconds heuristic.
-     */
-    private int resolveQueenReadyDelayLoops( final IRepProcessor repProc, final double energyCost ) {
-        final long gameSpeedRelative = repProc == null || repProc.getConverterGameSpeed() == null ? DEFAULT_GAME_SPEED_RELATIVE
-                : repProc.getConverterGameSpeed().getRelativeSpeed();
-        final double seconds = QUEEN_RESTORE_25_ENERGY_SECONDS * ( energyCost / QUEEN_INJECT_ENERGY_COST );
-        return (int) Math.ceil( seconds * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / gameSpeedRelative ) );
-    }
-
-    /**
-     * Resolves the earliest plausible ready loop for a queen observed next to a hatchery.
-     */
-    private int resolveObservedNearbyQueenReadyLoop( final IRepProcessor repProc, final QueenState queenState,
-            final Map< Integer, HatcheryInjectTimeline > injectTimelineByHatchTag, final int observationLoop ) {
-        int readyLoop = queenState.completionLoop < 0 ? observationLoop : queenState.completionLoop;
-        if ( injectTimelineByHatchTag == null || injectTimelineByHatchTag.isEmpty() )
-            return readyLoop;
-
-        for ( final HatcheryInjectTimeline injectTimeline : injectTimelineByHatchTag.values() ) {
-            if ( injectTimeline == null || injectTimeline.getInjectWindowList() == null )
-                continue;
-            for ( final HatcheryInjectWindow injectWindow : injectTimeline.getInjectWindowList() ) {
-                if ( injectWindow == null || injectWindow.getStartLoop() > observationLoop )
-                    continue;
-                readyLoop = Math.max( readyLoop, injectWindow.getStartLoop() + resolveQueenReadyDelayLoops( repProc, QUEEN_INJECT_ENERGY_COST ) );
-            }
-        }
-        return readyLoop;
-    }
-
-    /**
-     * Tells if the command is a queen inject ability.
-     */
-    private boolean isQueenInjectCommand( final ICommand command ) {
-        if ( command == null )
-            return false;
-
-        final String abilityId = normalizeCommandText( command.getAbilId() );
-        final String commandId = normalizeCommandText( command.getId() );
-        final String commandText = normalizeCommandText( command.getText() );
-        return containsAny( abilityId, commandId, commandText, "spawnlarva", "injectlarva", "effectinjectlarva" );
-    }
-
-    /**
-     * Tells if the evidence is a known non-inject queen energy spend that should keep the hatchery binding.
-     */
-    private boolean isKnownNonInjectQueenEnergySpend( final QueenCommandEvidence evidence ) {
-        return evidence != null && evidence.energyCost > 0 && !evidence.inject && !containsAny( normalizeCommandText( evidence.abilityId ),
-                "spawnlarva", "injectlarva", "effectinjectlarva" );
-    }
-
-    /**
-     * Resolves the energy cost of a confidently singleton-attributed queen command.
-     */
-    private int resolveQueenEnergyCost( final ICommand command ) {
-        if ( command == null )
-            return 0;
-
-        final String abilityId = normalizeCommandText( command.getAbilId() );
-        final String commandId = normalizeCommandText( command.getId() );
-        final String commandText = normalizeCommandText( command.getText() );
-
-        if ( containsAny( abilityId, commandId, commandText, "spawnlarva", "injectlarva" ) )
-            return (int) QUEEN_INJECT_ENERGY_COST;
-
-        if ( containsAny( abilityId, commandId, commandText, "transfusion", "transfuse" ) )
-            return (int) QUEEN_TRANSFUSE_ENERGY_COST;
-
-        if ( containsAny( abilityId, commandId, commandText, "creeptumor", "buildcreeptumor", "tumor" ) )
-            return (int) QUEEN_CREEP_TUMOR_ENERGY_COST;
-
-        return 0;
-    }
-
-    /**
-     * Lower-cases command text for ability matching.
-     */
-    private String normalizeCommandText( final String value ) {
-        return value == null ? "" : value.toLowerCase();
-    }
-
-    /**
-     * Tells if any haystack contains any of the needles.
-     */
-    private boolean containsAny( final String haystack1, final String haystack2, final String haystack3, final String needle1, final String needle2 ) {
-        return containsAny( haystack1, needle1, needle2 ) || containsAny( haystack2, needle1, needle2 ) || containsAny( haystack3, needle1, needle2 );
-    }
-
-    /**
-     * Tells if any haystack contains any of the three needles.
-     */
-    private boolean containsAny( final String haystack1, final String haystack2, final String haystack3, final String needle1, final String needle2,
-            final String needle3 ) {
-        return containsAny( haystack1, needle1, needle2, needle3 ) || containsAny( haystack2, needle1, needle2, needle3 )
-                || containsAny( haystack3, needle1, needle2, needle3 );
-    }
-
-    /**
-     * Tells if the haystack contains any of the needles.
-     */
-    private boolean containsAny( final String haystack, final String needle1, final String needle2 ) {
-        if ( haystack == null || haystack.length() == 0 )
-            return false;
-        return haystack.indexOf( needle1 ) >= 0 || haystack.indexOf( needle2 ) >= 0;
-    }
-
-    /**
-     * Tells if the haystack contains any of the three needles.
-     */
-    private boolean containsAny( final String haystack, final String needle1, final String needle2, final String needle3 ) {
-        if ( haystack == null || haystack.length() == 0 )
-            return false;
-        return haystack.indexOf( needle1 ) >= 0 || haystack.indexOf( needle2 ) >= 0 || haystack.indexOf( needle3 ) >= 0;
-    }
-
-    /**
-     * Returns the distance between two tracker points.
-     */
-    private double distance( final int x1, final int y1, final int x2, final int y2 ) {
-        final double dx = x1 - x2;
-        final double dy = y1 - y2;
-        return Math.sqrt( dx * dx + dy * dy );
-    }
-
-    /**
-     * Adds one deterministic diagnostic line per hatchery.
-     */
-    private void addDiagnostic( final Map< Integer, List< String > > diagnosticsByHatchTag, final int hatcheryTag, final String line ) {
-        if ( diagnosticsByHatchTag == null || line == null )
-            return;
-
-        List< String > diagnosticLineList = diagnosticsByHatchTag.get( Integer.valueOf( hatcheryTag ) );
-        if ( diagnosticLineList == null ) {
-            diagnosticLineList = new ArrayList<>();
-            diagnosticsByHatchTag.put( Integer.valueOf( hatcheryTag ), diagnosticLineList );
-        }
-        diagnosticLineList.add( line );
-    }
-
-    /**
-     * Adds a small integer count in a map.
-     */
-    private void addCount( final Map< Integer, Integer > countMap, final int key, final int delta ) {
-        if ( countMap == null )
-            return;
-        final Integer previous = countMap.get( Integer.valueOf( key ) );
-        countMap.put( Integer.valueOf( key ), Integer.valueOf( ( previous == null ? 0 : previous.intValue() ) + delta ) );
-    }
-
-    /**
-     * Null-safe integer value.
-     */
-    private int intValue( final Integer value ) {
-        return value == null ? 0 : value.intValue();
-    }
-
-    /**
-     * Returns safe command text for diagnostics.
-     */
-    private String safeAbilityId( final String abilityId ) {
-        return abilityId == null || abilityId.length() == 0 ? "unknown" : abilityId;
-    }
-
-    /**
-     * Joins deterministic string collections.
-     */
-    private String joinStrings( final Iterable< String > values ) {
-        if ( values == null )
-            return "";
-
-        final StringBuilder builder = new StringBuilder();
-        for ( final String value : values ) {
-            if ( value == null || value.length() == 0 )
-                continue;
-            if ( builder.length() > 0 )
-                builder.append( ", " );
-            builder.append( value );
-        }
-        return builder.toString();
-    }
-
-    /**
-     * Formats the dedicated idle radius.
-     */
-    private String formatRadius() {
-        return String.valueOf( (long) IDLE_INJECT_RADIUS );
+        return sorted;
     }
 
     /**
@@ -1754,8 +552,8 @@ public class LarvaReplayAnalyzer {
                 final int overlap = previousCandidate.endLoop - decision.injectWindow.getStartLoop();
                 if ( overlap == 1 ) {
                     final int trimmedStartLoop = previousCandidate.endLoop;
-                    final long trimmedStartMs = repProc.loopToTime( trimmedStartLoop );
-                    final String trimmedStartTimeLabel = repProc.formatLoopTime( trimmedStartLoop );
+                    final long trimmedStartMs = LarvaGameClock.loopToMs( trimmedStartLoop );
+                    final String trimmedStartTimeLabel = LarvaGameClock.format( trimmedStartLoop );
                     final HatcheryInjectWindow trimmedWindow = new HatcheryInjectWindow(
                             decision.injectWindow.getEvidenceLoop(), decision.injectWindow.getEvidenceTimeLabel(), decision.injectWindow.getEvidenceKind(),
                             trimmedStartLoop, decision.injectWindow.getEndLoop(),
@@ -1806,8 +604,8 @@ public class LarvaReplayAnalyzer {
     private InjectWindowDecision buildInjectWindowDecision( final IRepProcessor repProc, final HatcheryState hatcheryState,
             final InferredInjectDetector.BurstEvidence burstEvidence, final int injectActiveDurationLoops, final int replayEndLoop ) {
         final int evidenceLoop = burstEvidence.getEvidenceLoop();
-        final String evidenceTimeLabel = repProc.formatLoopTime( evidenceLoop );
-        final String burstStartTimeLabel = repProc.formatLoopTime( burstEvidence.getFirstBirthLoop() );
+        final String evidenceTimeLabel = LarvaGameClock.format( evidenceLoop );
+        final String burstStartTimeLabel = LarvaGameClock.format( burstEvidence.getFirstBirthLoop() );
 
         if ( !hatcheryState.completed || hatcheryState.completionLoop < 0 )
             return new InjectWindowDecision( null,
@@ -1842,18 +640,18 @@ public class LarvaReplayAnalyzer {
         if ( replayEndLoop > 0 && effectiveEndLoop > replayEndLoop ) {
             effectiveEndLoop = replayEndLoop;
             trimmedAtEnd = true;
-            trimReasonList.add( "end trimmed to replay end at " + repProc.formatLoopTime( replayEndLoop ) );
+            trimReasonList.add( "end trimmed to replay end at " + LarvaGameClock.format( replayEndLoop ) );
         }
 
         if ( effectiveEndLoop <= effectiveStartLoop ) {
-                final String reason = trimReasonList.isEmpty() ? "its retroactive " + INJECT_ACTIVE_DURATION_SECONDS + "-second window collapsed outside the valid hatchery lifetime"
+                final String reason = trimReasonList.isEmpty() ? "its retroactive one-inject window collapsed outside the valid hatchery lifetime"
                     : "normalization collapsed the window after " + joinReasons( trimReasonList );
             return new InjectWindowDecision( null, "Discarded inferred inject evidence at " + evidenceTimeLabel + " because " + reason + '.', false,
                     evidenceTimeLabel );
         }
 
-        final String startTimeLabel = repProc.formatLoopTime( effectiveStartLoop );
-        final String endTimeLabel = repProc.formatLoopTime( effectiveEndLoop );
+        final String startTimeLabel = LarvaGameClock.format( effectiveStartLoop );
+        final String endTimeLabel = LarvaGameClock.format( effectiveEndLoop );
         final StringBuilder diagnosticBuilder = new StringBuilder();
         diagnosticBuilder.append( "Kept inferred inject evidence at " ).append( evidenceTimeLabel )
                 .append( " from larva burst " ).append( burstStartTimeLabel ).append( '-' ).append( evidenceTimeLabel )
@@ -1866,21 +664,9 @@ public class LarvaReplayAnalyzer {
 
         final HatcheryInjectWindow injectWindow = new HatcheryInjectWindow( evidenceLoop, evidenceTimeLabel, INFERRED_INJECT_EVIDENCE_KIND,
                 effectiveStartLoop, effectiveEndLoop,
-                repProc.loopToTime( effectiveStartLoop ), repProc.loopToTime( effectiveEndLoop ), startTimeLabel, endTimeLabel,
+                LarvaGameClock.loopToMs( effectiveStartLoop ), LarvaGameClock.loopToMs( effectiveEndLoop ), startTimeLabel, endTimeLabel,
                 trimmedAtStart, trimmedAtEnd, diagnosticBuilder.toString() );
         return new InjectWindowDecision( injectWindow, diagnosticBuilder.toString(), trimmedAtStart || trimmedAtEnd, evidenceTimeLabel );
-    }
-
-    /**
-     * Resolves the inject-active window length in replay loops for the replay game speed.
-     *
-     * @param repProc replay processor
-     * @return inject-active window duration in replay loops
-     */
-    private int resolveInjectActiveDurationLoops( final IRepProcessor repProc ) {
-        final long gameSpeedRelative = repProc == null || repProc.getConverterGameSpeed() == null ? DEFAULT_GAME_SPEED_RELATIVE : repProc.getConverterGameSpeed().getRelativeSpeed();
-        final double effectiveGameSpeedRelative = gameSpeedRelative <= 0L ? DEFAULT_GAME_SPEED_RELATIVE : gameSpeedRelative;
-        return (int) ( INJECT_ACTIVE_DURATION_SECONDS * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / effectiveGameSpeedRelative ) );
     }
 
     /**
@@ -2091,7 +877,6 @@ public class LarvaReplayAnalyzer {
      * Builds per-player Epic 12 phase tables.
      */
         private Map< String, LarvaPlayerPhaseTable > buildPlayerPhaseTables( final IRepProcessor repProc, final int replayEndLoop,
-            final long gameSpeedRelative,
             final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName,
             final Map< String, Integer > spawningPoolCompletionLoopByPlayerName, final Map< Integer, HatcheryState > hatcheryByTag,
             final List< HatcheryInjectTimeline > injectTimelineList, final List< HatcheryIdleInjectTimeline > idleInjectTimelineList ) {
@@ -2111,10 +896,10 @@ public class LarvaReplayAnalyzer {
             if ( playerName == null || playerName.length() == 0 )
                 continue;
 
-                final Map< LarvaGamePhase, LarvaPhaseInterval > phaseIntervalMap = resolvePhaseIntervalMap( resourceSnapshotsByPlayerName.get( playerName ), replayEndLoop,
-                    gameSpeedRelative );
+            final Map< LarvaGamePhase, LarvaPhaseInterval > phaseIntervalMap = LarvaPhaseIntervalResolver.resolve(
+                    resourceSnapshotsByPlayerName.get( playerName ), replayEndLoop );
             final Map< LarvaGamePhase, LarvaPhaseStats > phaseStatsMap = buildPhaseStatsMap( repProc, playerName, replayEndLoop,
-                    gameSpeedRelative, spawningPoolCompletionLoopByPlayerName.get( playerName ), hatcheryByTag, injectTimelineByTag, idleInjectTimelineByTag,
+                    spawningPoolCompletionLoopByPlayerName.get( playerName ), hatcheryByTag, injectTimelineByTag, idleInjectTimelineByTag,
                     phaseIntervalMap );
             playerPhaseTableByPlayerName.put( playerName, new LarvaPlayerPhaseTable( playerName, phaseIntervalMap, phaseStatsMap ) );
         }
@@ -2123,76 +908,16 @@ public class LarvaReplayAnalyzer {
     }
 
     /**
-     * Resolves monotonic phase intervals from worker-count snapshots.
-     */
-        private Map< LarvaGamePhase, LarvaPhaseInterval > resolvePhaseIntervalMap( final List< LarvaPlayerResourceSnapshot > snapshotList,
-            final int replayEndLoop, final long gameSpeedRelative ) {
-        final Map< LarvaGamePhase, LarvaPhaseInterval > phaseIntervalMap = new LinkedHashMap<>();
-        final int earlyEndLoop;
-        final int midStartLoop;
-        final int lateStartLoop;
-        final int endStartLoop;
-
-        int resolvedMidStartLoop = resolvePhasePromotionLoop( snapshotList, replayEndLoop, LarvaGamePhase.MID.getPromotionWorkerThreshold(), gameSpeedRelative );
-        int resolvedLateStartLoop = resolvePhasePromotionLoop( snapshotList, replayEndLoop, LarvaGamePhase.LATE.getPromotionWorkerThreshold(), gameSpeedRelative );
-        int resolvedEndStartLoop = resolvePhasePromotionLoop( snapshotList, replayEndLoop, LarvaGamePhase.END.getPromotionWorkerThreshold(), gameSpeedRelative );
-
-        if ( resolvedLateStartLoop >= 0 && resolvedMidStartLoop < 0 )
-            resolvedMidStartLoop = resolvedLateStartLoop;
-        if ( resolvedEndStartLoop >= 0 && resolvedLateStartLoop < 0 )
-            resolvedLateStartLoop = resolvedEndStartLoop;
-        if ( resolvedEndStartLoop >= 0 && resolvedMidStartLoop < 0 )
-            resolvedMidStartLoop = resolvedEndStartLoop;
-        if ( resolvedMidStartLoop >= 0 )
-            resolvedMidStartLoop = clampLoop( resolvedMidStartLoop, replayEndLoop );
-        if ( resolvedLateStartLoop >= 0 )
-            resolvedLateStartLoop = clampLoop( Math.max( resolvedLateStartLoop, resolvedMidStartLoop < 0 ? 0 : resolvedMidStartLoop ), replayEndLoop );
-        if ( resolvedEndStartLoop >= 0 )
-            resolvedEndStartLoop = clampLoop( Math.max( resolvedEndStartLoop, resolvedLateStartLoop < 0 ? 0 : resolvedLateStartLoop ), replayEndLoop );
-
-        midStartLoop = resolvedMidStartLoop < 0 ? replayEndLoop : resolvedMidStartLoop;
-        lateStartLoop = resolvedLateStartLoop < 0 ? replayEndLoop : resolvedLateStartLoop;
-        endStartLoop = resolvedEndStartLoop < 0 ? replayEndLoop : resolvedEndStartLoop;
-        earlyEndLoop = Math.min( midStartLoop, replayEndLoop );
-
-        phaseIntervalMap.put( LarvaGamePhase.EARLY, new LarvaPhaseInterval( LarvaGamePhase.EARLY, 0, earlyEndLoop ) );
-        phaseIntervalMap.put( LarvaGamePhase.MID, new LarvaPhaseInterval( LarvaGamePhase.MID, midStartLoop, lateStartLoop ) );
-        phaseIntervalMap.put( LarvaGamePhase.LATE, new LarvaPhaseInterval( LarvaGamePhase.LATE, lateStartLoop, endStartLoop ) );
-        phaseIntervalMap.put( LarvaGamePhase.END, new LarvaPhaseInterval( LarvaGamePhase.END, endStartLoop, replayEndLoop ) );
-        return phaseIntervalMap;
-    }
-
-    /**
-     * Resolves the first loop where the worker threshold is exceeded.
-     */
-    private int resolvePhasePromotionLoop( final List< LarvaPlayerResourceSnapshot > snapshotList, final int replayEndLoop, final int workerThreshold,
-            final long gameSpeedRelative ) {
-        if ( snapshotList == null || snapshotList.isEmpty() || replayEndLoop <= 0 )
-            return -1;
-
-        for ( final LarvaPlayerResourceSnapshot snapshot : snapshotList ) {
-            if ( snapshot == null )
-                continue;
-
-            final Integer workersActiveCount = snapshot.getWorkersActiveCount();
-            if ( workersActiveCount != null && workersActiveCount.intValue() > workerThreshold )
-                return clampLoop( snapshot.getLoop(), replayEndLoop );
-        }
-
-        return -1;
-    }
-
-    /**
      * Builds per-phase stats for one player.
      */
     private Map< LarvaGamePhase, LarvaPhaseStats > buildPhaseStatsMap( final IRepProcessor repProc, final String playerName, final int replayEndLoop,
-            final long gameSpeedRelative, final Integer spawningPoolCompletionLoop, final Map< Integer, HatcheryState > hatcheryByTag,
+            final Integer spawningPoolCompletionLoop, final Map< Integer, HatcheryState > hatcheryByTag,
             final Map< Integer, HatcheryInjectTimeline > injectTimelineByTag,
             final Map< Integer, HatcheryIdleInjectTimeline > idleInjectTimelineByTag,
             final Map< LarvaGamePhase, LarvaPhaseInterval > phaseIntervalMap ) {
         final Map< LarvaGamePhase, LarvaPhaseStats > phaseStatsMap = new LinkedHashMap<>();
         final int injectUnlockLoop = spawningPoolCompletionLoop == null ? -1 : spawningPoolCompletionLoop.intValue()
-                + toDisplayedGameLoops( INJECT_ELIGIBILITY_DELAY_SECONDS, gameSpeedRelative );
+                + INJECT_ELIGIBILITY_DELAY_LOOPS;
 
         for ( final LarvaGamePhase phase : LarvaGamePhase.values() ) {
             final LarvaPhaseInterval interval = phaseIntervalMap.get( phase );
@@ -2215,12 +940,12 @@ public class LarvaReplayAnalyzer {
                 hatchEligibleLoops += intersectDuration( interval.getStartLoop(), interval.getEndLoop(), hatchStartLoop, hatchEndLoop );
 
                 final HatcheryLarvaTimeline hatcheryTimeline = hatcheryState.toTimeline( repProc );
-                final List< Integer > missedLarvaMarkerLoops = buildMissedLarvaMarkerLoops( hatcheryTimeline, replayEndLoop, gameSpeedRelative );
+                final List< Integer > missedLarvaMarkerLoops = buildMissedLarvaMarkerLoops( hatcheryTimeline, replayEndLoop );
                 missedLarvaCount += countLoopsInInterval( missedLarvaMarkerLoops, interval.getStartLoop(), interval.getEndLoop() );
                 totalSpawnedLarvaCount += countLoopsInInterval( hatcheryState.assignedLarvaBirthLoopList, interval.getStartLoop(), interval.getEndLoop() );
 
                 final HatcheryIdleInjectTimeline idleInjectTimeline = idleInjectTimelineByTag.get( Integer.valueOf( hatcheryState.hatcheryTag ) );
-                missedInjectLarvaCount += countLoopsInInterval( buildMissedInjectMarkerLoops( idleInjectTimeline, gameSpeedRelative ), interval.getStartLoop(), interval.getEndLoop() )
+                missedInjectLarvaCount += countLoopsInInterval( buildMissedInjectMarkerLoops( idleInjectTimeline ), interval.getStartLoop(), interval.getEndLoop() )
                         * MISSED_INJECT_LARVA_PER_THRESHOLD;
 
                 if ( injectUnlockLoop >= 0 ) {
@@ -2245,10 +970,9 @@ public class LarvaReplayAnalyzer {
     /**
      * Builds chronological missed-larva marker loops for a hatchery.
      */
-    private List< Integer > buildMissedLarvaMarkerLoops( final HatcheryLarvaTimeline hatcheryTimeline, final int replayEndLoop,
-            final long gameSpeedRelative ) {
+    private List< Integer > buildMissedLarvaMarkerLoops( final HatcheryLarvaTimeline hatcheryTimeline, final int replayEndLoop ) {
         final List< LarvaSaturationWindow > saturationWindowList = saturationWindowCalculator.buildWindows( hatcheryTimeline, replayEndLoop );
-        final List< LarvaTimelineMarker > markerList = missedLarvaMarkerCalculator.buildMarkers( saturationWindowList, gameSpeedRelative );
+        final List< LarvaTimelineMarker > markerList = missedLarvaMarkerCalculator.buildMarkers( saturationWindowList );
         final List< Integer > markerLoopList = new ArrayList<>( markerList.size() );
         for ( final LarvaTimelineMarker marker : markerList )
             markerLoopList.add( Integer.valueOf( marker.getLoop() ) );
@@ -2258,7 +982,7 @@ public class LarvaReplayAnalyzer {
     /**
      * Builds chronological missed-inject marker loops for one hatchery.
      */
-    private List< Integer > buildMissedInjectMarkerLoops( final HatcheryIdleInjectTimeline idleInjectTimeline, final long gameSpeedRelative ) {
+    private List< Integer > buildMissedInjectMarkerLoops( final HatcheryIdleInjectTimeline idleInjectTimeline ) {
         if ( idleInjectTimeline == null || idleInjectTimeline.getIdleWindowList().isEmpty() )
             return Collections.emptyList();
 
@@ -2273,7 +997,7 @@ public class LarvaReplayAnalyzer {
         } );
 
         final List< Integer > markerLoopList = new ArrayList<>();
-        final int thresholdLoops = toDisplayedGameLoops( MISSED_INJECT_THRESHOLD_SECONDS, gameSpeedRelative );
+        final int thresholdLoops = MISSED_INJECT_THRESHOLD_LOOPS;
         int accumulatedLoops = 0;
         int coveredUntilLoop = Integer.MIN_VALUE;
         for ( final HatcheryIdleInjectWindow idleWindow : sortedWindowList ) {
@@ -2369,21 +1093,6 @@ public class LarvaReplayAnalyzer {
     }
 
     /**
-     * Converts displayed gameplay seconds to replay loops using the same speed basis as the rest of the module.
-     */
-    private int toDisplayedGameLoops( final int seconds, final long gameSpeedRelative ) {
-        final double effectiveGameSpeedRelative = gameSpeedRelative <= 0L ? DEFAULT_GAME_SPEED_RELATIVE : gameSpeedRelative;
-        return (int) ( seconds * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / effectiveGameSpeedRelative ) );
-    }
-
-    /**
-     * Clamps a loop into the replay bounds.
-     */
-    private int clampLoop( final int loop, final int replayEndLoop ) {
-        return Math.max( 0, Math.min( loop, replayEndLoop ) );
-    }
-
-    /**
      * Null-safe text comparison for deterministic sorting.
      *
      * @param left left text
@@ -2431,65 +1140,6 @@ public class LarvaReplayAnalyzer {
     }
 
     /**
-     * Tells if the specified unit type should be treated as a Zerg building construction start.
-     * This uses generic type patterns instead of an explicit building-name list so new Zerg structures
-     * are picked up automatically when their unit type names match common building terminology.
-     */
-    private boolean isBuildingConstructionLike( final String unitType, final String creatorAbilityName, final int eventId ) {
-        if ( eventId != ITrackerEvents.ID_UNIT_INIT && eventId != ITrackerEvents.ID_UNIT_BORN )
-            return false;
-
-        if ( unitType == null || unitType.length() == 0 )
-            return false;
-
-        if ( isHatcheryLike( unitType ) || isSpawningPoolLike( unitType ) )
-            return true;
-
-        final String normalizedUnitType = normalizeUnitTypeToken( unitType );
-        if ( normalizedUnitType.length() == 0 )
-            return false;
-
-        if ( isQueenType( unitType ) || IBdUtil.UNIT_DRONE.equals( unitType ) || IBdUtil.UNIT_LARVA.equals( unitType ) || "egg".equals( normalizedUnitType ) )
-            return false;
-
-        final String normalizedAbilityName = normalizeUnitTypeToken( creatorAbilityName );
-        final boolean abilityLooksLikeConstruction = normalizedAbilityName.length() > 0
-                && ( normalizedAbilityName.indexOf( "build" ) >= 0 || normalizedAbilityName.indexOf( "construct" ) >= 0
-                        || normalizedAbilityName.indexOf( "place" ) >= 0 || normalizedAbilityName.indexOf( "morph" ) >= 0 );
-        if ( abilityLooksLikeConstruction )
-            return true;
-
-        return normalizedUnitType.indexOf( "extractor" ) >= 0 || normalizedUnitType.indexOf( "hatch" ) >= 0
-                || normalizedUnitType.indexOf( "lair" ) >= 0 || normalizedUnitType.indexOf( "hive" ) >= 0
-                || normalizedUnitType.indexOf( "pool" ) >= 0 || normalizedUnitType.indexOf( "spire" ) >= 0
-                || normalizedUnitType.indexOf( "warren" ) >= 0 || normalizedUnitType.indexOf( "nest" ) >= 0
-                || normalizedUnitType.indexOf( "den" ) >= 0 || normalizedUnitType.indexOf( "pit" ) >= 0
-                || normalizedUnitType.indexOf( "chamber" ) >= 0 || normalizedUnitType.indexOf( "cavern" ) >= 0
-                || normalizedUnitType.indexOf( "crawler" ) >= 0 || normalizedUnitType.indexOf( "network" ) >= 0
-                || normalizedUnitType.indexOf( "canal" ) >= 0 || normalizedUnitType.indexOf( "tower" ) >= 0
-                || normalizedUnitType.indexOf( "crest" ) >= 0;
-    }
-
-    private boolean isBuildingTypeLike( final String unitType ) {
-        if ( unitType == null || unitType.length() == 0 )
-            return false;
-
-        if ( isHatcheryLike( unitType ) || isSpawningPoolLike( unitType ) )
-            return true;
-
-        final String normalizedUnitType = normalizeUnitTypeToken( unitType );
-        return normalizedUnitType.indexOf( "extractor" ) >= 0 || normalizedUnitType.indexOf( "hatch" ) >= 0
-                || normalizedUnitType.indexOf( "lair" ) >= 0 || normalizedUnitType.indexOf( "hive" ) >= 0
-                || normalizedUnitType.indexOf( "pool" ) >= 0 || normalizedUnitType.indexOf( "spire" ) >= 0
-                || normalizedUnitType.indexOf( "warren" ) >= 0 || normalizedUnitType.indexOf( "nest" ) >= 0
-                || normalizedUnitType.indexOf( "den" ) >= 0 || normalizedUnitType.indexOf( "pit" ) >= 0
-                || normalizedUnitType.indexOf( "chamber" ) >= 0 || normalizedUnitType.indexOf( "cavern" ) >= 0
-                || normalizedUnitType.indexOf( "crawler" ) >= 0 || normalizedUnitType.indexOf( "network" ) >= 0
-                || normalizedUnitType.indexOf( "canal" ) >= 0 || normalizedUnitType.indexOf( "tower" ) >= 0
-                || normalizedUnitType.indexOf( "crest" ) >= 0;
-    }
-
-    /**
      * Builds a combined unit tag from tracker unit tag index and recycle values.
      *
      * @param unitTagIndex unit tag index
@@ -2510,20 +1160,6 @@ public class LarvaReplayAnalyzer {
     private Integer buildCombinedTagOrNull( final Object unitTagIndex, final Object unitTagRecycle ) {
         return unitTagIndex instanceof Integer && unitTagRecycle instanceof Integer ? Integer.valueOf( buildCombinedTag( (Integer) unitTagIndex, (Integer) unitTagRecycle ) )
                 : null;
-    }
-
-    /**
-     * Returns an existing queen state or creates a new one.
-     */
-    private QueenState getOrCreateQueenState( final IRepProcessor repProc, final Map< Integer, QueenState > queenByTag, final int queenTag ) {
-        final Integer key = Integer.valueOf( queenTag );
-        QueenState queenState = queenByTag.get( key );
-        if ( queenState == null ) {
-            queenState = new QueenState( queenTag, repProc == null || repProc.getTagTransformation() == null ? String.valueOf( queenTag )
-                    : repProc.getTagTransformation().tagToString( queenTag ) );
-            queenByTag.put( key, queenState );
-        }
-        return queenState;
     }
 
     /**
@@ -2631,76 +1267,6 @@ public class LarvaReplayAnalyzer {
 
     }
 
-    /** One conservatively attributed queen command. */
-    private static class QueenCommandEvidence {
-
-        /** Queen tag. */
-        private final int queenTag;
-
-        /** Command loop. */
-        private final int loop;
-
-        /** Formatted command time. */
-        private final String timeLabel;
-
-        /** Inject target hatchery tag, or -1 if not an inject. */
-        private final int targetHatcheryTag;
-
-        /** Ability id. */
-        private final String abilityId;
-
-        /** Tells if this was a SpawnLarva command. */
-        private final boolean inject;
-
-        /** Known energy cost of the command, or 0 if not a tracked queen energy spend. */
-        private final int energyCost;
-
-        private QueenCommandEvidence( final int queenTag, final int loop, final String timeLabel, final int targetHatcheryTag,
-                final String abilityId, final boolean inject, final int energyCost ) {
-            this.queenTag = queenTag;
-            this.loop = loop;
-            this.timeLabel = timeLabel;
-            this.targetHatcheryTag = targetHatcheryTag;
-            this.abilityId = abilityId;
-            this.inject = inject;
-            this.energyCost = energyCost;
-        }
-
-    }
-
-    /** One candidate idle-inject interval before hatchery-level merging. */
-    private static class CandidateIdleWindow {
-
-        /** Start loop. */
-        private final int startLoop;
-
-        /** End loop. */
-        private final int endLoop;
-
-        /** Estimated queen energy at candidate start. */
-        private final double estimatedStartEnergy;
-
-        /** Estimated queen energy at candidate end. */
-        private final double estimatedEndEnergy;
-
-        /** Queen summary text. */
-        private final String queenSummary;
-
-        /** Diagnostic note. */
-        private final String diagnosticNote;
-
-        private CandidateIdleWindow( final int startLoop, final int endLoop, final double estimatedStartEnergy,
-                final double estimatedEndEnergy, final String queenSummary, final String diagnosticNote ) {
-            this.startLoop = startLoop;
-            this.endLoop = endLoop;
-            this.estimatedStartEnergy = estimatedStartEnergy;
-            this.estimatedEndEnergy = estimatedEndEnergy;
-            this.queenSummary = queenSummary;
-            this.diagnosticNote = diagnosticNote;
-        }
-
-    }
-
     /** Mutable hatchery state during analysis. */
     private static class HatcheryState {
 
@@ -2803,7 +1369,7 @@ public class LarvaReplayAnalyzer {
             assignedLarvaBirthLoopList.add( Integer.valueOf( loop ) );
             if ( firstLarvaLoop < 0 ) {
                 firstLarvaLoop = loop;
-                firstLarvaTimeLabel = repProc.formatLoopTime( loop );
+                firstLarvaTimeLabel = LarvaGameClock.format( loop );
             }
             if ( larvaCount > maxLarvaCount )
                 maxLarvaCount = larvaCount;
@@ -2835,7 +1401,7 @@ public class LarvaReplayAnalyzer {
                 return;
 
             completionLoop = loop;
-            completionTimeLabel = repProc == null ? null : repProc.formatLoopTime( loop );
+            completionTimeLabel = LarvaGameClock.format( loop );
         }
 
         /**
@@ -2849,7 +1415,7 @@ public class LarvaReplayAnalyzer {
                 return;
 
             destroyedLoop = loop;
-            destroyedTimeLabel = repProc == null ? null : repProc.formatLoopTime( loop );
+            destroyedTimeLabel = LarvaGameClock.format( loop );
         }
 
         /**
@@ -2872,7 +1438,7 @@ public class LarvaReplayAnalyzer {
          * @param count larva count at the loop
          */
         private void addOrReplacePoint( final int loop, final IRepProcessor repProc, final int count ) {
-            final HatcheryLarvaTimeline.CountPoint point = new HatcheryLarvaTimeline.CountPoint( loop, repProc.formatLoopTime( loop ), count );
+            final HatcheryLarvaTimeline.CountPoint point = new HatcheryLarvaTimeline.CountPoint( loop, LarvaGameClock.format( loop ), count );
             if ( !countPointList.isEmpty() && countPointList.get( countPointList.size() - 1 ).getLoop() == loop )
                 countPointList.set( countPointList.size() - 1, point );
             else
@@ -2938,189 +1504,6 @@ public class LarvaReplayAnalyzer {
                     : "Player " + playerId;
         }
 
-    }
-
-    /** Mutable queen state during analysis. */
-    private static class QueenState {
-
-        /** Queen tag. */
-        private final int queenTag;
-
-        /** Formatted queen tag text. */
-        private final String queenTagText;
-
-        /** Player id. */
-        private Integer playerId;
-
-        /** Player name. */
-        private String playerName = "Unknown player";
-
-        /** Unit type currently represented by the tag. */
-        private String unitType = UNIT_QUEEN;
-
-        /** Last known x coordinate. */
-        private Integer x;
-
-        /** Last known y coordinate. */
-        private Integer y;
-
-        /** Last loop with a trusted sparse tracker position. */
-        private int lastKnownPositionLoop = -1;
-
-        /** Timeline of position observations for proximity re-validation. */
-        private final List< PositionSnapshot > positionTimeline = new ArrayList<>();
-
-        /** Tells if at least one tracker event positively observed this queen. */
-        private boolean trackerObserved;
-
-        /** Tells if this queen had to be seeded from singleton command evidence. */
-        private boolean commandSeeded;
-
-        /** Tells if the queen is alive. */
-        private boolean alive = true;
-
-        /** Tells if the queen is completed. */
-        private boolean completed;
-
-        /** Completion loop. */
-        private int completionLoop = -1;
-
-        /** Completion time label. */
-        private String completionTimeLabel;
-
-        /** Destroyed loop. */
-        private int destroyedLoop = -1;
-
-        /** Destroyed time label. */
-        private String destroyedTimeLabel;
-
-        private QueenState( final int queenTag, final String queenTagText ) {
-            this.queenTag = queenTag;
-            this.queenTagText = queenTagText;
-        }
-
-        private void recordCompletion( final int loop, final IRepProcessor repProc ) {
-            if ( completionLoop >= 0 )
-                return;
-            completionLoop = loop;
-            completionTimeLabel = repProc == null ? null : repProc.formatLoopTime( loop );
-        }
-
-        private void recordDestroyed( final int loop, final IRepProcessor repProc ) {
-            if ( destroyedLoop >= 0 )
-                return;
-            destroyedLoop = loop;
-            destroyedTimeLabel = repProc == null ? null : repProc.formatLoopTime( loop );
-        }
-
-    }
-
-    /**
-     * Position snapshot for a queen at a specific loop.
-     * Used for proximity re-validation when building idle-inject windows.
-     */
-    private static class PositionSnapshot {
-        final int loop;
-        final int x;
-        final int y;
-
-        PositionSnapshot( final int loop, final int x, final int y ) {
-            this.loop = loop;
-            this.x = x;
-            this.y = y;
-        }
-    }
-
-    /**
-     * Handles drone morphs into buildings and cancellations.
-     * Tracks drone count changes when drones transform into structures or vice versa.
-     *
-     * @param aliveDroneCountByPlayerName map of alive drone counts per player
-     * @param unitCompletedByTag map tracking completion status of units
-     * @param tag unit tag being transformed
-     * @param newUnitType new unit type after transformation
-     * @param hatcheryByTag hatchery state map
-     * @param repProc replay processor
-     * @param event the type change event
-     */
-    private void handleDroneMorphs( final Map< String, Integer > aliveDroneCountByPlayerName, final Map< Integer, Boolean > unitCompletedByTag,
-            final Map< Integer, String > buildingConstructionPlayerNameByTag, final Integer tag, final String newUnitType,
-            final Map< Integer, HatcheryState > hatcheryByTag, final IRepProcessor repProc, final IEvent event ) {
-        if ( tag == null )
-            return;
-
-        final String playerName = resolvePlayerName( repProc,
-                firstNonNull( (Integer) event.get( F_CONTROL_PLAYER_ID ), (Integer) event.get( F_UPKEEP_PLAYER_ID ) ) );
-
-        final String normalizedNewType = normalizeUnitTypeToken( newUnitType );
-
-        // If the unit became a Drone, increment the per-player count.
-        if ( IBdUtil.UNIT_DRONE.equals( newUnitType ) || "drone".equals( normalizedNewType ) ) {
-            incrementDroneCount( aliveDroneCountByPlayerName, playerName );
-            return;
-        }
-
-        // If the unit turned into a hatchery-like building and there was no hatchery recorded for the tag,
-        // it's likely a Drone->building morph: decrement the per-player count.
-        if ( isHatcheryLike( newUnitType ) ) {
-            final HatcheryState existing = hatcheryByTag == null ? null : hatcheryByTag.get( tag );
-            if ( ( existing == null || !isHatcheryLike( existing.hatcheryType ) ) && !buildingConstructionPlayerNameByTag.containsKey( tag ) ) {
-                decrementDroneCount( aliveDroneCountByPlayerName, playerName );
-                buildingConstructionPlayerNameByTag.put( tag, playerName );
-            }
-            // Mark hatchery as complete when it reaches completion status
-            unitCompletedByTag.put( tag, Boolean.TRUE );
-            return;
-        }
-
-        // Conservative fallback: if the tag is unknown as a hatchery and the new type is neither Larva nor Queen,
-        // treat this as a Drone->other-building morph and decrement.
-        final HatcheryState existing = hatcheryByTag == null ? null : hatcheryByTag.get( tag );
-        if ( existing == null && !IBdUtil.UNIT_LARVA.equals( newUnitType ) && !isQueenType( newUnitType )
-                && !buildingConstructionPlayerNameByTag.containsKey( tag ) ) {
-            decrementDroneCount( aliveDroneCountByPlayerName, playerName );
-            buildingConstructionPlayerNameByTag.put( tag, playerName );
-        }
-    }
-
-    /**
-     * Increments the alive drone count for a player.
-     *
-     * @param aliveDroneCountByPlayerName map of alive drone counts
-     * @param playerName player name
-     */
-    private void recordBuildingConstructionStart( final Map< String, Integer > aliveDroneCountByPlayerName,
-            final Map< Integer, String > buildingConstructionPlayerNameByTag, final Integer tag, final String playerName,
-            final String buildingDescription, final IRepProcessor repProc, final int loop ) {
-        if ( tag == null || playerName == null || playerName.length() == 0 )
-            return;
-
-        if ( buildingConstructionPlayerNameByTag.containsKey( tag ) )
-            return;
-
-        buildingConstructionPlayerNameByTag.put( tag, playerName );
-        decrementDroneCount( aliveDroneCountByPlayerName, playerName );
-    }
-
-    private void incrementDroneCount( final Map< String, Integer > aliveDroneCountByPlayerName, final String playerName ) {
-        if ( playerName == null || playerName.length() == 0 )
-            return;
-
-        final Integer currentCount = aliveDroneCountByPlayerName.get( playerName );
-        final int newCount = ( currentCount == null ? 0 : currentCount.intValue() ) + 1;
-        aliveDroneCountByPlayerName.put( playerName, Integer.valueOf( newCount ) );
-    }
-
-    /**
-     * Decrements the alive drone count for a player (never below zero).
-     */
-    private void decrementDroneCount( final Map< String, Integer > aliveDroneCountByPlayerName, final String playerName ) {
-        if ( playerName == null || playerName.length() == 0 )
-            return;
-
-        final Integer currentCount = aliveDroneCountByPlayerName.get( playerName );
-        final int newCount = ( currentCount == null || currentCount.intValue() <= 0 ) ? 0 : currentCount.intValue() - 1;
-        aliveDroneCountByPlayerName.put( playerName, Integer.valueOf( newCount ) );
     }
 
     /** Mutable larva state during analysis. */

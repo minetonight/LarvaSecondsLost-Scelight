@@ -1,6 +1,5 @@
 package hu.aleks.larvasecondslostextmod;
 
-import hu.scelightapi.sc2.balancedata.model.IAbility;
 
 import java.util.Collection;
 import java.util.List;
@@ -86,7 +85,7 @@ public class LarvaAssignmentHeuristic {
     }
 
     /** Signal window for matching a larva birth to a recent Spawn Larva command. */
-    private static final int DEFAULT_INJECT_WINDOW_LOOPS = 40 * 16;
+    private static final int DEFAULT_INJECT_WINDOW_LOOPS = LarvaGameClock.INJECT_CYCLE_LOOPS;
 
     /** Minimum score advantage required over the second-best hatchery. */
     private static final double AMBIGUITY_MARGIN = 2.0;
@@ -104,7 +103,10 @@ public class LarvaAssignmentHeuristic {
     }
 
     /**
-     * Assigns a larva to a hatchery.
+     * Assigns a larva to a hatchery. The creator hatchery of the {@code UnitBorn} event wins when it is a known, completed hatchery
+     * (E19-S02): in replays from 2019 to 2026 every larva names its hatchery as creator, and the creator ability name is always empty,
+     * so requiring "SpawnLarva" there left every larva to the spatial guess, which splits inject pops between a main and a nearby
+     * macro hatchery and so misses injects.
      *
      * @param loop larva birth loop
      * @param larvaPlayerId larva owner player id
@@ -119,7 +121,7 @@ public class LarvaAssignmentHeuristic {
     public AssignmentResult assignLarva( final int loop, final Integer larvaPlayerId, final Integer larvaX, final Integer larvaY,
             final Integer creatorTag, final String creatorAbilityName, final Collection< LarvaReplayAnalyzer.HatcherySnapshot > hatcheryStates,
             final Map< Integer, List< Integer > > injectLoopsByTag ) {
-        if ( creatorTag != null && IAbility.ID_SPAWN_LARVA.equals( creatorAbilityName ) ) {
+        if ( creatorTag != null ) {
             for ( final LarvaReplayAnalyzer.HatcherySnapshot hatcheryState : hatcheryStates ) {
                 if ( hatcheryState.getHatcheryTag() == creatorTag.intValue() && hatcheryState.isAlive() && hatcheryState.isCompleted() )
                     return new AssignmentResult( creatorTag, Confidence.DIRECT, REASON_DIRECT_CREATOR_MATCH );

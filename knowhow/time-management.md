@@ -1,127 +1,61 @@
-# Time management for Larva Seconds Lost
+# Time in Larva Seconds Lost
 
-## Core rule
+## The rule (since 2026-11-26)
 
-Use raw replay loops as the source of truth for all larva analysis.
+- **Compute in loops.** Every replay event has a game loop; windows, thresholds, phases and durations stay in loops.
+- **Show with the game clock.** Every time and every "per minute" the module shows goes through `LarvaGameClock` (loops / 22.4). A minute is 60 seconds of the game clock, 1344 loops.
+- **Nothing else converts.** No `* 16`, `/ 22.4`, 960 or 1344 in other code, and no Scelight time API (`formatLoopTime`, `loopToTime`, `getLengthMs`, `convertToRealTime`, `isRealTime`, `getConverterGameSpeed`). `LarvaTimeBasisGuardTest` scans `src` and fails `ant TEST` when code breaks this.
+- **Game data in loops.** A duration from the game data is a loop constant in `LarvaGameClock`, measured on replays; never "seconds × factor".
 
-That means:
-- hatchery timelines stay in loops
-- 3+ larva windows stay in loops
-- missed-larva thresholds stay in loops
-- replay end should come from replay/header elapsed loops
+## The time bases
 
-Do **not** derive gameplay loops back from displayed milliseconds.
+| base | loops per second | where it comes from | use in the module |
+|---|---:|---|---|
+| game loop | – | replays record every event in loops | all calculations |
+| game clock second | 22.4 | the in-game timer of LotV replays (real time at Faster); Liquipedia's LotV values (hatchery 71 s) | every time and rate shown |
+| Normal-speed second | 16 | Blizzard's game data (editor values: hatchery 100, inject 40, energy 0.5625 per second) | only to turn data values into loops (`LOOPS_PER_GAME_DATA_SECOND`) |
+| Scelight time | 22.15 (16 × 36/26), or 16 with "use real time" off | Scelight's own pages and `IRepProcessor` time methods | never |
 
-## Why the old approach was wrong
+Scelight's factor for Faster is 36/26 = 1.385 where the game uses 1.4, so Scelight shows times about 1.1 % too high (game 7:51 is Scelight 7:56). The other speeds are exact. Scelight's own charts keep their time; the module's differ from them by that 1.1 %.
 
-Scelight can display replay time in game time or real time, and that conversion depends on replay speed.
+## Game data in loops (measured on replays)
 
-A bad flow looked like this:
-1. take replay length from `RepProcessor.getLengthMs()`
-2. treat that value like raw game-time milliseconds
-3. convert it back to loops with a fixed `16 loops/sec`
+| what | loops | game clock | Normal-speed seconds |
+|---|---:|---:|---:|
+| natural larva spawn | 240 | 10.7 s | 15 |
+| back-to-back inject pops | 641 | 28.6 s | 40 (+1 loop) |
+| queen build | 800 | 35.7 s | 50 |
+| hatchery build | 1600 | 71.4 s | 100 |
+| spawning pool build | 1040 | 46.4 s | 65 |
+| evolution chamber build | 560 | 25.0 s | 35 |
+| extractor build | 480 | 21.4 s | 30 |
+| tracker PlayerStats interval | 160 | 7.1 s | 10 |
+| queen energy | 0.03515625 per loop | 0.7875 per s | 0.5625 per s |
 
-That truncates Faster replays because the displayed milliseconds are already speed-adjusted.
+Build times: `UnitInit` to `UnitDone` of the same tag. Inject: gaps between 3-larva bursts of one hatchery (queued injects). Natural larva: gaps between single births.
 
-Practical symptom:
-- charts end about 20-30% early
-- the cutoff closely matches Faster speed scaling
+Hand-picked limits (bridge limit 90 s, command lookback 40 s, tumor windows 30 s and 60 s, minimum game length 4 min) are game clock seconds, converted with `LarvaGameClock.secondsToLoops`.
 
-## Correct conversion model
+## What went wrong before
 
-### Calculation layer
+Until 2026-11-26 the module mixed three bases:
 
-Keep calculations in loops.
+- Chart labels used "gameplay time" (loops / 16, Normal-speed seconds) while other labels used Scelight's time, which followed its real-time setting.
+- Thresholds were built as "11 visible seconds × 16 × 36/26" (243 loops; the real larva interval is 240) and the inject as 29 × 16 × 36/26 (642; real 641). The game speed factor was applied to durations that do not depend on game speed.
+- "Per minute" rates were per 960 loops (60 Normal-speed seconds = 42.9 s of game clock), so they were 1/1.4 of per-minute rates. Old exports (April 2026 percentiles, the spreadsheet `benchmark-data/scelight mod - larva efficiency calculations.ods`, the E19 band notes) use that unit: multiply by 1.4 to compare.
+- An even older bug: replay length came from Scelight's displayed milliseconds and was turned back into loops with 16 loops per second, so charts ended 20–30 % early. Replay end comes from the header's elapsed loops.
 
-Examples:
-- saturation windows are built from count-point loops
-- missed-larva markers are created from loop distances
-- replay end visibility uses `replayLengthLoops`
+## Rules for each element
 
-### Display layer
+- Chart rows, windows and the replay end use loops (`replayLengthLoops` from the header).
+- Labels are `m:ss` (`LarvaGameClock.format`); tooltips may show tenths (`formatTenths`). Scoring keeps loop precision.
+- Resource snapshots (tracker `PlayerStats`) are sparse: a snapshot counts for a point within one PlayerStats interval (160 loops).
+- Python tools never convert loops: they take rates and times from the Java CLIs.
 
-Convert loops to visible time only when rendering labels, tooltips, or dumps.
+## Checklist
 
-For the Larva module, visible chart time should use **gameplay time**, not the replay page's optional
-real-time mode. The larva mechanic itself is gameplay-timed, so the chart must show the same elapsed
-duration that the 11-second threshold uses.
-
-Use this conversion:
-- base loop to gameplay milliseconds: `(gameloop * 125L) / 2`
-
-Do not compress those labels for Faster real-time display, or the visible missed-larva spacing will
-shrink to about 7.9 seconds instead of 11 seconds.
-
-In this module that conversion is centralized in `LarvaAnalysisReport`.
-
-## Rules for each UI element
-
-### Chart ranges
-
-- row start/end logic uses loop values
-- window start/end logic uses loop values
-- visible replay end uses replay header elapsed loops
-
-### Marker thresholds
-
-The missed-larva rule is tied to the visible in-game timer pace, and Blizzard keeps that timer pace
-linked to game speed.
-
-Implementation rule:
-- start from the base `11` visible in-game seconds
-- convert that threshold into loops using replay speed
-- Scelight relative speeds are `36` for Normal and `26` for Faster
-- threshold formula: `11 * 16 * (36 / gameSpeedRelative)`
-- compare loop deltas against that threshold
-- only format human-readable time at render time
-
-Examples:
-- Faster: `11 * 16 * (36 / 26) ≈ 243` loops
-- Normal: `11 * 16 * (36 / 36) = 176` loops
-- Slower speeds use fewer loops per visible timer second, so the visible time between missed-larva
-	markers stretches accordingly
-
-### Tooltips
-
-Tooltips should use higher precision than row labels.
-
-Rule:
-- normal labels can stay at whole seconds for readability
-- tooltips should format loop-derived time to tenths of a second
-
-### Resource snapshots
-
-Resource snapshots come from replay tracker `PlayerStats` events, so they are sparse by nature.
-
-Rule:
-- if the latest past snapshot is older than 10 seconds, show `Unknown at this timestamp`
-- if an upcoming snapshot is within 10 seconds, prefer it and mark it as near-future
-- snapshot timestamps must be formatted with the same gameplay-time conversion as windows and markers
-
-## Implementation checklist
-
-When touching timing code, verify these questions:
-
-1. Is this value a raw replay loop or a displayed time?
-2. Am I doing calculations only in loops?
-3. Am I formatting time only at the presentation boundary?
-4. Am I formatting larva mechanic timings in gameplay time?
-5. Am I avoiding fixed `16 loops/sec` reverse conversion from displayed milliseconds?
-
-## Files involved
-
-Main timing owners:
-- `LarvaReplayAnalyzer.java`
-- `LarvaAnalysisReport.java`
-- `LarvaSaturationWindowCalculator.java`
-- `LarvaMissedLarvaMarkerCalculator.java`
-- `LarvaTimelineModelBuilder.java`
-
-## Short version
-
-- loops are authoritative
-- display time is derived from loops
-- larva chart labels use gameplay time so 11 gameplay seconds still look like 11 seconds
-- replay end comes from replay loops, not converted display milliseconds
-- thresholds stay in loops
-- tooltips may show tenths, but scoring still uses loop precision
+1. Is this value a loop or a shown time?
+2. Is the calculation in loops?
+3. Does the conversion go through `LarvaGameClock`?
+4. Is a game-data duration a measured loop constant, not "seconds × factor"?
+5. Does `ant TEST` (with `LarvaTimeBasisGuardTest`) pass?

@@ -31,14 +31,14 @@ public class LarvaTablePainterTest {
         assertEquals( "End game [90+]", model.getColumnHeader( 3 ) );
         assertArrayEquals( new String[] { "Phase span", "Inject uptime [%]", "Larva gen [lrv / htch / min]", "larva gen ranking",
             "Larva missed [lrv / htch / min]", "larva missed ranking", "Inject-missed larva [lrv / htch / min]" }, rowLabels( model ) );
-        // Fallback time basis: 4000 loops = 250 s (16 loops/s). Values as rendered by the pre-S13 code.
-        assertEquals( "0:00-4:10", model.getCell( 0, 0 ) );
+        // Game clock: 4000 loops = 178.6 s; rates per game clock minute (1344 loops), 1.4 times the pre-2026-11-26 values.
+        assertEquals( "0:00-2:58", model.getCell( 0, 0 ) );
         assertEquals( "66.65%", model.getCell( 1, 0 ) );
-        assertEquals( "1.68", model.getCell( 2, 0 ) );
-        assertEquals( "top 100% gold", model.getCell( 3, 0 ) );
-        assertEquals( "0.36", model.getCell( 4, 0 ) );
-        assertEquals( "top 90% pro", model.getCell( 5, 0 ) );
-        assertEquals( "0.24", model.getCell( 6, 0 ) );
+        assertEquals( "2.35", model.getCell( 2, 0 ) );
+        assertEquals( "n/a", model.getCell( 3, 0 ) ); // fixture bands: no early larva gen band
+        assertEquals( "0.50", model.getCell( 4, 0 ) );
+        assertEquals( "top 50% masters", model.getCell( 5, 0 ) ); // fixture bands (test/resources)
+        assertEquals( "0.34", model.getCell( 6, 0 ) );
         assertEquals( "0.00", model.getCell( 4, 3 ) );
     }
 
@@ -47,7 +47,7 @@ public class LarvaTablePainterTest {
         final LarvaTableViewModel model = LarvaPhaseTableViewModels.fromPlayerPhaseTable( LarvaPhaseTableRenderFixture.earlyOnlyTable( "B" ), null );
         for ( int row = 0; row < model.getRowCount(); row++ )
             assertEquals( "row " + row, "n/a", model.getCell( row, 3 ) );
-        assertEquals( "0:00-3:13", model.getCell( 0, 0 ) );
+        assertEquals( "0:00-2:18", model.getCell( 0, 0 ) );
     }
 
     @Test

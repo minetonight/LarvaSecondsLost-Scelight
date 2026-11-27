@@ -56,10 +56,6 @@ final class LarvaAggregationRecordBuilder {
 
         /** Resource snapshots; only meaningful for Zerg players (non-Zerg worker counts are SCV/probe counts). */
         List< LarvaPlayerResourceSnapshot > snapshots;
-
-        Integer exactDrone66Loop;
-
-        Integer exactDrone80Loop;
     }
 
     /**
@@ -113,8 +109,7 @@ final class LarvaAggregationRecordBuilder {
 
     private static Map< LarvaMilestone, Long > buildMilestoneDisplayMs( final PlayerInput input, final LoopTimeConverter converter ) {
         final Map< LarvaMilestone, Long > result = new EnumMap<>( LarvaMilestone.class );
-        final Map< LarvaMilestone, Integer > loops = LarvaMilestoneCalculator.compute( input.snapshots, input.exactDrone66Loop,
-                input.exactDrone80Loop );
+        final Map< LarvaMilestone, Integer > loops = LarvaMilestoneCalculator.compute( input.snapshots );
         for ( final Map.Entry< LarvaMilestone, Integer > entry : loops.entrySet() )
             result.put( entry.getKey(), Long.valueOf( converter.loopToTimeMs( entry.getValue().intValue() ) ) );
         return result;
@@ -142,8 +137,6 @@ final class LarvaAggregationRecordBuilder {
             final String name = player.getName();
             input.phaseTable = report.getPlayerPhaseTable( name );
             input.snapshots = report.getResourceSnapshotsByPlayerName().get( name );
-            input.exactDrone66Loop = report.getFirstDroneCountLoop( name, LarvaMilestone.DRONES_66.getThreshold() );
-            input.exactDrone80Loop = report.getFirstDroneCountLoop( name, LarvaMilestone.DRONES_80.getThreshold() );
             game.addZergPlayer( buildPlayerRecord( input, converter ) );
         }
         return game.build();

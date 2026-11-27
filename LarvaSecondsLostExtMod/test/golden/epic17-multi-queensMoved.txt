@@ -6,14 +6,14 @@ skipped: 0
 tracked players: 1
 player 1: name=ScorpionБГ key=2-S2-1-5946255 games=1 last=2026-07-03 18:55:08
   bucket ALL games=1
-    phase EARLY: missed=7 missedInject=6 spawned=66 hatchEligibleLoops=12391 injectEligibleLoops=8267 injectActiveLoops=4528 | missed/h/min=0.54 missedInject/h/min=0.46 spawned/h/min=5.11 uptime=54.77% spawnedRank=top 90% dia missedRank=top 30% dia end=6:51 (411666 ms) 1/1
-    phase MID: missed=77 missedInject=66 spawned=123 hatchEligibleLoops=31723 injectEligibleLoops=31723 injectActiveLoops=14132 | missed/h/min=2.33 missedInject/h/min=2.00 spawned/h/min=3.72 uptime=44.55% spawnedRank=top 100% gold missedRank=top 65% gold end=14:05 (845000 ms) 1/1
-    phase LATE: missed=147 missedInject=105 spawned=242 hatchEligibleLoops=67541 injectEligibleLoops=67541 injectActiveLoops=16627 | missed/h/min=2.09 missedInject/h/min=1.49 spawned/h/min=3.44 uptime=24.62% spawnedRank=top 10% gold missedRank=top 15% plat end=22:10 (1330829 ms) 1/1
+    phase EARLY: missed=7 missedInject=0 spawned=66 hatchEligibleLoops=12391 injectEligibleLoops=8261 injectActiveLoops=4523 | missed/h/min=0.76 missedInject/h/min=0.00 spawned/h/min=7.16 uptime=54.75% spawnedRank=top 10% masters missedRank=top 60% dia end=6:47 (407142 ms) 1/1
+    phase MID: missed=76 missedInject=60 spawned=123 hatchEligibleLoops=31723 injectEligibleLoops=31723 injectActiveLoops=14449 | missed/h/min=3.22 missedInject/h/min=2.54 spawned/h/min=5.21 uptime=45.55% spawnedRank=top 100% gold missedRank=top 90% gold end=13:55 (835714 ms) 1/1
+    phase LATE: missed=143 missedInject=138 spawned=245 hatchEligibleLoops=67541 injectEligibleLoops=67541 injectActiveLoops=18206 | missed/h/min=2.85 missedInject/h/min=2.75 spawned/h/min=4.88 uptime=26.96% spawnedRank=top 60% plat missedRank=top 45% dia end=21:56 (1316205 ms) 1/1
     phase END: missed=0 missedInject=0 spawned=0 hatchEligibleLoops=0 injectEligibleLoops=0 injectActiveLoops=0 | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/1
-    milestone 100 supply: 11:18 (678888 ms) (1/1)
-    milestone 66 drones: 14:04 (844548 ms) (1/1)
-    milestone 80 drones: 14:50 (890093 ms) (1/1)
-    milestone 200 supply: 17:20 (1040000 ms) (1/1)
+    milestone 100 supply: 11:11 (671428 ms) (1/1)
+    milestone 66 drones: 13:55 (835714 ms) (1/1)
+    milestone 80 drones: n/a (0/1)
+    milestone 200 supply: 17:08 (1028571 ms) (1/1)
   bucket ZVP games=0
     phase EARLY: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
     phase MID: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
@@ -24,14 +24,14 @@ player 1: name=ScorpionБГ key=2-S2-1-5946255 games=1 last=2026-07-03 18:55:08
     milestone 80 drones: n/a (0/0)
     milestone 200 supply: n/a (0/0)
   bucket ZVT games=1
-    phase EARLY: missed=7 missedInject=6 spawned=66 hatchEligibleLoops=12391 injectEligibleLoops=8267 injectActiveLoops=4528 | missed/h/min=0.54 missedInject/h/min=0.46 spawned/h/min=5.11 uptime=54.77% spawnedRank=top 90% dia missedRank=top 30% dia end=6:51 (411666 ms) 1/1
-    phase MID: missed=77 missedInject=66 spawned=123 hatchEligibleLoops=31723 injectEligibleLoops=31723 injectActiveLoops=14132 | missed/h/min=2.33 missedInject/h/min=2.00 spawned/h/min=3.72 uptime=44.55% spawnedRank=top 100% gold missedRank=top 65% gold end=14:05 (845000 ms) 1/1
-    phase LATE: missed=147 missedInject=105 spawned=242 hatchEligibleLoops=67541 injectEligibleLoops=67541 injectActiveLoops=16627 | missed/h/min=2.09 missedInject/h/min=1.49 spawned/h/min=3.44 uptime=24.62% spawnedRank=top 10% gold missedRank=top 15% plat end=22:10 (1330829 ms) 1/1
+    phase EARLY: missed=7 missedInject=0 spawned=66 hatchEligibleLoops=12391 injectEligibleLoops=8261 injectActiveLoops=4523 | missed/h/min=0.76 missedInject/h/min=0.00 spawned/h/min=7.16 uptime=54.75% spawnedRank=top 10% masters missedRank=top 60% dia end=6:47 (407142 ms) 1/1
+    phase MID: missed=76 missedInject=60 spawned=123 hatchEligibleLoops=31723 injectEligibleLoops=31723 injectActiveLoops=14449 | missed/h/min=3.22 missedInject/h/min=2.54 spawned/h/min=5.21 uptime=45.55% spawnedRank=top 100% gold missedRank=top 90% gold end=13:55 (835714 ms) 1/1
+    phase LATE: missed=143 missedInject=138 spawned=245 hatchEligibleLoops=67541 injectEligibleLoops=67541 injectActiveLoops=18206 | missed/h/min=2.85 missedInject/h/min=2.75 spawned/h/min=4.88 uptime=26.96% spawnedRank=top 60% plat missedRank=top 45% dia end=21:56 (1316205 ms) 1/1
     phase END: missed=0 missedInject=0 spawned=0 hatchEligibleLoops=0 injectEligibleLoops=0 injectActiveLoops=0 | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/1
-    milestone 100 supply: 11:18 (678888 ms) (1/1)
-    milestone 66 drones: 14:04 (844548 ms) (1/1)
-    milestone 80 drones: 14:50 (890093 ms) (1/1)
-    milestone 200 supply: 17:20 (1040000 ms) (1/1)
+    milestone 100 supply: 11:11 (671428 ms) (1/1)
+    milestone 66 drones: 13:55 (835714 ms) (1/1)
+    milestone 80 drones: n/a (0/1)
+    milestone 200 supply: 17:08 (1028571 ms) (1/1)
   bucket ZVZ games=0
     phase EARLY: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
     phase MID: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0

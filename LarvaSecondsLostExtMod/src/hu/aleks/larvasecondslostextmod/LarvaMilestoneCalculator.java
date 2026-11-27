@@ -18,32 +18,21 @@ public final class LarvaMilestoneCalculator {
     }
 
     /**
-     * Computes the loop at which each reached milestone was first reached.
+     * Computes the loop at which each reached milestone was first reached. Drone milestones use the snapshots' workers count,
+     * which is {@code PlayerStats.workersActiveCount} (Scelight's Workers Active chart, E19-S04), so a milestone loop is the loop of
+     * the first {@code PlayerStats} sample (every 160 loops) at or above the threshold.
      *
      * @param snapshots snapshots of one player, may be null or empty
-     * @param exactDrone66Loop exact loop where the alive drone count first reached 66, or null to scan the snapshots
-     * @param exactDrone80Loop exact loop where the alive drone count first reached 80, or null to scan the snapshots
      * @return reached milestones in display order mapped to their loop, never null
      */
-    public static Map< LarvaMilestone, Integer > compute( final List< LarvaPlayerResourceSnapshot > snapshots, final Integer exactDrone66Loop,
-            final Integer exactDrone80Loop ) {
+    public static Map< LarvaMilestone, Integer > compute( final List< LarvaPlayerResourceSnapshot > snapshots ) {
         final Map< LarvaMilestone, Integer > result = new EnumMap<>( LarvaMilestone.class );
         for ( final LarvaMilestone milestone : LarvaMilestone.values() ) {
-            final Integer loop = resolveLoop( milestone, snapshots, exactDrone66Loop, exactDrone80Loop );
+            final Integer loop = firstSnapshotLoop( milestone, snapshots );
             if ( loop != null )
                 result.put( milestone, loop );
         }
         return result;
-    }
-
-    private static Integer resolveLoop( final LarvaMilestone milestone, final List< LarvaPlayerResourceSnapshot > snapshots,
-            final Integer exactDrone66Loop, final Integer exactDrone80Loop ) {
-        // Exact analyzer loops win over the coarse (about 10 s) snapshot scan.
-        if ( milestone == LarvaMilestone.DRONES_66 && exactDrone66Loop != null )
-            return exactDrone66Loop;
-        if ( milestone == LarvaMilestone.DRONES_80 && exactDrone80Loop != null )
-            return exactDrone80Loop;
-        return firstSnapshotLoop( milestone, snapshots );
     }
 
     private static Integer firstSnapshotLoop( final LarvaMilestone milestone, final List< LarvaPlayerResourceSnapshot > snapshots ) {

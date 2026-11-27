@@ -180,3 +180,21 @@ Interpretation examples:
 - `top 40% plat` → solidly inside the plat band
 - `top 15% plat` → close to the diamond anchor
 - `top 5% masters` → better than the masters anchor by roughly one additional tier span
+## Epic 19 update (phases on Workers Active)
+
+Epic 19 moved the phase boundaries back to Scelight's Workers Active count (`PlayerStats.workersActiveCount`); the hand-built "drones alive" tally of April–November 2026 never subtracted killed drones. The tier starts in the tables above are history.
+
+## Rate unit (since 2026-11-26)
+
+Rates are per hatchery per game clock minute (60 s, 1344 loops). Before 2026-11-26 they were per 960 loops (a Normal-speed minute, 42.9 s), so every rate in the tables above, in the April 2026 exports and in the spreadsheet is 1/1.4 of today's value. See [knowhow/time-management.md](../../knowhow/time-management.md).
+
+## League bands (since 2026-11-26)
+
+The maintainer's spreadsheet (`benchmark-data/scelight mod - larva efficiency calculations.ods`, sheet "may 2026 v2.1") defines the method; `ant BENCHMARK_BANDS` (in `LarvaSecondsLostExtMod`) runs it as one command, without an agent:
+
+1. **League per replay.** MMR-bucket corpus: the Zerg player's ladder MMR, read from the replay, against the 1v1 league limits of the player's region (toon `1-…` Americas, `2-…` Europe, `3-…` Korea; other regions are skipped) from [MMR-Ranges](https://burnysc2.github.io/MMR-Ranges/). An MMR above Master 1 counts as GrandMaster. Elite corpus (tournament replays of named pros, no MMR): `pro`. The MMR table is a snapshot, `benchmark-data/mmr-ranges/mmr-ranges-1v1.json`, of one season (the site shows only the current one), used for replays of all seasons; `-Dmmr.refresh=true` downloads the current table first.
+2. **League median** of each rate per phase (the spreadsheet's "average" column holds medians; means are pulled by short phases with few hatcheries and turned early larva generated upside down).
+3. **Tier start halfway** between a league's median and the median of the league below; the weakest tier starts half a step below its own median (spreadsheet formula `B3-(C3-B3)/2`).
+4. **Rules instead of judgment:** a league needs 20 replays with a rate in the phase; walking down from pro, a league whose median is not worse than the next kept league above it is dropped for that phase; a phase with fewer than two tiers is not rated (n/a).
+
+Outputs: the band file `LarvaSecondsLostExtMod/src/hu/aleks/larvasecondslostextmod/larva-benchmark-bands.properties` (read by `LarvaPhaseBenchmarkRatingFormatter`; labels `bronze`, `silver`, `gold`, `plat`, `dia`, `masters`, `GM`, `pro`), the report [benchmark-bands.md](../../benchmark-data/exports/benchmark-bands.md) (league limits, medians with counts, tier starts, dropped leagues) and the per-replay rates [phase-rates.csv](../../benchmark-data/exports/phase-rates.csv). After a run: `ant TEST` (the unit tests use fixed fixture bands, so they do not change), `ant GOLDEN_MULTI_REGENERATE` (the multi golden shows rankings), then review and commit the diff.

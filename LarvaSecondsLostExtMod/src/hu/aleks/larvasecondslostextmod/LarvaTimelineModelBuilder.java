@@ -13,20 +13,11 @@ import java.util.Map;
  */
 public class LarvaTimelineModelBuilder {
 
-    /** Maximum allowed distance between a hovered point and a resource snapshot. */
-    private static final int SNAPSHOT_MATCH_WINDOW_LOOPS = 10 * 16;
+    /** Maximum allowed distance between a hovered point and a resource snapshot: one PlayerStats interval. */
+    private static final int SNAPSHOT_MATCH_WINDOW_LOOPS = LarvaGameClock.PLAYER_STATS_INTERVAL_LOOPS;
 
-    /** Replay loops per second used by SC2 timing. */
-    private static final int REPLAY_LOOPS_PER_SECOND = 16;
-
-    /** Dot-column spacing in visible gameplay seconds for 1- and 2-larva rhythm hints. */
+    /** Dot-column spacing in game clock seconds for 1- and 2-larva rhythm hints. */
     private static final int LARVA_DOT_STEP_SECONDS = 2;
-
-    /** Scelight normal-speed relative value. */
-    private static final double NORMAL_GAME_SPEED_RELATIVE = 36.0d;
-
-    /** Scelight Faster-speed relative value used as the fallback default. */
-    private static final long DEFAULT_GAME_SPEED_RELATIVE = 26L;
 
     /** First cumulative label shown inside a 3+ larva window. */
     private static final int ACCUMULATION_LABEL_START = 6;
@@ -55,8 +46,8 @@ public class LarvaTimelineModelBuilder {
     /** Suffix used for per-hatchery injected-larva totals. */
     private static final String POTENTIAL_INJECTED_LARVA_MISSED_SUFFIX = " potential injected larva missed";
 
-    /** Visible gameplay seconds represented by one missed-inject threshold. */
-    private static final int MISSED_INJECT_THRESHOLD_SECONDS = 29;
+    /** Red (missed-inject) loops represented by one missed inject. */
+    private static final int MISSED_INJECT_THRESHOLD_LOOPS = LarvaGameClock.INJECT_CYCLE_LOOPS;
 
     /** Potential injected larva counted for each missed-inject threshold. */
     private static final int MISSED_INJECT_LARVA_PER_THRESHOLD = 3;
@@ -128,8 +119,8 @@ public class LarvaTimelineModelBuilder {
         if ( visibleStartLoop < 0 || visibleEndLoop <= visibleStartLoop )
             return null;
 
-        final long startMs = clampToReplay( toTimelineMs( larvaAnalysisReport, visibleStartLoop ), replayLengthMs );
-        final long endMs = clampToReplay( toTimelineMs( larvaAnalysisReport, visibleEndLoop ), replayLengthMs );
+        final long startMs = clampToReplay( LarvaGameClock.loopToMs( visibleStartLoop ), replayLengthMs );
+        final long endMs = clampToReplay( LarvaGameClock.loopToMs( visibleEndLoop ), replayLengthMs );
         if ( endMs <= startMs )
             return null;
 
@@ -142,7 +133,7 @@ public class LarvaTimelineModelBuilder {
         final HatcheryIdleInjectTimeline idleInjectTimeline = findIdleInjectTimeline( larvaAnalysisReport, timeline.getHatcheryTag() );
 
         final List< LarvaTimelineMarker > rawMarkerList = new ArrayList<>();
-        rawMarkerList.addAll( missedLarvaMarkerCalculator.buildMarkers( saturationWindowList, larvaAnalysisReport.getConverterGameSpeedRelative() ) );
+        rawMarkerList.addAll( missedLarvaMarkerCalculator.buildMarkers( saturationWindowList ) );
         rawMarkerList.addAll( buildMissedInjectMarkers( idleInjectTimeline, larvaAnalysisReport ) );
         sortMarkersByLoop( rawMarkerList );
 
@@ -151,8 +142,8 @@ public class LarvaTimelineModelBuilder {
 
         final List< LarvaTimelineSegment > segmentList = new ArrayList<>();
         for ( final LarvaSaturationWindow window : saturationWindowList )
-            segmentList.add( new LarvaTimelineSegment( toTimelineMs( larvaAnalysisReport, window.getStartLoop() ), toTimelineMs( larvaAnalysisReport, window.getEndLoop() ),
-                "3+ larva " + formatTimelineLoop( larvaAnalysisReport, window.getStartLoop() ) + "-" + formatTimelineLoop( larvaAnalysisReport, window.getEndLoop() ), LarvaTimelineSegment.Kind.SATURATION_WINDOW,
+            segmentList.add( new LarvaTimelineSegment( LarvaGameClock.loopToMs( window.getStartLoop() ), LarvaGameClock.loopToMs( window.getEndLoop() ),
+                "3+ larva " + LarvaGameClock.format( window.getStartLoop() ) + "-" + LarvaGameClock.format( window.getEndLoop() ), LarvaTimelineSegment.Kind.SATURATION_WINDOW,
                 buildWindowTooltipText( window, playerName, larvaAnalysisReport ) ) );
 
         appendInjectSegments( segmentList, injectTimeline, larvaAnalysisReport );
@@ -213,31 +204,20 @@ public class LarvaTimelineModelBuilder {
      */
     private void addDotDecorations( final List< LarvaTimelineDecoration > decorationList, final int startLoop, final int endLoop,
             final int larvaCount, final LarvaAnalysisReport larvaAnalysisReport ) {
-        final int larvaDotStepLoops = resolveLarvaDotStepLoops( larvaAnalysisReport == null ? 0L : larvaAnalysisReport.getConverterGameSpeedRelative() );
+        final int larvaDotStepLoops = LarvaGameClock.secondsToLoops( LARVA_DOT_STEP_SECONDS );
         final int durationLoops = endLoop - startLoop;
         if ( durationLoops <= 0 || larvaDotStepLoops <= 0 )
             return;
 
         if ( durationLoops <= larvaDotStepLoops ) {
             decorationList.add( new LarvaTimelineDecoration( LarvaTimelineDecoration.Kind.LARVA_DOT_COLUMN,
-                    toTimelineMs( larvaAnalysisReport, startLoop + durationLoops / 2 ), larvaCount, null ) );
+                    LarvaGameClock.loopToMs( startLoop + durationLoops / 2 ), larvaCount, null ) );
             return;
         }
 
         for ( int loop = startLoop + larvaDotStepLoops / 2; loop < endLoop; loop += larvaDotStepLoops )
             decorationList.add( new LarvaTimelineDecoration( LarvaTimelineDecoration.Kind.LARVA_DOT_COLUMN,
-                    toTimelineMs( larvaAnalysisReport, loop ), larvaCount, null ) );
-    }
-
-    /**
-     * Resolves the periodic gray-dot spacing in replay loops for the replay game speed.
-     *
-     * @param gameSpeedRelative replay game-speed relative value
-     * @return gray-dot spacing in replay loops
-     */
-    private int resolveLarvaDotStepLoops( final long gameSpeedRelative ) {
-        final double effectiveGameSpeedRelative = gameSpeedRelative <= 0L ? DEFAULT_GAME_SPEED_RELATIVE : gameSpeedRelative;
-        return (int) ( LARVA_DOT_STEP_SECONDS * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / effectiveGameSpeedRelative ) );
+                    LarvaGameClock.loopToMs( loop ), larvaCount, null ) );
     }
 
     /**
@@ -259,7 +239,7 @@ public class LarvaTimelineModelBuilder {
                 continue;
 
             decorationList.add( new LarvaTimelineDecoration( LarvaTimelineDecoration.Kind.ACCUMULATION_LABEL,
-                    toTimelineMs( larvaAnalysisReport, loop ), 0, String.valueOf( labelValue ) ) );
+                    LarvaGameClock.loopToMs( loop ), 0, String.valueOf( labelValue ) ) );
         }
     }
 
@@ -376,10 +356,10 @@ public class LarvaTimelineModelBuilder {
             if ( idleWindow == null )
                 continue;
 
-            final long startMs = idleWindow.getStartTimeLabel() == null ? toTimelineMs( larvaAnalysisReport, idleWindow.getStartLoop() ) : idleWindow.getStartMs();
-            final long endMs = idleWindow.getEndTimeLabel() == null ? toTimelineMs( larvaAnalysisReport, idleWindow.getEndLoop() ) : idleWindow.getEndMs();
-            final String startTimeLabel = idleWindow.getStartTimeLabel() == null ? formatTimelineLoop( larvaAnalysisReport, idleWindow.getStartLoop() ) : idleWindow.getStartTimeLabel();
-            final String endTimeLabel = idleWindow.getEndTimeLabel() == null ? formatTimelineLoop( larvaAnalysisReport, idleWindow.getEndLoop() ) : idleWindow.getEndTimeLabel();
+            final long startMs = idleWindow.getStartTimeLabel() == null ? LarvaGameClock.loopToMs( idleWindow.getStartLoop() ) : idleWindow.getStartMs();
+            final long endMs = idleWindow.getEndTimeLabel() == null ? LarvaGameClock.loopToMs( idleWindow.getEndLoop() ) : idleWindow.getEndMs();
+            final String startTimeLabel = idleWindow.getStartTimeLabel() == null ? LarvaGameClock.format( idleWindow.getStartLoop() ) : idleWindow.getStartTimeLabel();
+            final String endTimeLabel = idleWindow.getEndTimeLabel() == null ? LarvaGameClock.format( idleWindow.getEndLoop() ) : idleWindow.getEndTimeLabel();
             segmentList.add( new LarvaTimelineSegment( startMs, endMs,
                     "Idle inject " + startTimeLabel + "-" + endTimeLabel, LarvaTimelineSegment.Kind.IDLE_INJECT_WINDOW,
                     buildIdleInjectTooltipText( idleWindow, idleInjectTimeline, larvaAnalysisReport, startTimeLabel, endTimeLabel ) ) );
@@ -409,7 +389,7 @@ public class LarvaTimelineModelBuilder {
         } );
 
         final List< LarvaTimelineMarker > markerList = new ArrayList<>();
-        final int thresholdLoops = resolveMissedInjectThresholdLoops( larvaAnalysisReport == null ? 0L : larvaAnalysisReport.getConverterGameSpeedRelative() );
+        final int thresholdLoops = MISSED_INJECT_THRESHOLD_LOOPS;
         int accumulatedLoops = 0;
         int potentialInjectedLarvaMissedCount = 0;
         int coveredUntilLoop = Integer.MIN_VALUE;
@@ -430,8 +410,8 @@ public class LarvaTimelineModelBuilder {
                 final int loopsUntilThreshold = thresholdLoops - accumulatedLoops;
                 markerLoop += loopsUntilThreshold;
                 potentialInjectedLarvaMissedCount += MISSED_INJECT_LARVA_PER_THRESHOLD;
-                markerList.add( new LarvaTimelineMarker( markerLoop, toTimelineMs( larvaAnalysisReport, markerLoop ),
-                        "Potential injected larva missed " + potentialInjectedLarvaMissedCount + " at " + formatTimelineLoop( larvaAnalysisReport, markerLoop ),
+                markerList.add( new LarvaTimelineMarker( markerLoop, LarvaGameClock.loopToMs( markerLoop ),
+                        "Potential injected larva missed " + potentialInjectedLarvaMissedCount + " at " + LarvaGameClock.format( markerLoop ),
                         LarvaTimelineMarker.Kind.MISSED_INJECT_LARVA, estimateMissedInjectMarkerEnergyText( idleWindow, markerLoop ) ) );
 
                 loopsRemainingInWindow -= loopsUntilThreshold;
@@ -443,17 +423,6 @@ public class LarvaTimelineModelBuilder {
         }
 
         return markerList;
-    }
-
-    /**
-     * Resolves the loop threshold corresponding to 29 visible game-timer seconds.
-     *
-     * @param gameSpeedRelative replay game-speed relative value
-     * @return threshold in replay loops
-     */
-    private int resolveMissedInjectThresholdLoops( final long gameSpeedRelative ) {
-        final double effectiveGameSpeedRelative = gameSpeedRelative <= 0L ? DEFAULT_GAME_SPEED_RELATIVE : gameSpeedRelative;
-        return (int) ( MISSED_INJECT_THRESHOLD_SECONDS * REPLAY_LOOPS_PER_SECOND * ( NORMAL_GAME_SPEED_RELATIVE / effectiveGameSpeedRelative ) );
     }
 
     /**
@@ -500,10 +469,32 @@ public class LarvaTimelineModelBuilder {
         final StringBuilder builder = new StringBuilder( "<html><b>Missed inject window</b><br/>" );
         builder.append( "Window: " ).append( safeText( startTimeLabel, "n/a" ) ).append( " - " ).append( safeText( endTimeLabel, "n/a" ) ).append( "<br/>" );
         builder.append( "Estimated queen energy: " ).append( probableQueenEnergyText( idleWindow ) ).append( "<br/>" );
+        builder.append( "Why: " ).append( escapeTooltipText( shortenWhy( idleWindow.getDiagnosticNote() ) ) ).append( "<br/>" );
         builder.append( "Potential loss after 29s: 3 larva<br/>" );
         builder.append( buildSnapshotTooltipLines( "Window start", safeText( startTimeLabel, "n/a" ), snapshotSelection ) );
         builder.append( "</html>" );
         return builder.toString();
+    }
+
+    /** Longest "Why" text in the red-window tooltip. */
+    private static final int WHY_MAX_CHARS = 160;
+
+    /**
+     * The first reason of a red window (E19-S10: which queen and which evidence put her at the hatchery), shortened for a tooltip.
+     */
+    static String shortenWhy( final String note ) {
+        if ( note == null || note.length() == 0 )
+            return "n/a";
+        final int separator = note.indexOf( "; " );
+        String first = separator < 0 ? note : note.substring( 0, separator );
+        if ( first.length() > WHY_MAX_CHARS )
+            first = first.substring( 0, WHY_MAX_CHARS - 3 ) + "...";
+        return separator < 0 ? first : first + " (and more)";
+    }
+
+    /** Escapes text for Swing HTML tooltips. */
+    static String escapeTooltipText( final String text ) {
+        return text.replace( "&", "&amp;" ).replace( "<", "&lt;" ).replace( ">", "&gt;" );
     }
 
     /**
@@ -527,7 +518,7 @@ public class LarvaTimelineModelBuilder {
                 : new LarvaMarkerHoverData( playerName, snapshot.getLoop(), snapshot.getTimeLabel(), snapshot.getMineralsCurrent(), snapshot.getGasCurrent(),
                     snapshot.getFoodUsed(), snapshot.getFoodMade(), snapshotSelection.futureSnapshot );
             final String markerLabel = buildMarkerLabel( marker, larvaAnalysisReport );
-            enrichedMarkerList.add( new LarvaTimelineMarker( marker.getLoop(), toTimelineMs( larvaAnalysisReport, marker.getLoop() ), markerLabel, marker.getKind(),
+            enrichedMarkerList.add( new LarvaTimelineMarker( marker.getLoop(), LarvaGameClock.loopToMs( marker.getLoop() ), markerLabel, marker.getKind(),
                 marker.getDetailText(), hoverData, buildMarkerTooltipText( marker, markerLabel, hoverData ) ) );
         }
 
@@ -550,9 +541,9 @@ public class LarvaTimelineModelBuilder {
                 window.getStartLoop() );
 
         final StringBuilder builder = new StringBuilder( "<html><b>3+ larva window</b><br/>" );
-        builder.append( "Window: " ).append( formatTimelineLoop( larvaAnalysisReport, window.getStartLoop() ) ).append( " - " )
-            .append( formatTimelineLoop( larvaAnalysisReport, window.getEndLoop() ) ).append( "<br/>" );
-        builder.append( buildSnapshotTooltipLines( "Window start", formatTimelineLoop( larvaAnalysisReport, window.getStartLoop() ), snapshotSelection ) );
+        builder.append( "Window: " ).append( LarvaGameClock.format( window.getStartLoop() ) ).append( " - " )
+            .append( LarvaGameClock.format( window.getEndLoop() ) ).append( "<br/>" );
+        builder.append( buildSnapshotTooltipLines( "Window start", LarvaGameClock.format( window.getStartLoop() ), snapshotSelection ) );
         builder.append( "</html>" );
         return builder.toString();
     }
@@ -759,29 +750,7 @@ public class LarvaTimelineModelBuilder {
         final String prefix = marker.getLabel() == null ? "Missed larva" : marker.getLabel();
         final int atIndex = prefix.lastIndexOf( " at " );
         final String countPrefix = atIndex < 0 ? prefix : prefix.substring( 0, atIndex );
-        return countPrefix + " at " + formatTimelineLoop( larvaAnalysisReport, marker.getLoop() );
-    }
-
-    /**
-     * Converts a loop to timeline milliseconds using Scelight-consistent time conversion when available.
-     *
-     * @param larvaAnalysisReport analysis report containing time-conversion settings
-     * @param loop replay loop
-     * @return converted milliseconds
-     */
-    private long toTimelineMs( final LarvaAnalysisReport larvaAnalysisReport, final int loop ) {
-        return larvaAnalysisReport == null ? saturationWindowCalculator.loopsToMs( loop ) : larvaAnalysisReport.loopToTimeMs( loop );
-    }
-
-    /**
-     * Formats a loop with the same time basis Scelight uses for replay pages.
-     *
-     * @param larvaAnalysisReport analysis report containing time-conversion settings
-     * @param loop replay loop
-     * @return formatted time label
-     */
-    private String formatTimelineLoop( final LarvaAnalysisReport larvaAnalysisReport, final int loop ) {
-        return larvaAnalysisReport == null ? saturationWindowCalculator.formatLoopTime( loop ) : larvaAnalysisReport.formatLoopTime( loop );
+        return countPrefix + " at " + LarvaGameClock.format( marker.getLoop() );
     }
 
     /**

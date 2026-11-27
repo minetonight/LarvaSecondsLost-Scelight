@@ -11,9 +11,6 @@ import java.util.Map;
  */
 public class LarvaAnalysisReport {
 
-    /** Normal-speed relative value used by Scelight game-speed conversion. */
-    private static final long NORMAL_GAME_SPEED_RELATIVE = 36L;
-
     /** Calibration used by the assignment heuristic. */
     private final LarvaHeuristicCalibration calibration;
 
@@ -26,25 +23,25 @@ public class LarvaAnalysisReport {
     /** Per-hatchery normalized inject-window diagnostics. */
     private final List< HatcheryInjectTimeline > injectTimelineList;
 
-    /** Story 11.03 answer for the replay-native idle inject qualification question. */
+    /** How red (missed-inject) windows are made. */
     private final String idleInjectConclusion;
 
-    /** Dedicated queen-to-hatchery radius used for Story 11.03. */
+    /** Cells within which queen evidence belongs to a hatchery. */
     private final double idleInjectRadius;
 
     /** Per-hatchery normalized idle-inject diagnostics. */
     private final List< HatcheryIdleInjectTimeline > idleInjectTimelineList;
 
-    /** Number of unique queens admitted into idle-inject analysis. */
+    /** Queens born in the replay (all players). */
     private final int trackedQueenCount;
 
-    /** Number of queens that were position-observed from tracker events. */
+    /** Queens with at least one tracker UnitPositions sample (damaged queens only). */
     private final int trackerObservedQueenCount;
 
-    /** Number of queens that had to be seeded from singleton command evidence. */
+    /** Queen spends attributed among the queens of a command selection (E19; the getter keeps its old name). */
     private final int commandSeededQueenCount;
 
-    /** Number of singleton queen command evidence records collected. */
+    /** Commands given while at least one of the player's queens was selected (E19; the getter keeps its old name). */
     private final int queenCommandEvidenceCount;
 
     /** Number of hatcheries tracked during replay analysis. */
@@ -86,26 +83,14 @@ public class LarvaAnalysisReport {
     /** Tells if full replay reparsing was required to get complete event streams. */
     private final boolean fullReplayParseUsed;
 
-    /** Tells if replay times are currently shown in real time. */
-    private final boolean realTime;
-
-    /** Relative converter game speed used by Scelight for loop-to-time conversion. */
-    private final long converterGameSpeedRelative;
-
     /** Replay length in raw game loops from the replay header. */
     private final int replayLengthLoops;
 
     /** Player resource snapshots collected from tracker events. */
     private final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName;
 
-    /** Alive drone counts per player at end of analysis. */
-    private final Map< String, Integer > aliveDroneCountByPlayerName;
-
     /** Per-player Epic 12 phase tables. */
     private final Map< String, LarvaPlayerPhaseTable > playerPhaseTableByPlayerName;
-
-    /** Player name to (drone threshold to first loop where the alive drone count reached it), E17-S08. */
-    private final Map< String, Map< Integer, Integer > > firstDroneCountLoopByPlayerName;
 
     /**
      * Creates a new larva analysis report.
@@ -122,11 +107,9 @@ public class LarvaAnalysisReport {
      * @param injectCorrelatedAssignmentCount inject-correlated assignments
      * @param heuristicAssignmentCount pure heuristic assignments
          * @param hatcheryMorphCount number of hatchery morph continuations detected
-     * @param realTime tells if replay times are currently shown in real time
-     * @param converterGameSpeedRelative relative converter game speed used by Scelight
      * @param replayLengthLoops replay length in raw game loops from the replay header
      * @param resourceSnapshotsByPlayerName player resource snapshots collected from tracker events
-     * @param firstDroneCountLoopByPlayerName player name to (drone threshold to first loop reached)
+     * @param playerPhaseTableByPlayerName per-player phase tables
      */
         public LarvaAnalysisReport( final LarvaHeuristicCalibration calibration, final List< HatcheryLarvaTimeline > timelineList,
             final List< HatcheryInjectTimeline > injectTimelineList, final String injectSignalConclusion,
@@ -137,11 +120,9 @@ public class LarvaAnalysisReport {
             final int ambiguousLarvaCount, final int noEligibleHatcheryLarvaCount,
             final int directAssignmentCount, final int injectCorrelatedAssignmentCount, final int heuristicAssignmentCount,
              final int hatcheryMorphCount, final int trackerEventCount, final int gameEventCount, final boolean fullReplayParseUsed,
-             final boolean realTime, final long converterGameSpeedRelative, final int replayLengthLoops,
+             final int replayLengthLoops,
              final Map< String, List< LarvaPlayerResourceSnapshot > > resourceSnapshotsByPlayerName,
-             final Map< String, Integer > aliveDroneCountByPlayerName,
-             final Map< String, LarvaPlayerPhaseTable > playerPhaseTableByPlayerName,
-             final Map< String, Map< Integer, Integer > > firstDroneCountLoopByPlayerName ) {
+             final Map< String, LarvaPlayerPhaseTable > playerPhaseTableByPlayerName ) {
         this.calibration = calibration;
         this.timelineList = Collections.unmodifiableList( new ArrayList<>( timelineList ) );
         this.injectTimelineList = Collections.unmodifiableList( new ArrayList<>( injectTimelineList ) );
@@ -166,36 +147,9 @@ public class LarvaAnalysisReport {
         this.trackerEventCount = trackerEventCount;
         this.gameEventCount = gameEventCount;
         this.fullReplayParseUsed = fullReplayParseUsed;
-        this.realTime = realTime;
-        this.converterGameSpeedRelative = converterGameSpeedRelative;
         this.replayLengthLoops = replayLengthLoops;
         this.resourceSnapshotsByPlayerName = copySnapshotMap( resourceSnapshotsByPlayerName );
-        this.aliveDroneCountByPlayerName = aliveDroneCountByPlayerName == null ? Collections.< String, Integer >emptyMap() : Collections.unmodifiableMap( new LinkedHashMap<>( aliveDroneCountByPlayerName ) );
         this.playerPhaseTableByPlayerName = copyPhaseTableMap( playerPhaseTableByPlayerName );
-        this.firstDroneCountLoopByPlayerName = copyFirstDroneLoopMap( firstDroneCountLoopByPlayerName );
-    }
-
-    private static Map< String, Map< Integer, Integer > > copyFirstDroneLoopMap( final Map< String, Map< Integer, Integer > > source ) {
-        final Map< String, Map< Integer, Integer > > copy = new LinkedHashMap<>();
-        if ( source != null ) {
-            for ( final Map.Entry< String, Map< Integer, Integer > > entry : source.entrySet() )
-                copy.put( entry.getKey(), Collections.unmodifiableMap( new LinkedHashMap<>( entry.getValue() ) ) );
-        }
-        return Collections.unmodifiableMap( copy );
-    }
-
-    /**
-     * Returns the first loop where the player's alive drone count (analyzer calculation) reached the threshold, or null if it never
-     * did or the threshold is not tracked. Only the drone milestone thresholds (66, 80) are tracked. Later dips and re-reaching do
-     * not change the result.
-     *
-     * @param playerName player name
-     * @param threshold alive drone threshold
-     * @return exact loop or null
-     */
-    public Integer getFirstDroneCountLoop( final String playerName, final int threshold ) {
-        final Map< Integer, Integer > loops = playerName == null ? null : firstDroneCountLoopByPlayerName.get( playerName );
-        return loops == null ? null : loops.get( Integer.valueOf( threshold ) );
     }
 
     public LarvaHeuristicCalibration getCalibration() {
@@ -347,34 +301,12 @@ public class LarvaAnalysisReport {
         return fullReplayParseUsed;
     }
 
-    public boolean isRealTime() {
-        return realTime;
-    }
-
-    public long getConverterGameSpeedRelative() {
-        return converterGameSpeedRelative;
-    }
-
     public int getReplayLengthLoops() {
         return replayLengthLoops;
     }
 
     public Map< String, List< LarvaPlayerResourceSnapshot > > getResourceSnapshotsByPlayerName() {
         return resourceSnapshotsByPlayerName;
-    }
-
-    /**
-     * Returns per-player alive drone counts observed by the analyzer (may be empty).
-     */
-    public Map< String, Integer > getAliveDroneCountByPlayerName() {
-        return aliveDroneCountByPlayerName;
-    }
-
-    /**
-     * Returns alive drone count for a player, or null if unknown.
-     */
-    public Integer getAliveDroneCountForPlayer( final String playerName ) {
-        return playerName == null ? null : aliveDroneCountByPlayerName.get( playerName );
     }
 
     public Map< String, LarvaPlayerPhaseTable > getPlayerPhaseTableByPlayerName() {
@@ -433,68 +365,27 @@ public class LarvaAnalysisReport {
     }
 
     /**
-     * Converts replay loops to milliseconds using the same time basis as Scelight.
-     *
      * @param gameloop replay loop
-     * @return converted milliseconds
+     * @return milliseconds on the game clock ({@link LarvaGameClock})
      */
     public long loopToTimeMs( final int gameloop ) {
-        if ( gameloop <= 0 )
-            return 0L;
-
-        long gameMs = ( gameloop * 125L ) / 2L;
-        if ( realTime && converterGameSpeedRelative != NORMAL_GAME_SPEED_RELATIVE )
-            gameMs = gameMs * converterGameSpeedRelative / NORMAL_GAME_SPEED_RELATIVE;
-        return gameMs;
+        return LarvaGameClock.loopToMs( gameloop );
     }
 
     /**
-     * Formats replay loops using the same time basis as Scelight.
-     *
      * @param gameloop replay loop
-     * @return formatted time label
+     * @return game clock time label ({@link LarvaGameClock})
      */
     public String formatLoopTime( final int gameloop ) {
-        return formatDuration( loopToTimeMs( gameloop ), false );
+        return LarvaGameClock.format( gameloop );
     }
 
     /**
-     * Formats replay loops with tenth-of-a-second precision using the same time basis as Scelight.
-     *
      * @param gameloop replay loop
-     * @return formatted time label with tenths
+     * @return game clock time label with tenths ({@link LarvaGameClock})
      */
     public String formatLoopTimeTenths( final int gameloop ) {
-        return formatDuration( loopToTimeMs( gameloop ), true );
-    }
-
-    /**
-     * Formats milliseconds as $m:ss$ or $h:mm:ss$, optionally with tenths.
-     *
-     * @param ms duration in milliseconds
-     * @param includeTenths tells if tenth-of-a-second precision should be included
-     * @return formatted duration text
-     */
-    private String formatDuration( final long ms, final boolean includeTenths ) {
-        final long totalSeconds = ms / 1000L;
-        final long hours = totalSeconds / 3600L;
-        final long minutes = ( totalSeconds % 3600L ) / 60L;
-        final long seconds = totalSeconds % 60L;
-        final long tenths = ( ms % 1000L ) / 100L;
-        final String suffix = includeTenths ? "." + tenths : "";
-        if ( hours > 0L )
-            return hours + ":" + padTwoDigits( minutes ) + ":" + padTwoDigits( seconds ) + suffix;
-        return minutes + ":" + padTwoDigits( seconds ) + suffix;
-    }
-
-    /**
-     * Pads a time component to two digits.
-     *
-     * @param value value to pad
-     * @return padded text
-     */
-    private String padTwoDigits( final long value ) {
-        return value < 10L ? "0" + value : String.valueOf( value );
+        return LarvaGameClock.formatTenths( gameloop );
     }
 
     /**
@@ -659,13 +550,13 @@ public class LarvaAnalysisReport {
      * @param builder target builder
      */
     private void appendIdleInjectDiagnostics( final StringBuilder builder ) {
-        builder.append( "Epic 11 Story 11.03 idle inject qualification:" ).append( '\n' );
+        builder.append( "Missed inject qualification (E19 queen model):" ).append( '\n' );
         builder.append( "- Idle inject answer: " ).append( idleInjectConclusion == null ? "n/a" : idleInjectConclusion ).append( '\n' );
         builder.append( "- Dedicated queen radius: " ).append( formatDouble( idleInjectRadius ) ).append( '\n' );
-        builder.append( "- Queen discovery: tracked=" ).append( trackedQueenCount )
-            .append( ", tracker observed=" ).append( trackerObservedQueenCount )
-            .append( ", command seeded=" ).append( commandSeededQueenCount )
-            .append( ", command evidence=" ).append( queenCommandEvidenceCount )
+        builder.append( "- Queens: born=" ).append( trackedQueenCount )
+            .append( ", with tracker positions=" ).append( trackerObservedQueenCount )
+            .append( ", spends attributed from a command selection=" ).append( commandSeededQueenCount )
+            .append( ", commands with queens selected=" ).append( queenCommandEvidenceCount )
             .append( '\n' );
         builder.append( "- Idle inject totals: kept windows=" ).append( getIdleInjectWindowCount() )
                 .append( ", uncertainty discarded=" ).append( getIdleInjectUncertaintyDiscardCount() )
@@ -686,11 +577,11 @@ public class LarvaAnalysisReport {
                     .append( idleInjectTimeline.getHatcheryTagText() )
                     .append( ") kept=" )
                     .append( idleInjectTimeline.getKeptWindowCount() )
-                    .append( ", attributedQueenCommands=" )
+                    .append( ", queenEvidencePoints=" )
                     .append( idleInjectTimeline.getAttributedQueenCommandCount() )
-                    .append( ", attributedInjects=" )
+                    .append( ", injectsWithCommand=" )
                     .append( idleInjectTimeline.getAttributedInjectCommandCount() )
-                    .append( ", uncertaintyDiscarded=" )
+                    .append( ", ambiguousSpends=" )
                     .append( idleInjectTimeline.getUncertaintyDiscardCount() )
                     .append( '\n' );
             builder.append( "    idle windows: " ).append( formatIdleInjectWindows( idleInjectTimeline.getIdleWindowList() ) ).append( '\n' );

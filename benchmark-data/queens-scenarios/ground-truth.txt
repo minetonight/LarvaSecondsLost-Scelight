@@ -1,0 +1,54 @@
+file LarvaSecondsLostExtMod/test/queens-replay/qeens-by-scenario.SC2Replay
+# no hotkeys for queens
+2:39 one inject, one creep tumor at natural, close to the hatch.
+3:15 double inject
+3:20-ish queen from nat leaves to third base. nat is uninjected and without a queen next to it
+3:44 main and 3rd injected immediately
+4:11 starting a macro hatch in the main, there will be a queen nearby, sometime with energy, sometimes without
+4:21 queen 2 from third starts moving to natural to inject. the two injects will be off sync now.
+4:35-ish inject in nat from queen two that was away. in main inject is 70-80% complete
+4:45 there are two queens in main now, as third queen was created from main hatch.
+4:47 only one inject in the main, one queen with energy there. the macro hatch is incomplete yet (37/71 sec progress).
+4:53 queen from main starts moving towards forth base/hatch
+5:05 inject in nat only, main queen was idle or out of energy
+5:18 inject in main
+5:19-20 inject in nat
+5:29 each all was added one by one to a hotkey at this inject 
+# hotkeyed the queens 
+5:32 four injects in all hatches with queens from common hotkey
+5:51-57 four injects in all hatches with queens from common hotkey
+macro hatch is not injected and all queens are out of energy
+
+# march of the queens
+6:08 the queens start a walk to the watch tower in the middle of the map
+6:30 all hatches are non-injected now
+07:08 queens are back in the natural and spread to inject to four hatches.
+07:17 the last of the above mentioned queens injected the third base.
+the macro hatch in the main is not injected on purpose, and the queen next to it has energy
+7:47 4x injects 
+7:51 inject in the macro hatch
+08:16 non-injected hatches on purpose.
+btw at that point i am at 50 drones economy and dont make drones
+09:24 4x injects
+09:58 3x injects, not at 3rd
+10:08 3x queued injects in the macro hatch
+11:00 the queen at third did creep and at that moment it has spent its energy
+11:20-ish 3x injects and the queen at 3rd creeped again
+11:57-ish 2x injects and two queens are creep queens
+12:32 2 queens spread creep, two queens are idle at hatches
+
+
+# the ai bot actions
+queen from main moves to nat
+2:38 and attacks random overlord in front of natural
+2:51 queen injects natural
+3:01 queen is born in main and immediately injects
+3:20 inject at nat
+3:33 inject at main
+and so on injects back to back off sync
+6:11 synced injects 
+7:24 third base is born, no queen next to it
+08:18 3h injects, the third base was injected too
+
+# the real file was resumed from replay
+There is another file: LarvaSecondsLostExtMod/test/queens-replay/qeens-by-scenario-interrupted.SC2Replay that is the original game and can be used to deduce what happened there after the resume moment at about 10:05

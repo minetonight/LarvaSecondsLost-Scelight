@@ -138,7 +138,7 @@ public class ReplaySummaryService {
     }
 
     private LarvaReplayPageSummary buildPageSummary( final ReplayAnalysisContext context ) {
-        final long lengthMs = context.repProc.getLengthMs();
+        final long lengthMs = gameClockLengthMs( context.repProc );
         final long previewWindowStartMs = lengthMs <= 0L ? 0L : lengthMs / 4L;
         final long previewWindowDurationMs = lengthMs <= 0L ? 0L : Math.max( 10000L, lengthMs / 5L );
         final long previewWindowEndMs = lengthMs <= 0L ? 0L : Math.min( lengthMs, previewWindowStartMs + previewWindowDurationMs );
@@ -228,7 +228,7 @@ public class ReplaySummaryService {
         final IReplay replay = repProc.getReplay();
         final IDetails details = replay.getDetails();
         final Date replayEndTime = details == null ? null : details.getTime();
-        final long lengthMs = repProc.getLengthMs();
+        final long lengthMs = gameClockLengthMs( repProc );
         final LarvaAnalysisReport larvaAnalysisReport = larvaReplayAnalyzer.analyze( repProc, fullReplayParseUsed );
         logger.debug( "Larva analysis summary for " + replayFile.getFileName() + ": trackerEvents=" + larvaAnalysisReport.getTrackerEventCount()
             + ", gameEvents=" + larvaAnalysisReport.getGameEventCount() + ", hatcheries=" + larvaAnalysisReport.getTrackedHatcheryCount() + ", larvaBirths="
@@ -475,6 +475,16 @@ public class ReplaySummaryService {
     }
 
     /**
+     * @param repProc replay processor
+     * @return replay length on the game clock ({@link LarvaGameClock}), 0 when the header has no loop count
+     */
+    private static long gameClockLengthMs( final IRepProcessor repProc ) {
+        final IReplay replay = repProc.getReplay();
+        final Integer loops = replay == null || replay.getHeader() == null ? null : replay.getHeader().getElapsedGameLoops();
+        return loops == null ? 0L : LarvaGameClock.loopToMs( loops.intValue() );
+    }
+
+    /**
      * Formats a replay duration.
      *
      * @param lengthMs replay duration in milliseconds
@@ -560,7 +570,7 @@ public class ReplaySummaryService {
             final String playerName = resolvePlayerName( repProc, event.getPlayerId(), event.getUserId() );
 
                 logger.debug( "Larva inject command: " + playerName + " injected hatch " + hatcheryTagText + " at "
-                    + repProc.formatLoopTime( event.getLoop() ) + " (loop " + event.getLoop() + ")." );
+                    + LarvaGameClock.format( event.getLoop() ) + " (loop " + event.getLoop() + ")." );
         }
 
         if ( injectCommandCount == 0 )

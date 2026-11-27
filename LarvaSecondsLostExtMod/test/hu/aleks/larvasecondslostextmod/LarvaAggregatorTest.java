@@ -27,20 +27,22 @@ import org.junit.Test;
  * Aggregation engine (E17-S11). Synthetic records only.
  *
  * <h3>Worked example for sign-off (checkpoint "aggregation numbers signed off")</h3>
- * <p>Tracked player {@code A}, EARLY phase, three eligible games. Rate = count * 960 / hatchery-eligible loops
- * (960 = 60 s * 16 loops/s), uptime = active * 100 / eligible loops. Counts are summed first, then divided (D-1, D-2).</p>
+ * <p>Tracked player {@code A}, EARLY phase, three eligible games. Rate = count * 1344 / hatchery-eligible loops
+ * (1344 = 60 s * 22.4 loops/s, a game clock minute), uptime = active * 100 / eligible loops. Counts are summed first, then divided
+ * (D-1, D-2). Until 2026-11-26 a minute was 960 loops (Normal-speed seconds); the hatchery loops below are 1.4 times the signed-off
+ * ones, so every rate is unchanged.</p>
  * <pre>
  * game  matchup  missed  missedInject  spawned  hatchLoops  injElig  injActive  EARLY length  100 supply
- * g1    ZvP      10      4             48       9600        8000     6000       300 000 ms    400 000 ms
- * g2    ZvT       5      1             20       1920        1000     1000       120 000 ms    (not reached)
- * g3    ZvZ       3      1              8        480         200      100        61 000 ms    500 001 ms
+ * g1    ZvP      10      4             48      13440        8000     6000       300 000 ms    400 000 ms
+ * g2    ZvT       5      1             20       2688        1000     1000       120 000 ms    (not reached)
+ * g3    ZvZ       3      1              8        672         200      100        61 000 ms    500 001 ms
  *
- * ZvP : missed 10*960/9600 = 1.00   spawned 48*960/9600 = 4.80   missedInject 0.40   uptime 6000*100/8000 = 75.00 %
- * ZvT : missed  5*960/1920 = 2.50   spawned 20*960/1920 = 10.00  missedInject 0.50   uptime 100.00 %
- * ZvZ : missed  3*960/480  = 6.00   spawned  8*960/480  = 16.00  missedInject 2.00   uptime 50.00 %
+ * ZvP : missed 10*1344/13440 = 1.00   spawned 48*1344/13440 = 4.80   missedInject 0.40   uptime 6000*100/8000 = 75.00 %
+ * ZvT : missed  5*1344/2688  = 2.50   spawned 20*1344/2688  = 10.00  missedInject 0.50   uptime 100.00 %
+ * ZvZ : missed  3*1344/672   = 6.00   spawned  8*1344/672   = 16.00  missedInject 2.00   uptime 50.00 %
  *
- * ALL : missed 18, missedInject 6, spawned 76, loops 12000, injElig 9200, injActive 7100
- *       missed 18*960/12000 = 1.44   spawned 76*960/12000 = 6.08   missedInject 6*960/12000 = 0.48
+ * ALL : missed 18, missedInject 6, spawned 76, loops 16800, injElig 9200, injActive 7100
+ *       missed 18*1344/16800 = 1.44   spawned 76*1344/16800 = 6.08   missedInject 6*1344/16800 = 0.48
  *       uptime 7100*100/9200 = 77.1739 %
  *       (the mean of the three bucket missed rates would be (1.00+2.50+6.00)/3 = 3.1667, which is wrong on purpose)
  *       EARLY length: (300000+120000+61000)/3 = 160 333.33 -> 160 333 ms, 3/3
@@ -69,14 +71,14 @@ public class LarvaAggregatorTest {
 
     private static List< LarvaAggregationGameRecord > workedExampleGames() {
         final LarvaAggregationPlayerRecord.Builder g1 = withStats( player( "A", LarvaMatchupBucket.ZVP ),
-                stats( EARLY, 10, 4, 48, 9600, 8000, 6000 ) );
+                stats( EARLY, 10, 4, 48, 13440, 8000, 6000 ) );
         withEnd( g1, EARLY, 300000 );
         withMilestone( g1, LarvaMilestone.SUPPLY_100, 400000 );
         final LarvaAggregationPlayerRecord.Builder g2 = withStats( player( "A", LarvaMatchupBucket.ZVT ),
-                stats( EARLY, 5, 1, 20, 1920, 1000, 1000 ) );
+                stats( EARLY, 5, 1, 20, 2688, 1000, 1000 ) );
         withEnd( g2, EARLY, 120000 );
         final LarvaAggregationPlayerRecord.Builder g3 = withStats( player( "A", LarvaMatchupBucket.ZVZ ),
-                stats( EARLY, 3, 1, 8, 480, 200, 100 ) );
+                stats( EARLY, 3, 1, 8, 672, 200, 100 ) );
         withEnd( g3, EARLY, 61000 );
         withMilestone( g3, LarvaMilestone.SUPPLY_100, 500001 );
         return Arrays.asList( game( 1, g1.build() ), game( 2, g2.build() ), game( 3, g3.build() ) );
@@ -107,7 +109,7 @@ public class LarvaAggregatorTest {
         assertEquals( 3, supply.getGameCount() );
     }
 
-    /** AC 1 (AC-12.1): every rate equals sum(count) * 960 / sum(loops), computed independently here. */
+    /** AC 1 (AC-12.1): every rate equals sum(count) * 1344 / sum(loops), computed independently here. */
     @Test
     public void ac1_pooledRatesEqualSumOverSum() {
         final List< LarvaAggregationGameRecord > games = Arrays.asList(
@@ -115,7 +117,7 @@ public class LarvaAggregatorTest {
                 game( 2, early( LarvaMatchupBucket.ZVT, 2, 0, 13, 3100, 2000, 1900 ) ),
                 game( 3, early( LarvaMatchupBucket.ZVT, 11, 5, 40, 9000, 6000, 1 ) ) );
         final LarvaAggregatedPhaseCell cell = run( games, "A" ).getPhaseCell( LarvaMatchupBucket.ZVT, EARLY );
-        assertCell( cell, 20 * 960d / 19100, 8 * 960d / 19100, 84 * 960d / 19100, 4401 * 100d / 13000 );
+        assertCell( cell, 20 * 1344d / 19100, 8 * 1344d / 19100, 84 * 1344d / 19100, 4401 * 100d / 13000 );
     }
 
     /** AC 2 (AC-12.2): All pools the union; with unbalanced loops it differs from the mean of the bucket rates. */
@@ -126,7 +128,7 @@ public class LarvaAggregatorTest {
                 + r.getPhaseCell( LarvaMatchupBucket.ZVT, EARLY ).getMissedPerHatchPerMinute()
                 + r.getPhaseCell( LarvaMatchupBucket.ZVZ, EARLY ).getMissedPerHatchPerMinute() ) / 3;
         final double all = r.getPhaseCell( LarvaMatchupBucket.ALL, EARLY ).getMissedPerHatchPerMinute();
-        assertEquals( 18 * 960d / 12000, all, 1e-9 );
+        assertEquals( 18 * 1344d / 16800, all, 1e-9 );
         assertTrue( Math.abs( all - meanOfBuckets ) > 1.0 );
         assertEquals( 3, r.getGameCount( LarvaMatchupBucket.ALL ) );
     }
@@ -134,7 +136,7 @@ public class LarvaAggregatorTest {
     /** AC 3 (AC-12.3, OQ-4): a matchup without games exists with 0 games and only null cells. */
     @Test
     public void ac3_emptyBucketHasNullCells() {
-        final List< LarvaAggregationGameRecord > games = Arrays.asList( game( 1, early( LarvaMatchupBucket.ZVT, 1, 1, 5, 960, 500, 100 ) ) );
+        final List< LarvaAggregationGameRecord > games = Arrays.asList( game( 1, early( LarvaMatchupBucket.ZVT, 1, 1, 5, 1344, 500, 100 ) ) );
         final LarvaAggregationResult.PlayerResult r = run( games, "A" );
         assertEquals( 0, r.getGameCount( LarvaMatchupBucket.ZVP ) );
         for ( final LarvaGamePhase phase : LarvaGamePhase.values() ) {
@@ -163,7 +165,7 @@ public class LarvaAggregatorTest {
         final long[] endMs = { 600000, 720000, 840000, 0, 0 };
         for ( int i = 0; i < 5; i++ ) {
             final LarvaAggregationPlayerRecord.Builder b = withStats( player( "A", LarvaMatchupBucket.ZVP ),
-                    stats( LarvaGamePhase.END, 1, 0, 2, 960, 0, 0 ) );
+                    stats( LarvaGamePhase.END, 1, 0, 2, 1344, 0, 0 ) );
             if ( endMs[ i ] > 0 )
                 withEnd( b, LarvaGamePhase.END, endMs[ i ] );
             games.add( game( i + 1, b.build() ) );
@@ -186,7 +188,7 @@ public class LarvaAggregatorTest {
         final long[] ms = { 600000, 0, 900000, 0 };
         for ( int i = 0; i < 4; i++ ) {
             final LarvaAggregationPlayerRecord.Builder b = withStats( player( "A", LarvaMatchupBucket.ZVZ ),
-                    stats( EARLY, 1, 0, 1, 960, 0, 0 ) );
+                    stats( EARLY, 1, 0, 1, 1344, 0, 0 ) );
             if ( ms[ i ] > 0 )
                 withMilestone( b, LarvaMilestone.SUPPLY_200, ms[ i ] );
             games.add( game( i + 1, b.build() ) );
@@ -201,8 +203,8 @@ public class LarvaAggregatorTest {
     /** AC 6 (D-7): tracked A vs tracked B in one ZvZ game counts for both players and once in the header n. */
     @Test
     public void ac6_mirrorGameCountsForBothPlayersAndOnceInHeader() {
-        final LarvaAggregationPlayerRecord a = withStats( player( "A", LarvaMatchupBucket.ZVZ ), stats( EARLY, 2, 0, 10, 960, 0, 0 ) ).build();
-        final LarvaAggregationPlayerRecord b = withStats( player( "B", LarvaMatchupBucket.ZVZ ), stats( EARLY, 4, 0, 20, 960, 0, 0 ) ).build();
+        final LarvaAggregationPlayerRecord a = withStats( player( "A", LarvaMatchupBucket.ZVZ ), stats( EARLY, 2, 0, 10, 1344, 0, 0 ) ).build();
+        final LarvaAggregationPlayerRecord b = withStats( player( "B", LarvaMatchupBucket.ZVZ ), stats( EARLY, 4, 0, 20, 1344, 0, 0 ) ).build();
         final List< LarvaAggregationGameRecord > games = Arrays.asList( game( 1, a, b ) );
         final LarvaAggregationResult result = aggregator.aggregate( games, Arrays.asList( tracked( "A", 1 ), tracked( "B", 1 ) ), summaryOf( 1 ) );
         assertEquals( 1, result.getDistinctGameCount() );
@@ -219,7 +221,7 @@ public class LarvaAggregatorTest {
     public void ac7_rankingsComeFromTheFormatter() {
         final LarvaAggregationPlayerRecord.Builder b = player( "A", LarvaMatchupBucket.ZVP );
         for ( final LarvaGamePhase phase : LarvaGamePhase.values() )
-            withStats( b, stats( phase, 6, 0, 60, 960, 0, 0 ) );
+            withStats( b, stats( phase, 6, 0, 60, 1344, 0, 0 ) );
         final LarvaAggregationResult.PlayerResult r = run( Arrays.asList( game( 1, b.build() ), game( 2, b.build() ) ), "A" );
         final LarvaPhaseBenchmarkRatingFormatter formatter = new LarvaPhaseBenchmarkRatingFormatter();
         for ( final LarvaGamePhase phase : LarvaGamePhase.values() ) {
@@ -231,14 +233,15 @@ public class LarvaAggregatorTest {
             }
             assertEquals( formatter.formatSpawnedLarvaRanking( phase, Double.valueOf( 60.0 ) ), c.getSpawnedRanking() );
             assertEquals( formatter.formatMissedLarvaRanking( phase, Double.valueOf( 6.0 ) ), c.getMissedRanking() );
-            assertTrue( c.getSpawnedRanking().startsWith( "top " ) );
+            // the fixture bands (test/resources) have no early larva gen band
+            assertTrue( c.getSpawnedRanking(), phase == LarvaGamePhase.EARLY ? "n/a".equals( c.getSpawnedRanking() ) : c.getSpawnedRanking().startsWith( "top " ) );
         }
     }
 
     /** AC 8 (AC-7.2): the date range covers the eligible games only. */
     @Test
     public void ac8_dateRangeIgnoresExcludedReplays() {
-        final LarvaAggregationPlayerRecord p = early( LarvaMatchupBucket.ZVP, 1, 0, 1, 960, 0, 0 );
+        final LarvaAggregationPlayerRecord p = early( LarvaMatchupBucket.ZVP, 1, 0, 1, 1344, 0, 0 );
         final LarvaAggregationGameRecord tooShort = new LarvaAggregationGameRecord.Builder().replayFile( java.nio.file.Paths.get( "x.SC2Replay" ) ).replayDate( new Date( 1 * DAY_MS ) )
                 .oneVsOne( true ).ladder( true ).lengthLoops( 100 ).addZergPlayer( p ).build();
         final LarvaAggregationGameRecord nonLadder = new LarvaAggregationGameRecord.Builder().replayFile( java.nio.file.Paths.get( "x.SC2Replay" ) ).replayDate( new Date( 99 * DAY_MS ) )
@@ -274,7 +277,7 @@ public class LarvaAggregatorTest {
     public void missingPhaseTableIsSkippedAndListedAndNotCounted() {
         final LarvaAggregationPlayerRecord missing = player( "A", LarvaMatchupBucket.ZVP ).missingPhaseTable( true ).build();
         final List< LarvaAggregationGameRecord > games = Arrays.asList( game( 1, missing ),
-                game( 2, early( LarvaMatchupBucket.ZVP, 1, 0, 1, 960, 0, 0 ) ) );
+                game( 2, early( LarvaMatchupBucket.ZVP, 1, 0, 1, 1344, 0, 0 ) ) );
         final LarvaAggregationResult result = aggregator.aggregate( games, Arrays.asList( tracked( "A", 1 ) ), summaryOf( 2 ) );
         assertEquals( 1, result.getPlayers().get( 0 ).getGameCount( LarvaMatchupBucket.ALL ) );
         assertEquals( 1, result.getDistinctGameCount() );
@@ -295,7 +298,7 @@ public class LarvaAggregatorTest {
     @Test
     public void unknownMatchupIsOmittedEverywhereAndListed() {
         final LarvaAggregationResult result = aggregator.aggregate(
-                Arrays.asList( game( 1, early( LarvaMatchupBucket.ZVP, 1, 0, 1, 960, 0, 0 ) ), game( 5, early( null, 1, 0, 1, 960, 0, 0 ) ) ),
+                Arrays.asList( game( 1, early( LarvaMatchupBucket.ZVP, 1, 0, 1, 1344, 0, 0 ) ), game( 5, early( null, 1, 0, 1, 1344, 0, 0 ) ) ),
                 Arrays.asList( tracked( "A", 2 ) ), summaryOf( 2 ) );
         final LarvaAggregationResult.PlayerResult r = result.getPlayers().get( 0 );
         assertEquals( 1, r.getGameCount( LarvaMatchupBucket.ALL ) );
@@ -312,7 +315,7 @@ public class LarvaAggregatorTest {
     /** A player whose only games have no matchup gives empty tables and no distinct games, not a broken result. */
     @Test
     public void playerWithOnlyUnknownMatchupGamesHasEmptyResult() {
-        final LarvaAggregationResult result = aggregator.aggregate( Arrays.asList( game( 3, early( null, 1, 0, 1, 960, 0, 0 ) ) ),
+        final LarvaAggregationResult result = aggregator.aggregate( Arrays.asList( game( 3, early( null, 1, 0, 1, 1344, 0, 0 ) ) ),
                 Arrays.asList( tracked( "A", 1 ) ), summaryOf( 1 ) );
         assertEquals( 0, result.getDistinctGameCount() );
         assertNull( result.getStartDate() );
@@ -346,7 +349,7 @@ public class LarvaAggregatorTest {
 
     @Test
     public void countsBeyondIntRangeFailWithContext() {
-        final LarvaAggregationPlayerRecord big = early( LarvaMatchupBucket.ZVP, Integer.MAX_VALUE, 0, 0, 960, 0, 0 );
+        final LarvaAggregationPlayerRecord big = early( LarvaMatchupBucket.ZVP, Integer.MAX_VALUE, 0, 0, 1344, 0, 0 );
         try {
             run( Arrays.asList( game( 1, big ), game( 2, big ) ), "A" );
             fail( "expected IllegalStateException" );

@@ -18,8 +18,8 @@ public class LarvaPhaseStatsTest {
 
     @Test
     public void ratesMatchHandComputedValues() {
-        // 960 loops = 60 s = 1 minute of one hatchery.
-        final LarvaPhaseStats s = stats( 3, 2, 7, 960L, 400L, 100L );
+        // 1344 loops = 60 s on the game clock = 1 minute of one hatchery.
+        final LarvaPhaseStats s = stats( 3, 2, 7, 1344L, 400L, 100L );
         assertEquals( 3.0, s.getMissedLarvaPerHatchPerMinute().doubleValue(), EPS );
         assertEquals( 2.0, s.getMissedInjectLarvaPerHatchPerMinute().doubleValue(), EPS );
         assertEquals( 7.0, s.getSpawnedLarvaPerHatchPerMinute().doubleValue(), EPS );
@@ -28,7 +28,7 @@ public class LarvaPhaseStatsTest {
 
     @Test
     public void twoHatcheryMinutesHalveTheRate() {
-        assertEquals( 2.0, stats( 4, 0, 0, 1920L, 0L, 0L ).getMissedLarvaPerHatchPerMinute().doubleValue(), EPS );
+        assertEquals( 2.0, stats( 4, 0, 0, 2688L, 0L, 0L ).getMissedLarvaPerHatchPerMinute().doubleValue(), EPS );
     }
 
     @Test
@@ -42,7 +42,7 @@ public class LarvaPhaseStatsTest {
 
     @Test
     public void zeroNumeratorGivesZeroNotNull() {
-        final LarvaPhaseStats s = stats( 0, 0, 0, 960L, 100L, 0L );
+        final LarvaPhaseStats s = stats( 0, 0, 0, 1344L, 100L, 0L );
         assertEquals( 0.0, s.getMissedLarvaPerHatchPerMinute().doubleValue(), EPS );
         assertEquals( 0.0, s.getInjectUptimePercentage().doubleValue(), EPS );
     }
