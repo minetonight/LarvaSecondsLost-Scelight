@@ -3,6 +3,7 @@ package hu.aleks.larvasecondslostextmod;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -118,10 +119,20 @@ public class LarvaTimelinePreviewComp extends JPanel {
     /** Height of the per-player phase table. */
     static final int PHASE_TABLE_HEIGHT = LarvaTablePainter.HEADER_HEIGHT + LarvaTablePainter.ROW_HEIGHT * PHASE_TABLE_BODY_ROW_COUNT;
 
-    /** Gap after the per-player phase table. */
-    private static final int PHASE_TABLE_GAP = 8;
+    /** Height of the per-player milestone table (E20-S09). */
+    static final int MILESTONE_TABLE_HEIGHT = LarvaTablePainter.HEADER_HEIGHT + LarvaTablePainter.ROW_HEIGHT * LarvaMilestoneTableViewModels.BODY_ROW_COUNT;
 
-    /** Gap between the legacy summary line and the phase table. */
+    /**
+     * From the milestone table's bottom to the baseline of the summary line under it (E20-S13): measured text to text on the page,
+     * the summary then stands as far below the table (19 px) as it stands above the phase table, and the player name above the
+     * milestone table.
+     */
+    private static final int TEXT_BASELINE_BELOW_TABLE = 27;
+
+    /** Gap after the per-player phase table, so the first rail label stands as far (19 px, text to text) below it (E20-S13). */
+    private static final int PHASE_TABLE_GAP = 24;
+
+    /** Gap between the line above (player name, summary line) and a table, after the 14 px line step. */
     private static final int PHASE_TABLE_TOP_GAP = 4;
 
     /** Current normalized timeline model to render. */
@@ -206,10 +217,21 @@ public class LarvaTimelinePreviewComp extends JPanel {
                 g.setColor( resolveGroupColor( groupLabel, groupColorMap ) );
                 g.drawString( groupLabel, LEFT_PAD, y );
                 y += 14;
+                // E20-S13: player name, milestones, the bold larva summary, the phase table, then the rails
+                final LarvaPlayerMilestones milestones = timelineModel.getPlayerMilestones( groupLabel );
+                if ( milestones != null ) {
+                    final int tableTop = y + PHASE_TABLE_TOP_GAP;
+                    phaseTablePainter.paint( g, fm, LarvaMilestoneTableViewModels.fromPlayerMilestones( milestones ), LEFT_PAD, tableTop,
+                            width - LEFT_PAD - RIGHT_PAD );
+                    y = tableTop + MILESTONE_TABLE_HEIGHT + TEXT_BASELINE_BELOW_TABLE;
+                }
                 final String groupOverviewLabel = groupOverviewLabelMap.get( groupLabel );
                 if ( groupOverviewLabel != null && groupOverviewLabel.length() > 0 ) {
+                    final Font font = g.getFont();
                     g.setColor( OVERVIEW_TEXT_COLOR );
+                    g.setFont( font.deriveFont( Font.BOLD ) );
                     g.drawString( groupOverviewLabel, LEFT_PAD, y );
+                    g.setFont( font );
                     y += 14;
                 }
                 final LarvaPlayerPhaseTable playerPhaseTable = timelineModel.getPlayerPhaseTable( groupLabel );
@@ -549,8 +571,14 @@ public class LarvaTimelinePreviewComp extends JPanel {
             if ( playerName != null && playerName.length() > 0 )
                 phaseTableCount++;
 
+        int milestoneTableCount = 0;
+        for ( final String playerName : timelineModel.getPlayerMilestonesMap().keySet() )
+            if ( playerName != null && playerName.length() > 0 )
+                milestoneTableCount++;
+
         final int preferredHeight = 132 + timelineModel.getRowList().size() * ROW_STEP + Math.max( 0, groupCount - 1 ) * GROUP_GAP + groupCount * 14
-            + groupOverviewCount * 14 + phaseTableCount * ( PHASE_TABLE_HEIGHT + PHASE_TABLE_GAP ) + 18;
+            + groupOverviewCount * 14 + phaseTableCount * ( PHASE_TABLE_HEIGHT + PHASE_TABLE_GAP )
+            + milestoneTableCount * ( PHASE_TABLE_TOP_GAP + MILESTONE_TABLE_HEIGHT + TEXT_BASELINE_BELOW_TABLE ) + 18;
         setPreferredSize( new Dimension( 220, preferredHeight ) );
     }
 

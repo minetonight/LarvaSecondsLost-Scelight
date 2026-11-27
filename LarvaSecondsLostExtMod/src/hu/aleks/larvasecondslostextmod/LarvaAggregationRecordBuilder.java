@@ -77,8 +77,8 @@ final class LarvaAggregationRecordBuilder {
     }
 
     /**
-     * Builds one player record. Phases with duration 0 or a missing interval count as "not reached" (D-9); reached phases carry their end time (CR-1.1). Milestones use the
-     * exact drone loops where available (S08) and are converted to display ms now (C-9, D-11).
+     * Builds one player record. Phases with duration 0 or a missing interval count as "not reached" (D-9); reached phases carry their end time (CR-1.1). Milestones
+     * keep the calculator's loops unconverted (E20-S04): the aggregator takes their median and the band file is in loops.
      */
     static LarvaAggregationPlayerRecord buildPlayerRecord( final PlayerInput input, final LoopTimeConverter converter ) {
         final LarvaAggregationPlayerRecord.Builder builder = new LarvaAggregationPlayerRecord.Builder().identityKey( input.identityKey )
@@ -88,7 +88,7 @@ final class LarvaAggregationRecordBuilder {
             builder.missingPhaseTable( true );
         else
             addPhaseData( builder, input.phaseTable, converter );
-        builder.milestoneDisplayMs( buildMilestoneDisplayMs( input, converter ) );
+        builder.milestoneLoops( LarvaMilestoneCalculator.compute( input.snapshots ) );
         return builder.build();
     }
 
@@ -105,14 +105,6 @@ final class LarvaAggregationRecordBuilder {
             endMs.put( phase, Long.valueOf( converter.loopToTimeMs( interval.getEndLoop() ) ) );
         }
         builder.phaseStats( table.getPhaseStatsMap() ).phaseEndLoops( endLoops ).phaseEndDisplayMs( endMs );
-    }
-
-    private static Map< LarvaMilestone, Long > buildMilestoneDisplayMs( final PlayerInput input, final LoopTimeConverter converter ) {
-        final Map< LarvaMilestone, Long > result = new EnumMap<>( LarvaMilestone.class );
-        final Map< LarvaMilestone, Integer > loops = LarvaMilestoneCalculator.compute( input.snapshots );
-        for ( final Map.Entry< LarvaMilestone, Integer > entry : loops.entrySet() )
-            result.put( entry.getKey(), Long.valueOf( converter.loopToTimeMs( entry.getValue().intValue() ) ) );
-        return result;
     }
 
     /**
@@ -191,7 +183,7 @@ final class LarvaAggregationRecordBuilder {
     }
 
     /** D-7: race of the other player in a two-player replay, otherwise <code>null</code>. */
-    private static IRace findOneVsOneOpponentRace( final IDetails details, final IPlayer player ) {
+    static IRace findOneVsOneOpponentRace( final IDetails details, final IPlayer player ) {
         final IPlayer[] players = details.getPlayerList();
         if ( players.length != 2 )
             return null;

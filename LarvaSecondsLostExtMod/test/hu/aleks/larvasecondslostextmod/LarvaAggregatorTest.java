@@ -73,14 +73,14 @@ public class LarvaAggregatorTest {
         final LarvaAggregationPlayerRecord.Builder g1 = withStats( player( "A", LarvaMatchupBucket.ZVP ),
                 stats( EARLY, 10, 4, 48, 13440, 8000, 6000 ) );
         withEnd( g1, EARLY, 300000 );
-        withMilestone( g1, LarvaMilestone.SUPPLY_100, 400000 );
+        withMilestone( g1, LarvaMilestone.SUPPLY_100, 9000 );
         final LarvaAggregationPlayerRecord.Builder g2 = withStats( player( "A", LarvaMatchupBucket.ZVT ),
                 stats( EARLY, 5, 1, 20, 2688, 1000, 1000 ) );
         withEnd( g2, EARLY, 120000 );
         final LarvaAggregationPlayerRecord.Builder g3 = withStats( player( "A", LarvaMatchupBucket.ZVZ ),
                 stats( EARLY, 3, 1, 8, 672, 200, 100 ) );
         withEnd( g3, EARLY, 61000 );
-        withMilestone( g3, LarvaMilestone.SUPPLY_100, 500001 );
+        withMilestone( g3, LarvaMilestone.SUPPLY_100, 10001 );
         return Arrays.asList( game( 1, g1.build() ), game( 2, g2.build() ), game( 3, g3.build() ) );
     }
 
@@ -104,9 +104,14 @@ public class LarvaAggregatorTest {
         assertEquals( 3, all.getReachedCount() );
         assertEquals( 3, all.getGameCount() );
         final LarvaAggregatedMilestoneCell supply = r.getMilestoneCell( LarvaMatchupBucket.ALL, LarvaMilestone.SUPPLY_100 );
-        assertEquals( 450001L, supply.getMeanMs().longValue() );
+        assertEquals( Integer.valueOf( 9501 ), supply.getMedianLoop() ); // (9000 + 10001) / 2, half up
         assertEquals( 2, supply.getReachedCount() );
         assertEquals( 3, supply.getGameCount() );
+        assertEquals( "top 50% masters", supply.getRanking() ); // fixture SUPPLY_100.ALL: masters 9760, GM 9280
+        // ZvZ has its own band (masters from 10600): the one ZvZ game, 10001 loops, is rated against it
+        assertEquals( "top 20% masters", r.getMilestoneCell( LarvaMatchupBucket.ZVZ, LarvaMilestone.SUPPLY_100 ).getRanking() );
+        // ZvP has no band in the fixture
+        assertEquals( "n/a", r.getMilestoneCell( LarvaMatchupBucket.ZVP, LarvaMilestone.SUPPLY_100 ).getRanking() );
     }
 
     /** AC 1 (AC-12.1): every rate equals sum(count) * 1344 / sum(loops), computed independently here. */
@@ -153,8 +158,9 @@ public class LarvaAggregatorTest {
             assertEquals( 0, c.getGameCount() );
         }
         for ( final LarvaMilestone m : LarvaMilestone.values() ) {
-            assertNull( r.getMilestoneCell( LarvaMatchupBucket.ZVP, m ).getMeanMs() );
+            assertNull( r.getMilestoneCell( LarvaMatchupBucket.ZVP, m ).getMedianLoop() );
             assertEquals( 0, r.getMilestoneCell( LarvaMatchupBucket.ZVP, m ).getGameCount() );
+            assertEquals( "n/a", r.getMilestoneCell( LarvaMatchupBucket.ZVP, m ).getRanking() );
         }
     }
 
@@ -181,23 +187,57 @@ public class LarvaAggregatorTest {
         assertEquals( 5, late.getGameCount() );
     }
 
-    /** AC 5 (AC-13.1): 2 of 4 games reach 200 supply, the cell is the mean of those two with 2/4. Half-up rounding. */
-    @Test
-    public void ac5_milestoneMeanOverReachedGames() {
+    private LarvaAggregatedMilestoneCell supply200( final int... loops ) {
         final List< LarvaAggregationGameRecord > games = new ArrayList<>();
-        final long[] ms = { 600000, 0, 900000, 0 };
-        for ( int i = 0; i < 4; i++ ) {
+        for ( int i = 0; i < loops.length; i++ ) {
             final LarvaAggregationPlayerRecord.Builder b = withStats( player( "A", LarvaMatchupBucket.ZVZ ),
                     stats( EARLY, 1, 0, 1, 1344, 0, 0 ) );
-            if ( ms[ i ] > 0 )
-                withMilestone( b, LarvaMilestone.SUPPLY_200, ms[ i ] );
+            if ( loops[ i ] > 0 )
+                withMilestone( b, LarvaMilestone.SUPPLY_200, loops[ i ] );
             games.add( game( i + 1, b.build() ) );
         }
-        final LarvaAggregatedMilestoneCell cell = run( games, "A" ).getMilestoneCell( LarvaMatchupBucket.ALL, LarvaMilestone.SUPPLY_200 );
-        assertEquals( 750000L, cell.getMeanMs().longValue() );
+        return run( games, "A" ).getMilestoneCell( LarvaMatchupBucket.ALL, LarvaMilestone.SUPPLY_200 );
+    }
+
+    /** AC 5 (AC-13.1, E20-S04): 2 of 4 games reach 200 supply; even count: the mean of the two middle loops, with 2/4. */
+    @Test
+    public void ac5_milestoneMedianOverReachedGames_evenCount() {
+        final LarvaAggregatedMilestoneCell cell = supply200( 13440, 0, 20160, 0 );
+        assertEquals( Integer.valueOf( 16800 ), cell.getMedianLoop() );
         assertEquals( 2, cell.getReachedCount() );
         assertEquals( 4, cell.getGameCount() );
-        assertNull( run( games, "A" ).getMilestoneCell( LarvaMatchupBucket.ALL, LarvaMilestone.DRONES_66 ).getMeanMs() );
+        assertEquals( "aim for 12:12", cell.getRanking() ); // fixture SUPPLY_200.ALL starts at masters 16400 (OQ-5, E20-S12)
+    }
+
+    /** E20-S04: odd count, the middle loop; a late outlier does not move it (the reason for the median, F-4). */
+    @Test
+    public void milestoneMedianOverReachedGames_oddCountIgnoresALateOutlier() {
+        final LarvaAggregatedMilestoneCell cell = supply200( 16000, 40000, 15600, 0 );
+        assertEquals( Integer.valueOf( 16000 ), cell.getMedianLoop() );
+        assertEquals( 3, cell.getReachedCount() );
+        assertEquals( 4, cell.getGameCount() );
+        assertEquals( "top 75% GM", cell.getRanking() ); // GM 16240 .. pro 15280
+    }
+
+    /** E20-S04: one reached game is its own median; none reached gives null, n/a and 0/n. */
+    @Test
+    public void milestoneMedianOfOneGameAndOfNone() {
+        assertEquals( Integer.valueOf( 15000 ), supply200( 0, 15000 ).getMedianLoop() );
+        assertEquals( "top 70% pro", supply200( 0, 15000 ).getRanking() ); // best tier: width of the GM tier
+        final LarvaAggregatedMilestoneCell none = supply200( 0, 0, 0 );
+        assertNull( none.getMedianLoop() );
+        assertEquals( 0, none.getReachedCount() );
+        assertEquals( 3, none.getGameCount() );
+        assertEquals( "n/a", none.getRanking() );
+    }
+
+    @Test
+    public void medianHalfUpRoundsTheMiddlePairUpAndLeavesTheInputAlone() {
+        final List< Integer > loops = new ArrayList<>( Arrays.asList( 7, 1, 4, 2 ) );
+        assertEquals( Integer.valueOf( 3 ), LarvaAggregator.medianHalfUp( loops ) ); // (2 + 4) / 2
+        assertEquals( Integer.valueOf( 4 ), LarvaAggregator.medianHalfUp( Arrays.asList( 3, 4 ) ) ); // 3.5 -> 4
+        assertEquals( Arrays.asList( 7, 1, 4, 2 ), loops );
+        assertNull( LarvaAggregator.medianHalfUp( new ArrayList< Integer >() ) );
     }
 
     /** AC 6 (D-7): tracked A vs tracked B in one ZvZ game counts for both players and once in the header n. */

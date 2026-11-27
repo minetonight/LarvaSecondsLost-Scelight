@@ -243,7 +243,8 @@ public class ReplaySummaryService {
         final ReplaySummary replaySummary = new ReplaySummary( replayFile, safe( sourceDescription, "Unknown" ),
             safe( details == null ? null : details.getTitle(), "Unknown map" ), safe( repProc.getPlayersGrouped(), "Unknown players" ),
             safe( repProc.getWinnersString(), "Unknown / undecided" ), formatDuration( lengthMs ), lengthMs, formatDate( replayEndTime ),
-            replay.getHeader().versionString( true ), String.valueOf( replay.getHeader().getBaseBuild() ), buildPlayerColorMap( details ) );
+            replay.getHeader().versionString( true ), String.valueOf( replay.getHeader().getBaseBuild() ), buildPlayerColorMap( details ),
+            buildPlayerMatchupMap( details ) );
         return new ReplayAnalysisContext( repProc, details, replaySummary, larvaAnalysisReport );
     }
 
@@ -622,6 +623,26 @@ public class ReplaySummaryService {
         }
 
         return playerColorMap;
+    }
+
+    /**
+     * Builds the matchup of each Zerg player of a two-player replay (E20-S09: the single-replay milestone ranking uses its bands).
+     *
+     * @param details replay details
+     * @return matchup by player name; empty for other replays
+     */
+    private static Map< String, LarvaMatchupBucket > buildPlayerMatchupMap( final IDetails details ) {
+        final Map< String, LarvaMatchupBucket > matchupMap = new LinkedHashMap<>();
+        if ( details == null || details.getPlayerList() == null )
+            return matchupMap;
+        for ( final IPlayer player : details.getPlayerList() ) {
+            if ( player == null || player.getName() == null || player.getName().length() == 0 || !IRace.ZERG.equals( player.getRace() ) )
+                continue;
+            final LarvaMatchupBucket matchup = LarvaGameKinds.matchupOf( LarvaAggregationRecordBuilder.findOneVsOneOpponentRace( details, player ) );
+            if ( matchup != null )
+                matchupMap.put( player.getName(), matchup );
+        }
+        return matchupMap;
     }
 
     /**

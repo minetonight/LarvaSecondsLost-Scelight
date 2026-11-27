@@ -16,19 +16,20 @@ import java.util.regex.Pattern;
  * {@code LarvaMultiViewGoldenCheckTest} covers the comparison logic on synthetic data.
  *
  * <p>Mapping, per player and bucket: the golden phase line gives the seven rows (phase end with {@code (k/n)}, uptime, spawned,
- * spawned ranking, missed, missed ranking, missed inject), the golden milestone lines give the milestone table cells.</p>
+ * spawned ranking, missed, missed ranking, missed inject), the golden milestone lines give the milestone table cells: per
+ * milestone the time row ({@code m:ss (k/n)}) and the ranking row (E20-S06).</p>
  */
 public final class LarvaMultiViewGoldenCheck {
 
     private static final Pattern PHASE_LINE = Pattern.compile( "^\\s+phase \\w+: .*\\| missed/h/min=(\\S+) missedInject/h/min=(\\S+) "
             + "spawned/h/min=(\\S+) uptime=(\\S+) spawnedRank=(.*?) missedRank=(.*?) end=(\\S+) \\(.*?\\) (\\d+)/(\\d+)$" );
-    private static final Pattern MILESTONE_LINE = Pattern.compile( "^\\s+milestone .+?: (\\S+)(?: \\(\\d+ ms\\))? \\((\\d+)/(\\d+)\\)$" );
+    private static final Pattern MILESTONE_LINE = Pattern.compile( "^\\s+milestone .+?: (\\S+)(?: \\(\\d+ loops\\))? \\((\\d+)/(\\d+)\\) rank=(.*)$" );
     private static final Pattern PLAYER_LINE = Pattern.compile( "^player \\d+: name=.*" );
     private static final Pattern BUCKET_LINE = Pattern.compile( "^\\s+bucket (\\w+) games=(\\d+)$" );
     private static final int BUCKETS = 4;
     private static final int PHASES = 4;
     private static final int PHASE_ROWS = 7;
-    private static final int MILESTONES = 4;
+    private static final int MILESTONES = LarvaMilestone.values().length;
 
     private LarvaMultiViewGoldenCheck() {
     }
@@ -114,13 +115,14 @@ public final class LarvaMultiViewGoldenCheck {
     }
 
     private static void compareMilestoneTable( final List< String > problems, final int p, final String[][][] player, final List< String > rows ) {
-        if ( rows.size() != MILESTONES )
+        if ( rows.size() != 2 * MILESTONES )
             problems.add( "player " + ( p + 1 ) + " milestone table: " + rows.size() + " rows" );
-        for ( int row = 0; row < Math.min( MILESTONES, rows.size() ); row++ ) {
+        for ( int row = 0; row < Math.min( 2 * MILESTONES, rows.size() ); row++ ) {
             final String[] cells = cells( rows.get( row ) );
+            final int milestone = row / 2;
             for ( int b = 0; b < BUCKETS; b++ ) {
-                final String[] m = player[ BUCKETS + b ].length > row ? player[ BUCKETS + b ][ row ] : null;
-                final String expectedCell = m == null ? null : m[ 0 ] + " (" + m[ 1 ] + "/" + m[ 2 ] + ")";
+                final String[] m = player[ BUCKETS + b ].length > milestone ? player[ BUCKETS + b ][ milestone ] : null;
+                final String expectedCell = m == null ? null : row % 2 == 1 ? m[ 3 ] : m[ 0 ] + " (" + m[ 1 ] + "/" + m[ 2 ] + ")";
                 final String actualCell = b < cells.length ? cells[ b ] : null;
                 if ( expectedCell == null || !expectedCell.equals( actualCell ) )
                     problems.add( "player " + ( p + 1 ) + " milestone row " + row + " bucket " + b + ": golden '" + expectedCell + "', view model '"
@@ -139,7 +141,7 @@ public final class LarvaMultiViewGoldenCheck {
 
     /**
      * @return per player: index 0..3 = phase lines of bucket ALL..ZVZ (each String[] of the 9 groups), index 4..7 = milestone lines of
-     *         the bucket (each String[] of time, k, n); stored as {@code [slot][line][group]}
+     *         the bucket (each String[] of time, k, n, ranking); stored as {@code [slot][line][group]}
      */
     private static List< String[][][] > parseGolden( final String golden, final List< String > problems ) {
         final List< List< List< String[] > > > all = new ArrayList<>();
@@ -168,7 +170,7 @@ public final class LarvaMultiViewGoldenCheck {
         if ( phase.matches() )
             slots.get( bucket ).add( groups( phase, 9 ) );
         else if ( milestone.matches() )
-            slots.get( BUCKETS + bucket ).add( groups( milestone, 3 ) );
+            slots.get( BUCKETS + bucket ).add( groups( milestone, 4 ) );
         else if ( line.trim().startsWith( "phase " ) || line.trim().startsWith( "milestone " ) )
             problems.add( "unparsable golden line: " + line );
     }

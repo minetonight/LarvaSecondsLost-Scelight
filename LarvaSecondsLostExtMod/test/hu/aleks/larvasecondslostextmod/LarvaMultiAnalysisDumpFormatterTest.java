@@ -29,7 +29,7 @@ public class LarvaMultiAnalysisDumpFormatterTest {
                     LarvaTestFixtures.player( "Me", i == 3 ? LarvaMatchupBucket.ZVP : LarvaMatchupBucket.ZVT ),
                     LarvaTestFixtures.stats( LarvaGamePhase.EARLY, 2 * i, i, 30 * i, 20000L * i, 15000L * i, 9000L * i ) );
             LarvaTestFixtures.withEnd( player, LarvaGamePhase.EARLY, 240000L + i * 1500L );
-            LarvaTestFixtures.withMilestone( player, LarvaMilestone.DRONES_66, 300000L + i * 7777L );
+            LarvaTestFixtures.withMilestone( player, LarvaMilestone.DRONES_66, 6720 + i * 160 );
             source.add( name, new LarvaAggregationGameRecord.Builder().replayFile( path ).replayDate( new Date( 1700000000000L + i * 86400000L ) )
                     .oneVsOne( true ).ladder( true ).lengthLoops( 10000 ).addZergPlayer( player.build() ).build() );
         }
@@ -50,6 +50,9 @@ public class LarvaMultiAnalysisDumpFormatterTest {
         assertTrue( dump, dump.contains( "date range (UTC): 2023-11-15 22:13:20 .. 2023-11-17 22:13:20\n" ) );
         assertTrue( dump, dump.contains( "  broken.SC2Replay | " + LarvaSkippedReplay.REASON_FAILED_TO_PARSE + "\n" ) );
         assertTrue( dump, dump.contains( "player 1: name=Me key=Me games=3" ) );
+        // E20-S04/S06: median loop of 6880, 7040, 7200 (ZvT, ZvT, ZvP) with its game clock time and the ranking of the bucket
+        assertTrue( dump, dump.contains( "    milestone 66 drones: 5:14 (7040 loops) (3/3) rank=top 5% pro\n" ) );
+        assertTrue( dump, dump.contains( "    milestone 80 drones: n/a (0/3) rank=n/a\n" ) );
         assertTrue( dump, dump.contains( "    phase EARLY: missed=12 missedInject=6 spawned=180 hatchEligibleLoops=120000 injectEligibleLoops=90000 injectActiveLoops=54000 |" ) );
         assertTrue( dump, dump.contains( "    phase END: no stats | missed/h/min=n/a" ) );
         assertTrue( dump, dump.contains( "  bucket ZVZ games=0\n" ) );

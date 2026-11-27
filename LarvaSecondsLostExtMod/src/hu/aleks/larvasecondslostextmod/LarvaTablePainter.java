@@ -2,6 +2,7 @@ package hu.aleks.larvasecondslostextmod;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
@@ -14,6 +15,8 @@ import java.awt.Graphics2D;
  * <p>The look is the single-replay look everywhere (one line per cell, CR-1.2): the multi-analysis page uses exactly the same
  * painter. The metric column is as wide as the widest row label (or the corner label), so no label ever wraps; a table
  * that is wider than its space is scrolled by the page, never squeezed.</p>
+ *
+ * <p>A cell may have a bold part ({@link LarvaTableViewModel#getBold(int, int)}); it is measured and centered with it.</p>
  */
 final class LarvaTablePainter {
 
@@ -141,13 +144,47 @@ final class LarvaTablePainter {
                 g.drawString( model.getRowLabel( row ), left + CELL_PADDING, baseline );
             for ( int column = 0; column < columnWidths.length; column++ ) {
                 final String cell = model.getCell( row, column );
-                g.drawString( cell, centeredX( fm, columnX[ column + 1 ], columnWidths[ column ], cell ), baseline );
+                final LarvaTableViewModel.Bold bold = model.getBold( row, column );
+                final int x = columnX[ column + 1 ] + columnWidths[ column ] / 2 - textWidth( fm, cell, bold ) / 2;
+                drawCell( g, fm, cell, bold, x, baseline );
             }
         }
     }
 
     private static int centeredX( final FontMetrics fm, final int columnLeft, final int columnWidth, final String text ) {
         return columnLeft + columnWidth / 2 - fm.stringWidth( text ) / 2;
+    }
+
+    /** Draws a cell text, its bold part (if any) in the bold variant of the font. */
+    private static void drawCell( final Graphics2D g, final FontMetrics fm, final String text, final LarvaTableViewModel.Bold bold,
+            final int x, final int baseline ) {
+        if ( bold == null ) {
+            g.drawString( text, x, baseline );
+            return;
+        }
+        final Font regular = g.getFont();
+        final String before = text.substring( 0, bold.start );
+        final String boldPart = text.substring( bold.start, bold.end );
+        final int boldX = x + fm.stringWidth( before );
+        g.drawString( before, x, baseline );
+        g.setFont( regular.deriveFont( Font.BOLD ) );
+        g.drawString( boldPart, boldX, baseline );
+        g.setFont( regular );
+        g.drawString( text.substring( bold.end ), boldX + boldWidth( fm, boldPart ), baseline );
+    }
+
+    /** @return width of a cell text with its bold part (if any) */
+    private static int textWidth( final FontMetrics fm, final String text, final LarvaTableViewModel.Bold bold ) {
+        if ( bold == null )
+            return fm.stringWidth( text );
+        return fm.stringWidth( text.substring( 0, bold.start ) ) + boldWidth( fm, text.substring( bold.start, bold.end ) )
+                + fm.stringWidth( text.substring( bold.end ) );
+    }
+
+    /** @return width of the text in the bold variant of the metrics' font, measured as the metrics measure */
+    private static int boldWidth( final FontMetrics fm, final String text ) {
+        final Font bold = fm.getFont().deriveFont( Font.BOLD );
+        return (int) Math.ceil( bold.getStringBounds( text, fm.getFontRenderContext() ).getWidth() );
     }
 
     private static int titleOffset( final LarvaTableViewModel model ) {
@@ -190,7 +227,7 @@ final class LarvaTablePainter {
             if ( header != null )
                 width = Math.max( width, fm.stringWidth( header ) + 2 * CELL_PADDING );
             for ( int row = 0; row < model.getRowCount(); row++ )
-                width = Math.max( width, fm.stringWidth( model.getCell( row, column ) ) + 2 * CELL_PADDING );
+                width = Math.max( width, textWidth( fm, model.getCell( row, column ), model.getBold( row, column ) ) + 2 * CELL_PADDING );
             widths[ column ] = width;
         }
         return widths;

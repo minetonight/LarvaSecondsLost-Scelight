@@ -25,7 +25,8 @@ import java.util.Set;
  * <li>Pooled larva rates come from a {@link LarvaPhaseStats} over the summed counts and loops (D-1, D-2); this class holds no
  * rate formula.</li>
  * <li>Phase end is the mean game time at which the phase ended, over the player-games that reached the phase, reported with {@code k} of {@code n} (D-9, CR-1.1).
- * Milestones are the mean over the games that reached them, again {@code k/n}, without censoring (D-10).</li>
+ * Milestones are the median loop over the games that reached them, again {@code k/n}, without censoring (D-10, E20-S04), rated
+ * against the milestone bands of the bucket (E20-S06).</li>
  * <li>Player-games without phase table are left out and listed as {@code missing-phase-table} (OQ-15). They are not part of
  * {@code n}.</li>
  * <li>Any value without data (zero denominator, empty bucket) is <code>null</code> (OQ-4, OQ-13).</li>
@@ -34,6 +35,8 @@ import java.util.Set;
 public final class LarvaAggregator {
 
     private static final LarvaPhaseBenchmarkRatingFormatter RATINGS = new LarvaPhaseBenchmarkRatingFormatter();
+
+    private static final LarvaMilestoneBenchmarkRatingFormatter MILESTONE_RATINGS = new LarvaMilestoneBenchmarkRatingFormatter();
 
     /**
      * @param eligible
@@ -135,6 +138,23 @@ public final class LarvaAggregator {
         return Long.valueOf( ( 2L * sum + k ) / ( 2L * k ) );
     }
 
+    /**
+     * @param loops loops in any order, not changed
+     * @return the median (even count: mean of the two middle values, half up, as Python's statistics.median before rounding); null
+     *         for an empty list
+     */
+    static Integer medianHalfUp( final List< Integer > loops ) {
+        if ( loops.isEmpty() )
+            return null;
+        final List< Integer > sorted = new ArrayList<>( loops );
+        Collections.sort( sorted );
+        final int middle = sorted.size() / 2;
+        if ( sorted.size() % 2 == 1 )
+            return sorted.get( middle );
+        final long sum = (long) sorted.get( middle - 1 ).intValue() + sorted.get( middle ).intValue();
+        return Integer.valueOf( (int) ( ( sum + 1L ) / 2L ) );
+    }
+
     private static int toInt( final long value, final String context ) {
         if ( value < Integer.MIN_VALUE || value > Integer.MAX_VALUE )
             throw new IllegalStateException( "Summed count does not fit an int: " + context + " = " + value );
@@ -150,14 +170,14 @@ public final class LarvaAggregator {
 
         private final Map< LarvaGamePhase, PhaseSums > phaseSums = new EnumMap<>( LarvaGamePhase.class );
 
-        private final Map< LarvaMilestone, long[] > milestoneSums = new EnumMap<>( LarvaMilestone.class );
+        private final Map< LarvaMilestone, List< Integer > > milestoneLoops = new EnumMap<>( LarvaMilestone.class );
 
         BucketAccumulator( final LarvaMatchupBucket bucket ) {
             this.bucket = bucket;
             for ( final LarvaGamePhase phase : LarvaGamePhase.values() )
                 phaseSums.put( phase, new PhaseSums() );
             for ( final LarvaMilestone milestone : LarvaMilestone.values() )
-                milestoneSums.put( milestone, new long[ 2 ] );
+                milestoneLoops.put( milestone, new ArrayList< Integer >() );
         }
 
         void add( final LarvaAggregationPlayerRecord record ) {
@@ -174,12 +194,9 @@ public final class LarvaAggregator {
                 }
             }
             for ( final LarvaMilestone milestone : LarvaMilestone.values() ) {
-                final Long ms = record.getMilestoneDisplayMs().get( milestone );
-                if ( ms != null ) {
-                    final long[] sums = milestoneSums.get( milestone );
-                    sums[ 0 ] += ms.longValue();
-                    sums[ 1 ]++;
-                }
+                final Integer loop = record.getMilestoneLoops().get( milestone );
+                if ( loop != null )
+                    milestoneLoops.get( milestone ).add( loop );
             }
         }
 
@@ -191,8 +208,8 @@ public final class LarvaAggregator {
                 final Double spawned = pooled == null ? null : pooled.getSpawnedLarvaPerHatchPerMinute();
                 final Double missed = pooled == null ? null : pooled.getMissedLarvaPerHatchPerMinute();
                 // END has no benchmark anchors, so the formatter itself answers n/a (D-3).
-                final String spawnedRanking = spawned == null ? null : RATINGS.formatSpawnedLarvaRanking( phase, spawned );
-                final String missedRanking = missed == null ? null : RATINGS.formatMissedLarvaRanking( phase, missed );
+                final LarvaRanking spawnedRanking = spawned == null ? null : RATINGS.rankSpawnedLarva( phase, spawned );
+                final LarvaRanking missedRanking = missed == null ? null : RATINGS.rankMissedLarva( phase, missed );
                 cells.put( phase, new LarvaAggregatedPhaseCell( phase, pooled, spawnedRanking, missedRanking,
                         meanHalfUp( sums.endMsSum, sums.reached ), sums.reached, games ) );
             }
@@ -202,9 +219,10 @@ public final class LarvaAggregator {
         Map< LarvaMilestone, LarvaAggregatedMilestoneCell > buildMilestoneCells() {
             final Map< LarvaMilestone, LarvaAggregatedMilestoneCell > cells = new EnumMap<>( LarvaMilestone.class );
             for ( final LarvaMilestone milestone : LarvaMilestone.values() ) {
-                final long[] sums = milestoneSums.get( milestone );
-                final int reached = (int) sums[ 1 ];
-                cells.put( milestone, new LarvaAggregatedMilestoneCell( milestone, meanHalfUp( sums[ 0 ], reached ), reached, games ) );
+                final List< Integer > loops = milestoneLoops.get( milestone );
+                final Integer median = medianHalfUp( loops );
+                cells.put( milestone, new LarvaAggregatedMilestoneCell( milestone, median, loops.size(), games,
+                        MILESTONE_RATINGS.rank( milestone, bucket, median ) ) );
             }
             return cells;
         }

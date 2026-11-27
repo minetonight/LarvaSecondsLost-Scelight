@@ -11,7 +11,7 @@ import java.util.Map;
  *
  * <p>Holds only plain values and the existing immutable {@link LarvaPhaseStats} objects. It keeps no reference to the
  * analysis report, the replay processor or the timeline model, so those can be garbage collected right after extraction.
- * Display times are converted to milliseconds at build time (C-9).</p>
+ * Phase end times are converted to milliseconds at build time (C-9); milestones stay in loops (E20-S04).</p>
  */
 public final class LarvaAggregationPlayerRecord {
 
@@ -33,7 +33,7 @@ public final class LarvaAggregationPlayerRecord {
 
     private final Map< LarvaGamePhase, Long > phaseEndDisplayMs;
 
-    private final Map< LarvaMilestone, Long > milestoneDisplayMs;
+    private final Map< LarvaMilestone, Integer > milestoneLoops;
 
     private final boolean missingPhaseTable;
 
@@ -47,7 +47,7 @@ public final class LarvaAggregationPlayerRecord {
         phaseStats = Collections.unmodifiableMap( copy( LarvaGamePhase.class, b.phaseStats ) );
         phaseEndLoops = Collections.unmodifiableMap( copy( LarvaGamePhase.class, b.phaseEndLoops ) );
         phaseEndDisplayMs = Collections.unmodifiableMap( copy( LarvaGamePhase.class, b.phaseEndDisplayMs ) );
-        milestoneDisplayMs = Collections.unmodifiableMap( copy( LarvaMilestone.class, b.milestoneDisplayMs ) );
+        milestoneLoops = Collections.unmodifiableMap( copy( LarvaMilestone.class, b.milestoneLoops ) );
         missingPhaseTable = b.missingPhaseTable;
     }
 
@@ -105,9 +105,9 @@ public final class LarvaAggregationPlayerRecord {
         return phaseEndDisplayMs;
     }
 
-    /** @return unmodifiable milestone time in display milliseconds; absent = not reached (D-10) */
-    public Map< LarvaMilestone, Long > getMilestoneDisplayMs() {
-        return milestoneDisplayMs;
+    /** @return unmodifiable loop at which each milestone was first reached; absent = not reached (D-10). Loops, not ms (E20-S04). */
+    public Map< LarvaMilestone, Integer > getMilestoneLoops() {
+        return milestoneLoops;
     }
 
     /** @return <code>true</code> if the analysis produced no phase table for this player (OQ-15) */
@@ -136,7 +136,7 @@ public final class LarvaAggregationPlayerRecord {
 
         private final Map< LarvaGamePhase, Long > phaseEndDisplayMs = new EnumMap<>( LarvaGamePhase.class );
 
-        private final Map< LarvaMilestone, Long > milestoneDisplayMs = new EnumMap<>( LarvaMilestone.class );
+        private final Map< LarvaMilestone, Integer > milestoneLoops = new EnumMap<>( LarvaMilestone.class );
 
         private boolean missingPhaseTable;
 
@@ -198,10 +198,10 @@ public final class LarvaAggregationPlayerRecord {
             return this;
         }
 
-        public Builder milestoneDisplayMs( final Map< LarvaMilestone, Long > milestoneDisplayMs ) {
-            this.milestoneDisplayMs.clear();
-            if ( milestoneDisplayMs != null )
-                this.milestoneDisplayMs.putAll( milestoneDisplayMs );
+        public Builder milestoneLoops( final Map< LarvaMilestone, Integer > milestoneLoops ) {
+            this.milestoneLoops.clear();
+            if ( milestoneLoops != null )
+                this.milestoneLoops.putAll( milestoneLoops );
             return this;
         }
 

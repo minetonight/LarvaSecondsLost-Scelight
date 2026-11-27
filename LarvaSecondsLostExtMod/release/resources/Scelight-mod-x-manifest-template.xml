@@ -18,7 +18,7 @@
         </contact>
     </authorList>
     <homePage>https://minetonight.github.io/scelight/larva-seconds-lost/</homePage>
-    <shortDesc>Zerg larva and inject analysis: missed larva, inject uptime, phase tables, benchmarks and multi-replay averages.</shortDesc>
+    <shortDesc>Zerg larva and inject analysis: missed larva, inject uptime, phase tables, macro milestones, league benchmarks and multi-replay averages.</shortDesc>
     <description><![CDATA[
         <html><body>
             <p><b>Larva Seconds Lost</b> shows how well you use your larva and injects as Zerg, for one replay or averaged over many replays.</p>
@@ -28,7 +28,8 @@
                 <li><b>Larva timeline</b> per hatchery: when larva sat at 3 (floating), inject uptime, and likely missed inject windows.</li>
                 <li><b>Phase table:</b> Early, Mid, Late and End game columns with larva generated, larva missed, missed inject value and inject uptime.</li>
                 <li><b>Benchmarks:</b> your larva generation and larva missed rates ranked against bands from higher-level games.</li>
-                <li><b>Multi analysis:</b> pooled tables for All games, ZvP, ZvT and ZvZ for up to two tracked players, plus milestones (100 supply, 66 and 80 drones, 200 supply).</li>
+                <li><b>Multi analysis:</b> pooled tables for All games, ZvP, ZvT and ZvZ for up to two tracked players.</li>
+                <li><b>Milestones:</b> when you reached 44, 55, 66 and 80 drones and 100, 150 and 200 supply, ranked per matchup against league bands, for one replay and as your median over many.</li>
                 <li><b>Updates:</b> the module checks its home page for new versions and can install them for you (restart Scelight to use the new version).</li>
             </ul>
             <p>Home page and install guide: https://minetonight.github.io/scelight/larva-seconds-lost/<br>

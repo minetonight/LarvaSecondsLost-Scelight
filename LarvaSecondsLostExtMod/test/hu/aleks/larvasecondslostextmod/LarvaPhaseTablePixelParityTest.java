@@ -15,7 +15,8 @@ import org.junit.Test;
 
 /**
  * AC-4.1: the whole {@link LarvaTimelinePreviewComp} (timeline + phase tables) renders pixel-identical to the images captured from the
- * pre-S13 code (<code>drawPhaseTable</code> inline). The references live in <code>test/resources</code>.
+ * pre-S13 code (<code>drawPhaseTable</code> inline). The references live in <code>test/resources</code>; regenerated for E20-S12 (bold
+ * league label of the ranking cells, and the column widths that follow from it) and E20-S13 (bold summary line, rails 16 px lower).
  *
  * <p>Pixels depend on the installed fonts, so the test is skipped (assumption) when the font fingerprint differs from the one stored next to
  * the images. To regenerate on another machine, run with <code>-Dlarva.parity.writeDir=&lt;dir&gt;</code> against a known-good build.</p>

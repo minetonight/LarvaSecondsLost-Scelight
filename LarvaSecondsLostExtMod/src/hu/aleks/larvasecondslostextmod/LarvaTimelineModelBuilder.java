@@ -46,6 +46,12 @@ public class LarvaTimelineModelBuilder {
     /** Suffix used for per-hatchery injected-larva totals. */
     private static final String POTENTIAL_INJECTED_LARVA_MISSED_SUFFIX = " potential injected larva missed";
 
+    /** Larva generated suffix of the player summary line (E20-S13). */
+    private static final String LARVA_GENERATED_SUFFIX = " larva generated";
+
+    /** Inject larva missed suffix of the player summary line (E20-S13; the hatchery rows keep "potential injected larva missed"). */
+    private static final String INJECT_LARVA_MISSED_SUFFIX = " inject larva missed";
+
     /** Red (missed-inject) loops represented by one missed inject. */
     private static final int MISSED_INJECT_THRESHOLD_LOOPS = LarvaGameClock.INJECT_CYCLE_LOOPS;
 
@@ -80,9 +86,10 @@ public class LarvaTimelineModelBuilder {
         if ( rowList.isEmpty() && replaySummary != null && replayLengthMs > 0L )
             rowList.add( createFallbackRow( replayLengthMs, fallbackPreviewStartMs, fallbackPreviewEndMs ) );
 
+        final Map< String, LarvaPlayerPhaseTable > playerPhaseTableMap = buildPlayerPhaseTableMap( rowList, larvaAnalysisReport );
         return new LarvaTimelineModel( TITLE, SUBTITLE, resolveModeLabel( integrationMode ), buildGroupOverviewLabelMap( rowList, larvaAnalysisReport ),
-            buildPlayerPhaseTableMap( rowList, larvaAnalysisReport ), buildGroupColorMap( replaySummary, rowList ), larvaAnalysisReport, replayLengthMs,
-            replayLengthLabel, EMPTY_MESSAGE, rowList );
+            playerPhaseTableMap, buildPlayerMilestonesMap( playerPhaseTableMap, replaySummary, larvaAnalysisReport ),
+            buildGroupColorMap( replaySummary, rowList ), larvaAnalysisReport, replayLengthMs, replayLengthLabel, EMPTY_MESSAGE, rowList );
     }
 
     /**
@@ -910,30 +917,21 @@ public class LarvaTimelineModelBuilder {
             }
         }
 
+        // E20-S13: every player, "x larva generated, y potential larva missed, z inject larva missed" (was: ZvZ only)
         final Map< String, String > groupOverviewLabelMap = new LinkedHashMap<>();
         for ( final Map.Entry< String, Integer > entry : playerTotals.entrySet() ) {
             final String playerName = entry.getKey();
             final Integer injectedTotal = playerInjectedTotals.get( playerName );
             final Integer generatedTotal = playerLarvaGeneratedTotals.get( playerName );
-            final StringBuilder overview = new StringBuilder();
-            overview.append( entry.getValue().intValue() ).append( POTENTIAL_LARVA_MISSED_SUFFIX ).append( "; " )
-                .append( ( injectedTotal == null ? 0 : injectedTotal.intValue() ) ).append( POTENTIAL_INJECTED_LARVA_MISSED_SUFFIX );
-            groupOverviewLabelMap.put( playerName, overview.toString() );
+            groupOverviewLabelMap.put( playerName, overviewLabel( generatedTotal == null ? 0 : generatedTotal.intValue(), entry.getValue().intValue(),
+                    injectedTotal == null ? 0 : injectedTotal.intValue() ) );
         }
-
-        // For ZVZ matchups (exactly 2 Zerg players), prepend total larva generated
-        if ( groupOverviewLabelMap.size() == 2 ) {
-            for ( final Map.Entry< String, String > entry : groupOverviewLabelMap.entrySet() ) {
-                final String playerName = entry.getKey();
-                final Integer generatedTotal = playerLarvaGeneratedTotals.get( playerName );
-                if ( generatedTotal != null && generatedTotal.intValue() > 0 ) {
-                    final String newValue = "" + generatedTotal.intValue() + " larva generated; " + entry.getValue();
-                    groupOverviewLabelMap.put( playerName, newValue );
-                }
-            }
-        }
-
         return groupOverviewLabelMap;
+    }
+
+    /** @return {@code 412 larva generated, 85 potential larva missed, 72 inject larva missed} (E20-S13) */
+    static String overviewLabel( final int generated, final int missed, final int injectMissed ) {
+        return generated + LARVA_GENERATED_SUFFIX + ", " + missed + POTENTIAL_LARVA_MISSED_SUFFIX + ", " + injectMissed + INJECT_LARVA_MISSED_SUFFIX;
     }
 
     /**
@@ -964,6 +962,27 @@ public class LarvaTimelineModelBuilder {
                 playerPhaseTableMap.put( entry.getKey(), entry.getValue() );
 
         return playerPhaseTableMap;
+    }
+
+    /**
+     * Builds the milestones of every player with a phase table (the Zerg players), E20-S09.
+     *
+     * @param playerPhaseTableMap phase tables by player name
+     * @param replaySummary replay summary holding the matchups; may be <code>null</code>
+     * @param larvaAnalysisReport source analysis report; may be <code>null</code>
+     * @return milestones keyed by player name, same order as the phase tables
+     */
+    static Map< String, LarvaPlayerMilestones > buildPlayerMilestonesMap( final Map< String, LarvaPlayerPhaseTable > playerPhaseTableMap,
+            final ReplaySummary replaySummary, final LarvaAnalysisReport larvaAnalysisReport ) {
+        final Map< String, LarvaPlayerMilestones > milestonesMap = new LinkedHashMap<>();
+        if ( larvaAnalysisReport == null )
+            return milestonesMap;
+        for ( final String playerName : playerPhaseTableMap.keySet() ) {
+            final List< LarvaPlayerResourceSnapshot > snapshots = larvaAnalysisReport.getResourceSnapshotsByPlayerName().get( playerName );
+            final LarvaMatchupBucket matchup = replaySummary == null ? null : replaySummary.getPlayerMatchup( playerName );
+            milestonesMap.put( playerName, new LarvaPlayerMilestones( matchup, LarvaMilestoneCalculator.compute( snapshots ) ) );
+        }
+        return milestonesMap;
     }
 
     /**

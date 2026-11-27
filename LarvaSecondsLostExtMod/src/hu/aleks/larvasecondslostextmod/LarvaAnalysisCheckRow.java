@@ -79,8 +79,8 @@ final class LarvaAnalysisCheckRow {
         fillModulePhases();
         if ( record != null )
             for ( int i = 0; i < DRONE_MILESTONES.length; i++ ) {
-                final Long ms = record.getMilestoneDisplayMs().get( DRONE_MILESTONES[ i ] );
-                milestoneModule[ i ] = ms == null ? -1 : (int) ( ms.longValue() / 1000L );
+                final Integer loop = record.getMilestoneLoops().get( DRONE_MILESTONES[ i ] );
+                milestoneModule[ i ] = loop == null ? -1 : seconds( loop.intValue() );
             }
     }
 

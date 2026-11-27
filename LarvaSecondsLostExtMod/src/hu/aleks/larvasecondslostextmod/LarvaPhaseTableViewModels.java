@@ -30,6 +30,7 @@ final class LarvaPhaseTableViewModels {
         final LarvaGamePhase[] phases = LarvaGamePhase.values();
         final String[] headers = new String[ phases.length ];
         final String[][] cells = new String[ SINGLE_REPLAY_ROW_LABELS.length ][ phases.length ];
+        final LarvaTableViewModel.Bold[][] bold = new LarvaTableViewModel.Bold[ SINGLE_REPLAY_ROW_LABELS.length ][ phases.length ];
         for ( int column = 0; column < phases.length; column++ ) {
             final LarvaGamePhase phase = phases[ column ];
             headers[ column ] = LarvaPhaseHeaderLabels.resolve( phase );
@@ -39,12 +40,16 @@ final class LarvaPhaseTableViewModels {
             cells[ 0 ][ column ] = formatInterval( table.getPhaseInterval( phase ), report );
             cells[ 1 ][ column ] = LarvaStatFormat.formatPercent( stats == null ? null : stats.getInjectUptimePercentage() );
             cells[ 2 ][ column ] = LarvaStatFormat.formatRate( spawned );
-            cells[ 3 ][ column ] = RATING_FORMATTER.formatSpawnedLarvaRanking( phase, spawned );
+            final LarvaRanking spawnedRanking = RATING_FORMATTER.rankSpawnedLarva( phase, spawned );
+            final LarvaRanking missedRanking = RATING_FORMATTER.rankMissedLarva( phase, missed );
+            cells[ 3 ][ column ] = spawnedRanking.getText();
+            bold[ 3 ][ column ] = LarvaTableViewModel.boldLabel( spawnedRanking ); // E20-S12: the league inside the bands is bold
             cells[ 4 ][ column ] = LarvaStatFormat.formatRate( missed );
-            cells[ 5 ][ column ] = RATING_FORMATTER.formatMissedLarvaRanking( phase, missed );
+            cells[ 5 ][ column ] = missedRanking.getText();
+            bold[ 5 ][ column ] = LarvaTableViewModel.boldLabel( missedRanking );
             cells[ 6 ][ column ] = LarvaStatFormat.formatRate( stats == null ? null : stats.getMissedInjectLarvaPerHatchPerMinute() );
         }
-        return new LarvaTableViewModel( null, LarvaTableViewModel.DEFAULT_CORNER_LABEL, headers, SINGLE_REPLAY_ROW_LABELS, cells );
+        return new LarvaTableViewModel( null, LarvaTableViewModel.DEFAULT_CORNER_LABEL, headers, SINGLE_REPLAY_ROW_LABELS, cells, bold );
     }
 
     private static String formatInterval( final LarvaPhaseInterval interval, final LarvaAnalysisReport report ) {

@@ -78,6 +78,11 @@
         <javac srcdir="${testFolder}" destdir="${testBinFolder}" source="1.7" target="1.7" encoding="UTF-8" debug="true" includeantruntime="false">
             <classpath refid="testClasspath" />
         </javac>
+        <!-- Fixed bands for the tests, ahead of the generated band file (see the fixture's header). -->
+        <copy file="${testFolder}/resources/larva-benchmark-bands-fixture.properties"
+              tofile="${testBinFolder}/hu/aleks/larvasecondslostextmod/larva-benchmark-bands.properties" />
+        <copy file="${testFolder}/resources/larva-milestone-bands-fixture.properties"
+              tofile="${testBinFolder}/hu/aleks/larvasecondslostextmod/larva-milestone-bands.properties" />
     </target>
 
     <target name="TEST" depends="COMPILE_TESTS" description="Compiles and runs all *Test classes with JUnit 4; fails the build on any failure.">
@@ -161,6 +166,133 @@
 
     <target name="GOLDEN_MULTI_REGENERATE" depends="GOLDEN_MULTI_RUN" description="Overwrites the golden with the current dump (review and commit manually).">
         <copy file="${goldenMultiActual}" tofile="${goldenMultiFile}" overwrite="true" />
+    </target>
+
+    <!-- E19-S02: inject and red windows of the scenario replays (written ground truth: benchmark-data/queens-scenarios/ground-truth.txt).
+         Run: ant TEST_GOLDEN_SCENARIO. Regenerate: ant GOLDEN_SCENARIO_REGENERATE, check the diff against the ground truth, commit manually. -->
+    <property name="goldenScenarioFile" value="${testFolder}/golden/epic19-scenario-red.txt" />
+    <property name="goldenScenarioActual" value="${testBinFolder}/epic19-scenario-red.actual.txt" />
+
+    <target name="GOLDEN_SCENARIO_RUN" depends="COMPILE,REQUIRE_SCELIGHT_FOLDER" description="Dumps inject and red windows of benchmark-data/queens-scenarios into bin-test.">
+        <mkdir dir="${testBinFolder}" />
+        <java jvm="${golden.java}" classname="hu.aleks.larvasecondslostextmod.LarvaRedWindowDumpCli" fork="true" failonerror="true"
+              output="${goldenScenarioActual}" error="${testBinFolder}/epic19-scenario-red.stderr.txt">
+            <classpath>
+                <pathelement location="${binFolder}" />
+                <pathelement location="${extModApiJar}" />
+                <fileset dir="${customLibsFolder}" includes="**/*.jar" />
+                <fileset dir="${scelightFolder}/mod" includes="app/*/*.sldat app-libs/*/*.sldat launcher/*/*.sldat sc2-t/*/*.sldat sc2-bd/*/*.sldat" />
+            </classpath>
+            <arg value="--scelight-app-dir" />
+            <arg value="${scelightFolder}" />
+            <arg value="../benchmark-data/queens-scenarios/qeens-by-scenario.SC2Replay" />
+            <arg value="../benchmark-data/queens-scenarios/queens-by-scenario-interrupted.SC2Replay" />
+        </java>
+    </target>
+
+    <target name="TEST_GOLDEN_SCENARIO" depends="GOLDEN_SCENARIO_RUN" description="Diffs the scenario red windows against test/golden/epic19-scenario-red.txt (needs Scelight and Java 8).">
+        <condition property="goldenScenarioMatches">
+            <filesmatch file1="${goldenScenarioFile}" file2="${goldenScenarioActual}" />
+        </condition>
+        <fail message="Scenario red windows differ from the golden: diff ${goldenScenarioFile} ${goldenScenarioActual}" unless="goldenScenarioMatches" />
+        <echo>Scenario red windows match the golden.</echo>
+    </target>
+
+    <target name="GOLDEN_SCENARIO_REGENERATE" depends="GOLDEN_SCENARIO_RUN" description="Overwrites the scenario golden with the current dump (review and commit manually).">
+        <copy file="${goldenScenarioActual}" tofile="${goldenScenarioFile}" overwrite="true" />
+    </target>
+
+    <!--
+         Benchmark bands (phase table rankings), the maintainer's method as a command:
+           ant BENCHMARK_BANDS                     uses the MMR-Ranges snapshot in benchmark-data/mmr-ranges
+           ant BENCHMARK_BANDS -Dmmr.refresh=true  downloads the current MMR-Ranges table first
+         Needs python3, the installed Scelight, Java 8 and the corpus replays (benchmark-data/raw-replays, see benchmark-data/tools).
+         Writes benchmark-data/exports/phase-rates.csv, benchmark-data/exports/benchmark-bands.md and the band file
+         src/hu/aleks/larvasecondslostextmod/larva-benchmark-bands.properties. Then run TEST and GOLDEN_MULTI_REGENERATE and review
+         the diff. Method and rules: benchmark-data/tools/benchmark_bands.py.
+    -->
+    <property name="repoFolder" location=".." />
+    <property name="bandsTool" location="../benchmark-data/tools/benchmark_bands.py" />
+    <property name="bandsList" location="../benchmark-data/tmp/bands-replays.tsv" />
+    <property name="bandsRates" location="../benchmark-data/exports/phase-rates.csv" />
+
+    <target name="BENCHMARK_MMR_RANGES" if="mmr.refresh" description="Downloads the current MMR-Ranges 1v1 table (with -Dmmr.refresh=true).">
+        <exec executable="python3" dir="${repoFolder}" failonerror="true">
+            <arg value="${bandsTool}" />
+            <arg value="fetch-mmr-ranges" />
+        </exec>
+    </target>
+
+    <target name="BENCHMARK_BANDS" depends="COMPILE,REQUIRE_SCELIGHT_FOLDER,BENCHMARK_MMR_RANGES"
+            description="Rebuilds the benchmark bands: league buckets by MMR, per-replay rates, league medians, tier starts between medians.">
+        <exec executable="python3" dir="${repoFolder}" failonerror="true">
+            <arg value="${bandsTool}" />
+            <arg value="list" />
+            <arg value="--output" />
+            <arg value="${bandsList}" />
+        </exec>
+        <mkdir dir="${testBinFolder}" />
+        <java jvm="${golden.java}" classname="hu.aleks.larvasecondslostextmod.LarvaPhaseRateDumpCli" fork="true" failonerror="true"
+              output="${bandsRates}" error="${testBinFolder}/bands-rates.stderr.txt">
+            <env key="REPO" value="${repoFolder}" />
+            <classpath>
+                <pathelement location="${binFolder}" />
+                <pathelement location="${extModApiJar}" />
+                <fileset dir="${customLibsFolder}" includes="**/*.jar" />
+                <fileset dir="${scelightFolder}/mod" includes="app/*/*.sldat app-libs/*/*.sldat launcher/*/*.sldat sc2-t/*/*.sldat sc2-bd/*/*.sldat" />
+            </classpath>
+            <arg value="--scelight-app-dir" />
+            <arg value="${scelightFolder}" />
+            <arg value="--list" />
+            <arg value="${bandsList}" />
+        </java>
+        <exec executable="python3" dir="${repoFolder}" failonerror="true">
+            <arg value="${bandsTool}" />
+            <arg value="bands" />
+            <arg value="${bandsRates}" />
+        </exec>
+    </target>
+
+    <!--
+         Milestone bands (milestone rankings, Epic 20), same league method as BENCHMARK_BANDS:
+           ant MILESTONE_BANDS                     uses the MMR-Ranges snapshot in benchmark-data/mmr-ranges
+           ant MILESTONE_BANDS -Dmmr.refresh=true  downloads the current MMR-Ranges table first
+         Writes benchmark-data/tmp/milestone-replays.tsv, benchmark-data/exports/milestone-times.csv, benchmark-data/exports/milestone-bands.md
+         and the band file src/hu/aleks/larvasecondslostextmod/larva-milestone-bands.properties. Then run TEST and GOLDEN_MULTI_REGENERATE
+         and review the diff. Method and rules: benchmark-data/tools/milestone_bands.py.
+    -->
+    <property name="milestoneBandsTool" location="../benchmark-data/tools/milestone_bands.py" />
+    <property name="milestoneBandsList" location="../benchmark-data/tmp/milestone-replays.tsv" />
+    <property name="milestoneTimes" location="../benchmark-data/exports/milestone-times.csv" />
+
+    <target name="MILESTONE_BANDS" depends="COMPILE,REQUIRE_SCELIGHT_FOLDER,BENCHMARK_MMR_RANGES"
+            description="Rebuilds the milestone bands: league buckets by MMR, per-player milestone loops, league medians, tier starts between medians.">
+        <exec executable="python3" dir="${repoFolder}" failonerror="true">
+            <arg value="${milestoneBandsTool}" />
+            <arg value="list" />
+            <arg value="--output" />
+            <arg value="${milestoneBandsList}" />
+        </exec>
+        <mkdir dir="${testBinFolder}" />
+        <java jvm="${golden.java}" classname="hu.aleks.larvasecondslostextmod.LarvaMilestoneDumpCli" fork="true" failonerror="true"
+              output="${milestoneTimes}" error="${testBinFolder}/milestone-times.stderr.txt">
+            <env key="REPO" value="${repoFolder}" />
+            <classpath>
+                <pathelement location="${binFolder}" />
+                <pathelement location="${extModApiJar}" />
+                <fileset dir="${customLibsFolder}" includes="**/*.jar" />
+                <fileset dir="${scelightFolder}/mod" includes="app/*/*.sldat app-libs/*/*.sldat launcher/*/*.sldat sc2-t/*/*.sldat sc2-bd/*/*.sldat" />
+            </classpath>
+            <arg value="--scelight-app-dir" />
+            <arg value="${scelightFolder}" />
+            <arg value="--list" />
+            <arg value="${milestoneBandsList}" />
+        </java>
+        <exec executable="python3" dir="${repoFolder}" failonerror="true">
+            <arg value="${milestoneBandsTool}" />
+            <arg value="bands" />
+            <arg value="${milestoneTimes}" />
+        </exec>
     </target>
 
     <target name="BUILD_RELEASE" depends="PACKAGE_RELEASE,CHECK_RELEASE" description="Creates a release and deployment of the external module, then checks it." />

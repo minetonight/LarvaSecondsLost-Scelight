@@ -30,7 +30,7 @@ public class LarvaMultiViewGoldenCheckTest {
                 stats( LarvaGamePhase.EARLY, 7, 6, 66, 12391, 8267, 4528 ) );
         withStats( b, stats( LarvaGamePhase.MID, 77, 66, 123, 31723, 31723, 14132 ) );
         withEnd( b, LarvaGamePhase.EARLY, 411666 );
-        withMilestone( b, LarvaMilestone.SUPPLY_100, 678888 );
+        withMilestone( b, LarvaMilestone.SUPPLY_100, 15200 );
         return new LarvaAggregator().aggregate( Arrays.asList( game( 1, b.build() ), game( 2, b.build() ) ), Arrays.asList( tracked( "A", 2 ) ),
                 summaryOf( 2 ) );
     }
@@ -55,6 +55,14 @@ public class LarvaMultiViewGoldenCheckTest {
         final List< String > problems = LarvaMultiViewGoldenCheck.compare( golden(), view().replace( "6:51 (2/2)", "6:52 (2/2)" ) );
         assertFalse( problems.isEmpty() );
         assertTrue( problems.get( 0 ), problems.get( 0 ).contains( "golden '6:51 (2/2)'" ) );
+    }
+
+    @Test
+    public void aChangedMilestoneRankingIsReported() {
+        assertTrue( golden().contains( "rank=aim for 8:45" ) );
+        final List< String > problems = LarvaMultiViewGoldenCheck.compare( golden(), view().replace( "| aim for 8:45 |", "| top 5% pro |" ) );
+        assertFalse( problems.isEmpty() );
+        assertTrue( problems.get( 0 ), problems.get( 0 ).contains( "golden 'aim for 8:45'" ) );
     }
 
     @Test

@@ -114,26 +114,29 @@ public class LarvaAggregationRecordBuilderTest {
         assertTrue( rec.isMissingPhaseTable() );
         assertTrue( rec.getPhaseStats().isEmpty() );
         assertTrue( rec.getPhaseEndLoops().isEmpty() );
-        assertTrue( rec.getMilestoneDisplayMs().isEmpty() );
+        assertTrue( rec.getMilestoneLoops().isEmpty() );
     }
 
     @Test
-    public void milestonesUseSnapshotWorkersAndDisplayMs() {
+    public void milestonesUseSnapshotWorkersAndStayInLoops() {
         final LarvaAggregationRecordBuilder.PlayerInput in = input();
         in.snapshots = Arrays.asList( snap( 900, 99, 66 ), snap( 1000, 100, 66 ), snap( 2000, 150, 80 ), snap( 3000, 200, 80 ) );
         final LarvaAggregationPlayerRecord rec = LarvaAggregationRecordBuilder.buildPlayerRecord( in, TEN_MS );
-        final Map< LarvaMilestone, Long > m = rec.getMilestoneDisplayMs();
-        assertEquals( Long.valueOf( 10000L ), m.get( LarvaMilestone.SUPPLY_100 ) );
-        assertEquals( Long.valueOf( 9000L ), m.get( LarvaMilestone.DRONES_66 ) );
-        assertEquals( Long.valueOf( 20000L ), m.get( LarvaMilestone.DRONES_80 ) );
-        assertEquals( Long.valueOf( 30000L ), m.get( LarvaMilestone.SUPPLY_200 ) );
+        final Map< LarvaMilestone, Integer > m = rec.getMilestoneLoops();
+        assertEquals( Integer.valueOf( 900 ), m.get( LarvaMilestone.DRONES_44 ) );
+        assertEquals( Integer.valueOf( 900 ), m.get( LarvaMilestone.DRONES_55 ) );
+        assertEquals( Integer.valueOf( 1000 ), m.get( LarvaMilestone.SUPPLY_100 ) );
+        assertEquals( Integer.valueOf( 900 ), m.get( LarvaMilestone.DRONES_66 ) );
+        assertEquals( Integer.valueOf( 2000 ), m.get( LarvaMilestone.SUPPLY_150 ) );
+        assertEquals( Integer.valueOf( 2000 ), m.get( LarvaMilestone.DRONES_80 ) );
+        assertEquals( Integer.valueOf( 3000 ), m.get( LarvaMilestone.SUPPLY_200 ) );
     }
 
     @Test
     public void unreachedMilestonesAreAbsent() {
         final LarvaAggregationRecordBuilder.PlayerInput in = input();
         in.snapshots = Arrays.asList( snap( 1000, 50, 30 ) );
-        assertTrue( LarvaAggregationRecordBuilder.buildPlayerRecord( in, TEN_MS ).getMilestoneDisplayMs().isEmpty() );
+        assertTrue( LarvaAggregationRecordBuilder.buildPlayerRecord( in, TEN_MS ).getMilestoneLoops().isEmpty() );
     }
 
     @Test( expected = UnsupportedOperationException.class )
@@ -145,13 +148,13 @@ public class LarvaAggregationRecordBuilderTest {
 
     @Test
     public void playerRecordCopiesBuilderInputs() {
-        final Map< LarvaMilestone, Long > source = new HashMap<>();
-        source.put( LarvaMilestone.SUPPLY_100, Long.valueOf( 5L ) );
-        final LarvaAggregationPlayerRecord rec = new LarvaAggregationPlayerRecord.Builder().identityKey( "k" ).name( "n" ).milestoneDisplayMs( source ).build();
-        source.put( LarvaMilestone.SUPPLY_200, Long.valueOf( 9L ) );
+        final Map< LarvaMilestone, Integer > source = new HashMap<>();
+        source.put( LarvaMilestone.SUPPLY_100, Integer.valueOf( 5 ) );
+        final LarvaAggregationPlayerRecord rec = new LarvaAggregationPlayerRecord.Builder().identityKey( "k" ).name( "n" ).milestoneLoops( source ).build();
+        source.put( LarvaMilestone.SUPPLY_200, Integer.valueOf( 9 ) );
         source.remove( LarvaMilestone.SUPPLY_100 );
-        assertEquals( 1, rec.getMilestoneDisplayMs().size() );
-        assertEquals( Long.valueOf( 5L ), rec.getMilestoneDisplayMs().get( LarvaMilestone.SUPPLY_100 ) );
+        assertEquals( 1, rec.getMilestoneLoops().size() );
+        assertEquals( Integer.valueOf( 5 ), rec.getMilestoneLoops().get( LarvaMilestone.SUPPLY_100 ) );
     }
 
     @Test( expected = IllegalStateException.class )

@@ -67,7 +67,9 @@ final class LarvaPhaseTableRenderFixture {
                 Collections.< LarvaTimelineMarker >emptyList() ) );
         rows.add( new LarvaTimelineRow( "Beta", "Hatchery 1", "detail", 0L, 900000L, 0, Collections.< LarvaTimelineSegment >emptyList(),
                 Collections.< LarvaTimelineMarker >emptyList() ) );
-        return new LarvaTimelineModel( "Fixture title", "Fixture subtitle", "Fixture mode", overview, tables, colors, null, 900000L, "15:00",
+        // No milestone tables: the pixel references show the phase tables only (E20-S09 adds the milestone table below them).
+        return new LarvaTimelineModel( "Fixture title", "Fixture subtitle", "Fixture mode", overview, tables,
+                Collections.< String, LarvaPlayerMilestones >emptyMap(), colors, null, 900000L, "15:00",
                 "empty", rows );
     }
 

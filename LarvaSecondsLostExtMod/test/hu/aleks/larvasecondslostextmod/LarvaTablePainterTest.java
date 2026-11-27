@@ -68,6 +68,70 @@ public class LarvaTablePainterTest {
         new LarvaTableViewModel( null, "x", new String[] { "A" }, new String[] { "r1", "r2" }, new String[][] { { "1" } } );
     }
 
+    /** E20-S11: a bold time is measured with the bold font and puts more ink on the page than the same text in plain. */
+    @Test
+    public void aBoldPrefixIsMeasuredAndPaintedBold() {
+        final String cell = "10:08 10:08 10:08 10:08 10:08 10:08 (1234/1234)"; // wider than the 220 px minimum table
+        final LarvaTableViewModel plain = new LarvaTableViewModel( null, "M", new String[] { "A" }, new String[] { "r" }, new String[][] { { cell } } );
+        final LarvaTableViewModel bold = new LarvaTableViewModel( null, "M", new String[] { "A" }, new String[] { "r" }, new String[][] { { cell } },
+                new LarvaTableViewModel.Bold[][] { { LarvaTableViewModel.bold( 0, 35 ) } } );
+        assertEquals( "", plain.getBoldText( 0, 0 ) );
+        assertEquals( "10:08 10:08 10:08 10:08 10:08 10:08", bold.getBoldText( 0, 0 ) );
+        final FontMetrics fm = metrics();
+        // Dialog has bold digits as wide as plain ones, so the bold cell is at least as wide, never narrower
+        assertTrue( new LarvaTablePainter().measure( fm, bold ).width >= new LarvaTablePainter().measure( fm, plain ).width );
+        assertTrue( ink( bold ) > ink( plain ) );
+    }
+
+    /** E20-S12: a bold part in the middle or at the end (the league of {@code top 50% plat}) paints bold too. */
+    @Test
+    public void aBoldLabelAtTheEndIsPaintedBold() {
+        final String cell = "top 50% masters/GM/pro masters/GM/pro masters/GM/pro";
+        final LarvaTableViewModel plain = new LarvaTableViewModel( null, "M", new String[] { "A" }, new String[] { "r" }, new String[][] { { cell } } );
+        final LarvaTableViewModel bold = new LarvaTableViewModel( null, "M", new String[] { "A" }, new String[] { "r" }, new String[][] { { cell } },
+                new LarvaTableViewModel.Bold[][] { { LarvaTableViewModel.bold( 8, cell.length() ) } } );
+        assertEquals( "masters/GM/pro masters/GM/pro masters/GM/pro", bold.getBoldText( 0, 0 ) );
+        assertTrue( ink( bold ) > ink( plain ) );
+    }
+
+    @Test
+    public void aRankingWithoutLabelHasNoBoldPart() {
+        assertEquals( null, LarvaTableViewModel.boldLabel( LarvaRanking.plain( "aim for 9:01" ) ) );
+        assertEquals( null, LarvaTableViewModel.boldLabel( null ) );
+        final LarvaTableViewModel.Bold label = LarvaTableViewModel.boldLabel( LarvaRanking.withLabel( "top 50% ", "plat", "" ) );
+        assertEquals( 8, label.start );
+        assertEquals( 12, label.end );
+    }
+
+    @Test( expected = IllegalArgumentException.class )
+    public void rejectsABoldPartPastTheCellText() {
+        new LarvaTableViewModel( null, "x", new String[] { "A" }, new String[] { "r" }, new String[][] { { "1:00" } },
+                new LarvaTableViewModel.Bold[][] { { LarvaTableViewModel.bold( 0, 5 ) } } );
+    }
+
+    @Test( expected = IllegalArgumentException.class )
+    public void rejectsBoldOfAnotherShape() {
+        new LarvaTableViewModel( null, "x", new String[] { "A" }, new String[] { "r" }, new String[][] { { "1:00" } },
+                new LarvaTableViewModel.Bold[][] { { null }, { null } } );
+    }
+
+    @Test( expected = IllegalArgumentException.class )
+    public void rejectsAnEmptyBoldPart() {
+        LarvaTableViewModel.bold( 3, 3 );
+    }
+
+    /** @return number of dark text pixels of the painted model */
+    private static int ink( final LarvaTableViewModel model ) {
+        final BufferedImage image = new BufferedImage( 600, 100, BufferedImage.TYPE_INT_RGB );
+        paintOnWhite( image, model, MARGIN, MARGIN );
+        int dark = 0;
+        for ( int y = 0; y < image.getHeight(); y++ )
+            for ( int x = 0; x < image.getWidth(); x++ )
+                if ( ( image.getRGB( x, y ) & 0xFF ) < 160 )
+                    dark++;
+        return dark;
+    }
+
     @Test( expected = IllegalArgumentException.class )
     public void rejectsNoColumns() {
         new LarvaTableViewModel( null, "x", new String[0], new String[0], new String[0][] );

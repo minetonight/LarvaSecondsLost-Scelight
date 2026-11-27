@@ -75,11 +75,12 @@ final class LarvaMultiAnalysisDumpFormatter {
 
     private static void appendMilestone( final StringBuilder sb, final LarvaAggregatedMilestoneCell cell ) {
         sb.append( "    milestone " ).append( cell.getMilestone().getLabel() ).append( ": " );
-        if ( cell.getMeanMs() == null )
+        if ( cell.getMedianLoop() == null )
             sb.append( LarvaStatFormat.NOT_AVAILABLE );
         else
-            sb.append( LarvaStatFormat.formatMinSec( cell.getMeanMs().longValue() ) ).append( " (" ).append( cell.getMeanMs() ).append( " ms)" );
-        sb.append( " (" ).append( cell.getReachedCount() ).append( '/' ).append( cell.getGameCount() ).append( ')' ).append( NL );
+            sb.append( LarvaGameClock.format( cell.getMedianLoop().intValue() ) ).append( " (" ).append( cell.getMedianLoop() ).append( " loops)" );
+        sb.append( " (" ).append( cell.getReachedCount() ).append( '/' ).append( cell.getGameCount() ).append( ')' ).append( " rank=" )
+                .append( text( cell.getRanking() ) ).append( NL );
     }
 
     private static String text( final String value ) {

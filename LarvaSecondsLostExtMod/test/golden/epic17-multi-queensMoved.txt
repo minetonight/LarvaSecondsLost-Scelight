@@ -10,34 +10,46 @@ player 1: name=ScorpionБГ key=2-S2-1-5946255 games=1 last=2026-07-03 18:55:08
     phase MID: missed=76 missedInject=60 spawned=123 hatchEligibleLoops=31723 injectEligibleLoops=31723 injectActiveLoops=14449 | missed/h/min=3.22 missedInject/h/min=2.54 spawned/h/min=5.21 uptime=45.55% spawnedRank=top 100% gold missedRank=top 90% gold end=13:55 (835714 ms) 1/1
     phase LATE: missed=143 missedInject=138 spawned=245 hatchEligibleLoops=67541 injectEligibleLoops=67541 injectActiveLoops=18206 | missed/h/min=2.85 missedInject/h/min=2.75 spawned/h/min=4.88 uptime=26.96% spawnedRank=top 60% plat missedRank=top 45% dia end=21:56 (1316205 ms) 1/1
     phase END: missed=0 missedInject=0 spawned=0 hatchEligibleLoops=0 injectEligibleLoops=0 injectActiveLoops=0 | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/1
-    milestone 100 supply: 11:11 (671428 ms) (1/1)
-    milestone 66 drones: 13:55 (835714 ms) (1/1)
-    milestone 80 drones: n/a (0/1)
-    milestone 200 supply: 17:08 (1028571 ms) (1/1)
+    milestone 44 drones: 9:45 (13120 loops) (1/1) rank=aim for 7:26
+    milestone 55 drones: 10:42 (14400 loops) (1/1) rank=aim for 9:26
+    milestone 100 supply: 11:11 (15040 loops) (1/1) rank=aim for 8:45
+    milestone 66 drones: 13:55 (18720 loops) (1/1) rank=aim for 11:00
+    milestone 150 supply: 14:02 (18880 loops) (1/1) rank=aim for 12:08
+    milestone 80 drones: n/a (0/1) rank=n/a
+    milestone 200 supply: 17:08 (23040 loops) (1/1) rank=aim for 12:12
   bucket ZVP games=0
     phase EARLY: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
     phase MID: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
     phase LATE: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
     phase END: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
-    milestone 100 supply: n/a (0/0)
-    milestone 66 drones: n/a (0/0)
-    milestone 80 drones: n/a (0/0)
-    milestone 200 supply: n/a (0/0)
+    milestone 44 drones: n/a (0/0) rank=n/a
+    milestone 55 drones: n/a (0/0) rank=n/a
+    milestone 100 supply: n/a (0/0) rank=n/a
+    milestone 66 drones: n/a (0/0) rank=n/a
+    milestone 150 supply: n/a (0/0) rank=n/a
+    milestone 80 drones: n/a (0/0) rank=n/a
+    milestone 200 supply: n/a (0/0) rank=n/a
   bucket ZVT games=1
     phase EARLY: missed=7 missedInject=0 spawned=66 hatchEligibleLoops=12391 injectEligibleLoops=8261 injectActiveLoops=4523 | missed/h/min=0.76 missedInject/h/min=0.00 spawned/h/min=7.16 uptime=54.75% spawnedRank=top 10% masters missedRank=top 60% dia end=6:47 (407142 ms) 1/1
     phase MID: missed=76 missedInject=60 spawned=123 hatchEligibleLoops=31723 injectEligibleLoops=31723 injectActiveLoops=14449 | missed/h/min=3.22 missedInject/h/min=2.54 spawned/h/min=5.21 uptime=45.55% spawnedRank=top 100% gold missedRank=top 90% gold end=13:55 (835714 ms) 1/1
     phase LATE: missed=143 missedInject=138 spawned=245 hatchEligibleLoops=67541 injectEligibleLoops=67541 injectActiveLoops=18206 | missed/h/min=2.85 missedInject/h/min=2.75 spawned/h/min=4.88 uptime=26.96% spawnedRank=top 60% plat missedRank=top 45% dia end=21:56 (1316205 ms) 1/1
     phase END: missed=0 missedInject=0 spawned=0 hatchEligibleLoops=0 injectEligibleLoops=0 injectActiveLoops=0 | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/1
-    milestone 100 supply: 11:11 (671428 ms) (1/1)
-    milestone 66 drones: 13:55 (835714 ms) (1/1)
-    milestone 80 drones: n/a (0/1)
-    milestone 200 supply: 17:08 (1028571 ms) (1/1)
+    milestone 44 drones: 9:45 (13120 loops) (1/1) rank=aim for 6:48
+    milestone 55 drones: 10:42 (14400 loops) (1/1) rank=aim for 10:14
+    milestone 100 supply: 11:11 (15040 loops) (1/1) rank=aim for 9:26
+    milestone 66 drones: 13:55 (18720 loops) (1/1) rank=aim for 13:37
+    milestone 150 supply: 14:02 (18880 loops) (1/1) rank=aim for 13:30
+    milestone 80 drones: n/a (0/1) rank=n/a
+    milestone 200 supply: 17:08 (23040 loops) (1/1) rank=aim for 13:41
   bucket ZVZ games=0
     phase EARLY: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
     phase MID: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
     phase LATE: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
     phase END: no stats | missed/h/min=n/a missedInject/h/min=n/a spawned/h/min=n/a uptime=n/a spawnedRank=n/a missedRank=n/a end=n/a (n/a) 0/0
-    milestone 100 supply: n/a (0/0)
-    milestone 66 drones: n/a (0/0)
-    milestone 80 drones: n/a (0/0)
-    milestone 200 supply: n/a (0/0)
+    milestone 44 drones: n/a (0/0) rank=n/a
+    milestone 55 drones: n/a (0/0) rank=n/a
+    milestone 100 supply: n/a (0/0) rank=n/a
+    milestone 66 drones: n/a (0/0) rank=n/a
+    milestone 150 supply: n/a (0/0) rank=n/a
+    milestone 80 drones: n/a (0/0) rank=n/a
+    milestone 200 supply: n/a (0/0) rank=n/a

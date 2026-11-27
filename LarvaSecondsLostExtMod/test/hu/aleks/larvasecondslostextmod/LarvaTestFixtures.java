@@ -52,13 +52,13 @@ final class LarvaTestFixtures {
         return b.phaseEndDisplayMs( ms1 ).phaseEndLoops( loops );
     }
 
-    /** Sets one milestone time in ms. */
+    /** Sets the loop at which one milestone was reached (E20-S04: milestones are loops). */
     static LarvaAggregationPlayerRecord.Builder withMilestone( final LarvaAggregationPlayerRecord.Builder b, final LarvaMilestone milestone,
-            final long ms ) {
-        final Map< LarvaMilestone, Long > map = new EnumMap<>( LarvaMilestone.class );
-        map.putAll( b.build().getMilestoneDisplayMs() );
-        map.put( milestone, Long.valueOf( ms ) );
-        return b.milestoneDisplayMs( map );
+            final int loop ) {
+        final Map< LarvaMilestone, Integer > map = new EnumMap<>( LarvaMilestone.class );
+        map.putAll( b.build().getMilestoneLoops() );
+        map.put( milestone, Integer.valueOf( loop ) );
+        return b.milestoneLoops( map );
     }
 
     /** Eligible-looking 1v1 ladder game on the given day (days since epoch) with the given Zerg players. */

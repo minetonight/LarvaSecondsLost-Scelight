@@ -15,11 +15,17 @@ final class LarvaMultiAnalysisViewModelBuilder {
     static final String[] PHASE_ROW_LABELS = new String[] { "Avg phase end [m:ss]", "Inject uptime [%]", "Larva gen [lrv / htch / min]",
         "larva gen ranking", "Larva missed [lrv / htch / min]", "larva missed ranking", "Inject-missed larva [lrv / htch / min]" };
 
-    static final String HELP_LINE = "Ranking rows compare averages with per-game benchmark bands; averages sit closer to the middle.";
+    static final String HELP_LINE = "Ranking rows compare your averages (milestones: medians) with per-game benchmark bands; they sit closer to the middle than single games.";
 
-    static final String MILESTONE_TITLE = "Milestones (mean time, reached / games)";
+    static final String MILESTONE_TITLE = "Milestones (median time, reached / games)";
 
     static final String MILESTONE_CORNER_LABEL = "Milestone";
+
+    /**
+     * Label of every milestone ranking row (E20-S11): a ditto mark under the milestone of the row above, then {@code ranking}, so the
+     * time rows and the ranking rows read alternating. The spaces place the mark under the milestone name in the page font.
+     */
+    static final String MILESTONE_RANKING_ROW_LABEL = "        \"        ranking";
 
     private static final String EM_DASH = " — ";
 
@@ -80,6 +86,7 @@ final class LarvaMultiAnalysisViewModelBuilder {
         final LarvaGamePhase[] phases = LarvaGamePhase.values();
         final String[] headers = new String[ phases.length ];
         final String[][] cells = new String[ PHASE_ROW_LABELS.length ][ phases.length ];
+        final LarvaTableViewModel.Bold[][] bold = new LarvaTableViewModel.Bold[ PHASE_ROW_LABELS.length ][ phases.length ];
         for ( int column = 0; column < phases.length; column++ ) {
             final LarvaAggregatedPhaseCell cell = player.getPhaseCell( bucket, phases[ column ] );
             headers[ column ] = LarvaPhaseHeaderLabels.resolve( phases[ column ] );
@@ -87,35 +94,47 @@ final class LarvaMultiAnalysisViewModelBuilder {
             cells[ 1 ][ column ] = LarvaStatFormat.formatPercent( cell.getInjectUptimePercent() );
             cells[ 2 ][ column ] = LarvaStatFormat.formatRate( cell.getSpawnedPerHatchPerMinute() );
             cells[ 3 ][ column ] = textOrNotAvailable( cell.getSpawnedRanking() );
+            bold[ 3 ][ column ] = LarvaTableViewModel.boldLabel( cell.getSpawnedRankingValue() ); // E20-S12: league inside the bands
             cells[ 4 ][ column ] = LarvaStatFormat.formatRate( cell.getMissedPerHatchPerMinute() );
             cells[ 5 ][ column ] = textOrNotAvailable( cell.getMissedRanking() );
+            bold[ 5 ][ column ] = LarvaTableViewModel.boldLabel( cell.getMissedRankingValue() );
             cells[ 6 ][ column ] = LarvaStatFormat.formatRate( cell.getMissedInjectPerHatchPerMinute() );
         }
         final int games = player.getGameCount( bucket );
-        return new LarvaTableViewModel( bucketTitle( bucket, games ), LarvaTableViewModel.DEFAULT_CORNER_LABEL, headers, PHASE_ROW_LABELS, cells );
+        return new LarvaTableViewModel( bucketTitle( bucket, games ), LarvaTableViewModel.DEFAULT_CORNER_LABEL, headers, PHASE_ROW_LABELS, cells,
+                bold );
     }
 
     private static LarvaTableViewModel milestoneTable( final LarvaAggregationResult.PlayerResult player ) {
         final LarvaMatchupBucket[] buckets = LarvaMatchupBucket.values();
         final LarvaMilestone[] milestones = LarvaMilestone.values();
         final String[] headers = new String[ buckets.length ];
-        final String[] rowLabels = new String[ milestones.length ];
-        final String[][] cells = new String[ milestones.length ][ buckets.length ];
+        // E20-S06: each milestone has its time row, then its ranking row, as the larva rows of the phase tables.
+        final String[] rowLabels = new String[ 2 * milestones.length ];
+        final String[][] cells = new String[ 2 * milestones.length ][ buckets.length ];
+        final LarvaTableViewModel.Bold[][] bold = new LarvaTableViewModel.Bold[ 2 * milestones.length ][ buckets.length ];
         for ( int column = 0; column < buckets.length; column++ )
             headers[ column ] = buckets[ column ].getLabel();
-        for ( int row = 0; row < milestones.length; row++ ) {
-            rowLabels[ row ] = milestoneRowLabel( milestones[ row ] );
+        for ( int m = 0; m < milestones.length; m++ ) {
+            final int row = 2 * m;
+            rowLabels[ row ] = milestoneRowLabel( milestones[ m ] );
+            rowLabels[ row + 1 ] = MILESTONE_RANKING_ROW_LABEL;
             for ( int column = 0; column < buckets.length; column++ ) {
-                final LarvaAggregatedMilestoneCell cell = player.getMilestoneCell( buckets[ column ], milestones[ row ] );
-                cells[ row ][ column ] = timeWithCount( cell.getMeanMs(), cell.getReachedCount(), cell.getGameCount() );
+                final LarvaAggregatedMilestoneCell cell = player.getMilestoneCell( buckets[ column ], milestones[ m ] );
+                cells[ row ][ column ] = loopWithCount( cell.getMedianLoop(), cell.getReachedCount(), cell.getGameCount() );
+                // E20-S11: only the time is bold (not the count), so the eye finds it among the counts and the ranking rows
+                if ( cell.getMedianLoop() != null )
+                    bold[ row ][ column ] = LarvaTableViewModel.bold( 0, LarvaGameClock.format( cell.getMedianLoop().intValue() ).length() );
+                cells[ row + 1 ][ column ] = cell.getRanking();
+                bold[ row + 1 ][ column ] = LarvaTableViewModel.boldLabel( cell.getRankingValue() ); // E20-S12: league inside the bands
             }
         }
-        return new LarvaTableViewModel( MILESTONE_TITLE, MILESTONE_CORNER_LABEL, headers, rowLabels, cells );
+        return new LarvaTableViewModel( MILESTONE_TITLE, MILESTONE_CORNER_LABEL, headers, rowLabels, cells, bold );
     }
 
-    /** @return {@code 100 supply used} or {@code 66 drones alive} */
+    /** @return {@code 100 supply used at:} or {@code 66 drones made by:} */
     static String milestoneRowLabel( final LarvaMilestone milestone ) {
-        return milestone.getThreshold() + ( milestone.getKind() == LarvaMilestone.Kind.SUPPLY ? " supply used" : " drones alive" );
+        return milestone.getThreshold() + ( milestone.getKind() == LarvaMilestone.Kind.SUPPLY ? " supply used at:" : " drones made by:" );
     }
 
     /** @return {@code All games — 12 games}, {@code ZvP — 0 games} (OQ-4) */
@@ -127,6 +146,12 @@ final class LarvaMultiAnalysisViewModelBuilder {
     /** @return {@code m:ss (k/n)}, or {@code n/a (k/n)} when no game reached it (D-9, OQ-13) */
     static String timeWithCount( final Long ms, final int reached, final int games ) {
         final String time = ms == null ? LarvaStatFormat.NOT_AVAILABLE : LarvaStatFormat.formatMinSec( ms.longValue() );
+        return time + " (" + reached + "/" + games + ")";
+    }
+
+    /** @return {@code m:ss (k/n)} of a loop on the game clock, or {@code n/a (k/n)} when no game reached it (E20-S04) */
+    static String loopWithCount( final Integer loop, final int reached, final int games ) {
+        final String time = loop == null ? LarvaStatFormat.NOT_AVAILABLE : LarvaGameClock.format( loop.intValue() );
         return time + " (" + reached + "/" + games + ")";
     }
 

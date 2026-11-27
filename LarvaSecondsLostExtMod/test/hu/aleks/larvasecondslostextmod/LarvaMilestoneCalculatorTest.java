@@ -79,10 +79,23 @@ public class LarvaMilestoneCalculatorTest {
         assertEquals( Integer.valueOf( 300 ), m.get( LarvaMilestone.SUPPLY_100 ) );
     }
 
+    /** E20-S01: 44 and 55 drones and 150 supply use the same rule (first sample at or above the threshold). */
+    @Test
+    public void newMilestonesUseTheSameRule() {
+        final Map< LarvaMilestone, Integer > m = compute( Arrays.asList( snap( 6080, 120 * SCALE, 43 ), snap( 6240, 149 * SCALE, 44 ),
+                snap( 6400, 150 * SCALE, 54 ), snap( 6560, 150 * SCALE, 55 ) ) );
+        assertEquals( Integer.valueOf( 6240 ), m.get( LarvaMilestone.DRONES_44 ) );
+        assertEquals( Integer.valueOf( 6560 ), m.get( LarvaMilestone.DRONES_55 ) );
+        assertEquals( Integer.valueOf( 6400 ), m.get( LarvaMilestone.SUPPLY_150 ) );
+        assertEquals( Integer.valueOf( 6080 ), m.get( LarvaMilestone.SUPPLY_100 ) );
+        assertNull( m.get( LarvaMilestone.DRONES_66 ) );
+    }
+
     @Test
     public void resultIsInDisplayOrder() {
         final List< LarvaMilestone > order = new ArrayList<>( Arrays.asList( LarvaMilestone.values() ) );
-        assertEquals( Arrays.asList( LarvaMilestone.SUPPLY_100, LarvaMilestone.DRONES_66, LarvaMilestone.DRONES_80, LarvaMilestone.SUPPLY_200 ), order );
+        assertEquals( Arrays.asList( LarvaMilestone.DRONES_44, LarvaMilestone.DRONES_55, LarvaMilestone.SUPPLY_100, LarvaMilestone.DRONES_66,
+                LarvaMilestone.SUPPLY_150, LarvaMilestone.DRONES_80, LarvaMilestone.SUPPLY_200 ), order );
         final Map< LarvaMilestone, Integer > m = compute( Arrays.asList( snap( 1, 200 * SCALE, 80 ) ) );
         assertEquals( order, new ArrayList<>( m.keySet() ) );
     }

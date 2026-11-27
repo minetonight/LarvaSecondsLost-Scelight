@@ -20,9 +20,9 @@ public final class LarvaAggregatedPhaseCell {
 
     private final Double injectUptimePercent;
 
-    private final String spawnedRanking;
+    private final LarvaRanking spawnedRanking;
 
-    private final String missedRanking;
+    private final LarvaRanking missedRanking;
 
     private final Long meanEndMs;
 
@@ -30,8 +30,8 @@ public final class LarvaAggregatedPhaseCell {
 
     private final int gameCount;
 
-    LarvaAggregatedPhaseCell( final LarvaGamePhase phase, final LarvaPhaseStats pooled, final String spawnedRanking,
-            final String missedRanking, final Long meanEndMs, final int reachedCount, final int gameCount ) {
+    LarvaAggregatedPhaseCell( final LarvaGamePhase phase, final LarvaPhaseStats pooled, final LarvaRanking spawnedRanking,
+            final LarvaRanking missedRanking, final Long meanEndMs, final int reachedCount, final int gameCount ) {
         this.phase = phase;
         this.pooledStats = pooled;
         this.missedPerHatchPerMinute = pooled == null ? null : pooled.getMissedLarvaPerHatchPerMinute();
@@ -76,11 +76,21 @@ public final class LarvaAggregatedPhaseCell {
 
     /** @return ranking text of the pooled spawned rate; {@code n/a} for END (D-3); null if there is no data */
     public String getSpawnedRanking() {
+        return spawnedRanking == null ? null : spawnedRanking.getText();
+    }
+
+    /** @return the spawned ranking with its league label marked inside the bands (E20-S12), or null without a rate */
+    LarvaRanking getSpawnedRankingValue() {
         return spawnedRanking;
     }
 
     /** @return ranking text of the pooled missed rate; {@code n/a} for END (D-3); null if there is no data */
     public String getMissedRanking() {
+        return missedRanking == null ? null : missedRanking.getText();
+    }
+
+    /** @return the missed ranking with its league label marked inside the bands (E20-S12), or null without a rate */
+    LarvaRanking getMissedRankingValue() {
         return missedRanking;
     }
 

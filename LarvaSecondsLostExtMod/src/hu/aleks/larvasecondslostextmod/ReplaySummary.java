@@ -48,6 +48,9 @@ public class ReplaySummary {
     /** Player colors keyed by player name. */
     private final Map< String, Color > playerColorMap;
 
+    /** Matchup of each Zerg player of a two-player replay (E20-S09). */
+    private final Map< String, LarvaMatchupBucket > playerMatchupMap;
+
     /**
      * Creates a new replay summary.
      *
@@ -62,10 +65,11 @@ public class ReplaySummary {
      * @param replayVersion replay version string
      * @param baseBuild replay base build string
          * @param playerColorMap player colors keyed by player name
+     * @param playerMatchupMap matchup ({@code ZVP}, {@code ZVT}, {@code ZVZ}) of each Zerg player of a two-player replay; may be <code>null</code>
      */
     public ReplaySummary( final Path replayFile, final String sourceDescription, final String mapTitle, final String players, final String winners,
              final String length, final long lengthMs, final String replayEndTime, final String replayVersion, final String baseBuild,
-             final Map< String, Color > playerColorMap ) {
+             final Map< String, Color > playerColorMap, final Map< String, LarvaMatchupBucket > playerMatchupMap ) {
         this.replayFile = replayFile;
         this.sourceDescription = sourceDescription;
         this.mapTitle = mapTitle;
@@ -78,6 +82,16 @@ public class ReplaySummary {
         this.baseBuild = baseBuild;
         this.playerColorMap = playerColorMap == null ? Collections.< String, Color >emptyMap()
             : Collections.unmodifiableMap( new LinkedHashMap<>( playerColorMap ) );
+        this.playerMatchupMap = playerMatchupMap == null ? Collections.< String, LarvaMatchupBucket >emptyMap()
+            : Collections.unmodifiableMap( new LinkedHashMap<>( playerMatchupMap ) );
+    }
+
+    /**
+     * @param playerName player name
+     * @return the Zerg player's matchup, or <code>null</code> if unknown (not Zerg, or not a two-player replay)
+     */
+    public LarvaMatchupBucket getPlayerMatchup( final String playerName ) {
+        return playerName == null ? null : playerMatchupMap.get( playerName );
     }
 
     public Path getReplayFile() {

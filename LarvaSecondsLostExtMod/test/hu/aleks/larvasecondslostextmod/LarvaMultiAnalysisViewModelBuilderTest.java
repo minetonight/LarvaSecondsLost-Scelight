@@ -31,7 +31,7 @@ public class LarvaMultiAnalysisViewModelBuilderTest {
     private static LarvaAggregationPlayerRecord record( final String name, final LarvaMatchupBucket matchup ) {
         final LarvaAggregationPlayerRecord.Builder b = withStats( player( name, matchup ), stats( LarvaGamePhase.EARLY, 7, 6, 66, 12391, 8267, 4528 ) );
         withEnd( b, LarvaGamePhase.EARLY, 411666 );
-        withMilestone( b, LarvaMilestone.SUPPLY_100, 678888 );
+        withMilestone( b, LarvaMilestone.SUPPLY_100, 15200 ); // 11:18 on the game clock
         return b.build();
     }
 
@@ -79,7 +79,7 @@ public class LarvaMultiAnalysisViewModelBuilderTest {
             assertEquals( "Early game [<37]", tables.get( 1 ).getColumnHeader( 0 ) );
             assertEquals( "End game [90+]", tables.get( 1 ).getColumnHeader( 3 ) );
             assertEquals( LarvaMultiAnalysisViewModelBuilder.MILESTONE_TITLE, tables.get( 0 ).getTitle() );
-            assertEquals( 4, tables.get( 0 ).getRowCount() );
+            assertEquals( 2 * LarvaMilestone.values().length, tables.get( 0 ).getRowCount() ); // time and ranking row per milestone (E20-S06)
             assertEquals( 4, tables.get( 0 ).getColumnCount() );
         }
         final List< LarvaTableViewModel > a = model.getPlayers().get( 0 ).getTables();
@@ -118,16 +118,29 @@ public class LarvaMultiAnalysisViewModelBuilderTest {
         assertEquals( "0.65", all.getCell( 6, 0 ) );
         final LarvaTableViewModel milestones = tables.get( 0 );
         assertEquals( "Milestone", milestones.getCornerLabel() );
-        assertEquals( "100 supply used", milestones.getRowLabel( 0 ) );
-        assertEquals( "66 drones alive", milestones.getRowLabel( 1 ) );
-        assertEquals( "80 drones alive", milestones.getRowLabel( 2 ) );
-        assertEquals( "200 supply used", milestones.getRowLabel( 3 ) );
+        // E20-S06: per milestone, in game order, the time row and then its ranking row; E20-S11: the ranking rows are ditto rows
+        final String r = LarvaMultiAnalysisViewModelBuilder.MILESTONE_RANKING_ROW_LABEL;
+        final String[] expectedLabels = { "44 drones made by:", r, "55 drones made by:", r, "100 supply used at:", r, "66 drones made by:", r,
+            "150 supply used at:", r, "80 drones made by:", r, "200 supply used at:", r };
+        assertEquals( "\"        ranking", r.trim() );
+        assertEquals( expectedLabels.length, milestones.getRowCount() );
+        for ( int row = 0; row < expectedLabels.length; row++ )
+            assertEquals( expectedLabels[ row ], milestones.getRowLabel( row ) );
         assertEquals( "All", milestones.getColumnHeader( 0 ) );
         assertEquals( "ZvZ", milestones.getColumnHeader( 3 ) );
-        assertEquals( "11:18 (2/2)", milestones.getCell( 0, 0 ) );
-        assertEquals( "11:18 (1/1)", milestones.getCell( 0, 2 ) );
-        assertEquals( "n/a (0/1)", milestones.getCell( 1, 3 ) );
-        assertEquals( "n/a (0/0)", milestones.getCell( 0, 1 ) );
+        assertEquals( "11:18 (2/2)", milestones.getCell( 4, 0 ) );
+        assertEquals( "11:18 (1/1)", milestones.getCell( 4, 2 ) );
+        assertEquals( "n/a (0/1)", milestones.getCell( 6, 3 ) );
+        assertEquals( "n/a (0/0)", milestones.getCell( 4, 1 ) );
+        assertEquals( "aim for 8:45", milestones.getCell( 5, 0 ) ); // fixture SUPPLY_100.ALL weakest tier: gold 11760
+        assertEquals( "aim for 9:26", milestones.getCell( 5, 2 ) ); // ZvT has its own band: silver 12680
+        assertEquals( "n/a", milestones.getCell( 5, 1 ) ); // no ZvP band, no games
+        assertEquals( "n/a", milestones.getCell( 7, 3 ) ); // not reached
+        // E20-S11: only the time is bold, not the count, not n/a; E20-S12: no bold in a ranking outside the bands
+        assertEquals( "11:18", milestones.getBoldText( 4, 0 ) );
+        assertEquals( "", milestones.getBoldText( 6, 3 ) );
+        assertEquals( "", milestones.getBoldText( 5, 0 ) );
+        assertEquals( "", all.getBoldText( 0, 0 ) );
     }
 
     /** User decision 2026-11-24: no blank cell anywhere, also not for a ranking without rate (END, no benchmark). */

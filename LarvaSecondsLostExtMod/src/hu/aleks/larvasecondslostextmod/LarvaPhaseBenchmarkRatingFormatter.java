@@ -32,16 +32,11 @@ public class LarvaPhaseBenchmarkRatingFormatter {
     /** Bands by key {@code <metric>.<PHASE>}. */
     private static final Map< String, Bands > BANDS = loadBands();
 
-    /** Tiers of one metric and phase, weakest first. */
-    static final class Bands {
-
-        final String[] labels;
-
-        final double[] starts;
+    /** Tiers of one metric and phase, weakest first (the shared tier logic is {@link LarvaBenchmarkTiers}, E20-S05). */
+    static final class Bands extends LarvaBenchmarkTiers {
 
         Bands( final String[] labels, final double[] starts ) {
-            this.labels = labels;
-            this.starts = starts;
+            super( labels, starts );
         }
     }
 
@@ -53,7 +48,12 @@ public class LarvaPhaseBenchmarkRatingFormatter {
      * @return compact ranking label
      */
     public String formatSpawnedLarvaRanking( final LarvaGamePhase phase, final Double value ) {
-        return formatRanking( phase == null ? null : BANDS.get( SPAWNED + '.' + phase.name() ), value, true );
+        return rankSpawnedLarva( phase, value ).getText();
+    }
+
+    /** @return the spawned-larva ranking with its league label marked when inside the bands (E20-S12) */
+    LarvaRanking rankSpawnedLarva( final LarvaGamePhase phase, final Double value ) {
+        return rank( phase == null ? null : BANDS.get( SPAWNED + '.' + phase.name() ), value, true );
     }
 
     /**
@@ -64,7 +64,12 @@ public class LarvaPhaseBenchmarkRatingFormatter {
      * @return compact ranking label
      */
     public String formatMissedLarvaRanking( final LarvaGamePhase phase, final Double value ) {
-        return formatRanking( phase == null ? null : BANDS.get( MISSED + '.' + phase.name() ), value, false );
+        return rankMissedLarva( phase, value ).getText();
+    }
+
+    /** @return the larva-missed ranking with its league label marked when inside the bands (E20-S12) */
+    LarvaRanking rankMissedLarva( final LarvaGamePhase phase, final Double value ) {
+        return rank( phase == null ? null : BANDS.get( MISSED + '.' + phase.name() ), value, false );
     }
 
     /** @return true if the packaged band file was read and holds at least one band */
@@ -101,76 +106,24 @@ public class LarvaPhaseBenchmarkRatingFormatter {
             if ( !higherIsBetter && !key.startsWith( MISSED + '.' ) )
                 throw new IllegalArgumentException( "Unknown band metric: " + key );
             LarvaGamePhase.valueOf( key.substring( key.indexOf( '.' ) + 1 ) );
-            final String[] tiers = properties.getProperty( key ).split( "," );
-            if ( tiers.length < 2 )
-                throw new IllegalArgumentException( key + " needs at least two tiers" );
-            final String[] labels = new String[ tiers.length ];
-            final double[] starts = new double[ tiers.length ];
-            for ( int i = 0; i < tiers.length; i++ ) {
-                final String[] parts = tiers[ i ].trim().split( ":" );
-                if ( parts.length != 2 || parts[ 0 ].isEmpty() )
-                    throw new IllegalArgumentException( key + ": tier '" + tiers[ i ] + "' is not <label>:<start>" );
-                labels[ i ] = parts[ 0 ];
-                starts[ i ] = Double.parseDouble( parts[ 1 ] );
-                if ( i > 0 && ( higherIsBetter ? starts[ i ] <= starts[ i - 1 ] : starts[ i ] >= starts[ i - 1 ] ) )
-                    throw new IllegalArgumentException( key + ": tier " + labels[ i ] + " does not improve on " + labels[ i - 1 ] );
-            }
-            bands.put( key, new Bands( labels, starts ) );
+            final LarvaBenchmarkTiers tiers = LarvaBenchmarkTiers.parse( key, properties.getProperty( key ), higherIsBetter );
+            bands.put( key, new Bands( tiers.labels, tiers.starts ) );
         }
         return Collections.unmodifiableMap( bands );
     }
 
     /**
-     * Formats one phase benchmark rating.
+     * Formats one phase benchmark rating: {@code top p% <label>}; a value worse than the weakest tier reads {@code top 100%} of it.
      */
     String formatRanking( final Bands bands, final Double value, final boolean higherIsBetter ) {
+        return rank( bands, value, higherIsBetter ).getText();
+    }
+
+    /** @return as {@link #formatRanking(Bands, Double, boolean)}, with the league label marked when the value is inside the bands */
+    LarvaRanking rank( final Bands bands, final Double value, final boolean higherIsBetter ) {
         if ( bands == null || value == null )
-            return NOT_AVAILABLE;
-
-        final double numericValue = value.doubleValue();
-        final int tierIndex = resolveTierIndex( numericValue, bands.starts, higherIsBetter );
-        final int topPercent = resolveTopPercent( numericValue, bands.starts, higherIsBetter, tierIndex );
-        return "top " + topPercent + "% " + bands.labels[ tierIndex ];
-    }
-
-    /**
-     * Resolves the current tier index for a metric; a value below the weakest tier counts as that tier.
-     */
-    private int resolveTierIndex( final double value, final double[] benchmarkArray, final boolean higherIsBetter ) {
-        for ( int i = 0; i < benchmarkArray.length - 1; i++ )
-            if ( higherIsBetter ? value < benchmarkArray[ i + 1 ] : value > benchmarkArray[ i + 1 ] )
-                return i;
-        return benchmarkArray.length - 1;
-    }
-
-    /**
-     * Resolves the top-percent string payload inside the current tier.
-     */
-    private int resolveTopPercent( final double value, final double[] benchmarkArray, final boolean higherIsBetter, final int tierIndex ) {
-        final double tierStart = benchmarkArray[ tierIndex ];
-        final double referenceSpan;
-        final double progress;
-
-        if ( tierIndex < benchmarkArray.length - 1 ) {
-            final double tierEnd = benchmarkArray[ tierIndex + 1 ];
-            referenceSpan = Math.abs( tierEnd - tierStart );
-        } else {
-            final double previousTierStart = benchmarkArray[ tierIndex - 1 ];
-            referenceSpan = Math.abs( tierStart - previousTierStart );
-        }
-        progress = higherIsBetter ? safeRatio( value - tierStart, referenceSpan ) : safeRatio( tierStart - value, referenceSpan );
-
-        final double clampedProgress = Math.max( 0.0d, Math.min( 1.0d, progress ) );
-        final double rawPercent = 100.0d - clampedProgress * 95.0d;
-        final int roundedPercent = (int) ( Math.round( rawPercent / 5.0d ) * 5L );
-        return Math.max( 5, Math.min( 100, roundedPercent ) );
-    }
-
-    /**
-     * Returns a ratio guarded against a zero denominator.
-     */
-    private double safeRatio( final double numerator, final double denominator ) {
-        return denominator <= 0.0d ? 0.0d : numerator / denominator;
+            return LarvaRanking.plain( NOT_AVAILABLE );
+        return bands.rankTopPercent( value.doubleValue(), higherIsBetter );
     }
 
 }
